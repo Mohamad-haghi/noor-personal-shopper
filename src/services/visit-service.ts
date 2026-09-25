@@ -1,5 +1,5 @@
 import type { VisitProvider } from "../providers/interfaces/visit-provider";
-import type { Visit, VisitId } from "../../domain";
+import type { Visit, VisitId } from "../domain";
 
 export class VisitService {
   constructor(private readonly provider: VisitProvider) {}
