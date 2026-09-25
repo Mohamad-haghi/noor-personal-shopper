@@ -1,5 +1,5 @@
 import type { CompareProvider } from "../providers/interfaces/compare-provider";
-import type { Comparison, ComparisonId } from "../../domain";
+import type { Comparison, ComparisonId } from "../domain";
 
 export class CompareService {
   constructor(private readonly provider: CompareProvider) {}
