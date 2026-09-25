@@ -1,5 +1,5 @@
 import type { AccountProvider } from "../providers/interfaces/account-provider";
-import type { Account, AccountId } from "../../domain";
+import type { Account, AccountId } from "../domain";
 
 export class AccountService {
   constructor(private readonly provider: AccountProvider) {}
