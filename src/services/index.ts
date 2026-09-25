@@ -1,0 +1,13 @@
+export { CatalogService } from "./catalog-service";
+export { ShopperService } from "./shopper-service";
+export { RecommendationsService } from "./recommendations-service";
+export { ChoicesService } from "./choices-service";
+export { CompareService } from "./compare-service";
+export { AccountService } from "./account-service";
+export { CartService } from "./cart-service";
+export { OrderService } from "./order-service";
+export { PaymentService } from "./payment-service";
+export { ConfirmationService } from "./confirmation-service";
+export { BranchService } from "./branch-service";
+export { VisitService } from "./visit-service";
+export { HeroService } from "./hero-service";
