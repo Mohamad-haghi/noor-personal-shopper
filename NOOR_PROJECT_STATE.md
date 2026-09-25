@@ -9,6 +9,11 @@ LATEST ARCHITECTURE CHECKPOINT: `NOOR_FULL_ARCHITECTURE_AUDIT.md`
 
 The full application architecture and structural foundation are complete and CI-verified.
 
+The project has now entered Demo Implementation.
+Current phase: D1 — Demo Foundation & Application Shell.
+D1 implementation is committed and diff-audited; build verification is still pending.
+Do not start D2 until D1 build verification is confirmed.
+
 Completed and not to be repeated:
 - C1-C1 — Core Structure & Domain
 - C1-C2 — Services & Providers
@@ -16,7 +21,7 @@ Completed and not to be repeated:
 - C1-C4 — Architecture hardening
 - Full Architecture Completion
 
-The next implementation phase is Demo Layout/UI. Runtime/browser QA is still a later gate and is not claimed by the architecture CI.
+The current implementation phase is D1 — Demo Foundation & Application Shell. Runtime/browser QA remains a later gate and is not claimed until actually performed.
 
 ## Locked Demo Scope
 
