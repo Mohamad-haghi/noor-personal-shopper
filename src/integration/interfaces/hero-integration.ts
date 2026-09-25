@@ -5,5 +5,7 @@ export interface HeroContentProvider {
 }
 
 export interface HeroDestinationResolver {
-  resolve(destination: HeroContent["cta"]["destination"]): string | null;
+  resolve(
+    destination: NonNullable<HeroContent["cta"]>["destination"],
+  ): string | null;
 }
