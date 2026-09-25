@@ -1,5 +1,5 @@
 import type { ShopperProvider } from "../providers/interfaces/shopper-provider";
-import type { ShopperProfile, ShopperProfileId } from "../../domain";
+import type { ShopperProfile, ShopperProfileId } from "../domain";
 
 export class ShopperService {
   constructor(private readonly provider: ShopperProvider) {}
