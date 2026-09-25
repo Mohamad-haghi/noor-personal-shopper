@@ -1,5 +1,5 @@
 import type { PaymentProvider } from "../providers/interfaces/payment-provider";
-import type { Payment, PaymentId, OrderId } from "../../domain";
+import type { Payment, PaymentId, OrderId } from "../domain";
 
 export class PaymentService {
   constructor(private readonly provider: PaymentProvider) {}
