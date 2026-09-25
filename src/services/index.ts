@@ -11,3 +11,8 @@ export { ConfirmationService } from "./confirmation-service";
 export { BranchService } from "./branch-service";
 export { VisitService } from "./visit-service";
 export { HeroService } from "./hero-service";
+export { SearchService } from "./search-service";
+export { FavoritesService } from "./favorites-service";
+export { IdentityService } from "./identity-service";
+export { ShopperProfileService } from "./shopper-profile-service";
+export { CheckoutService } from "./checkout-service";
