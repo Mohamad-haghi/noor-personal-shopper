@@ -1,8 +1,9 @@
 # NOOR Personal Shopper — C1-C3 Checkpoint
 
-STATUS: ARCHITECTURE IMPLEMENTED — BUILD VERIFICATION PENDING
+STATUS: VERIFIED
 BASELINE: 3b7b3513852307b62e3653f43409e56cbddacd4a
 CURRENT BRANCH: main
+VERIFIED COMMIT: 9b0db106c14f748673c88aa560b514fc8a7fa711
 
 ## Implemented
 C1-C3 defines the boundaries for persistence, application/session/navigation state, routing guards, and future NOOR integration without implementing real persistence, auth, APIs, CMS, booking, or payment.
@@ -18,9 +19,31 @@ C1-C3 defines the boundaries for persistence, application/session/navigation sta
 - No real NOOR integration is connected.
 - No LocalStorage, database, auth implementation, API client, booking, payment gateway, or UI feature was added.
 
-## Recovery rule
-Do not re-run C1-C1, C1-C2, or C1-C3.
-The next phase must inspect this checkpoint and the current GitHub tree before making changes and continue only with its explicitly assigned scope.
+## CI Verification
+GitHub Actions workflow: NOOR Build Verification
+Run: #12
+Run ID: 36189247542
+Trigger: push
+Commit: 9b0db106c14f748673c88aa560b514fc8a7fa711
 
-## Verification
-Architecture has been reviewed against the current GitHub tree. A real npm build must still pass before this checkpoint is marked VERIFIED.
+Verified steps:
+- npm install: SUCCESS
+- npm run build: SUCCESS
+- TypeScript strict type-check: SUCCESS
+- Vite build: SUCCESS
+
+A previous CI blocker caused by Replit-specific registry URLs in package-lock.json was corrected in commit 28efaee69a523412b12fbf29816f347aeed58663. That correction is infrastructure-only and does not change the application architecture.
+
+## Scope Protection
+- No new routes
+- No UI implementation
+- No persistence implementation
+- No LocalStorage
+- No real NOOR API/CMS/auth/payment/booking integration
+- No external dependencies added
+- No replacement of C1-C1/C1-C2/C1-C3 architecture
+
+## Recovery Rule
+Do not re-run C1-C1, C1-C2, or C1-C3.
+Do not advance to C1-C4 until the next explicitly assigned phase is reviewed against this verified checkpoint.
+Runtime/browser behavior is NOT claimed verified by this CI build; only install, type-check, and production build are verified.
