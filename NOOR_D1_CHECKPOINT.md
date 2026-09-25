@@ -1,9 +1,9 @@
 # NOOR Personal Shopper — D1 Checkpoint
 
-STATUS: IMPLEMENTED — VERIFICATION PENDING
+STATUS: VERIFIED
 PHASE: D1 — Demo Foundation & Application Shell
 BASELINE: 5fb03e45644e51d7312bf33529e2759f25d8d438
-CURRENT COMMIT: 785f9d1ac9b1a1fc596485f272928574aa95dfc3
+CURRENT COMMIT: 825b4e34b0f9d3dd9a34208e143e0209b29f5537
 
 ## Implemented
 - Replaced the foundation shell with a responsive Persian RTL application shell.
@@ -40,8 +40,8 @@ Comparison from baseline 5fb03e45644e51d7312bf33529e2759f25d8d438 to current com
 
 ## Verification
 GitHub diff audit: PASS.
-GitHub Actions / production build: PENDING verification for commit 785f9d1ac9b1a1fc596485f272928574aa95dfc3.
+GitHub Actions / production build: PASS for commit 825b4e34b0f9d3dd9a34208e143e0209b29f5537.\n- Workflow: NOOR Build Verification\n- Run #59 / Run ID: 36196339830\n- npm install: SUCCESS\n- TypeScript strict type-check: SUCCESS\n- Vite production build: SUCCESS.
 Runtime/browser QA: NOT YET CLAIMED.
 
 ## Gate
-Do not start D2 until D1 build verification is confirmed.
+D1 gate: PASSED. D2 is now unblocked.
