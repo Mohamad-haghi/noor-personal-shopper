@@ -1,5 +1,5 @@
 import type { ConfirmationProvider } from "../providers/interfaces/confirmation-provider";
-import type { Confirmation, ConfirmationId, OrderId } from "../../domain";
+import type { Confirmation, ConfirmationId, OrderId } from "../domain";
 
 export class ConfirmationService {
   constructor(private readonly provider: ConfirmationProvider) {}
