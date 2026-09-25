@@ -1,3 +1,10 @@
+export { DemoCatalogProvider } from "./demo-catalog-provider";
+export { DemoShopperProvider } from "./demo-shopper-provider";
+export { DemoRecommendationsProvider } from "./demo-recommendations-provider";
+export { DemoChoicesProvider } from "./demo-choices-provider";
+export { DemoCompareProvider } from "./demo-compare-provider";
+export { DemoAccountProvider } from "./demo-account-provider";
+export { DemoCartProvider } from "./demo-cart-provider";
 export { DemoOrderProvider } from "./demo-order-provider";
 export { DemoPaymentProvider } from "./demo-payment-provider";
 export { DemoConfirmationProvider } from "./demo-confirmation-provider";
