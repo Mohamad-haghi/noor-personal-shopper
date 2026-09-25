@@ -1,4 +1,4 @@
-import "./styles.css";
+import "./styles.css";\nimport "./ui/hero.css";
 import { startApplication } from "./app/bootstrap";
 
 const root = document.querySelector<HTMLElement>("#app");
