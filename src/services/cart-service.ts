@@ -1,5 +1,5 @@
 import type { CartProvider } from "../providers/interfaces/cart-provider";
-import type { Cart, CartId, CartItem } from "../../domain";
+import type { Cart, CartId, CartItem } from "../domain";
 
 export class CartService {
   constructor(private readonly provider: CartProvider) {}
