@@ -1,5 +1,5 @@
 import type { OrderProvider } from "../providers/interfaces/order-provider";
-import type { Order, OrderId, AccountId } from "../../domain";
+import type { Order, OrderId, AccountId } from "../domain";
 
 export class OrderService {
   constructor(private readonly provider: OrderProvider) {}
