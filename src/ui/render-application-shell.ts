@@ -1,6 +1,7 @@
-import type { FoundationStatus } from "../domain/foundation-status";
+import type { FoundationStatus, HeroContent } from "../domain";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
 import { renderFoundationStatus } from "./render-foundation";
+import { renderHero } from "./render-hero";
 import { renderRoutePlaceholder } from "./render-route-placeholder";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
@@ -19,7 +20,13 @@ function renderNavigation(match: RouteMatch | null): string {
     .join("");
 }
 
-export function renderApplicationShell(root: HTMLElement, match: RouteMatch | null, status: FoundationStatus): void {
+export function renderApplicationShell(
+  root: HTMLElement,
+  match: RouteMatch | null,
+  status: FoundationStatus,
+  hero: HeroContent | null,
+  heroDestination: string | null,
+): void {
   const navigation = renderNavigation(match);
   root.innerHTML = `
     <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
@@ -48,6 +55,11 @@ export function renderApplicationShell(root: HTMLElement, match: RouteMatch | nu
 
   const routeView = root.querySelector<HTMLElement>("#route-view");
   if (!routeView) throw new Error("Application route view was not created.");
-  if (match?.route.path === "/") renderFoundationStatus(routeView, status);
-  else renderRoutePlaceholder(routeView, match);
+
+  if (match?.route.path === "/") {
+    if (hero) renderHero(routeView, hero, heroDestination);
+    else renderFoundationStatus(routeView, status);
+  } else {
+    renderRoutePlaceholder(routeView, match);
+  }
 }
