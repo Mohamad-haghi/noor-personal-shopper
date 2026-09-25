@@ -2,7 +2,8 @@ import { readAppConfig } from "../config/app-config";
 import { FoundationFeature } from "../features/foundation/foundation-feature";
 import { DemoFoundationProvider } from "../providers/demo/demo-foundation-provider";
 import { FoundationService } from "../services/foundation-service";
-import { renderFoundationStatus } from "../ui/render-foundation";
+import { createRouter } from "./routing/create-router";
+import { renderApplicationShell } from "../ui/render-application-shell";
 
 export function startApplication(root: HTMLElement): void {
   const config = readAppConfig();
@@ -16,6 +17,9 @@ export function startApplication(root: HTMLElement): void {
   const provider = new DemoFoundationProvider();
   const service = new FoundationService(provider);
   const feature = new FoundationFeature(service);
+  const status = feature.getStatus();
 
-  renderFoundationStatus(root, feature.getStatus());
+  createRouter(root, (match) => {
+    renderApplicationShell(root, match, status);
+  });
 }

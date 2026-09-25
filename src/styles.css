@@ -16,8 +16,74 @@ body {
   margin: 0;
 }
 
+#app {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+}
+
+.app-shell {
+  padding: 1.25rem 0 2rem;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0 1rem;
+}
+
+.app-brand {
+  color: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-mode {
+  color: #686660;
+}
+
+.primary-nav {
+  overflow-x: auto;
+  border-block: 1px solid #e2e0db;
+}
+
+.primary-nav ul {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.primary-nav a {
+  display: block;
+  padding: 0.8rem 0.7rem;
+  color: #4e4d49;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.primary-nav a:hover,
+.primary-nav a[aria-current="page"] {
+  color: #20201f;
+  background: #eeedea;
+}
+
 .foundation {
   width: min(100% - 2rem, 42rem);
+  margin: 12vh auto;
+  padding: 2rem;
+  border: 1px solid #e2e0db;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.route-placeholder {
+  width: min(100%, 42rem);
   margin: 12vh auto;
   padding: 2rem;
   border: 1px solid #e2e0db;
@@ -62,7 +128,16 @@ h1 {
 }
 
 @media (max-width: 480px) {
+  .app-shell {
+    padding-top: 0.75rem;
+  }
+
   .foundation {
+    margin-top: 2rem;
+    padding: 1.25rem;
+  }
+
+  .route-placeholder {
     margin-top: 2rem;
     padding: 1.25rem;
   }
