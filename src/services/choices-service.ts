@@ -1,5 +1,5 @@
 import type { ChoicesProvider } from "../providers/interfaces/choices-provider";
-import type { SavedChoice, SavedChoiceId } from "../../domain";
+import type { SavedChoice, SavedChoiceId } from "../domain";
 
 export class ChoicesService {
   constructor(private readonly provider: ChoicesProvider) {}
