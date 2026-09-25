@@ -1,5 +1,5 @@
 import type { RecommendationsProvider } from "../providers/interfaces/recommendations-provider";
-import type { Recommendation, RecommendationContext, ShopperProfileId } from "../../domain";
+import type { Recommendation, RecommendationContext, ShopperProfileId } from "../domain";
 
 export class RecommendationsService {
   constructor(private readonly provider: RecommendationsProvider) {}
