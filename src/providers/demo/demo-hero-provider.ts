@@ -1,4 +1,5 @@
-import heroMediaSource from "../../assets/noor-hero.svg";\nimport type { HeroProvider } from "../interfaces/hero-provider";
+import heroMediaSource from "../../assets/noor-hero.svg";
+import type { HeroProvider } from "../interfaces/hero-provider";
 import type { HeroContent, HeroContentId } from "../../domain";
 
 const DEMO_HERO: HeroContent = {
