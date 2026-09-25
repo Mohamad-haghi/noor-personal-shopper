@@ -1,5 +1,5 @@
 import type { BranchProvider } from "../providers/interfaces/branch-provider";
-import type { Branch, BranchId } from "../../domain";
+import type { Branch, BranchId } from "../domain";
 
 export class BranchService {
   constructor(private readonly provider: BranchProvider) {}
