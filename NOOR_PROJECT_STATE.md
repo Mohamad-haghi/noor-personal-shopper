@@ -21,7 +21,7 @@ Completed and not to be repeated:
 - C1-C4 — Architecture hardening
 - Full Architecture Completion
 
-The current implementation phase is D1 — Demo Foundation & Application Shell. Runtime/browser QA remains a later gate and is not claimed until actually performed.
+The current implementation phase is D2 — Hero & Demo Entry Experience. Runtime/browser QA remains a later gate and is not claimed until actually performed.
 
 ## Locked Demo Scope
 
