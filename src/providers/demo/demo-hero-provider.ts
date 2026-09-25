@@ -1,4 +1,4 @@
-import type { HeroProvider } from "../interfaces/hero-provider";
+import heroMediaSource from "../../assets/noor-hero.svg";\nimport type { HeroProvider } from "../interfaces/hero-provider";
 import type { HeroContent, HeroContentId } from "../../domain";
 
 const DEMO_HERO: HeroContent = {
@@ -9,7 +9,7 @@ const DEMO_HERO: HeroContent = {
     "با چند انتخاب کوتاه، سلیقه و نیاز خود را مشخص کنید و مسیر انتخاب عینک مناسب را شروع کنید.",
   media: {
     type: "image",
-    source: "/src/assets/noor-hero.svg",
+    source: heroMediaSource,
     altText: "تصویر انتزاعی و مینیمال مشاور انتخاب عینک نور",
     poster: null,
   },
