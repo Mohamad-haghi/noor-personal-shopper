@@ -1,3 +1,10 @@
+export type { CatalogProvider } from "./catalog-provider";
+export type { ShopperProvider } from "./shopper-provider";
+export type { RecommendationsProvider } from "./recommendations-provider";
+export type { ChoicesProvider } from "./choices-provider";
+export type { CompareProvider } from "./compare-provider";
+export type { AccountProvider } from "./account-provider";
+export type { CartProvider } from "./cart-provider";
 export type { OrderProvider } from "./order-provider";
 export type { PaymentProvider } from "./payment-provider";
 export type { ConfirmationProvider } from "./confirmation-provider";
