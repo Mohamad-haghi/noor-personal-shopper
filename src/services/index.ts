@@ -16,3 +16,4 @@ export { FavoritesService } from "./favorites-service";
 export { IdentityService } from "./identity-service";
 export { ShopperProfileService } from "./shopper-profile-service";
 export { CheckoutService } from "./checkout-service";
+export { ReservationService } from "./reservation-service";
