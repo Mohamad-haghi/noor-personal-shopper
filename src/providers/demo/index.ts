@@ -1,5 +1,6 @@
 export { DemoCatalogProvider } from "./demo-catalog-provider";
 export { DemoShopperProvider } from "./demo-shopper-provider";
+export { DemoSelectionProfileProvider } from "./demo-selection-profile-provider";
 export { DemoChoicesProvider } from "./demo-choices-provider";
 export { DemoCompareProvider } from "./demo-compare-provider";
 export { DemoAccountProvider } from "./demo-account-provider";
