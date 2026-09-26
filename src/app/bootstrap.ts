@@ -49,14 +49,15 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const heroDestination = hero?.cta ? heroResolver.resolve(hero.cta.destination) : null;
 
     const shopperFeature = new ShopperFeature();
-    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const catalogProvider = new DemoCatalogProvider();
+    const catalogService = new CatalogService(catalogProvider);
     const recommendationsService = new RecommendationsService(catalogService);
     const choicesService = new ChoicesService(new DemoChoicesProvider());
     const compareService = new CompareService(new DemoCompareProvider());
     const accountService = new AccountService(new DemoAccountProvider());
     const cartProvider = new DemoCartProvider();
     const cartService = new CartService(cartProvider);
-    const commerceService = new CommerceService(new DemoCommerceProvider(new DemoCatalogProvider()));
+    const commerceService = new CommerceService(new DemoCommerceProvider(catalogProvider));
 
     createRouter(root, (match) => {
       void renderApplicationShell(
