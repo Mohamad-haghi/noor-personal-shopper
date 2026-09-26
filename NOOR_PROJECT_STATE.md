@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: VERIFIED — D6 READY
+STATUS: VERIFIED — D7 READY
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -11,6 +11,8 @@ LATEST VERIFIED D4 IMPLEMENTATION COMMIT: `ae21364edf369d199905217c3a5e1665f6390
 LATEST D4 CHECKPOINT: `NOOR_D4_CHECKPOINT.md`
 LATEST VERIFIED D5 IMPLEMENTATION COMMIT: `7663c976146062dcac97ee47049a5111f46cbc8d`
 LATEST D5 CHECKPOINT: `NOOR_D5_CHECKPOINT.md`
+LATEST VERIFIED D6 IMPLEMENTATION COMMIT: `4ca52bcb7878ae652d51d90aa494902c5f15f181`
+LATEST D6 CHECKPOINT: `NOOR_D6_CHECKPOINT.md`
 
 ## Current Position
 
@@ -26,9 +28,11 @@ Completed and verified:
 - D2 — Hero & Demo Entry Experience
 - D3 — Personal Shopper Journey
 - D4 — Product Catalog & Recommendation Engine
-- D5 — Choices / Favorites / Comparison
+- D5
+- D6 — Choices / Favorites / Comparison
+- D6 — Independent Shopper Account/Auth
 
-Current phase: D6 — Independent Shopper Account/Auth.
+Current phase: D7 — Purchase / Cart / Checkout.
 
 D2 GitHub Actions verification:
 - Workflow: NOOR Build Verification
@@ -49,6 +53,12 @@ D4 verification:
 
 D5 verification:
 - GitHub Actions Run #136 / Run ID 36259988464
+- Behavioral tests: SUCCESS
+- Type-check: SUCCESS
+- Production build: SUCCESS
+
+D6 verification:
+- GitHub Actions Run #149 / Run ID 36260132459
 - Behavioral tests: SUCCESS
 - Type-check: SUCCESS
 - Production build: SUCCESS
