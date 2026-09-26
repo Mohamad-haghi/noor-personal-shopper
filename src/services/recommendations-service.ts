@@ -1,10 +1,9 @@
 import type {
   Recommendation,
-  RecommendationCandidate,
   RecommendationContext,
   ShopperProfileId,
 } from "../domain";
-import type { RecommendationsProvider } from "../providers/interfaces/recommendations-provider";
+import type { RecommendationCandidate, RecommendationsProvider } from "../providers/interfaces/recommendations-provider";
 import { CatalogService } from "./catalog-service";
 
 export class RecommendationsService {
