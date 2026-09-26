@@ -33,7 +33,8 @@ export function renderChoices(
                 <p>${escapeHtml(product.description ?? "جزئیات این فریم در کاتالوگ Demo ثبت شده است.")}</p>
                 <div class="d5-card-actions">
                   <button class="button button-secondary" type="button" data-remove-choice="${escapeHtml(choice.identity.id)}">حذف</button>
-                  <a class="button button-primary" href="/compare" data-app-link>مقایسهٔ انتخاب‌ها</a>
+                  <button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(choice.variantId.id)}" data-product-id="${escapeHtml(choice.variantId.productId.id)}">انتخاب برای خرید</button>
+                  <a class="button button-secondary" href="/compare" data-app-link>مقایسهٔ انتخاب‌ها</a>
                 </div>
               </article>
             `).join("")}
