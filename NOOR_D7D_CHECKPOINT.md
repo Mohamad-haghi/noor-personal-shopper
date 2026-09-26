@@ -28,6 +28,8 @@ Checkout -> Order -> PaymentService -> NoorPaymentProvider -> NOOR payment gatew
 The real provider can translate the existing Payment model to NOOR's actual payment API and return provider transaction identifiers, authorization/capture state, and failure information without exposing gateway-specific code to the UI.
 
 ## Verification
+GitHub Actions Run #220 / Run ID 36266684816: behavioral tests 19/19 PASS; type-check and production build PASS.
+
 Required:
 - behavioral tests
 - type-check
@@ -35,8 +37,5 @@ Required:
 - GitHub Actions verification
 
 ## Next
-After CI passes:
-1. mark D7-D VERIFIED
-2. update NOOR_PROJECT_STATE.md
-3. proceed to D7-E — Order creation and persistence within demo runtime state
-4. do not redesign the payment/commerce architecture
+D7-E — Order creation and persistence within demo runtime state.
+Do not redesign the payment/commerce architecture.
