@@ -194,7 +194,7 @@ async function attachPurchaseActions(
       const variantId = button.dataset.addToCart;
       const productId = button.dataset.productId;
       if (!variantId || !productId) return;
-      const offer = await commerceService.getOffer({ id: variantId, productId: { id: productId } });
+      const offer = await commerceService.getOffer({ id: variantId, productId: { id: productId, source: "demo" } });
       if (!offer) return;
       await cartService.addCommerceOffer({ id: "demo-cart" }, offer);
       button.textContent = "به سبد خرید اضافه شد";
