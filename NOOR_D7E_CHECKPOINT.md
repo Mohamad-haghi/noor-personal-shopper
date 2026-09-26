@@ -4,7 +4,7 @@
 D7 — Complete Demo Commerce & Purchase Journey
 
 ## STATUS
-D7-E IMPLEMENTED — CI VERIFICATION PENDING
+D7-E VERIFIED
 
 ## Implemented
 - Existing OrderProvider / OrderService boundary is executable through a stateful DemoOrderProvider.
@@ -35,12 +35,7 @@ Order retrievable by OrderId / AccountId
 ```
 
 ## Verification status
-Implementation and repository-state audit completed. GitHub Actions CI status for this main commit was not exposed through the available GitHub integration, so D7-E is not marked VERIFIED yet.
-
-Required before acceptance:
-- behavioral tests PASS
-- type-check PASS
-- production build PASS
+GitHub Actions Run #236 passed: 7/7 test files, 22/22 tests, type-check and production build all PASS.
 
 ## Next
 After CI verification: D7-F — Confirmation / Order ID / next-step state.
