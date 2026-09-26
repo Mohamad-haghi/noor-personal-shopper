@@ -1,5 +1,6 @@
 import { readAppConfig } from "../config/app-config";
 import { FoundationFeature } from "../features/foundation/foundation-feature";
+import { ShopperFeature } from "../features/shopper/shopper-feature";
 import { DemoFoundationProvider } from "../providers/demo/demo-foundation-provider";
 import { DemoHeroProvider } from "../providers/demo/demo-hero-provider";
 import { FoundationService } from "../services/foundation-service";
@@ -34,8 +35,10 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const hero = await heroService.getHeroContent();
     const heroDestination = hero?.cta ? heroResolver.resolve(hero.cta.destination) : null;
 
+    const shopperFeature = new ShopperFeature();
+
     createRouter(root, (match) => {
-      renderApplicationShell(root, match, status, hero, heroDestination);
+      renderApplicationShell(root, match, status, hero, heroDestination, shopperFeature);
     });
   } catch {
     root.innerHTML = `
