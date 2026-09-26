@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { DemoCatalogProvider } from "../src/providers/demo/demo-catalog-provider";
 import { DemoSearchProvider } from "../src/providers/demo/demo-search-provider";
+import { CatalogService } from "../src/services/catalog-service";
 import { SearchService } from "../src/services/search-service";
 
 describe("D4 Smart Discovery Search", () => {
-  function service(): SearchService { return new SearchService(new DemoSearchProvider(new DemoCatalogProvider())); }
+  function service(): SearchService { const catalog = new DemoCatalogProvider(); return new SearchService(new DemoSearchProvider(catalog), new CatalogService(catalog)); }
 
   it("supports keyword search by model and product name", async () => {
     const result = await service().search({ text: "PO3011", limit: 12 });
