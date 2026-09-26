@@ -181,3 +181,8 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
 .d7-checkout-summary div { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
 .d7-form-error { padding: 14px 16px; border: 1px solid rgba(150,0,0,.22); margin-bottom: 24px; }
 @media (max-width: 820px) { .d7-checkout-page { padding: 52px 18px 72px; } }
+
+
+/* D7-D — Demo Payment */
+.d7-demo-toggle { display: flex; align-items: center; gap: 10px; margin: 20px 0; color: var(--muted); line-height: 1.7; }
+.d7-demo-toggle input { inline-size: 18px; block-size: 18px; }
