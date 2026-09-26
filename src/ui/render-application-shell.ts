@@ -12,6 +12,7 @@ import type { OrderService } from "../services/order-service";
 import type { ConfirmationService } from "../services/confirmation-service";
 import type { BranchService } from "../services/branch-service";
 import type { VisitService } from "../services/visit-service";
+import type { SearchService } from "../services/search-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -29,6 +30,7 @@ import { renderConfirmation } from "./render-confirmation";
 import { renderBranches } from "./render-branches";
 import { renderVisit } from "./render-visit";
 import { renderProducts, renderProductDetail } from "./render-products";
+import { renderSearch } from "./render-search";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -379,7 +381,7 @@ async function renderCheckoutRoute(
   });
 }
 
-async function renderProductsRoute(routeView: HTMLElement, catalogService: CatalogService): Promise<void> {
+async function renderSearchRoute(routeView: HTMLElement, searchService: SearchService, catalogService: CatalogService): Promise<void> {\n  const params = new URLSearchParams(window.location.search);\n  const query = params.get("q") ?? "";\n  const response = await searchService.search({ text: query, limit: 12 });\n  const products = await catalogService.listProducts();\n  renderSearch(routeView, response, products);\n  const form = routeView.querySelector<HTMLFormElement>("[data-search-form]");\n  form?.addEventListener("submit", (event) => {\n    event.preventDefault();\n    const value = String(new FormData(form).get("q") ?? "").trim();\n    window.history.pushState(null, "", "/search" + (value ? "?q=" + encodeURIComponent(value) : ""));\n    window.dispatchEvent(new PopStateEvent("popstate"));\n  });\n}\n\nasync function renderProductsRoute(routeView: HTMLElement, catalogService: CatalogService): Promise<void> {
   const products = await catalogService.listProducts();
   const variantsByProduct = new Map<string, readonly import("../domain").ProductVariant[]>();
   for (const product of products) {
@@ -527,6 +529,7 @@ export async function renderApplicationShell(
   confirmationService: ConfirmationService,
   branchService: BranchService,
   visitService: VisitService,
+  searchService: SearchService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -560,7 +563,7 @@ export async function renderApplicationShell(
   if (match?.route.path === "/") {
     if (hero) renderHero(routeView, hero, heroDestination);
     else renderFoundationStatus(routeView, status);
-  } else if (match?.route.path === "/products") {
+  } else if (match?.route.path === "/search") {\n    await renderSearchRoute(routeView, searchService, catalogService);\n  } else if (match?.route.path === "/products") {
     await renderProductsRoute(routeView, catalogService);
   } else if (match?.route.path === "/products/:id") {
     await renderProductDetailRoute(routeView, catalogService, commerceService, match.params.id ?? null);
