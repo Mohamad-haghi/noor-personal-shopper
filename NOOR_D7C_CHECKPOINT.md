@@ -4,7 +4,7 @@
 D7 — Complete Demo Commerce & Purchase Journey
 
 ## STATUS
-D7-C IMPLEMENTED — AWAITING CI VERIFICATION
+D7-C VERIFIED
 
 ## Scope
 D7-C makes the existing Checkout boundary executable without replacing the Provider/Service architecture.
@@ -35,7 +35,7 @@ Cart -> CheckoutRequest -> real checkout orchestration -> Order
 The future real system must expose price, availability, order creation and payment capabilities through an API/service boundary. The Shopper should consume that provider rather than embedding live prices or inventory rules.
 
 ## Verification
-CI workflow now also runs on pull requests so this checkpoint can be verified against the current main state.
+CI workflow now runs on push to main and pull requests targeting main.
 
 Required:
 - behavioral tests
@@ -43,11 +43,8 @@ Required:
 - production build
 - GitHub Actions verification
 
-Implementation is on main. CI must be confirmed before D7-C is marked VERIFIED.
+Implementation is on main and has been verified by GitHub Actions Run #205 / Run ID 36266196232. Behavioral tests: 16 passed. Type-check and production build: SUCCESS.
 
 ## Next
-After CI passes:
-1. mark D7-C VERIFIED
-2. update NOOR_PROJECT_STATE.md
-3. proceed to D7-D — Mock Payment / PaymentProvider execution
-4. do not redesign the commerce architecture
+Next: D7-D — Mock Payment / PaymentProvider execution.
+Do not redesign the commerce architecture.
