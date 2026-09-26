@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: D7-B VERIFIED — PRICED DEMO CART
+STATUS: D7-C VERIFIED — CHECKOUT AND ORDER PRICING
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -15,6 +15,8 @@ LATEST VERIFIED D6 IMPLEMENTATION COMMIT: `4ca52bcb7878ae652d51d90aa494902c5f15f
 LATEST D6 CHECKPOINT: `NOOR_D6_CHECKPOINT.md`
 LATEST VERIFIED D7-A COMMIT: `8549926cb091eada3fc60f28da07397dcbb354c1`
 LATEST VERIFIED D7-B COMMIT: `fd4bc98afba7712443182e91e7a5dfb286e42bb9`
+LATEST VERIFIED D7-C IMPLEMENTATION: `209d9c81bb241f595ebb885a7c786cdce8525253`
+LATEST D7-C CHECKPOINT: `NOOR_D7C_CHECKPOINT.md`
 LATEST D7-A CHECKPOINT: `NOOR_D7A_CHECKPOINT.md`
 LATEST D7-B CHECKPOINT: `NOOR_D7B_CHECKPOINT.md`
 
@@ -48,6 +50,18 @@ D7-A verified:
 - Behavioral tests verify offer coverage, demo provenance, positive prices, currency, purchasability, variant resolution, and configurable pricing policy.
 - GitHub Actions Run #160 / Run ID 36264355064: behavioral tests, type-check, and production build SUCCESS.
 
+
+D7-C verified:
+- Added CheckoutRequest at the existing Checkout boundary for cart, independent Shopper account, shopper contact, and delivery/pickup fulfillment.
+- DemoCheckoutProvider now creates priced draft Orders from the Cart using an explicit demo pricing policy.
+- Delivery and pickup are both represented without adding price to Product.
+- Pickup carries a branch identity; delivery carries a ShippingAddress.
+- /checkout is executable and requires the independent Personal Shopper account.
+- Demo pricing remains explicitly separated from future real NOOR commerce data.
+- Future real transaction integration remains provider-based: real price/availability/order/payment systems can replace Demo providers without changing Product or Recommendation architecture.
+- GitHub Actions Run #205 / Run ID 36266103742: 16 behavioral tests PASS; type-check and production build PASS.
+- A test-fixture gap and a checkout UI escaping syntax error were caught by CI and fixed before D7-C acceptance.
+
 D7-B verified:
 - Existing Cart boundary is now executable with CommerceOffer pricing snapshots.
 - DemoCartProvider is stateful within the demo runtime and supports add/merge/update/remove/clear behavior.
@@ -58,7 +72,7 @@ D7-B verified:
 
 D7 next sequence:
 1. D7-B — Cart with priced commerce items. VERIFIED.
-2. D7-C — Checkout and order pricing.
+2. D7-C — Checkout and order pricing. VERIFIED.
 3. D7-D — Mock payment success/failure/retry.
 4. D7-E — Order creation and persistence within demo runtime state.
 5. D7-F — Confirmation / Order ID / next-step state.
