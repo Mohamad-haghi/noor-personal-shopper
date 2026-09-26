@@ -91,10 +91,7 @@ export function composeApplicationServices(providers: ApplicationProviders): App
   return {
     catalog,
     shopper: new ShopperService(providers.shopper),
-    recommendations: new RecommendationsService(
-      providers.recommendations,
-      catalog,
-    ),
+    recommendations: new RecommendationsService(catalog),
     choices: new ChoicesService(providers.choices),
     compare: new CompareService(providers.compare),
     account: new AccountService(providers.account),
