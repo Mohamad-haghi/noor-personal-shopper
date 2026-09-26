@@ -1,14 +1,14 @@
 # NOOR Personal Shopper — D2 Checkpoint
 
-STATUS: IMPLEMENTED — VERIFICATION PENDING
+STATUS: VERIFIED
 PHASE: D2 — Hero & Demo Entry Experience
 BASELINE: 3c55f50c6e660699272da24eae75e806d6d7073d
-CURRENT COMMIT: b3d3113e61a0be1df62edea67b1468c9df8d7775
+VERIFIED COMMIT: e8adf1a6ef06f9f101404df03d2b6430a9b52dec
 
 ## Implemented
 - Added a structured demo Hero through the existing HeroProvider/HeroService boundary.
 - Added deterministic demo Hero content with a local bundled media asset.
-- Added destination-aware Hero CTA resolution for the Shopper route.
+- Added destination-aware demo Hero CTA resolution for the Shopper route.
 - Replaced the D1 foundation home entry with the cinematic Hero while preserving the existing route map.
 - Added responsive desktop/mobile Hero presentation.
 - Added loading and recovery states around application startup.
@@ -41,9 +41,16 @@ CURRENT COMMIT: b3d3113e61a0be1df62edea67b1468c9df8d7775
 
 ## Verification
 - D1 prerequisite gate: PASS.
-- D2 GitHub Actions verification for current commit: PENDING.
-- Latest workflow: NOOR Build Verification, Run #71 / Run ID 36196871647.
+- GitHub Actions: NOOR Build Verification
+- Run: #76
+- Run ID: 36222698488
+- Commit: e8adf1a6ef06f9f101404df03d2b6430a9b52dec
+- npm install: SUCCESS
+- TypeScript strict type-check: SUCCESS
+- Vite production build: SUCCESS
+- D2 build gate: PASS
 - Runtime/browser QA: NOT YET CLAIMED.
 
 ## Gate
-Do not start D3 until the current D2 build verification is confirmed.
+D2 is verified and the D3 implementation phase is now unblocked.
+Do not re-run D2 unless a later regression requires a targeted correction.
