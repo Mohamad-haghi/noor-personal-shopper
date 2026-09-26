@@ -188,7 +188,6 @@ async function attachPurchaseActions(
   routeView: HTMLElement,
   commerceService: CommerceService,
   cartService: CartService,
-  catalogService: CatalogService,
 ): Promise<void> {
   routeView.querySelectorAll<HTMLButtonElement>("[data-add-to-cart]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -288,6 +287,6 @@ export async function renderApplicationShell(
   }
 
   if (match?.route.path !== "/cart") {
-    await attachPurchaseActions(routeView, commerceService, cartService, catalogService);
+    await attachPurchaseActions(routeView, commerceService, cartService);
   }
 }
