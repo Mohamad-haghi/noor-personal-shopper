@@ -1,15 +1,15 @@
 # NOOR POST-D7 AUDIT
 
 ## Audit date
-2026-09-26
+2026-09-27
 
-## Baseline
-GitHub main after G3 CI Run #260.
+## Source of truth
+GitHub `main` — commit `aac32dc8e5e76e9bf812a373c1e6ab0299e38115`.
 
 ## Verified complete
 - Personal Shopper journey: Intro → type → use case → style → face shape → recommendations.
 - Recommendation Engine: deterministic 3-result recommendations with explanation.
-- Choices / Favorites-style saved choices and comparison.
+- Choices / saved choices and comparison.
 - Independent Shopper Account/Auth.
 - Demo Commerce pricing separated from Product.
 - Cart with price snapshots.
@@ -17,18 +17,20 @@ GitHub main after G3 CI Run #260.
 - Mock Payment success/failure/retry.
 - Confirmed Order persistence in demo runtime.
 - Confirmation with Order ID and Request ID.
-- D7-G end-to-end and recovery tests.
+- D7-G end-to-end purchase and recovery tests.
 - G1 — executable Branch selection and pickup validation.
 - G2 — executable in-person visit scheduling/request flow.
 - G3 — destination-aware NOOR inventory smart link.
+- G4 — structured Selection Profile persistence seam.
+- G5 — executable `/products` and `/products/:id` catalog/detail routes.
 
 ## G1 — VERIFIED
-Implemented through the existing BranchProvider/BranchService boundaries:
+Implemented through BranchProvider/BranchService:
 - 3 Demo branches.
 - Branch listing and lookup.
 - Branch selection UI.
 - Pickup capability validation.
-- Existing checkout pickup path validates the selected branch.
+- Checkout pickup validates the selected branch.
 
 CI Run #256:
 - 10/10 test files PASS.
@@ -36,16 +38,13 @@ CI Run #256:
 - Type-check PASS.
 - Production build PASS.
 
-No architecture change.
-
 ## G2 — VERIFIED
-Implemented through the existing VisitProvider/VisitService/Confirmation boundaries:
+Implemented through VisitProvider/VisitService/Confirmation:
 - Branch selection.
 - Demo time-slot selection.
 - Visit purpose selection.
 - Visit request persistence in Demo runtime.
-- Request ID.
-- Confirmation state.
+- Request ID and confirmation state.
 - Independent Shopper account requirement.
 
 CI Run #256:
@@ -54,44 +53,31 @@ CI Run #256:
 - Type-check PASS.
 - Production build PASS.
 
-No architecture change.
-
 ## G3 — VERIFIED
-Implemented without adding a new provider/service boundary:
-- Added destination-aware NOOR inventory link resolution.
-- Resolution uses structured Product external identifiers:
-  `providerProductId → externalSystemIds.noorReference → sku`.
-- No demo product IDs are hard-coded into link generation.
-- Recommendations expose the smart link.
-- My Choices exposes the smart link.
-- The UI identifies the NOOR reference used for the destination.
-- The Demo explicitly remains disconnected from live NOOR inventory.
+Implemented without a new provider/service boundary:
+- Destination-aware NOOR inventory link resolution.
+- Structured external identifier precedence: `providerProductId → externalSystemIds.noorReference → sku`.
+- No demo product IDs hard-coded into link generation.
+- Recommendations and My Choices expose the smart link.
+- Demo remains explicitly disconnected from live NOOR inventory.
 - No real API/CMS/inventory integration was added.
-
-The current NOOR storefront was verified at `https://www.nooroptic.com/fa/`; product pages expose model/reference information, which supports the destination-aware search-link behavior used by the Demo. citeturn2view0turn3view0
 
 CI Run #260 / Run ID 36270301855:
 - 11/11 test files PASS.
 - 33/33 tests PASS.
 - Type-check PASS.
 - Production build PASS.
-- Warning only: GitHub Actions Node.js 20 deprecation notice.
 
-Checkpoint:
-`NOOR_G3_CHECKPOINT.md`
+Checkpoint: `NOOR_G3_CHECKPOINT.md`
 
-## Remaining scope gaps
-
-### G4 — Selection Profile persistence
-VERIFIED.
-
-The SelectionProfile architecture was intentionally upgraded rather than bypassed:
-- SelectionProfile now carries structured questionnaire criteria.
-- Optional AccountId ownership allows anonymous demo usage and future account association.
-- Dedicated SelectionProfileProvider / SelectionProfileService boundaries were added.
-- DemoSelectionProfileProvider persists the profile in demo runtime state.
-- ShopperFeature now persists questionnaire changes through SelectionProfileService.
-- Direct LocalStorage persistence was removed from the ShopperFeature.
+## G4 — VERIFIED
+Architecture was intentionally extended because the original SelectionProfile had no persistence seam:
+- Structured questionnaire criteria are stored in SelectionProfile.
+- Optional AccountId ownership supports anonymous Demo usage and future account association.
+- Dedicated SelectionProfileProvider / SelectionProfileService boundaries.
+- Stateful DemoSelectionProfileProvider.
+- ShopperFeature persists through SelectionProfileService.
+- Direct ShopperFeature LocalStorage persistence removed.
 
 CI Run #276:
 - 13/13 test files PASS.
@@ -101,31 +87,82 @@ CI Run #276:
 
 Checkpoint: `NOOR_G4_CHECKPOINT.md`
 
-This is an approved architecture extension: it preserves the existing Provider → Service → Feature layering while adding the missing persistence seam required by the scope.
+## G5 — VERIFIED
+The previous version of this audit incorrectly described G5 as still missing. That statement is now obsolete.
 
-### G5 — Product/detail route coverage
-`/products` and `/products/:id` are declared routes, but the application shell currently falls through to the generic route placeholder.
+Implemented:
+- Executable `/products` catalog route.
+- Executable `/products/:id` detail route.
+- Existing CatalogService/CatalogProvider boundary used for product and variant data.
+- Existing CommerceService used for Demo offers/pricing.
+- Purchase actions reuse existing Commerce → Cart flow.
+- Unknown product IDs render a recoverable not-found state.
+- Responsive Persian RTL presentation.
+- No product-specific business logic or hard-coded demo product IDs in route handling.
 
-Classification: implementation-level UI gap using the existing CatalogService. No architecture redesign is currently indicated.
+CI:
+- Run #280 — catalog/detail UI: SUCCESS.
+- Run #281 — route wiring: SUCCESS.
+- Run #282 — styling: SUCCESS.
+- Run #283 — catalog data contract tests: SUCCESS.
+- Latest main CI Run #286 / Run ID 36271841127: SUCCESS.
 
-## Not identified as gaps
-- No real NOOR API/CMS/auth/payment/booking integration is required at this demo stage.
-- No AI/LLM integration is required.
-- No Product price field is required; CommerceOffer remains the approved pricing boundary.
-- No new persistence architecture is required by the current audit.
-- No architecture redesign is approved or required.
+Checkpoint: `NOOR_G5_CHECKPOINT.md`
 
-## Recommended next execution order
-1. G4 — persist the structured SelectionProfile through the existing boundaries.
-2. G5 — implement executable `/products` and `/products/:id` inspection using CatalogService.
-3. Final runtime/browser QA across the complete demo journey.
+## Final static architecture / integration-readiness audit
 
-## Architecture policy
-Architecture may be extended when the change directly improves:
-- demo completeness and independence,
-- separation of domain concerns,
-- future NOOR API/CMS/account/commerce integration readiness,
-- scalability to the real NOOR catalog and users,
-- testability and failure isolation.
+Result: **NO BLOCKING ARCHITECTURE GAP IDENTIFIED in the repository state reviewed on 2026-09-27.**
 
-Architecture must not be replaced or changed gratuitously. Any material architecture extension must be documented in the relevant checkpoint and verified by CI before acceptance.
+Verified boundaries include:
+- UI/Feature → Domain → Service → Provider Interface → Demo Provider.
+- Commerce pricing remains outside Product.
+- Selection Profile has an explicit persistence seam.
+- Catalog and Commerce are replaceable through provider boundaries.
+- Account/Auth is independent from current NOOR website authentication.
+- Future NOOR inventory/commerce integration remains outside UI and behind explicit boundaries.
+- No real NOOR credentials or production integrations are present.
+- No AI/LLM dependency is present.
+- Demo data remains provider-backed and is not embedded into recommendation logic.
+- Builder workflow artifacts are not part of the application architecture.
+
+The repository still contains `render-route-placeholder.ts`, but the current application shell routes all declared implemented routes, including `/products` and `/products/:id`, to their executable renderers. The placeholder remains only as the generic fallback for an unmatched/unimplemented route.
+
+## CI state
+Latest GitHub Actions workflow:
+- Workflow: NOOR Build Verification
+- Run #286
+- Run ID: 36271841127
+- Commit: `aac32dc8e5e76e9bf812a373c1e6ab0299e38115`
+- Conclusion: SUCCESS
+
+The CI gate verifies behavioral tests, TypeScript type-check, and production build.
+
+## Final remaining gate
+**Real browser/runtime QA is still required before declaring the Demo presentation-ready.**
+
+This cannot be truthfully marked VERIFIED from repository/CI inspection alone. It requires opening the running application and exercising the actual UI, including:
+1. Home/Hero → Shopper entry.
+2. Full questionnaire forward/back/restart.
+3. Recommendation generation and all 3 recommendations.
+4. Save → My Choices → Compare.
+5. Product catalog → product detail → add to cart.
+6. Account register → logout → login.
+7. Cart → delivery checkout → Demo payment success → confirmation.
+8. Demo payment failure → retry → success.
+9. Pickup checkout → branch validation → payment → confirmation.
+10. Branches → visit scheduling → Request ID.
+11. NOOR inventory smart link destination.
+12. Unknown product route recovery.
+13. Mobile RTL navigation, scrolling, responsive layout, and browser refresh/direct-route behavior.
+
+No new feature phase should be started unless this browser QA exposes a real implementation gap.
+
+## Scope / integration boundary
+Not required at this demo stage:
+- real NOOR API/CMS integration
+- real NOOR authentication integration
+- real payment gateway
+- real booking/reservation backend
+- AI/LLM integration
+
+Future production integration should replace Demo providers with NOOR-backed providers/adapters without rewriting the Product, Recommendation, Selection Profile, Commerce, or UI contracts.
