@@ -1,6 +1,5 @@
 export type { CatalogProvider } from "./catalog-provider";
 export type { ShopperProvider } from "./shopper-provider";
-export type { RecommendationsProvider } from "./recommendations-provider";
 export type { ChoicesProvider } from "./choices-provider";
 export type { CompareProvider } from "./compare-provider";
 export type { AccountProvider } from "./account-provider";
