@@ -22,9 +22,9 @@ async function createCart() {
 describe("D7-C checkout", () => {
   it("creates a priced delivery order from the cart", async () => {
     const cart = await createCart();
-    const checkout = new CheckoutService(new DemoCheckoutProvider(new DemoCartProvider()));
     const provider = new DemoCartProvider();
     await provider.addItem(cartId, cart.items[0]);
+    const checkout = new CheckoutService(new DemoCheckoutProvider(provider));
 
     const order = await checkout.createOrderFromCart({
       cartId,
