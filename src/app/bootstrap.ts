@@ -41,7 +41,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
 
     const shopperFeature = new ShopperFeature();
     const catalogService = new CatalogService(new DemoCatalogProvider());
-    const recommendationsService = new RecommendationsService(new DemoRecommendationsProvider(), catalogService);
+    const recommendationsService = new RecommendationsService(catalogService);
 
     createRouter(root, (match) => {
       void renderApplicationShell(root, match, status, hero, heroDestination, shopperFeature, recommendationsService);
