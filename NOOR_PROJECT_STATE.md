@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: G4 VERIFIED — ARCHITECTURE EXTENDED
+STATUS: G5 VERIFIED — FINAL RUNTIME QA REMAINS
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -29,6 +29,7 @@ LATEST VERIFIED G3 COMMIT: `ae03e15d8e8d9e654e578612bbb74954a4f4e72d`
 LATEST G3 CHECKPOINT: `NOOR_G3_CHECKPOINT.md`
 LATEST VERIFIED G4 COMMIT: `6d2742d5894214572a20fa2c3106276af7c0a448`
 LATEST G4 CHECKPOINT: `NOOR_G4_CHECKPOINT.md`
+LATEST VERIFIED G5 CHECKPOINT: `NOOR_G5_CHECKPOINT.md`
 
 ## Architecture Policy Update
 
@@ -112,7 +113,7 @@ D7 verified sequence:
 ## Post-D7 Scope Audit
 See `NOOR_POST_D7_AUDIT.md`.
 
-G1/G2/G3/G4 are VERIFIED. G5 remains.
+G1/G2/G3/G4/G5 are VERIFIED. Final end-to-end runtime/browser QA remains.
 Verified post-D7 gaps completed:
 - G1 — Branch selection and pickup validation: VERIFIED in CI Run #256.
 - G2 — In-person visit scheduling/request flow: VERIFIED in CI Run #256.
