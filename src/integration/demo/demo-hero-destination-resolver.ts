@@ -1,4 +1,5 @@
-import type { HeroDestination, HeroDestinationResolver } from "../interfaces/hero-integration";
+import type { HeroDestinationResolver } from "../interfaces/hero-integration";
+import type { HeroDestination } from "../../domain";
 
 export class DemoHeroDestinationResolver implements HeroDestinationResolver {
   resolve(destination: HeroDestination): string | null {
