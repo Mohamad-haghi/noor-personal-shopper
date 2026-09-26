@@ -86,10 +86,15 @@ export interface ApplicationProviders {
 }
 
 export function composeApplicationServices(providers: ApplicationProviders): ApplicationServices {
+  const catalog = new CatalogService(providers.catalog);
+
   return {
-    catalog: new CatalogService(providers.catalog),
+    catalog,
     shopper: new ShopperService(providers.shopper),
-    recommendations: new RecommendationsService(providers.recommendations),
+    recommendations: new RecommendationsService(
+      providers.recommendations,
+      catalog,
+    ),
     choices: new ChoicesService(providers.choices),
     compare: new CompareService(providers.compare),
     account: new AccountService(providers.account),
