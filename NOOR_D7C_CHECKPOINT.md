@@ -35,6 +35,8 @@ Cart -> CheckoutRequest -> real checkout orchestration -> Order
 The future real system must expose price, availability, order creation and payment capabilities through an API/service boundary. The Shopper should consume that provider rather than embedding live prices or inventory rules.
 
 ## Verification
+CI workflow now also runs on pull requests so this checkpoint can be verified against the current main state.
+
 Required:
 - behavioral tests
 - type-check
