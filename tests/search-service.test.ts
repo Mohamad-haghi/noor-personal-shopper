@@ -38,6 +38,4 @@ describe("D4 Smart Discovery Search", () => {
     expect(similar.length).toBeGreaterThanOrEqual(0);
     expect(similar.every((item) => item.productId.id !== products[0].identity.id)).toBe(true);
   });
-}
-
 });
