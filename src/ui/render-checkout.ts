@@ -98,18 +98,20 @@ export function renderPaymentState(
   }
 
   const success = payment.status === "captured" || payment.status === "authorized";
+  const orderPersisted = success && order.status === "confirmed";
   routeView.innerHTML = `
     <main class="d7-checkout-page" id="main-content">
       <section class="d7-checkout-intro">
         <p class="eyebrow">${success ? "PAYMENT SUCCESS" : "PAYMENT FAILED"}</p>
         <h1>${success ? "پرداخت Demo موفق بود" : "پرداخت انجام نشد"}</h1>
         <p>${success
-          ? "تراکنش آزمایشی با موفقیت ثبت شد. مرحلهٔ بعدی در D7-E، ایجاد و نگهداری وضعیت سفارش است."
+          ? "تراکنش آزمایشی با موفقیت ثبت شد. سفارش در وضعیت نهایی Demo ذخیره شده و مرحلهٔ بعدی نمایش Confirmation و شناسهٔ سفارش است."
           : "تراکنش آزمایشی ناموفق بود. می‌توانید دوباره تلاش کنید یا به Checkout برگردید."}</p>
       </section>
       <section class="d7-checkout-summary">
         <div><span>شناسه سفارش</span><strong>${escapeHtml(order.identity.id)}</strong></div>
         <div><span>وضعیت پرداخت</span><strong>${success ? "موفق" : "ناموفق"}</strong></div>
+        <div><span>وضعیت سفارش</span><strong>${orderPersisted ? "تأیید و ذخیره‌شده در Demo" : "پیش‌نویس Checkout"}</strong></div>
         <div><span>مبلغ</span><strong>${formatAmount(payment.amount, payment.currency)}</strong></div>
         <div><span>شناسه تراکنش Demo</span><strong>${escapeHtml(payment.transaction?.providerTransactionId ?? "—")}</strong></div>
       </section>
