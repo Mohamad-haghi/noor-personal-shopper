@@ -31,7 +31,8 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
     <div><span>کاربرد</span><strong>${escapeHtml(flow.journey.useCase ?? "—")}</strong></div>
     <div><span>استایل</span><strong>${escapeHtml(flow.journey.style ?? "—")}</strong></div>
     <div><span>فرم صورت</span><strong>${escapeHtml(flow.journey.faceShape ?? "—")}</strong></div>
-  </div>` : "";
+  </div>
+  <p class="shopper-profile-note" aria-live="polite">پروفایل انتخاب شما به‌صورت ساختاریافته در لایهٔ Profile نگه‌داری شده و برای اتصال آینده به حساب و سیستم نور آماده است.</p>` : "";
 
   routeView.innerHTML = `<main class="shopper" id="main-content" aria-labelledby="shopper-title">
     <div class="shopper-layout">
@@ -41,7 +42,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
         <ol class="shopper-progress">${renderProgress(steps,currentIndex)}</ol>
       </aside>
       <section class="shopper-panel">
-        <div class="shopper-header"><span class="shopper-step">مرحله ${Math.min(currentIndex + 1, steps.length - 1)} از ${steps.length - 1}</span><span class="shopper-private-note">انتخاب‌ها فقط برای همین تجربه نگه داشته می‌شوند.</span></div>
+        <div class="shopper-header"><span class="shopper-step">مرحله ${Math.min(currentIndex + 1, steps.length - 1)} از ${steps.length - 1}</span><span class="shopper-private-note">انتخاب‌ها در پروفایل انتخاب ساختاریافتهٔ این تجربه نگه‌داری می‌شوند.</span></div>
         <div class="shopper-content">
           <p class="eyebrow">راهنمای انتخاب</p>
           <h1 id="shopper-title">${escapeHtml(step.title)}</h1>
@@ -58,10 +59,14 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
   </main>`;
 
   routeView.querySelectorAll<HTMLButtonElement>("[data-shopper-option]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       if (!step.field) return;
-      feature.setAnswer(step.field, button.dataset.shopperOption ?? "");
-      renderShopper(routeView, feature);
+      button.disabled = true;
+      try {
+        await feature.setAnswer(step.field, button.dataset.shopperOption ?? "");
+      } finally {
+        renderShopper(routeView, feature);
+      }
     });
   });
 
