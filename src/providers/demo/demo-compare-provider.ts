@@ -2,9 +2,19 @@ import type { CompareProvider } from "../interfaces/compare-provider";
 import type { Comparison, ComparisonId } from "../../domain";
 
 export class DemoCompareProvider implements CompareProvider {
-  async getComparison(_id: ComparisonId): Promise<Comparison | null> { return null; }
+  private readonly comparisons = new Map<string, Comparison>();
 
-  async createComparison(comparison: Comparison): Promise<Comparison> { return comparison; }
+  async getComparison(id: ComparisonId): Promise<Comparison | null> {
+    return this.comparisons.get(id.id) ?? null;
+  }
 
-  async saveComparison(comparison: Comparison): Promise<Comparison> { return comparison; }
+  async createComparison(comparison: Comparison): Promise<Comparison> {
+    this.comparisons.set(comparison.identity.id, comparison);
+    return comparison;
+  }
+
+  async saveComparison(comparison: Comparison): Promise<Comparison> {
+    this.comparisons.set(comparison.identity.id, comparison);
+    return comparison;
+  }
 }
