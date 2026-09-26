@@ -20,7 +20,7 @@ import { renderChoices } from "./render-choices";
 import { renderCompare } from "./render-compare";
 import { renderAccount } from "./render-account";
 import { renderCart } from "./render-cart";
-import { renderCheckout } from "./render-checkout";
+import { renderCheckout, renderPaymentState } from "./render-checkout";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
