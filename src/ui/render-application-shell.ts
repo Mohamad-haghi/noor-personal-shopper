@@ -376,6 +376,7 @@ export async function renderApplicationShell(
   commerceService: CommerceService,
   checkoutService: CheckoutService,
   paymentService: PaymentService,
+  orderService: OrderService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
