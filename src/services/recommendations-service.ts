@@ -2,22 +2,21 @@ import type {
   Recommendation,
   RecommendationContext,
   ShopperProfileId,
+  Product,
 } from "../domain";
-import type { RecommendationCandidate, RecommendationsProvider } from "../providers/interfaces/recommendations-provider";
-import { CatalogService } from "./catalog-service";
+import type { CatalogService } from "./catalog-service";
+import { RecommendationEngine, type RecommendationCandidate } from "./recommendation-engine";
 
 export class RecommendationsService {
   constructor(
-    private readonly provider: RecommendationsProvider,
     private readonly catalogService: CatalogService,
+    private readonly engine: RecommendationEngine = new RecommendationEngine(),
   ) {}
 
-  async getProductForVariant(variantId: import("../domain").ProductVariantId) {
+  async getProductForVariant(
+    variantId: import("../domain").ProductVariantId,
+  ): Promise<Product | null> {
     return this.catalogService.getProduct(variantId.productId);
-  }
-
-  getRecommendations(shopperId: ShopperProfileId): Promise<readonly Recommendation[]> {
-    return this.provider.getRecommendations(shopperId);
   }
 
   async generateRecommendations(
@@ -32,6 +31,6 @@ export class RecommendationsService {
       if (product) candidates.push({ product, variant });
     }
 
-    return this.provider.generateRecommendations(shopperId, context, candidates);
+    return this.engine.generate(shopperId, context, candidates);
   }
 }
