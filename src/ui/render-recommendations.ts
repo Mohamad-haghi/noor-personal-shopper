@@ -1,6 +1,6 @@
 import type { Product, Recommendation } from "../domain";
 
-function escapeHtml(value: string): string { return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll(""","&quot;").replaceAll("'","&#039;"); }
+function escapeHtml(value: string): string { return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\"","&quot;").replaceAll("'","&#039;"); }
 function custom(product: Product, key: string): unknown { return product.attributes.customAttributes[key]; }
 function card(product: Product, recommendation: Recommendation, index: number): string {
   const shape = Array.isArray(custom(product, "frameShapes")) ? (custom(product, "frameShapes") as string[]).join(" · ") : "—";
