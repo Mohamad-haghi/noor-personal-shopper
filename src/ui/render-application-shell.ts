@@ -1,9 +1,11 @@
 import type { HeroContent } from "../domain";
 import type { FoundationStatus } from "../domain/foundation-status";
+import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
 import { renderFoundationStatus } from "./render-foundation";
 import { renderHero } from "./render-hero";
 import { renderRoutePlaceholder } from "./render-route-placeholder";
+import { renderShopper } from "./render-shopper";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -27,6 +29,7 @@ export function renderApplicationShell(
   status: FoundationStatus,
   hero: HeroContent | null,
   heroDestination: string | null,
+  shopperFeature: ShopperFeature,
 ): void {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -60,6 +63,8 @@ export function renderApplicationShell(
   if (match?.route.path === "/") {
     if (hero) renderHero(routeView, hero, heroDestination);
     else renderFoundationStatus(routeView, status);
+  } else if (match?.route.path === "/shopper") {
+    renderShopper(routeView, shopperFeature);
   } else {
     renderRoutePlaceholder(routeView, match);
   }
