@@ -72,6 +72,8 @@ export async function startApplication(root: HTMLElement): Promise<void> {
         choicesService,
         compareService,
         accountService,
+        cartService,
+        commerceService,
       );
     });
   } catch {
