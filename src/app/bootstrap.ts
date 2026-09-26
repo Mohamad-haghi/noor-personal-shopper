@@ -9,6 +9,7 @@ import { DemoCompareProvider } from "../providers/demo/demo-compare-provider";
 import { DemoAccountProvider } from "../providers/demo/demo-account-provider";
 import { DemoCartProvider } from "../providers/demo/demo-cart-provider";
 import { DemoCommerceProvider } from "../providers/demo/demo-commerce-provider";
+import { DemoCheckoutProvider } from "../providers/demo/demo-checkout-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
@@ -18,6 +19,7 @@ import { CompareService } from "../services/compare-service";
 import { AccountService } from "../services/account-service";
 import { CartService } from "../services/cart-service";
 import { CommerceService } from "../services/commerce-service";
+import { CheckoutService } from "../services/checkout-service";
 import { DemoHeroDestinationResolver } from "../integration/demo/demo-hero-destination-resolver";
 import { createRouter } from "./routing/create-router";
 import { renderApplicationShell } from "../ui/render-application-shell";
@@ -58,6 +60,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const cartProvider = new DemoCartProvider();
     const cartService = new CartService(cartProvider);
     const commerceService = new CommerceService(new DemoCommerceProvider(catalogProvider));
+    const checkoutService = new CheckoutService(new DemoCheckoutProvider(cartProvider));
 
     createRouter(root, (match) => {
       void renderApplicationShell(
@@ -74,6 +77,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
         accountService,
         cartService,
         commerceService,
+        checkoutService,
       );
     });
   } catch {
