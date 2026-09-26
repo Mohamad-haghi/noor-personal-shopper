@@ -10,6 +10,8 @@ import type { CheckoutService } from "../services/checkout-service";
 import type { PaymentService } from "../services/payment-service";
 import type { OrderService } from "../services/order-service";
 import type { ConfirmationService } from "../services/confirmation-service";
+import type { BranchService } from "../services/branch-service";
+import type { VisitService } from "../services/visit-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -24,6 +26,8 @@ import { renderAccount } from "./render-account";
 import { renderCart } from "./render-cart";
 import { renderCheckout, renderPaymentState } from "./render-checkout";
 import { renderConfirmation } from "./render-confirmation";
+import { renderBranches } from "./render-branches";
+import { renderVisit } from "./render-visit";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -225,6 +229,7 @@ async function renderCheckoutRoute(
   paymentService: PaymentService,
   orderService: OrderService,
   confirmationService: ConfirmationService,
+  branchService: BranchService,
   errorMessage: string | null = null,
 ): Promise<void> {
   const cart = await cartService.getCart({ id: "demo-cart" });
@@ -259,7 +264,7 @@ async function renderCheckoutRoute(
     event.preventDefault();
     const currentAccount = await accountService.getCurrentAccount();
     if (!currentAccount) {
-      await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, confirmationService, "ابتدا وارد حساب مستقل Personal Shopper شوید.");
+      await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, confirmationService, branchService, "ابتدا وارد حساب مستقل Personal Shopper شوید.");
       return;
     }
 
@@ -269,12 +274,21 @@ async function renderCheckoutRoute(
     const phone = String(data.get("phone")).trim() || null;
 
     try {
+      let pickupBranchId: string | null = null;
+      if (method === "pickup") {
+        pickupBranchId = String(data.get("branchId")).trim();
+        if (!pickupBranchId) throw new Error("برای تحویل حضوری، یک شعبه انتخاب کنید.");
+        const pickupBranch = await branchService.getBranch({ id: pickupBranchId });
+        if (!pickupBranch) throw new Error("شعبه انتخاب‌شده در فهرست Demo معتبر نیست.");
+        if (!pickupBranch.services.includes("pickup")) throw new Error("این شعبه برای تحویل حضوری در Demo فعال نیست.");
+      }
+
       const request = method === "pickup"
         ? {
             cartId: { id: "demo-cart" },
             accountId: currentAccount.identity,
             shopper: { recipientName, phone },
-            fulfillment: { method: "pickup" as const, branchId: String(data.get("branchId")).trim() },
+            fulfillment: { method: "pickup" as const, branchId: pickupBranchId as string },
           }
         : {
             cartId: { id: "demo-cart" },
@@ -357,6 +371,7 @@ async function renderCheckoutRoute(
         paymentService,
         orderService,
         confirmationService,
+        branchService,
         error instanceof Error ? error.message : "ثبت سفارش انجام نشد.",
       );
     }
@@ -377,6 +392,84 @@ async function renderCartRoute(routeView: HTMLElement, cartService: CartService,
   });
 }
 
+async function renderBranchesRoute(routeView: HTMLElement, branchService: BranchService): Promise<void> {
+  const branches = await branchService.listBranches();
+  renderBranches(routeView, branches);
+}
+
+async function renderVisitRoute(
+  routeView: HTMLElement,
+  branchService: BranchService,
+  visitService: VisitService,
+  accountService: AccountService,
+): Promise<void> {
+  const branches = await branchService.listBranches();
+  const account = await accountService.getCurrentAccount();
+  const params = new URLSearchParams(window.location.search);
+  const selectedBranchId = params.get("branch");
+  const existingVisitId = params.get("request");
+  const existingVisit = existingVisitId ? await visitService.getVisit({ id: existingVisitId }) : null;
+
+  renderVisit(
+    routeView,
+    branches,
+    account?.email ?? null,
+    selectedBranchId,
+    existingVisit,
+  );
+
+  const form = routeView.querySelector<HTMLFormElement>("[data-visit-form]");
+  if (!form || !account) return;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const branchId = String(data.get("branchId")).trim();
+    const scheduledAtValue = String(data.get("scheduledAt")).trim();
+    const branch = await branchService.getBranch({ id: branchId });
+
+    if (!branch) {
+      await renderVisitRouteWithError(routeView, branchService, visitService, accountService, "شعبه انتخاب‌شده معتبر نیست.");
+      return;
+    }
+
+    const scheduledAt = new Date(scheduledAtValue);
+    if (Number.isNaN(scheduledAt.getTime()) || scheduledAt.getTime() <= Date.now()) {
+      await renderVisitRouteWithError(routeView, branchService, visitService, accountService, "زمان مراجعه معتبر نیست.");
+      return;
+    }
+
+    const visitId = "demo-visit-" + Date.now();
+    const visit = await visitService.requestVisit({
+      identity: { id: visitId },
+      branchId: branch.identity,
+      accountId: account.identity,
+      scheduledAt,
+      duration: { estimatedMinutes: 45, actualMinutes: null },
+      purpose: String(data.get("purpose")) as "consultation" | "fitting",
+      status: "requested",
+      notes: String(data.get("notes")).trim() || null,
+      createdAt: new Date(),
+    });
+
+    window.history.pushState(null, "", "/visit?branch=" + encodeURIComponent(branch.identity.id) + "&request=" + encodeURIComponent(visit.identity.id));
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+}
+
+async function renderVisitRouteWithError(
+  routeView: HTMLElement,
+  branchService: BranchService,
+  visitService: VisitService,
+  accountService: AccountService,
+  errorMessage: string,
+): Promise<void> {
+  const branches = await branchService.listBranches();
+  const account = await accountService.getCurrentAccount();
+  const params = new URLSearchParams(window.location.search);
+  renderVisit(routeView, branches, account?.email ?? null, params.get("branch"), null, errorMessage);
+}
+
 export async function renderApplicationShell(
   root: HTMLElement,
   match: RouteMatch | null,
@@ -395,6 +488,8 @@ export async function renderApplicationShell(
   paymentService: PaymentService,
   orderService: OrderService,
   confirmationService: ConfirmationService,
+  branchService: BranchService,
+  visitService: VisitService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -441,7 +536,11 @@ export async function renderApplicationShell(
   } else if (match?.route.path === "/cart") {
     await renderCartRoute(routeView, cartService, catalogService);
   } else if (match?.route.path === "/checkout") {
-    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, confirmationService);
+    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, confirmationService, branchService);
+  } else if (match?.route.path === "/branches") {
+    await renderBranchesRoute(routeView, branchService);
+  } else if (match?.route.path === "/visit") {
+    await renderVisitRoute(routeView, branchService, visitService, accountService);
   } else if (match?.route.path === "/confirmation/:id") {
     const confirmationId = match.params.id ? { id: match.params.id } : null;
     const confirmation = confirmationId ? await confirmationService.getConfirmation(confirmationId) : null;
@@ -451,7 +550,7 @@ export async function renderApplicationShell(
     renderRoutePlaceholder(routeView, match);
   }
 
-  if (match?.route.path !== "/cart" && match?.route.path !== "/confirmation/:id") {
+  if (match?.route.path !== "/cart" && match?.route.path !== "/confirmation/:id" && match?.route.path !== "/branches" && match?.route.path !== "/visit") {
     await attachPurchaseActions(routeView, commerceService, cartService);
   }
 }
