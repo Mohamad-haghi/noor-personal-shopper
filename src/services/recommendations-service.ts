@@ -1,5 +1,6 @@
 import type {
   Recommendation,
+  RecommendationCandidate,
   RecommendationContext,
   ShopperProfileId,
 } from "../domain";
@@ -20,7 +21,14 @@ export class RecommendationsService {
     shopperId: ShopperProfileId,
     context: RecommendationContext,
   ): Promise<readonly Recommendation[]> {
-    const candidates = await this.catalogService.listAvailableVariants();
+    const availableVariants = await this.catalogService.listAvailableVariants();
+    const candidates: RecommendationCandidate[] = [];
+
+    for (const variant of availableVariants) {
+      const product = await this.catalogService.getProduct(variant.identity.productId);
+      if (product) candidates.push({ product, variant });
+    }
+
     return this.provider.generateRecommendations(shopperId, context, candidates);
   }
 }
