@@ -77,7 +77,7 @@ export async function renderApplicationShell(
     );
     const products: Product[] = [];
     for (const recommendation of recommendations) {
-      const product = await recommendationsService["catalogService"].getProduct(recommendation.variantId.productId);
+      const product = await recommendationsService.getProductForVariant(recommendation.variantId.productId);
       if (product) products.push(product);
     }
     renderRecommendations(routeView, recommendations, products);
