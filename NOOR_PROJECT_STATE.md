@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: G3 VERIFIED — POST-D7 AUDIT UPDATED
+STATUS: G4 VERIFIED — ARCHITECTURE EXTENDED
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -27,6 +27,12 @@ LATEST D7-G CHECKPOINT: `NOOR_D7G_CHECKPOINT.md`
 LATEST POST-D7 AUDIT: `NOOR_POST_D7_AUDIT.md`
 LATEST VERIFIED G3 COMMIT: `ae03e15d8e8d9e654e578612bbb74954a4f4e72d`
 LATEST G3 CHECKPOINT: `NOOR_G3_CHECKPOINT.md`
+LATEST VERIFIED G4 COMMIT: `6d2742d5894214572a20fa2c3106276af7c0a448`
+LATEST G4 CHECKPOINT: `NOOR_G4_CHECKPOINT.md`
+
+## Architecture Policy Update
+
+Architecture may be extended when necessary for demo completeness, independent execution, clean domain separation, testability, scalability, or future NOOR integration readiness. Extensions must preserve the existing layered boundaries and be documented and CI-verified.
 
 ## Current Position
 
@@ -106,17 +112,16 @@ D7 verified sequence:
 ## Post-D7 Scope Audit
 See `NOOR_POST_D7_AUDIT.md`.
 
-G1/G2/G3 are VERIFIED. G4/G5 remain.
+G1/G2/G3/G4 are VERIFIED. G5 remains.
 Verified post-D7 gaps completed:
 - G1 — Branch selection and pickup validation: VERIFIED in CI Run #256.
 - G2 — In-person visit scheduling/request flow: VERIFIED in CI Run #256.
 - G3 — Destination-aware NOOR inventory smart link: VERIFIED in CI Run #260.
 
-Remaining implementation gaps:
-- G4 — Structured SelectionProfile persistence.
+Remaining implementation gap:
 - G5 — Executable `/products` and `/products/:id` catalog/detail routes.
 
-No architecture change was introduced for G1/G2/G3. If any G4/G5 fix requires changing architecture/composition or adding a new provider/service boundary, STOP and report before implementation.
+G4 intentionally extended the architecture with a dedicated SelectionProfileProvider / SelectionProfileService seam. This preserves the Provider → Service → Feature layering while making SelectionProfile persistence integration-ready.
 
 D7 rule:
 - Do not expose a purchase action that ends in a dead-end.
