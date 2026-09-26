@@ -4,7 +4,6 @@ import { ShopperFeature } from "../features/shopper/shopper-feature";
 import { DemoFoundationProvider } from "../providers/demo/demo-foundation-provider";
 import { DemoHeroProvider } from "../providers/demo/demo-hero-provider";
 import { DemoCatalogProvider } from "../providers/demo/demo-catalog-provider";
-import { DemoRecommendationsProvider } from "../providers/demo/demo-recommendations-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
