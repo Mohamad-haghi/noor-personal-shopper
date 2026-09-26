@@ -16,6 +16,10 @@ export class CatalogService {
     return this.provider.listVariants(productId);
   }
 
+  listAvailableVariants(productId?: ProductId): Promise<readonly ProductVariant[]> {
+    return this.provider.listAvailableVariants(productId);
+  }
+
   getVariant(id: ProductVariantId): Promise<ProductVariant | null> {
     return this.provider.getVariant(id);
   }
