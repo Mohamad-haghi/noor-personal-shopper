@@ -27,6 +27,7 @@ describe("D7-E DemoOrderProvider", () => {
     expect(retrieved?.identity.id).toBe(order.identity.id);
     expect(retrieved?.status).toBe("confirmed");
     expect(retrieved?.pricing.total).toBe(order.pricing.total);
+    expect(retrieved?.updatedAt).toBeInstanceOf(Date);
   });
 
   it("lists only orders belonging to the requested account", async () => {
