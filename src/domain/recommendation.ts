@@ -52,6 +52,13 @@ export interface RecommendationContext {
   readonly occasion: string | null;
   readonly season: Season | null;
   readonly requestSource: RecommendationSource;
+  /** Shopper answers used by the provider-facing rule engine. */
+  readonly journey?: {
+    readonly productType: string | null;
+    readonly useCase: string | null;
+    readonly style: string | null;
+    readonly faceShape: string | null;
+  };
 }
 
 export type Season = "spring" | "summer" | "fall" | "winter" | "all_season";
