@@ -3,6 +3,7 @@ import type { RecommendationsService } from "../services/recommendations-service
 import type { CatalogService } from "../services/catalog-service";
 import type { ChoicesService } from "../services/choices-service";
 import type { CompareService } from "../services/compare-service";
+import type { AccountService } from "../services/account-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -13,6 +14,7 @@ import { renderShopper } from "./render-shopper";
 import { renderRecommendations } from "./render-recommendations";
 import { renderChoices } from "./render-choices";
 import { renderCompare } from "./render-compare";
+import { renderAccount } from "./render-account";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -93,11 +95,71 @@ async function renderChoicesRoute(
   });
 }
 
+
+async function renderAccountRoute(routeView: HTMLElement, accountService: AccountService): Promise<void> {
+  const account = await accountService.getCurrentAccount();
+  renderAccount(routeView, account);
+
+  const logoutButton = routeView.querySelector<HTMLButtonElement>("[data-account-logout]");
+  logoutButton?.addEventListener("click", async () => {
+    await accountService.logout();
+    await renderAccountRoute(routeView, accountService);
+  });
+
+  const registerForm = routeView.querySelector<HTMLFormElement>("[data-account-register]");
+  registerForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = new FormData(registerForm);
+    try {
+      const now = new Date();
+      await accountService.register({
+        identity: { id: \`demo-account-\${String(form.get("email")).trim().toLowerCase().replaceAll(/[^a-z0-9]+/g, "-")}\` },
+        email: String(form.get("email")),
+        phone: null,
+        profile: {
+          firstName: String(form.get("firstName")),
+          lastName: String(form.get("lastName")),
+          displayName: null,
+          avatarUrl: null,
+          language: "fa",
+          region: null,
+        },
+        verificationStatus: {
+          emailVerified: false,
+          phoneVerified: false,
+          identityVerified: false,
+          verifiedAt: null,
+        },
+        createdAt: now,
+        updatedAt: now,
+      }, String(form.get("password")));
+      await renderAccountRoute(routeView, accountService);
+    } catch (error) {
+      await renderAccountRoute(routeView, accountService);
+      const formError = routeView.querySelector<HTMLElement>(".d5-form-error");
+      if (formError) formError.textContent = error instanceof Error ? error.message : "ثبت‌نام انجام نشد.";
+    }
+  });
+
+  const loginForm = routeView.querySelector<HTMLFormElement>("[data-account-login]");
+  loginForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = new FormData(loginForm);
+    const account = await accountService.login(String(form.get("email")), String(form.get("password")));
+    if (!account) {
+      await renderAccount(routeView, null, "ایمیل یا رمز عبور صحیح نیست.");
+      return;
+    }
+    await renderAccountRoute(routeView, accountService);
+  });
+}
+
 async function renderCompareRoute(
   routeView: HTMLElement,
   catalogService: CatalogService,
   choicesService: ChoicesService,
   compareService: CompareService,
+  accountService: AccountService,
 ): Promise<void> {
   const choices = await choicesService.listChoices();
   const items = choices.slice(0, 3).map((choice, index) => ({
@@ -172,6 +234,8 @@ export async function renderApplicationShell(
     await renderChoicesRoute(routeView, catalogService, choicesService);
   } else if (match?.route.path === "/compare") {
     await renderCompareRoute(routeView, catalogService, choicesService, compareService);
+  } else if (match?.route.path === "/account") {
+    await renderAccountRoute(routeView, accountService);
   } else {
     renderRoutePlaceholder(routeView, match);
   }
