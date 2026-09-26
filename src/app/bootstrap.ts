@@ -70,7 +70,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const catalogProvider = new DemoCatalogProvider();
     const catalogService = new CatalogService(catalogProvider);
     const recommendationsService = new RecommendationsService(catalogService);
-    const searchService = new SearchService(new DemoSearchProvider(catalogProvider));
+    const searchService = new SearchService(new DemoSearchProvider(catalogProvider), catalogService);
     const choicesService = new ChoicesService(new DemoChoicesProvider());
     const compareService = new CompareService(new DemoCompareProvider());
     const accountService = new AccountService(new DemoAccountProvider());
