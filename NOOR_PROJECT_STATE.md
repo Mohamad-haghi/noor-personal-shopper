@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: D7-E IMPLEMENTED — CI VERIFICATION PENDING
+STATUS: D7-G VERIFIED — POST-D7 SCOPE AUDIT COMPLETE
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -22,6 +22,9 @@ LATEST D7-D CHECKPOINT: `NOOR_D7D_CHECKPOINT.md`
 LATEST D7-E IMPLEMENTATION COMMIT: `8232fb266dbf3051b5a675d0ca2551357b4b25d9`
 LATEST D7-A CHECKPOINT: `NOOR_D7A_CHECKPOINT.md`
 LATEST D7-B CHECKPOINT: `NOOR_D7B_CHECKPOINT.md`
+LATEST D7-G CI: Run #245 — 9 test files / 27 tests PASS; type-check and production build PASS.
+LATEST D7-G CHECKPOINT: `NOOR_D7G_CHECKPOINT.md`
+LATEST POST-D7 AUDIT: `NOOR_POST_D7_AUDIT.md`
 
 ## Current Position
 
@@ -90,13 +93,24 @@ D7-B verified:
 - `/cart` is executable and keeps demo pricing visibly labeled.
 - GitHub Actions Run #184 / Run ID 36265352241: behavioral tests, type-check, and production build SUCCESS.
 
-D7 next sequence:
+D7 verified sequence:
 1. D7-B — Cart with priced commerce items. VERIFIED.
 2. D7-C — Checkout and order pricing. VERIFIED.
 3. D7-D — Mock payment success/failure/retry. VERIFIED.
 4. D7-E — Order creation and persistence within demo runtime state. VERIFIED.
-5. D7-F — Confirmation / Order ID / next-step state.
-6. D7-G — End-to-end purchase flow verification and recovery-path QA.
+5. D7-F — Confirmation / Order ID / next-step state. VERIFIED.
+6. D7-G — End-to-end purchase flow verification and recovery-path QA. VERIFIED.
+
+## Post-D7 Scope Audit
+See `NOOR_POST_D7_AUDIT.md`.
+Remaining implementation gaps:
+- Branch selection is not executable; existing BranchProvider/BranchService boundaries exist but DemoBranchProvider has no demo branch data.
+- In-person visit scheduling/request flow is not executable; existing Visit domain/service/provider boundaries exist but `/visit` is not rendered as a workflow.
+- Smart link to future real NOOR inventory is not surfaced as a user-facing destination-aware flow; no real external integration should be added at this stage.
+- Structured SelectionProfile persistence is incomplete; current shopper UI primarily keeps selections in ShopperFlowState/session presentation.
+- `/products` and `/products/:id` are declared routes but currently use the generic route placeholder.
+
+No architecture change is approved or required by this audit. If any fix requires changing architecture/composition or adding a new provider/service boundary, STOP and report before implementation.
 
 D7 rule:
 - Do not expose a purchase action that ends in a dead-end.
