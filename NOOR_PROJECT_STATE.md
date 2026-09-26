@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: D7-A VERIFIED — COMMERCE OFFER FOUNDATION
+STATUS: D7-B VERIFIED — PRICED DEMO CART
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -14,7 +14,9 @@ LATEST D5 CHECKPOINT: `NOOR_D5_CHECKPOINT.md`
 LATEST VERIFIED D6 IMPLEMENTATION COMMIT: `4ca52bcb7878ae652d51d90aa494902c5f15f181`
 LATEST D6 CHECKPOINT: `NOOR_D6_CHECKPOINT.md`
 LATEST VERIFIED D7-A COMMIT: `8549926cb091eada3fc60f28da07397dcbb354c1`
+LATEST VERIFIED D7-B COMMIT: `fd4bc98afba7712443182e91e7a5dfb286e42bb9`
 LATEST D7-A CHECKPOINT: `NOOR_D7A_CHECKPOINT.md`
+LATEST D7-B CHECKPOINT: `NOOR_D7B_CHECKPOINT.md`
 
 ## Current Position
 
@@ -46,8 +48,16 @@ D7-A verified:
 - Behavioral tests verify offer coverage, demo provenance, positive prices, currency, purchasability, variant resolution, and configurable pricing policy.
 - GitHub Actions Run #160 / Run ID 36264355064: behavioral tests, type-check, and production build SUCCESS.
 
+D7-B verified:
+- Existing Cart boundary is now executable with CommerceOffer pricing snapshots.
+- DemoCartProvider is stateful within the demo runtime and supports add/merge/update/remove/clear behavior.
+- Cart exposes item count and calculated subtotal.
+- Purchase actions from Recommendations, My Choices, and Comparison connect to the existing Commerce and Cart services.
+- `/cart` is executable and keeps demo pricing visibly labeled.
+- GitHub Actions Run #184 / Run ID 36265352241: behavioral tests, type-check, and production build SUCCESS.
+
 D7 next sequence:
-1. D7-B — Cart with priced commerce items.
+1. D7-B — Cart with priced commerce items. VERIFIED.
 2. D7-C — Checkout and order pricing.
 3. D7-D — Mock payment success/failure/retry.
 4. D7-E — Order creation and persistence within demo runtime state.
