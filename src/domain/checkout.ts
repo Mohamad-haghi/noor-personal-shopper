@@ -1,4 +1,6 @@
-import type { CartId, AccountId, ShippingAddress } from "./index";
+import type { CartId } from "./cart";
+import type { AccountId } from "./account";
+import type { ShippingAddress } from "./order";
 
 export interface CheckoutRequest {
   readonly cartId: CartId;
