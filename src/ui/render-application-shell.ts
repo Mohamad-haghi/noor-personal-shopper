@@ -528,8 +528,8 @@ export async function renderApplicationShell(
   orderService: OrderService,
   confirmationService: ConfirmationService,
   branchService: BranchService,
-  visitService: VisitService,
   searchService: SearchService,
+  visitService: VisitService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -563,7 +563,9 @@ export async function renderApplicationShell(
   if (match?.route.path === "/") {
     if (hero) renderHero(routeView, hero, heroDestination);
     else renderFoundationStatus(routeView, status);
-  } else if (match?.route.path === "/search") {\n    await renderSearchRoute(routeView, searchService, catalogService);\n  } else if (match?.route.path === "/products") {
+  } else if (match?.route.path === "/search") {
+    await renderSearchRoute(routeView, searchService, catalogService);
+  } else if (match?.route.path === "/products") {
     await renderProductsRoute(routeView, catalogService);
   } else if (match?.route.path === "/products/:id") {
     await renderProductDetailRoute(routeView, catalogService, commerceService, match.params.id ?? null);
