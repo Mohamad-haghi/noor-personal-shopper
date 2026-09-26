@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: D7-D IMPLEMENTED — MOCK PAYMENT AWAITING VERIFICATION
+STATUS: D7-D VERIFIED — MOCK PAYMENT
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -17,7 +17,7 @@ LATEST VERIFIED D7-A COMMIT: `8549926cb091eada3fc60f28da07397dcbb354c1`
 LATEST VERIFIED D7-B COMMIT: `fd4bc98afba7712443182e91e7a5dfb286e42bb9`
 LATEST VERIFIED D7-C IMPLEMENTATION: `209d9c81bb241f595ebb885a7c786cdce8525253`
 LATEST D7-C CHECKPOINT: `NOOR_D7C_CHECKPOINT.md`
-LATEST D7-D IMPLEMENTATION: `43e3ec66794be649a7e2560f6b43149005ca654d`
+LATEST VERIFIED D7-D COMMIT: `fc27c1495f703955c0bae1c03747e0a44b93d0eb`
 LATEST D7-D CHECKPOINT: `NOOR_D7D_CHECKPOINT.md`
 LATEST D7-A CHECKPOINT: `NOOR_D7A_CHECKPOINT.md`
 LATEST D7-B CHECKPOINT: `NOOR_D7B_CHECKPOINT.md`
@@ -85,7 +85,7 @@ D7-B verified:
 D7 next sequence:
 1. D7-B — Cart with priced commerce items. VERIFIED.
 2. D7-C — Checkout and order pricing. VERIFIED.
-3. D7-D — Mock payment success/failure/retry. IMPLEMENTED — awaiting CI verification.
+3. D7-D — Mock payment success/failure/retry. VERIFIED.
 4. D7-E — Order creation and persistence within demo runtime state.
 5. D7-F — Confirmation / Order ID / next-step state.
 6. D7-G — End-to-end purchase flow verification and recovery-path QA.
