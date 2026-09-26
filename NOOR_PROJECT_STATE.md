@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: VERIFIED — D7 READY
+STATUS: D7 AUDIT — DATA DECISION REQUIRED
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -33,6 +33,15 @@ Completed and verified:
 - D6 — Independent Shopper Account/Auth
 
 Current phase: D7 — Purchase / Cart / Checkout.
+
+D7 audit result:
+- Existing Cart, Checkout, Order, Payment, and Confirmation contracts are present.
+- Demo providers for these contracts are still intentionally stateless placeholders.
+- The current Demo Product/ProductVariant model contains no product price field or demo unit-price dataset.
+- Order pricing requires subtotal/discount/tax/shipping/total.
+- Therefore checkout/payment must not invent NOOR pricing or silently use misleading zero prices.
+- No architecture change is required for this finding.
+- Implementation is paused at this data boundary until the approved Demo pricing representation is defined.
 
 D2 GitHub Actions verification:
 - Workflow: NOOR Build Verification
