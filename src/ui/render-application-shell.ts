@@ -1,5 +1,8 @@
-import type { HeroContent, Product } from "../domain";
+import type { HeroContent, Product, Recommendation, SavedChoice, Comparison } from "../domain";
 import type { RecommendationsService } from "../services/recommendations-service";
+import type { CatalogService } from "../services/catalog-service";
+import type { ChoicesService } from "../services/choices-service";
+import type { CompareService } from "../services/compare-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -8,6 +11,8 @@ import { renderHero } from "./render-hero";
 import { renderRoutePlaceholder } from "./render-route-placeholder";
 import { renderShopper } from "./render-shopper";
 import { renderRecommendations } from "./render-recommendations";
+import { renderChoices } from "./render-choices";
+import { renderCompare } from "./render-compare";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -25,6 +30,96 @@ function renderNavigation(match: RouteMatch | null): string {
     .join("");
 }
 
+function createSavedChoice(recommendation: Recommendation): SavedChoice {
+  const now = new Date();
+  return {
+    identity: { id: `demo-choice-${recommendation.variantId.id}` },
+    variantId: recommendation.variantId,
+    status: "saved",
+    notes: null,
+    tags: ["recommendation"],
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+async function renderRecommendationRoute(
+  routeView: HTMLElement,
+  shopperFeature: ShopperFeature,
+  recommendationsService: RecommendationsService,
+  choicesService: ChoicesService,
+): Promise<void> {
+  routeView.innerHTML = `<main class="app-loading" id="main-content" aria-live="polite"><p>در حال ساخت پیشنهادهای شما…</p></main>`;
+  const flow = shopperFeature.getFlowState();
+  const recommendations = await recommendationsService.generateRecommendations(
+    { id: "demo-shopper" },
+    { occasion: flow.journey.useCase, season: null, requestSource: "shopper_request", journey: flow.journey },
+  );
+  const products: Product[] = [];
+  for (const recommendation of recommendations) {
+    const product = await recommendationsService.getProductForVariant(recommendation.variantId);
+    if (product) products.push(product);
+  }
+  renderRecommendations(routeView, recommendations, products);
+
+  routeView.querySelectorAll<HTMLButtonElement>("[data-save-choice]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const variantId = button.dataset.saveChoice;
+      const recommendation = recommendations.find((item) => item.variantId.id === variantId);
+      if (!recommendation) return;
+      await choicesService.saveChoice(createSavedChoice(recommendation));
+      button.textContent = "در انتخاب‌های من ذخیره شد";
+      button.disabled = true;
+    });
+  });
+}
+
+async function renderChoicesRoute(
+  routeView: HTMLElement,
+  catalogService: CatalogService,
+  choicesService: ChoicesService,
+): Promise<void> {
+  const choices = await choicesService.listChoices();
+  const products = await catalogService.listProducts();
+  renderChoices(routeView, choices, products);
+
+  routeView.querySelectorAll<HTMLButtonElement>("[data-remove-choice]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const id = button.dataset.removeChoice;
+      if (!id) return;
+      await choicesService.removeChoice({ id });
+      await renderChoicesRoute(routeView, catalogService, choicesService);
+    });
+  });
+}
+
+async function renderCompareRoute(
+  routeView: HTMLElement,
+  catalogService: CatalogService,
+  choicesService: ChoicesService,
+  compareService: CompareService,
+): Promise<void> {
+  const choices = await choicesService.listChoices();
+  const items = choices.slice(0, 3).map((choice, index) => ({
+    variantId: choice.variantId,
+    addedAt: choice.createdAt,
+    position: index + 1,
+  }));
+
+  const comparison: Comparison | null = items.length >= 2
+    ? await compareService.saveComparison({
+        identity: { id: "demo-current-comparison" },
+        name: "مقایسهٔ انتخاب‌های من",
+        items,
+        criteria: ["style", "brand", "material", "color", "size", "availability"],
+        createdAt: new Date(),
+      })
+    : null;
+
+  const products = await catalogService.listProducts();
+  renderCompare(routeView, comparison, products);
+}
+
 export async function renderApplicationShell(
   root: HTMLElement,
   match: RouteMatch | null,
@@ -33,6 +128,9 @@ export async function renderApplicationShell(
   heroDestination: string | null,
   shopperFeature: ShopperFeature,
   recommendationsService: RecommendationsService,
+  catalogService: CatalogService,
+  choicesService: ChoicesService,
+  compareService: CompareService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -69,18 +167,11 @@ export async function renderApplicationShell(
   } else if (match?.route.path === "/shopper") {
     renderShopper(routeView, shopperFeature);
   } else if (match?.route.path === "/recommendations") {
-    routeView.innerHTML = `<main class="app-loading" id="main-content" aria-live="polite"><p>در حال ساخت پیشنهادهای شما…</p></main>`;
-    const flow = shopperFeature.getFlowState();
-    const recommendations = await recommendationsService.generateRecommendations(
-      { id: "demo-shopper" },
-      { occasion: flow.journey.useCase, season: null, requestSource: "shopper_request", journey: flow.journey },
-    );
-    const products: Product[] = [];
-    for (const recommendation of recommendations) {
-      const product = await recommendationsService.getProductForVariant(recommendation.variantId);
-      if (product) products.push(product);
-    }
-    renderRecommendations(routeView, recommendations, products);
+    await renderRecommendationRoute(routeView, shopperFeature, recommendationsService, choicesService);
+  } else if (match?.route.path === "/choices") {
+    await renderChoicesRoute(routeView, catalogService, choicesService);
+  } else if (match?.route.path === "/compare") {
+    await renderCompareRoute(routeView, catalogService, choicesService, compareService);
   } else {
     renderRoutePlaceholder(routeView, match);
   }
