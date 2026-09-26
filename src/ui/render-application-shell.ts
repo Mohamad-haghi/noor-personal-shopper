@@ -4,6 +4,8 @@ import type { CatalogService } from "../services/catalog-service";
 import type { ChoicesService } from "../services/choices-service";
 import type { CompareService } from "../services/compare-service";
 import type { AccountService } from "../services/account-service";
+import type { CartService } from "../services/cart-service";
+import type { CommerceService } from "../services/commerce-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -15,6 +17,7 @@ import { renderRecommendations } from "./render-recommendations";
 import { renderChoices } from "./render-choices";
 import { renderCompare } from "./render-compare";
 import { renderAccount } from "./render-account";
+import { renderCart } from "./render-cart";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -181,6 +184,20 @@ async function renderCompareRoute(
   renderCompare(routeView, comparison, products);
 }
 
+async function renderCartRoute(routeView: HTMLElement, cartService: CartService, catalogService: CatalogService): Promise<void> {
+  const cart = await cartService.getCart({ id: "demo-cart" });
+  const products = await catalogService.listProducts();
+  renderCart(routeView, cart, products);
+  routeView.querySelectorAll<HTMLButtonElement>("[data-cart-remove]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const itemId = button.dataset.cartRemove;
+      if (!itemId) return;
+      await cartService.removeItem({ id: "demo-cart" }, itemId);
+      await renderCartRoute(routeView, cartService, catalogService);
+    });
+  });
+}
+
 export async function renderApplicationShell(
   root: HTMLElement,
   match: RouteMatch | null,
@@ -193,6 +210,8 @@ export async function renderApplicationShell(
   choicesService: ChoicesService,
   compareService: CompareService,
   accountService: AccountService,
+  cartService: CartService,
+  commerceService: CommerceService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -236,6 +255,8 @@ export async function renderApplicationShell(
     await renderCompareRoute(routeView, catalogService, choicesService, compareService);
   } else if (match?.route.path === "/account") {
     await renderAccountRoute(routeView, accountService);
+  } else if (match?.route.path === "/cart") {
+    await renderCartRoute(routeView, cartService, catalogService);
   } else {
     renderRoutePlaceholder(routeView, match);
   }
