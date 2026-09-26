@@ -113,7 +113,7 @@ async function renderAccountRoute(routeView: HTMLElement, accountService: Accoun
     try {
       const now = new Date();
       await accountService.register({
-        identity: { id: \`demo-account-\${String(form.get("email")).trim().toLowerCase().replaceAll(/[^a-z0-9]+/g, "-")}\` },
+        identity: { id: `demo-account-${String(form.get("email")).trim().toLowerCase().replaceAll(/[^a-z0-9]+/g, "-")}` },
         email: String(form.get("email")),
         phone: null,
         profile: {
