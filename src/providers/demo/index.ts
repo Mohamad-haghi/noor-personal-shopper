@@ -16,3 +16,4 @@ export { DemoIdentityProvider } from "./demo-identity-provider";
 export { DemoShopperProfileProvider } from "./demo-shopper-profile-provider";
 export { DemoCheckoutProvider } from "./demo-checkout-provider";
 export { DemoReservationProvider } from "./demo-reservation-provider";
+export { DemoCommerceProvider } from "./demo-commerce-provider";
