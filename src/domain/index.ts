@@ -1,5 +1,5 @@
 export type { ProductId, ProductSource, Product, ProductAttributes, ProductMerchandising, ProductMedia, ProductImage, ExternalProductIdentifiers } from "./product";
-export type { ProductVariantId, ProductVariant, VariantAttributes, VariantAvailability, AvailabilityStatus } from "./product-variant";
+export type { ProductVariantId, ProductVariant, VariantAttributes, VariantAvailability, AvailabilitySource, AvailabilityStatus } from "./product-variant";
 export type { ShopperProfileId, ShopperProfile, ShopperPreferences, NotificationPreferences, StyleProfile, FormalityLevel, MeasurementProfile, MeasurementUnit, BudgetProfile, PriceRangePreference } from "./shopper-profile";
 export type { SelectionProfileId, SelectionProfile, SelectionItem, SelectionPriority } from "./selection-profile";
 export type { RecommendationId, Recommendation, RecommendationScore, RecommendationReason, RecommendationPrimaryReason, RecommendationSecondaryReason, RecommendationContext, Season, RecommendationSource } from "./recommendation";
