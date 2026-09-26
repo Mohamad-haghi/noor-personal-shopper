@@ -1,5 +1,6 @@
 import type { SearchProvider } from "../providers/interfaces/search-provider";
-import type { ProductId, SearchQuery, SearchResponse, SearchResult } from "../domain/search";
+import type { ProductId } from "../domain/product";
+import type { SearchQuery, SearchResponse, SearchResult } from "../domain/search";
 
 export class SearchService {
   constructor(private readonly provider: SearchProvider) {}
