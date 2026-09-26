@@ -16,6 +16,7 @@ import { DemoConfirmationProvider } from "../providers/demo/demo-confirmation-pr
 import { DemoBranchProvider } from "../providers/demo/demo-branch-provider";
 import { DemoVisitProvider } from "../providers/demo/demo-visit-provider";
 import { DemoSelectionProfileProvider } from "../providers/demo/demo-selection-profile-provider";
+import { DemoSearchProvider } from "../providers/demo/demo-search-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
@@ -32,6 +33,7 @@ import { ConfirmationService } from "../services/confirmation-service";
 import { BranchService } from "../services/branch-service";
 import { VisitService } from "../services/visit-service";
 import { SelectionProfileService } from "../services/selection-profile-service";
+import { SearchService } from "../services/search-service";
 import { DemoHeroDestinationResolver } from "../integration/demo/demo-hero-destination-resolver";
 import { createRouter } from "./routing/create-router";
 import { renderApplicationShell } from "../ui/render-application-shell";
@@ -68,6 +70,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const catalogProvider = new DemoCatalogProvider();
     const catalogService = new CatalogService(catalogProvider);
     const recommendationsService = new RecommendationsService(catalogService);
+    const searchService = new SearchService(new DemoSearchProvider(catalogProvider));
     const choicesService = new ChoicesService(new DemoChoicesProvider());
     const compareService = new CompareService(new DemoCompareProvider());
     const accountService = new AccountService(new DemoAccountProvider());
@@ -90,6 +93,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
         heroDestination,
         shopperFeature,
         recommendationsService,
+        searchService,
         catalogService,
         choicesService,
         compareService,
