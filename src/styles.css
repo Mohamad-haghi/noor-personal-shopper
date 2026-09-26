@@ -78,3 +78,36 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; }
 }
+
+
+.recommendations{max-width:1180px;margin:0 auto;padding:72px 24px 96px}
+.recommendations-hero{max-width:720px;margin-bottom:48px}
+.recommendations-hero h1{font-size:clamp(2.4rem,6vw,4.8rem);line-height:1.05;margin:12px 0 20px}
+.recommendations-hero>p:last-child{color:var(--text-muted);font-size:1.05rem;line-height:1.9}
+.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.recommendation-card{min-height:360px;border:1px solid var(--border);background:var(--surface);display:flex;position:relative}
+.recommendation-rank{font-size:4rem;line-height:1;padding:22px;color:var(--text-muted);opacity:.35}
+.recommendation-card-body{padding:28px 24px 28px 8px}
+.recommendation-card h2{font-size:1.35rem;line-height:1.5;margin:10px 0 14px}
+.recommendation-reason{line-height:1.9;color:var(--text-muted);min-height:72px}
+.recommendation-specs{display:grid;gap:10px;margin-top:24px}
+.recommendation-specs div{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--border);padding-top:9px}
+.recommendation-specs dt{color:var(--text-muted)}
+.recommendation-specs dd{margin:0;text-align:left}
+.smart-comparison{margin-top:72px;padding-top:48px;border-top:1px solid var(--border)}
+.smart-comparison h2{font-size:2rem;margin:8px 0 12px}
+.smart-comparison p{color:var(--text-muted);line-height:1.8}
+.comparison-table-wrap{overflow:auto;margin-top:24px}
+.comparison-table-wrap table{width:100%;border-collapse:collapse;min-width:720px}
+.comparison-table-wrap th,.comparison-table-wrap td{border-bottom:1px solid var(--border);padding:16px;text-align:right;vertical-align:top}
+.comparison-table-wrap thead th{font-weight:600;color:var(--text-muted)}
+.recommendation-actions{display:flex;gap:12px;margin-top:40px}
+@media (max-width:800px){
+  .recommendations{padding:48px 18px 72px}
+  .recommendation-grid{grid-template-columns:1fr}
+  .recommendation-card{min-height:0}
+  .recommendation-card-body{padding-right:18px}
+  .recommendation-rank{font-size:3rem}
+  .recommendation-actions{flex-direction:column}
+  .recommendation-actions .button{width:100%;text-align:center}
+}
