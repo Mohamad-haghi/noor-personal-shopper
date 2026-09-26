@@ -14,3 +14,4 @@ export type { VisitId, Visit, VisitPurpose, VisitStatus, VisitDuration } from ".
 export type { ConfirmationId, Confirmation, RequestIdentity, ConfirmationStatus } from "./confirmation";
 export type { HeroContentId, HeroContent, HeroMedia, HeroMediaType, HeroCTA, HeroDestination, HeroDestinationType, CTASTyle, HeroDisplay, HeroAlignment, HeroTheme, HeroScheduling, HeroStatus } from "./hero-content";
 export type { SearchQuery, SearchResult, SearchResponse } from "./search";
+export type { CommerceOffer, CommerceOfferId, CommercePricing, CommercePriceSource, CommerceAvailability, CommerceAvailabilitySource } from "./commerce-offer";
