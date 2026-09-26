@@ -6,6 +6,7 @@ import type { CompareService } from "../services/compare-service";
 import type { AccountService } from "../services/account-service";
 import type { CartService } from "../services/cart-service";
 import type { CommerceService } from "../services/commerce-service";
+import type { CheckoutService } from "../services/checkout-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -18,6 +19,7 @@ import { renderChoices } from "./render-choices";
 import { renderCompare } from "./render-compare";
 import { renderAccount } from "./render-account";
 import { renderCart } from "./render-cart";
+import { renderCheckout } from "./render-checkout";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -209,6 +211,97 @@ async function attachPurchaseActions(
   });
 }
 
+
+
+async function renderCheckoutRoute(
+  routeView: HTMLElement,
+  cartService: CartService,
+  accountService: AccountService,
+  checkoutService: CheckoutService,
+  errorMessage: string | null = null,
+): Promise<void> {
+  const cart = await cartService.getCart({ id: "demo-cart" });
+  const account = await accountService.getCurrentAccount();
+  renderCheckout(routeView, cart, account, null, errorMessage);
+
+  const form = routeView.querySelector<HTMLFormElement>("[data-checkout-form]");
+  if (!form) return;
+
+  const deliveryFields = routeView.querySelector<HTMLElement>("[data-delivery-fields]");
+  const pickupFields = routeView.querySelector<HTMLElement>("[data-pickup-fields]");
+  const syncFulfillmentFields = () => {
+    const method = form.querySelector<HTMLInputElement>('input[name="fulfillment"]:checked')?.value;
+    const delivery = method === "delivery";
+    if (deliveryFields) deliveryFields.hidden = !delivery;
+    if (pickupFields) pickupFields.hidden = delivery;
+    const address = form.elements.namedItem("addressLine1") as HTMLInputElement | null;
+    const city = form.elements.namedItem("city") as HTMLInputElement | null;
+    const postalCode = form.elements.namedItem("postalCode") as HTMLInputElement | null;
+    const branchId = form.elements.namedItem("branchId") as HTMLInputElement | null;
+    if (address) address.required = delivery;
+    if (city) city.required = delivery;
+    if (postalCode) postalCode.required = delivery;
+    if (branchId) branchId.required = !delivery;
+  };
+  form.querySelectorAll<HTMLInputElement>('input[name="fulfillment"]').forEach((input) => {
+    input.addEventListener("change", syncFulfillmentFields);
+  });
+  syncFulfillmentFields();
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const currentAccount = await accountService.getCurrentAccount();
+    if (!currentAccount) {
+      await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, "ابتدا وارد حساب مستقل Personal Shopper شوید.");
+      return;
+    }
+
+    const data = new FormData(form);
+    const method = String(data.get("fulfillment"));
+    const recipientName = String(data.get("recipientName")).trim();
+    const phone = String(data.get("phone")).trim() || null;
+
+    try {
+      const request = method === "pickup"
+        ? {
+            cartId: { id: "demo-cart" },
+            accountId: currentAccount.identity,
+            shopper: { recipientName, phone },
+            fulfillment: { method: "pickup" as const, branchId: String(data.get("branchId")).trim() },
+          }
+        : {
+            cartId: { id: "demo-cart" },
+            accountId: currentAccount.identity,
+            shopper: { recipientName, phone },
+            fulfillment: {
+              method: "delivery" as const,
+              address: {
+                recipientName,
+                addressLine1: String(data.get("addressLine1")).trim(),
+                addressLine2: null,
+                city: String(data.get("city")).trim(),
+                state: String(data.get("state")).trim() || null,
+                postalCode: String(data.get("postalCode")).trim(),
+                country: "IR",
+                phone,
+              },
+            },
+          };
+
+      const order = await checkoutService.createOrderFromCart(request);
+      renderCheckout(routeView, cart, currentAccount, order);
+    } catch (error) {
+      await renderCheckoutRoute(
+        routeView,
+        cartService,
+        accountService,
+        checkoutService,
+        error instanceof Error ? error.message : "ثبت سفارش انجام نشد.",
+      );
+    }
+  });
+}
+
 async function renderCartRoute(routeView: HTMLElement, cartService: CartService, catalogService: CatalogService): Promise<void> {
   const cart = await cartService.getCart({ id: "demo-cart" });
   const products = await catalogService.listProducts();
@@ -237,6 +330,7 @@ export async function renderApplicationShell(
   accountService: AccountService,
   cartService: CartService,
   commerceService: CommerceService,
+  checkoutService: CheckoutService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -282,6 +376,8 @@ export async function renderApplicationShell(
     await renderAccountRoute(routeView, accountService);
   } else if (match?.route.path === "/cart") {
     await renderCartRoute(routeView, cartService, catalogService);
+  } else if (match?.route.path === "/checkout") {
+    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService);
   } else {
     renderRoutePlaceholder(routeView, match);
   }
