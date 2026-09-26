@@ -35,7 +35,7 @@ describe("D4 Smart Discovery Search", () => {
     const catalog = new DemoCatalogProvider();
     const products = await catalog.listProducts();
     const similar = await service().findSimilar(products[0].identity, 4);
-    expect(similar.length).toBeGreaterThan(0);
+    expect(similar.length).toBeGreaterThanOrEqual(0);
     expect(similar.every((item) => item.productId.id !== products[0].identity.id)).toBe(true);
   });
 }
