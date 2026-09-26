@@ -7,6 +7,7 @@ import type { AccountService } from "../services/account-service";
 import type { CartService } from "../services/cart-service";
 import type { CommerceService } from "../services/commerce-service";
 import type { CheckoutService } from "../services/checkout-service";
+import type { PaymentService } from "../services/payment-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -218,6 +219,7 @@ async function renderCheckoutRoute(
   cartService: CartService,
   accountService: AccountService,
   checkoutService: CheckoutService,
+  paymentService: PaymentService,
   errorMessage: string | null = null,
 ): Promise<void> {
   const cart = await cartService.getCart({ id: "demo-cart" });
@@ -252,7 +254,7 @@ async function renderCheckoutRoute(
     event.preventDefault();
     const currentAccount = await accountService.getCurrentAccount();
     if (!currentAccount) {
-      await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, "ابتدا وارد حساب مستقل Personal Shopper شوید.");
+      await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, "ابتدا وارد حساب مستقل Personal Shopper شوید.");
       return;
     }
 
@@ -289,13 +291,55 @@ async function renderCheckoutRoute(
           };
 
       const order = await checkoutService.createOrderFromCart(request);
-      renderCheckout(routeView, cart, currentAccount, order);
+      const pay = async (simulateFailure: boolean) => {
+        renderPaymentState(routeView, order, null, async (retryFailure) => {
+          const payment = await paymentService.createPayment({
+            identity: { id: "demo-payment-" + order.identity.id },
+            orderId: order.identity,
+            amount: order.pricing.total,
+            currency: order.pricing.currency,
+            method: "digital_wallet",
+            status: "pending",
+            transaction: {
+              providerTransactionId: "demo-pending",
+              authorizationCode: null,
+              capturedAt: null,
+              failureReason: (simulateFailure || retryFailure) ? "demo_failure" : null,
+            },
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          renderPaymentState(routeView, order, payment, async (nextFailure) => {
+            const retried = await paymentService.createPayment({
+              identity: { id: "demo-payment-" + order.identity.id },
+              orderId: order.identity,
+              amount: order.pricing.total,
+              currency: order.pricing.currency,
+              method: "digital_wallet",
+              status: "pending",
+              transaction: {
+                providerTransactionId: "demo-pending",
+                authorizationCode: null,
+                capturedAt: null,
+                failureReason: nextFailure ? "demo_failure" : null,
+              },
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            });
+            renderPaymentState(routeView, order, retried, async (againFailure) => {
+              await pay(againFailure);
+            });
+          });
+        });
+      };
+      renderPaymentState(routeView, order, null, pay);
     } catch (error) {
       await renderCheckoutRoute(
         routeView,
         cartService,
         accountService,
         checkoutService,
+        paymentService,
         error instanceof Error ? error.message : "ثبت سفارش انجام نشد.",
       );
     }
@@ -331,6 +375,8 @@ export async function renderApplicationShell(
   cartService: CartService,
   commerceService: CommerceService,
   checkoutService: CheckoutService,
+  paymentService: PaymentService,
+  paymentService: PaymentService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -377,7 +423,7 @@ export async function renderApplicationShell(
   } else if (match?.route.path === "/cart") {
     await renderCartRoute(routeView, cartService, catalogService);
   } else if (match?.route.path === "/checkout") {
-    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService);
+    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService);
   } else {
     renderRoutePlaceholder(routeView, match);
   }
