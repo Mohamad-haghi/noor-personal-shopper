@@ -18,6 +18,7 @@ type Journey = NonNullable<RecommendationContext["journey"]>;
 const FACE_SHAPE_MAP: Readonly<Record<string, string>> = {
   "گرد": "round",
   "بیضی": "oval",
+  "مربع": "rectangle",
   "قلبی": "heart",
   "کشیده": "rectangle",
 };
