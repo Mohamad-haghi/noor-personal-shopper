@@ -16,3 +16,4 @@ export type { IdentityProvider } from "./identity-provider";
 export type { ShopperProfileProvider } from "./shopper-profile-provider";
 export type { CheckoutProvider } from "./checkout-provider";
 export type { ReservationProvider } from "./reservation-provider";
+export type { CommerceProvider } from "./commerce-provider";
