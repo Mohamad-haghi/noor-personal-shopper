@@ -1,5 +1,5 @@
 import type { HeroContent } from "../domain";
-import type { FoundationStatus } from "../features/foundation/foundation-feature";
+import type { FoundationStatus } from "../domain/foundation-status";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
 import { renderFoundationStatus } from "./render-foundation";
 import { renderHero } from "./render-hero";
