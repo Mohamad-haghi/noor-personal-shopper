@@ -184,6 +184,32 @@ async function renderCompareRoute(
   renderCompare(routeView, comparison, products);
 }
 
+async function attachPurchaseActions(
+  routeView: HTMLElement,
+  commerceService: CommerceService,
+  cartService: CartService,
+  catalogService: CatalogService,
+): Promise<void> {
+  routeView.querySelectorAll<HTMLButtonElement>("[data-add-to-cart]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const variantId = button.dataset.addToCart;
+      const productId = button.dataset.productId;
+      if (!variantId || !productId) return;
+      const offer = await commerceService.getOffer({ id: variantId, productId: { id: productId } });
+      if (!offer) return;
+      await cartService.addCommerceOffer({ id: "demo-cart" }, offer);
+      button.textContent = "به سبد خرید اضافه شد";
+      button.disabled = true;
+      const cartLink = document.createElement("a");
+      cartLink.className = "button button-secondary";
+      cartLink.href = "/cart";
+      cartLink.dataset.appLink = "";
+      cartLink.textContent = "مشاهدهٔ سبد خرید";
+      button.parentElement?.appendChild(cartLink);
+    });
+  });
+}
+
 async function renderCartRoute(routeView: HTMLElement, cartService: CartService, catalogService: CatalogService): Promise<void> {
   const cart = await cartService.getCart({ id: "demo-cart" });
   const products = await catalogService.listProducts();
@@ -259,5 +285,9 @@ export async function renderApplicationShell(
     await renderCartRoute(routeView, cartService, catalogService);
   } else {
     renderRoutePlaceholder(routeView, match);
+  }
+
+  if (match?.route.path !== "/cart") {
+    await attachPurchaseActions(routeView, commerceService, cartService, catalogService);
   }
 }
