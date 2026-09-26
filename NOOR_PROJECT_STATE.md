@@ -1,12 +1,16 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: VERIFIED — D4 READY
+STATUS: VERIFIED — D6 READY
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
 LATEST D2 CHECKPOINT: `NOOR_D2_CHECKPOINT.md`
 LATEST VERIFIED D3 COMMIT: `08d07442e00eb7578319dd44df1e64868c439589`
 LATEST D3 CHECKPOINT: `NOOR_D3_CHECKPOINT.md`
+LATEST VERIFIED D4 IMPLEMENTATION COMMIT: `ae21364edf369d199905217c3a5e1665f63909d1`
+LATEST D4 CHECKPOINT: `NOOR_D4_CHECKPOINT.md`
+LATEST VERIFIED D5 IMPLEMENTATION COMMIT: `7663c976146062dcac97ee47049a5111f46cbc8d`
+LATEST D5 CHECKPOINT: `NOOR_D5_CHECKPOINT.md`
 
 ## Current Position
 
@@ -21,8 +25,10 @@ Completed and verified:
 - D1 — Demo Foundation & Application Shell
 - D2 — Hero & Demo Entry Experience
 - D3 — Personal Shopper Journey
+- D4 — Product Catalog & Recommendation Engine
+- D5 — Choices / Favorites / Comparison
 
-Current phase: D4 — Product Catalog & Recommendation Engine.
+Current phase: D6 — Independent Shopper Account/Auth.
 
 D2 GitHub Actions verification:
 - Workflow: NOOR Build Verification
@@ -34,6 +40,18 @@ D2 GitHub Actions verification:
 - Vite production build: SUCCESS
 
 Runtime/browser QA remains a later gate and is not claimed until actually performed.
+
+D4 verification:
+- GitHub Actions Run #128 / Run ID 36259759181
+- Behavioral tests: SUCCESS
+- Type-check: SUCCESS
+- Production build: SUCCESS
+
+D5 verification:
+- GitHub Actions Run #136 / Run ID 36259988464
+- Behavioral tests: SUCCESS
+- Type-check: SUCCESS
+- Production build: SUCCESS
 
 ## Locked Demo Scope
 
@@ -124,6 +142,8 @@ Do not re-run or rebuild:
 - D1
 - D2
 - D3
+- D4
+- D5
 
 Do not recreate architecture or completed implementation phases that already exist in GitHub.
 
