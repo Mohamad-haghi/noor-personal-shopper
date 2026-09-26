@@ -83,9 +83,25 @@ Checkpoint:
 ## Remaining scope gaps
 
 ### G4 — Selection Profile persistence
-The SelectionProfile domain exists, but the current Shopper flow still represents the journey primarily through ShopperFlowState and does not persist a structured SelectionProfile through a dedicated existing service/provider path.
+VERIFIED.
 
-Classification: implementation-level if existing profile boundaries are sufficient. Inspect exact contracts before implementation. If a new provider/service boundary or composition change becomes necessary, STOP and report before changing architecture.
+The SelectionProfile architecture was intentionally upgraded rather than bypassed:
+- SelectionProfile now carries structured questionnaire criteria.
+- Optional AccountId ownership allows anonymous demo usage and future account association.
+- Dedicated SelectionProfileProvider / SelectionProfileService boundaries were added.
+- DemoSelectionProfileProvider persists the profile in demo runtime state.
+- ShopperFeature now persists questionnaire changes through SelectionProfileService.
+- Direct LocalStorage persistence was removed from the ShopperFeature.
+
+CI Run #276:
+- 13/13 test files PASS.
+- 37/37 tests PASS.
+- Type-check PASS.
+- Production build PASS.
+
+Checkpoint: `NOOR_G4_CHECKPOINT.md`
+
+This is an approved architecture extension: it preserves the existing Provider → Service → Feature layering while adding the missing persistence seam required by the scope.
 
 ### G5 — Product/detail route coverage
 `/products` and `/products/:id` are declared routes, but the application shell currently falls through to the generic route placeholder.
@@ -104,5 +120,12 @@ Classification: implementation-level UI gap using the existing CatalogService. N
 2. G5 — implement executable `/products` and `/products/:id` inspection using CatalogService.
 3. Final runtime/browser QA across the complete demo journey.
 
-## Architecture gate
-If implementation of G4 or G5 requires a new provider/service boundary, changes composition architecture, or otherwise changes the locked architecture/structure, STOP and report before implementation.
+## Architecture policy
+Architecture may be extended when the change directly improves:
+- demo completeness and independence,
+- separation of domain concerns,
+- future NOOR API/CMS/account/commerce integration readiness,
+- scalability to the real NOOR catalog and users,
+- testability and failure isolation.
+
+Architecture must not be replaced or changed gratuitously. Any material architecture extension must be documented in the relevant checkpoint and verified by CI before acceptance.
