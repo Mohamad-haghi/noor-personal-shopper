@@ -159,7 +159,6 @@ async function renderCompareRoute(
   catalogService: CatalogService,
   choicesService: ChoicesService,
   compareService: CompareService,
-  accountService: AccountService,
 ): Promise<void> {
   const choices = await choicesService.listChoices();
   const items = choices.slice(0, 3).map((choice, index) => ({
@@ -193,6 +192,7 @@ export async function renderApplicationShell(
   catalogService: CatalogService,
   choicesService: ChoicesService,
   compareService: CompareService,
+  accountService: AccountService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
