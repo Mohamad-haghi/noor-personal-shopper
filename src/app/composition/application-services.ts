@@ -1,7 +1,6 @@
 import type {
   CatalogProvider,
   ShopperProvider,
-  RecommendationsProvider,
   ChoicesProvider,
   CompareProvider,
   AccountProvider,
@@ -66,7 +65,6 @@ export interface ApplicationServices {
 export interface ApplicationProviders {
   readonly catalog: CatalogProvider;
   readonly shopper: ShopperProvider;
-  readonly recommendations: RecommendationsProvider;
   readonly choices: ChoicesProvider;
   readonly compare: CompareProvider;
   readonly account: AccountProvider;
