@@ -381,7 +381,22 @@ async function renderCheckoutRoute(
   });
 }
 
-async function renderSearchRoute(routeView: HTMLElement, searchService: SearchService, catalogService: CatalogService): Promise<void> {\n  const params = new URLSearchParams(window.location.search);\n  const query = params.get("q") ?? "";\n  const response = await searchService.search({ text: query, limit: 12 });\n  const products = await catalogService.listProducts();\n  renderSearch(routeView, response, products);\n  const form = routeView.querySelector<HTMLFormElement>("[data-search-form]");\n  form?.addEventListener("submit", (event) => {\n    event.preventDefault();\n    const value = String(new FormData(form).get("q") ?? "").trim();\n    window.history.pushState(null, "", "/search" + (value ? "?q=" + encodeURIComponent(value) : ""));\n    window.dispatchEvent(new PopStateEvent("popstate"));\n  });\n}\n\nasync function renderProductsRoute(routeView: HTMLElement, catalogService: CatalogService): Promise<void> {
+async function renderSearchRoute(routeView: HTMLElement, searchService: SearchService, catalogService: CatalogService): Promise<void> {
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get("q") ?? "";
+  const response = await searchService.search({ text: query, limit: 12 });
+  const products = await catalogService.listProducts();
+  renderSearch(routeView, response, products);
+  const form = routeView.querySelector<HTMLFormElement>("[data-search-form]");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const value = String(new FormData(form).get("q") ?? "").trim();
+    window.history.pushState(null, "", "/search" + (value ? "?q=" + encodeURIComponent(value) : ""));
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+}
+
+async function renderProductsRoute(routeView: HTMLElement, catalogService: CatalogService): Promise<void> {
   const products = await catalogService.listProducts();
   const variantsByProduct = new Map<string, readonly import("../domain").ProductVariant[]>();
   for (const product of products) {
