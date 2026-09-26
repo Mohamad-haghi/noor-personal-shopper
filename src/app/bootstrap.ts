@@ -13,6 +13,8 @@ import { DemoCheckoutProvider } from "../providers/demo/demo-checkout-provider";
 import { DemoPaymentProvider } from "../providers/demo/demo-payment-provider";
 import { DemoOrderProvider } from "../providers/demo/demo-order-provider";
 import { DemoConfirmationProvider } from "../providers/demo/demo-confirmation-provider";
+import { DemoBranchProvider } from "../providers/demo/demo-branch-provider";
+import { DemoVisitProvider } from "../providers/demo/demo-visit-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
@@ -26,6 +28,8 @@ import { CheckoutService } from "../services/checkout-service";
 import { PaymentService } from "../services/payment-service";
 import { OrderService } from "../services/order-service";
 import { ConfirmationService } from "../services/confirmation-service";
+import { BranchService } from "../services/branch-service";
+import { VisitService } from "../services/visit-service";
 import { DemoHeroDestinationResolver } from "../integration/demo/demo-hero-destination-resolver";
 import { createRouter } from "./routing/create-router";
 import { renderApplicationShell } from "../ui/render-application-shell";
@@ -70,6 +74,8 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const paymentService = new PaymentService(new DemoPaymentProvider());
     const orderService = new OrderService(new DemoOrderProvider());
     const confirmationService = new ConfirmationService(new DemoConfirmationProvider());
+    const branchService = new BranchService(new DemoBranchProvider());
+    const visitService = new VisitService(new DemoVisitProvider());
 
     createRouter(root, (match) => {
       void renderApplicationShell(
@@ -90,6 +96,8 @@ export async function startApplication(root: HTMLElement): Promise<void> {
         paymentService,
         orderService,
         confirmationService,
+        branchService,
+        visitService,
       );
     });
   } catch {
