@@ -12,6 +12,7 @@ export interface RouteMatch {
 
 export const APP_ROUTES: readonly AppRoute[] = [
   { path: "/", title: "خانه", navigationLabel: "خانه" },
+  { path: "/search", title: "جست‌وجوی فریم", navigationLabel: "جست‌وجو" },
   { path: "/products", title: "محصولات", navigationLabel: "محصولات" },
   { path: "/products/:id", title: "جزئیات محصول", navigationLabel: null },
   { path: "/shopper", title: "دستیار خرید", navigationLabel: "دستیار خرید" },
