@@ -3,8 +3,12 @@ import { FoundationFeature } from "../features/foundation/foundation-feature";
 import { ShopperFeature } from "../features/shopper/shopper-feature";
 import { DemoFoundationProvider } from "../providers/demo/demo-foundation-provider";
 import { DemoHeroProvider } from "../providers/demo/demo-hero-provider";
+import { DemoCatalogProvider } from "../providers/demo/demo-catalog-provider";
+import { DemoRecommendationsProvider } from "../providers/demo/demo-recommendations-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
+import { CatalogService } from "../services/catalog-service";
+import { RecommendationsService } from "../services/recommendations-service";
 import { DemoHeroDestinationResolver } from "../integration/demo/demo-hero-destination-resolver";
 import { createRouter } from "./routing/create-router";
 import { renderApplicationShell } from "../ui/render-application-shell";
@@ -36,9 +40,11 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const heroDestination = hero?.cta ? heroResolver.resolve(hero.cta.destination) : null;
 
     const shopperFeature = new ShopperFeature();
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const recommendationsService = new RecommendationsService(new DemoRecommendationsProvider(), catalogService);
 
     createRouter(root, (match) => {
-      renderApplicationShell(root, match, status, hero, heroDestination, shopperFeature);
+      void renderApplicationShell(root, match, status, hero, heroDestination, shopperFeature, recommendationsService);
     });
   } catch {
     root.innerHTML = `
