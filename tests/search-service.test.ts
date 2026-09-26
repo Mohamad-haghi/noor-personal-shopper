@@ -39,3 +39,5 @@ describe("D4 Smart Discovery Search", () => {
     expect(similar.every((item) => item.productId.id !== products[0].identity.id)).toBe(true);
   });
 }
+
+});
