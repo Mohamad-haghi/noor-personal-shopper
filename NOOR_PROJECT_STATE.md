@@ -1,27 +1,36 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: VERIFIED — READY FOR DEMO IMPLEMENTATION
+STATUS: VERIFIED — D3 IN PROGRESS
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
-LATEST ARCHITECTURE CHECKPOINT: `NOOR_FULL_ARCHITECTURE_AUDIT.md`
+LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
+LATEST D2 CHECKPOINT: `NOOR_D2_CHECKPOINT.md`
 
 ## Current Position
 
 The full application architecture and structural foundation are complete and CI-verified.
 
-The project has now entered Demo Implementation.
-Current phase: D1 — Demo Foundation & Application Shell.
-D1 implementation is committed and diff-audited; build verification is still pending.
-Do not start D2 until D1 build verification is confirmed.
-
-Completed and not to be repeated:
+Completed and verified:
 - C1-C1 — Core Structure & Domain
 - C1-C2 — Services & Providers
 - C1-C3 — Persistence / State / Routing / Integration boundaries
 - C1-C4 — Architecture hardening
 - Full Architecture Completion
+- D1 — Demo Foundation & Application Shell
+- D2 — Hero & Demo Entry Experience
 
-The current implementation phase is D2 — Hero & Demo Entry Experience. Runtime/browser QA remains a later gate and is not claimed until actually performed.
+Current phase: D3 — Personal Shopper Journey.
+
+D2 GitHub Actions verification:
+- Workflow: NOOR Build Verification
+- Run: #76
+- Run ID: 36222698488
+- Commit: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
+- npm install: SUCCESS
+- TypeScript strict type-check: SUCCESS
+- Vite production build: SUCCESS
+
+Runtime/browser QA remains a later gate and is not claimed until actually performed.
 
 ## Locked Demo Scope
 
@@ -43,6 +52,30 @@ The Demo includes:
 - Future-integration readiness without real NOOR production integration
 
 No real NOOR API/CMS/auth/payment/booking integration is implemented unless explicitly assigned in a later phase.
+
+## D3 Boundary
+
+D3 implements only the Personal Shopper journey:
+Entry → Intro → Product Type → Use Case → Style → Face Shape → Selection Profile → Recommendation.
+
+D3 must:
+- capture the user's selections into a structured Selection Profile
+- support direct/guided face-shape selection
+- use the existing ShopperFlowState boundary
+- provide forward/back navigation and recovery
+- remain Persian RTL and responsive
+- preserve loading/error states
+- connect through the existing service/application architecture
+
+D3 must NOT:
+- implement AI/LLM
+- implement biometric or face recognition
+- connect to real NOOR inventory
+- implement real account synchronization
+- introduce new routes unless explicitly required by the existing route contract
+- introduce direct LocalStorage/database access
+- replace or create a parallel architecture
+- add unrelated dependencies, refactors, or features
 
 ## Architecture Rules
 
@@ -85,8 +118,10 @@ Do not re-run or rebuild:
 - C1-C3
 - C1-C4
 - Full Architecture Completion
+- D1
+- D2
 
-Do not recreate architecture that already exists in GitHub.
+Do not recreate architecture or completed implementation phases that already exist in GitHub.
 
 ## Required Builder Handoff Pattern
 
@@ -101,6 +136,6 @@ Before any Builder implementation:
 
 ## Recovery
 
-If a chat is interrupted, resume from this file and the latest verified GitHub commit. Do not restart completed architecture phases.
+If a chat is interrupted, resume from this file and the latest verified GitHub commit. Do not restart completed phases.
 
 This document intentionally does not duplicate source code or the full implementation contract. The implementation contract remains the canonical detailed reference outside the application source.
