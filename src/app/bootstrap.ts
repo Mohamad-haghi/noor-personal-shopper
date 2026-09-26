@@ -15,6 +15,7 @@ import { DemoOrderProvider } from "../providers/demo/demo-order-provider";
 import { DemoConfirmationProvider } from "../providers/demo/demo-confirmation-provider";
 import { DemoBranchProvider } from "../providers/demo/demo-branch-provider";
 import { DemoVisitProvider } from "../providers/demo/demo-visit-provider";
+import { DemoSelectionProfileProvider } from "../providers/demo/demo-selection-profile-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
@@ -30,6 +31,7 @@ import { OrderService } from "../services/order-service";
 import { ConfirmationService } from "../services/confirmation-service";
 import { BranchService } from "../services/branch-service";
 import { VisitService } from "../services/visit-service";
+import { SelectionProfileService } from "../services/selection-profile-service";
 import { DemoHeroDestinationResolver } from "../integration/demo/demo-hero-destination-resolver";
 import { createRouter } from "./routing/create-router";
 import { renderApplicationShell } from "../ui/render-application-shell";
@@ -60,7 +62,9 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const hero = await heroService.getHeroContent();
     const heroDestination = hero?.cta ? heroResolver.resolve(hero.cta.destination) : null;
 
-    const shopperFeature = new ShopperFeature();
+    const selectionProfileService = new SelectionProfileService(new DemoSelectionProfileProvider());
+    const selectionProfile = await selectionProfileService.getProfile({ id: "demo-selection-profile" });
+    const shopperFeature = new ShopperFeature(selectionProfileService, selectionProfile);
     const catalogProvider = new DemoCatalogProvider();
     const catalogService = new CatalogService(catalogProvider);
     const recommendationsService = new RecommendationsService(catalogService);
