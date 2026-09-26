@@ -10,8 +10,11 @@ export function renderAccount(
   errorMessage: string | null = null,
 ): void {
   if (account) {
-    const name = account.profile.displayName || [account.profile.firstName, account.profile.lastName].filter(Boolean).join(" ") || account.email;
-    routeView.innerHTML = \`
+    const name = account.profile.displayName ||
+      [account.profile.firstName, account.profile.lastName].filter(Boolean).join(" ") ||
+      account.email;
+
+    routeView.innerHTML = `
       <main class="d5-page" id="main-content" aria-labelledby="account-title">
         <section class="d5-intro">
           <p class="eyebrow">NOOR SHOPPER ACCOUNT</p>
@@ -20,8 +23,8 @@ export function renderAccount(
         </section>
         <section class="d5-choice-card">
           <p class="eyebrow">حساب فعال</p>
-          <h2>\${escapeHtml(name)}</h2>
-          <p>\${escapeHtml(account.email)}</p>
+          <h2>${escapeHtml(name)}</h2>
+          <p>${escapeHtml(account.email)}</p>
           <p>وضعیت ایمیل: تأییدنشده در Demo</p>
           <div class="d5-actions">
             <button class="button button-primary" type="button" data-account-logout>خروج از حساب</button>
@@ -29,18 +32,18 @@ export function renderAccount(
           </div>
         </section>
       </main>
-    \`;
+    `;
     return;
   }
 
-  routeView.innerHTML = \`
+  routeView.innerHTML = `
     <main class="d5-page" id="main-content" aria-labelledby="account-title">
       <section class="d5-intro">
         <p class="eyebrow">NOOR SHOPPER ACCOUNT</p>
         <h1 id="account-title">حساب Personal Shopper</h1>
         <p>برای این Demo، حساب مستقل خود را بسازید یا با حساب همین Demo وارد شوید.</p>
       </section>
-      \${errorMessage ? \`<p class="d5-form-error" role="alert">\${escapeHtml(errorMessage)}</p>\` : ""}
+      ${errorMessage ? `<p class="d5-form-error" role="alert">${escapeHtml(errorMessage)}</p>` : ""}
       <section class="d5-account-grid">
         <form class="d5-choice-card d5-form" data-account-register>
           <p class="eyebrow">ثبت‌نام</p>
@@ -60,6 +63,5 @@ export function renderAccount(
         </form>
       </section>
     </main>
-  \`;
+  `;
 }
-
