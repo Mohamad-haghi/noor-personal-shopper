@@ -1,5 +1,6 @@
 import "./styles.css";
 import "./ui/hero.css";
+import "./ui/shopper.css";
 import { startApplication } from "./app/bootstrap";
 
 const root = document.querySelector<HTMLElement>("#app");
