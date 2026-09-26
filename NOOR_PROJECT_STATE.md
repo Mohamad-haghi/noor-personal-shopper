@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: D7-G VERIFIED — POST-D7 SCOPE AUDIT COMPLETE
+STATUS: G3 VERIFIED — POST-D7 AUDIT UPDATED
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -25,6 +25,8 @@ LATEST D7-B CHECKPOINT: `NOOR_D7B_CHECKPOINT.md`
 LATEST D7-G CI: Run #245 — 9 test files / 27 tests PASS; type-check and production build PASS.
 LATEST D7-G CHECKPOINT: `NOOR_D7G_CHECKPOINT.md`
 LATEST POST-D7 AUDIT: `NOOR_POST_D7_AUDIT.md`
+LATEST VERIFIED G3 COMMIT: `ae03e15d8e8d9e654e578612bbb74954a4f4e72d`
+LATEST G3 CHECKPOINT: `NOOR_G3_CHECKPOINT.md`
 
 ## Current Position
 
@@ -103,14 +105,18 @@ D7 verified sequence:
 
 ## Post-D7 Scope Audit
 See `NOOR_POST_D7_AUDIT.md`.
-Remaining implementation gaps:
-- Branch selection is not executable; existing BranchProvider/BranchService boundaries exist but DemoBranchProvider has no demo branch data.
-- In-person visit scheduling/request flow is not executable; existing Visit domain/service/provider boundaries exist but `/visit` is not rendered as a workflow.
-- Smart link to future real NOOR inventory is not surfaced as a user-facing destination-aware flow; no real external integration should be added at this stage.
-- Structured SelectionProfile persistence is incomplete; current shopper UI primarily keeps selections in ShopperFlowState/session presentation.
-- `/products` and `/products/:id` are declared routes but currently use the generic route placeholder.
 
-No architecture change is approved or required by this audit. If any fix requires changing architecture/composition or adding a new provider/service boundary, STOP and report before implementation.
+G1/G2/G3 are VERIFIED. G4/G5 remain.
+Verified post-D7 gaps completed:
+- G1 — Branch selection and pickup validation: VERIFIED in CI Run #256.
+- G2 — In-person visit scheduling/request flow: VERIFIED in CI Run #256.
+- G3 — Destination-aware NOOR inventory smart link: VERIFIED in CI Run #260.
+
+Remaining implementation gaps:
+- G4 — Structured SelectionProfile persistence.
+- G5 — Executable `/products` and `/products/:id` catalog/detail routes.
+
+No architecture change was introduced for G1/G2/G3. If any G4/G5 fix requires changing architecture/composition or adding a new provider/service boundary, STOP and report before implementation.
 
 D7 rule:
 - Do not expose a purchase action that ends in a dead-end.
