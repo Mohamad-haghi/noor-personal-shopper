@@ -96,9 +96,9 @@ async function renderChoicesRoute(
 }
 
 
-async function renderAccountRoute(routeView: HTMLElement, accountService: AccountService): Promise<void> {
+async function renderAccountRoute(routeView: HTMLElement, accountService: AccountService, errorMessage: string | null = null): Promise<void> {
   const account = await accountService.getCurrentAccount();
-  renderAccount(routeView, account);
+  renderAccount(routeView, account, errorMessage);
 
   const logoutButton = routeView.querySelector<HTMLButtonElement>("[data-account-logout]");
   logoutButton?.addEventListener("click", async () => {
@@ -147,7 +147,7 @@ async function renderAccountRoute(routeView: HTMLElement, accountService: Accoun
     const form = new FormData(loginForm);
     const account = await accountService.login(String(form.get("email")), String(form.get("password")));
     if (!account) {
-      await renderAccount(routeView, null, "ایمیل یا رمز عبور صحیح نیست.");
+      await renderAccountRoute(routeView, accountService, "ایمیل یا رمز عبور صحیح نیست.");
       return;
     }
     await renderAccountRoute(routeView, accountService);
