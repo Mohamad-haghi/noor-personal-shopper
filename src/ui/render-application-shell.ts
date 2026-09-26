@@ -1,4 +1,4 @@
-import type { HeroContent, Recommendation, Product } from "../domain";
+import type { HeroContent, Product } from "../domain";
 import type { RecommendationsService } from "../services/recommendations-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
