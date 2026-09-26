@@ -1,14 +1,26 @@
+import type {
+  Recommendation,
+  RecommendationContext,
+  ShopperProfileId,
+} from "../domain";
 import type { RecommendationsProvider } from "../providers/interfaces/recommendations-provider";
-import type { Recommendation, RecommendationContext, ShopperProfileId } from "../domain";
+import { CatalogService } from "./catalog-service";
 
 export class RecommendationsService {
-  constructor(private readonly provider: RecommendationsProvider) {}
+  constructor(
+    private readonly provider: RecommendationsProvider,
+    private readonly catalogService: CatalogService,
+  ) {}
 
   getRecommendations(shopperId: ShopperProfileId): Promise<readonly Recommendation[]> {
     return this.provider.getRecommendations(shopperId);
   }
 
-  generateRecommendations(shopperId: ShopperProfileId, context: RecommendationContext): Promise<readonly Recommendation[]> {
-    return this.provider.generateRecommendations(shopperId, context);
+  async generateRecommendations(
+    shopperId: ShopperProfileId,
+    context: RecommendationContext,
+  ): Promise<readonly Recommendation[]> {
+    const candidates = await this.catalogService.listAvailableVariants();
+    return this.provider.generateRecommendations(shopperId, context, candidates);
   }
 }
