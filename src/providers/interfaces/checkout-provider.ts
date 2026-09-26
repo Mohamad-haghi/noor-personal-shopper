@@ -1,6 +1,6 @@
-import type { CartId, Order } from "../../domain";
+import type { CheckoutRequest, Order } from "../../domain";
 
 export interface CheckoutProvider {
-  createOrderFromCart(cartId: CartId): Promise<Order>;
-  validate(cartId: CartId): Promise<readonly string[]>;
+  createOrderFromCart(request: CheckoutRequest): Promise<Order>;
+  validate(request: CheckoutRequest): Promise<readonly string[]>;
 }
