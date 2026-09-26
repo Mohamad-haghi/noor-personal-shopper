@@ -45,8 +45,9 @@ export interface OrderPricing {
 }
 
 export interface OrderShipping {
-  readonly method: string;
-  readonly address: ShippingAddress;
+  readonly method: "delivery" | "pickup";
+  readonly address: ShippingAddress | null;
+  readonly branchId: string | null;
   readonly estimatedDelivery: Date | null;
   readonly trackingNumber: string | null;
 }
