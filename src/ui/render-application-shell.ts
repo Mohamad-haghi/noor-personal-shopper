@@ -9,6 +9,7 @@ import type { CommerceService } from "../services/commerce-service";
 import type { CheckoutService } from "../services/checkout-service";
 import type { PaymentService } from "../services/payment-service";
 import type { OrderService } from "../services/order-service";
+import type { ConfirmationService } from "../services/confirmation-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
@@ -22,6 +23,7 @@ import { renderCompare } from "./render-compare";
 import { renderAccount } from "./render-account";
 import { renderCart } from "./render-cart";
 import { renderCheckout, renderPaymentState } from "./render-checkout";
+import { renderConfirmation } from "./render-confirmation";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -222,6 +224,7 @@ async function renderCheckoutRoute(
   checkoutService: CheckoutService,
   paymentService: PaymentService,
   orderService: OrderService,
+  confirmationService: ConfirmationService,
   errorMessage: string | null = null,
 ): Promise<void> {
   const cart = await cartService.getCart({ id: "demo-cart" });
@@ -256,7 +259,7 @@ async function renderCheckoutRoute(
     event.preventDefault();
     const currentAccount = await accountService.getCurrentAccount();
     if (!currentAccount) {
-      await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, "ابتدا وارد حساب مستقل Personal Shopper شوید.");
+      await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, confirmationService, "ابتدا وارد حساب مستقل Personal Shopper شوید.");
       return;
     }
 
@@ -319,9 +322,22 @@ async function renderCheckoutRoute(
               status: "confirmed",
               updatedAt: new Date(),
             });
-            renderPaymentState(routeView, persistedOrder, payment, async () => {
-              await processPayment(persistedOrder, false);
+            const confirmation = await confirmationService.createConfirmation({
+              identity: { id: "demo-confirmation-" + persistedOrder.identity.id },
+              orderId: persistedOrder.identity,
+              requestIdentity: {
+                requestToken: "demo-request-" + persistedOrder.identity.id,
+                ipAddress: null,
+                userAgent: null,
+                fingerprint: null,
+              },
+              status: "confirmed",
+              sentAt: new Date(),
+              confirmedAt: new Date(),
             });
+            window.history.pushState(null, "", "/confirmation/" + encodeURIComponent(confirmation.identity.id));
+            window.dispatchEvent(new PopStateEvent("popstate"));
+
             return;
           }
 
@@ -340,6 +356,7 @@ async function renderCheckoutRoute(
         checkoutService,
         paymentService,
         orderService,
+        confirmationService,
         error instanceof Error ? error.message : "ثبت سفارش انجام نشد.",
       );
     }
@@ -377,6 +394,7 @@ export async function renderApplicationShell(
   checkoutService: CheckoutService,
   paymentService: PaymentService,
   orderService: OrderService,
+  confirmationService: ConfirmationService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
   root.innerHTML = `
@@ -423,12 +441,17 @@ export async function renderApplicationShell(
   } else if (match?.route.path === "/cart") {
     await renderCartRoute(routeView, cartService, catalogService);
   } else if (match?.route.path === "/checkout") {
-    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService);
+    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, confirmationService);
+  } else if (match?.route.path === "/confirmation/:id") {
+    const confirmationId = match.params.id ? { id: match.params.id } : null;
+    const confirmation = confirmationId ? await confirmationService.getConfirmation(confirmationId) : null;
+    const order = confirmation ? await orderService.getOrder(confirmation.orderId) : null;
+    renderConfirmation(routeView, confirmation, order);
   } else {
     renderRoutePlaceholder(routeView, match);
   }
 
-  if (match?.route.path !== "/cart") {
+  if (match?.route.path !== "/cart" && match?.route.path !== "/confirmation/:id") {
     await attachPurchaseActions(routeView, commerceService, cartService);
   }
 }
