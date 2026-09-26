@@ -4,7 +4,7 @@
 2026-09-26
 
 ## Baseline
-GitHub main after D7-G CI Run #245.
+GitHub main after G3 CI Run #260.
 
 ## Verified complete
 - Personal Shopper journey: Intro → type → use case → style → face shape → recommendations.
@@ -20,6 +20,19 @@ GitHub main after D7-G CI Run #245.
 - D7-G end-to-end and recovery tests: 9 test files / 27 tests passing in CI Run #245.
 
 ## Scope gaps found
+
+G1, G2, and G3 are now VERIFIED. Remaining gaps are G4 and G5.
+
+### G1 — Branch selection — VERIFIED
+Implemented and verified through the existing BranchProvider/BranchService boundaries. Demo branch discovery, selection, pickup validation, and branch lookup are executable. CI Run #256 passed.
+
+### G2 — In-person visit scheduling — VERIFIED
+Implemented and verified through the existing VisitProvider/VisitService/Confirmation boundaries. Branch selection, time selection, visit request persistence, Request ID, and confirmation path are executable. CI Run #256 passed.
+
+### G3 — Smart inventory link — VERIFIED
+Implemented through structured Product external identifiers without adding a new integration boundary. Recommendations and My Choices expose destination-aware links to the current NOOR storefront search path. The Demo remains disconnected from live inventory. CI Run #260 passed.
+
+### G1/G2/G3 historical gap details
 
 ### G1 — Branch selection is not executable yet
 Routes /branches and /visit exist, and BranchProvider/VisitProvider boundaries exist, but DemoBranchProvider returns an empty list and DemoVisitProvider only echoes a request without executable branch discovery/selection flow.
@@ -54,11 +67,9 @@ Classification: implementation-level UI gap; existing CatalogService can be used
 - No architecture redesign is required by the current findings.
 
 ## Recommended next execution order
-1. Complete G1 + G2: executable branch selection and in-person visit request flow.
-2. Complete G4: persist the structured SelectionProfile through the existing boundaries.
-3. Complete G3: surface destination-aware smart-link behavior without connecting to real NOOR inventory.
-4. Complete G5: product listing/detail inspection using the existing CatalogService.
-5. Run a final runtime/browser QA pass across the complete demo journey.
+1. Complete G4: persist the structured SelectionProfile through the existing boundaries.
+2. Complete G5: product listing/detail inspection using the existing CatalogService.
+3. Run a final runtime/browser QA pass across the complete demo journey.
 
 ## Architecture gate
 No architecture change is approved or proposed by this audit. If implementation of any item requires a new provider/service boundary or changes the existing composition architecture, STOP and report before changing it.
