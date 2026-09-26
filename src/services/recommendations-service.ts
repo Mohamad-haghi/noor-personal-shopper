@@ -13,7 +13,7 @@ export class RecommendationsService {
   ) {}
 
   async getProductForVariant(variantId: import("../domain").ProductVariantId) {
-    return this.catalogService.getProduct(variantId);
+    return this.catalogService.getProduct(variantId.productId);
   }
 
   getRecommendations(shopperId: ShopperProfileId): Promise<readonly Recommendation[]> {
