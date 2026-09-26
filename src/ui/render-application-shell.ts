@@ -28,6 +28,7 @@ import { renderCheckout, renderPaymentState } from "./render-checkout";
 import { renderConfirmation } from "./render-confirmation";
 import { renderBranches } from "./render-branches";
 import { renderVisit } from "./render-visit";
+import { renderProducts, renderProductDetail } from "./render-products";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -378,6 +379,42 @@ async function renderCheckoutRoute(
   });
 }
 
+async function renderProductsRoute(routeView: HTMLElement, catalogService: CatalogService): Promise<void> {
+  const products = await catalogService.listProducts();
+  const variantsByProduct = new Map<string, readonly import("../domain").ProductVariant[]>();
+  for (const product of products) {
+    variantsByProduct.set(product.identity.id, await catalogService.listVariants(product.identity));
+  }
+  renderProducts(routeView, products, variantsByProduct);
+}
+
+async function renderProductDetailRoute(
+  routeView: HTMLElement,
+  catalogService: CatalogService,
+  commerceService: CommerceService,
+  productId: string | null,
+): Promise<void> {
+  if (!productId) {
+    renderProductDetail(routeView, null, [], []);
+    return;
+  }
+
+  const identity = { id: productId, source: "demo" as const };
+  const product = await catalogService.getProduct(identity);
+  if (!product) {
+    renderProductDetail(routeView, null, [], []);
+    return;
+  }
+
+  const variants = await catalogService.listVariants(product.identity);
+  const offers = [];
+  for (const variant of variants) {
+    const offer = await commerceService.getOffer(variant.identity);
+    if (offer) offers.push(offer);
+  }
+  renderProductDetail(routeView, product, variants, offers);
+}
+
 async function renderCartRoute(routeView: HTMLElement, cartService: CartService, catalogService: CatalogService): Promise<void> {
   const cart = await cartService.getCart({ id: "demo-cart" });
   const products = await catalogService.listProducts();
@@ -523,6 +560,10 @@ export async function renderApplicationShell(
   if (match?.route.path === "/") {
     if (hero) renderHero(routeView, hero, heroDestination);
     else renderFoundationStatus(routeView, status);
+  } else if (match?.route.path === "/products") {
+    await renderProductsRoute(routeView, catalogService);
+  } else if (match?.route.path === "/products/:id") {
+    await renderProductDetailRoute(routeView, catalogService, commerceService, match.params.id ?? null);
   } else if (match?.route.path === "/shopper") {
     renderShopper(routeView, shopperFeature);
   } else if (match?.route.path === "/recommendations") {
