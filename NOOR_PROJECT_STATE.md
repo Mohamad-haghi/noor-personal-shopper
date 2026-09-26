@@ -1,6 +1,6 @@
 # NOOR Personal Shopper — Project State
 
-STATUS: D7-C VERIFIED — CHECKOUT AND ORDER PRICING
+STATUS: D7-D IMPLEMENTED — MOCK PAYMENT AWAITING VERIFICATION
 SOURCE OF TRUTH: GitHub `main`
 LATEST VERIFIED ARCHITECTURE COMMIT: `e379635d3025a40c6915a5be7c3200281baaabd2`
 LATEST VERIFIED D2 COMMIT: `e8adf1a6ef06f9f101404df03d2b6430a9b52dec`
@@ -17,6 +17,8 @@ LATEST VERIFIED D7-A COMMIT: `8549926cb091eada3fc60f28da07397dcbb354c1`
 LATEST VERIFIED D7-B COMMIT: `fd4bc98afba7712443182e91e7a5dfb286e42bb9`
 LATEST VERIFIED D7-C IMPLEMENTATION: `209d9c81bb241f595ebb885a7c786cdce8525253`
 LATEST D7-C CHECKPOINT: `NOOR_D7C_CHECKPOINT.md`
+LATEST D7-D IMPLEMENTATION: `43e3ec66794be649a7e2560f6b43149005ca654d`
+LATEST D7-D CHECKPOINT: `NOOR_D7D_CHECKPOINT.md`
 LATEST D7-A CHECKPOINT: `NOOR_D7A_CHECKPOINT.md`
 LATEST D7-B CHECKPOINT: `NOOR_D7B_CHECKPOINT.md`
 
@@ -62,6 +64,16 @@ D7-C verified:
 - GitHub Actions Run #205 / Run ID 36266103742: 16 behavioral tests PASS; type-check and production build PASS.
 - A test-fixture gap and a checkout UI escaping syntax error were caught by CI and fixed before D7-C acceptance.
 
+
+D7-D implemented:
+- Existing PaymentProvider / PaymentService boundary is executable through a stateful DemoPaymentProvider.
+- Demo success transitions to captured and creates a Demo transaction identifier and authorization code.
+- Demo failure can be explicitly simulated and recovered by retry.
+- Payment records are queryable by OrderId within demo runtime state.
+- Checkout now continues into the Demo Payment UI after Order creation.
+- No real gateway, credential, or external payment integration was introduced.
+- Future real payment integration remains behind PaymentProvider.
+
 D7-B verified:
 - Existing Cart boundary is now executable with CommerceOffer pricing snapshots.
 - DemoCartProvider is stateful within the demo runtime and supports add/merge/update/remove/clear behavior.
@@ -73,7 +85,7 @@ D7-B verified:
 D7 next sequence:
 1. D7-B — Cart with priced commerce items. VERIFIED.
 2. D7-C — Checkout and order pricing. VERIFIED.
-3. D7-D — Mock payment success/failure/retry.
+3. D7-D — Mock payment success/failure/retry. IMPLEMENTED — awaiting CI verification.
 4. D7-E — Order creation and persistence within demo runtime state.
 5. D7-F — Confirmation / Order ID / next-step state.
 6. D7-G — End-to-end purchase flow verification and recovery-path QA.
