@@ -4,10 +4,14 @@ import { ShopperFeature } from "../features/shopper/shopper-feature";
 import { DemoFoundationProvider } from "../providers/demo/demo-foundation-provider";
 import { DemoHeroProvider } from "../providers/demo/demo-hero-provider";
 import { DemoCatalogProvider } from "../providers/demo/demo-catalog-provider";
+import { DemoChoicesProvider } from "../providers/demo/demo-choices-provider";
+import { DemoCompareProvider } from "../providers/demo/demo-compare-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
 import { RecommendationsService } from "../services/recommendations-service";
+import { ChoicesService } from "../services/choices-service";
+import { CompareService } from "../services/compare-service";
 import { DemoHeroDestinationResolver } from "../integration/demo/demo-hero-destination-resolver";
 import { createRouter } from "./routing/create-router";
 import { renderApplicationShell } from "../ui/render-application-shell";
@@ -41,9 +45,22 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const shopperFeature = new ShopperFeature();
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const recommendationsService = new RecommendationsService(catalogService);
+    const choicesService = new ChoicesService(new DemoChoicesProvider());
+    const compareService = new CompareService(new DemoCompareProvider());
 
     createRouter(root, (match) => {
-      void renderApplicationShell(root, match, status, hero, heroDestination, shopperFeature, recommendationsService);
+      void renderApplicationShell(
+        root,
+        match,
+        status,
+        hero,
+        heroDestination,
+        shopperFeature,
+        recommendationsService,
+        catalogService,
+        choicesService,
+        compareService,
+      );
     });
   } catch {
     root.innerHTML = `
