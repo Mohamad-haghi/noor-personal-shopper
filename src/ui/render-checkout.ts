@@ -1,4 +1,4 @@
-import type { Account, Cart, Order } from "../domain";
+import type { Account, Cart, Order, Payment } from "../domain";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#039;");
@@ -66,4 +66,57 @@ export function renderCheckout(
         <button class="button button-primary" type="submit">ثبت سفارش و ادامه</button>
       </form>
     </main>`;
+}
+
+
+export function renderPaymentState(
+  routeView: HTMLElement,
+  order: Order,
+  payment: Payment | null,
+  onPay: (simulateFailure: boolean) => Promise<void>,
+): void {
+  if (!payment) {
+    routeView.innerHTML = `
+      <main class="d7-checkout-page" id="main-content">
+        <section class="d7-checkout-intro">
+          <p class="eyebrow">DEMO PAYMENT</p>
+          <h1>پرداخت سفارش</h1>
+          <p>این پرداخت کاملاً آزمایشی است. هیچ وجه واقعی جابه‌جا نمی‌شود و درگاه واقعی NOOR در این مرحله متصل نیست.</p>
+        </section>
+        <section class="d7-checkout-summary">
+          <div><span>شناسه سفارش</span><strong>${escapeHtml(order.identity.id)}</strong></div>
+          <div><span>مبلغ قابل پرداخت</span><strong>${formatAmount(order.pricing.total, order.pricing.currency)}</strong></div>
+        </section>
+        <label class="d7-demo-toggle"><input type="checkbox" data-simulate-failure> شبیه‌سازی پرداخت ناموفق برای تست Recovery</label>
+        <button class="button button-primary" type="button" data-demo-pay>پرداخت Demo</button>
+      </main>`;
+    routeView.querySelector<HTMLButtonElement>("[data-demo-pay]")?.addEventListener("click", async () => {
+      const simulateFailure = routeView.querySelector<HTMLInputElement>("[data-simulate-failure]")?.checked ?? false;
+      await onPay(simulateFailure);
+    });
+    return;
+  }
+
+  const success = payment.status === "captured" || payment.status === "authorized";
+  routeView.innerHTML = `
+    <main class="d7-checkout-page" id="main-content">
+      <section class="d7-checkout-intro">
+        <p class="eyebrow">${success ? "PAYMENT SUCCESS" : "PAYMENT FAILED"}</p>
+        <h1>${success ? "پرداخت Demo موفق بود" : "پرداخت انجام نشد"}</h1>
+        <p>${success
+          ? "تراکنش آزمایشی با موفقیت ثبت شد. مرحلهٔ بعدی در D7-E، ایجاد و نگهداری وضعیت سفارش است."
+          : "تراکنش آزمایشی ناموفق بود. می‌توانید دوباره تلاش کنید یا به Checkout برگردید."}</p>
+      </section>
+      <section class="d7-checkout-summary">
+        <div><span>شناسه سفارش</span><strong>${escapeHtml(order.identity.id)}</strong></div>
+        <div><span>وضعیت پرداخت</span><strong>${success ? "موفق" : "ناموفق"}</strong></div>
+        <div><span>مبلغ</span><strong>${formatAmount(payment.amount, payment.currency)}</strong></div>
+        <div><span>شناسه تراکنش Demo</span><strong>${escapeHtml(payment.transaction?.providerTransactionId ?? "—")}</strong></div>
+      </section>
+      <p class="d7-demo-note">پرداخت و شناسه تراکنش نمایشی هستند و به هیچ درگاه بانکی واقعی متصل نیستند.</p>
+      ${success ? "" : '<button class="button button-primary" type="button" data-demo-retry>تلاش دوباره</button>'}
+    </main>`;
+  routeView.querySelector<HTMLButtonElement>("[data-demo-retry]")?.addEventListener("click", async () => {
+    await onPay(false);
+  });
 }
