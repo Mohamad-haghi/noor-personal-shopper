@@ -94,7 +94,6 @@ export async function startApplication(root: HTMLElement): Promise<void> {
         shopperFeature,
         recommendationsService,
         catalogService,
-        searchService,
         choicesService,
         compareService,
         accountService,
@@ -105,6 +104,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
         orderService,
         confirmationService,
         branchService,
+        searchService,
         visitService,
       );
     });
