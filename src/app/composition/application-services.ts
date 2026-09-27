@@ -100,7 +100,7 @@ export function composeApplicationServices(providers: ApplicationProviders): App
     branch: new BranchService(providers.branch),
     visit: new VisitService(providers.visit),
     hero: new HeroService(providers.hero),
-    search: new SearchService(providers.search),
+    search: new SearchService(providers.search, catalog),
     favorites: new FavoritesService(providers.favorites),
     identity: new IdentityService(providers.identity),
     shopperProfile: new ShopperProfileService(providers.shopperProfile),
