@@ -12,6 +12,7 @@ export class RecommendationsService {
   constructor(
     private readonly catalogService: CatalogService,
     private readonly engine: RecommendationEngine = new RecommendationEngine(),
+    private readonly digitalSalesBridge?: NoorDigitalSalesRecommendationBridge,
   ) {}
 
   async getProductForVariant(
@@ -24,6 +25,10 @@ export class RecommendationsService {
     shopperId: ShopperProfileId,
     context: RecommendationContext,
   ): Promise<readonly Recommendation[]> {
+    if (this.digitalSalesBridge) {
+      return this.digitalSalesBridge.generateRecommendations(shopperId, context);
+    }
+
     const availableVariants = await this.catalogService.listAvailableVariants();
     const candidates: RecommendationCandidate[] = [];
 
