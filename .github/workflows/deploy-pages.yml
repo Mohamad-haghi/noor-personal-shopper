@@ -19,8 +19,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout NOOR
         uses: actions/checkout@v6
+
+      - name: Checkout Digital Sales Core
+        uses: actions/checkout@v6
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: ad965af6ebd8889f084b00755db3b5fed16904c2
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -28,20 +36,10 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Configure private Digital Sales Core dependency access
-        run: |
-          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "https://github.com/"
-          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
-          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "git@github.com:"
-        env:
-          CORE_REPO_TOKEN: ${{ secrets.CORE_REPO_TOKEN }}
-
       - name: Install dependencies
-        env:
-          GIT_CONFIG_COUNT: "1"
-          GIT_CONFIG_KEY_0: url.https://x-access-token:${{ secrets.CORE_REPO_TOKEN }}@github.com/.insteadOf
-          GIT_CONFIG_VALUE_0: ssh://git@github.com/
-        run: npm install
+        run: |
+          npm pkg set dependencies.digital-sales-core="file:../digital-sales-core"
+          npm install
 
       - name: Verify behavior
         run: npm test
