@@ -1,29 +1,13 @@
-import type { Product as CoreProduct, ProductVariant as CoreProductVariant, ProductAttributeValue } from "digital-sales-core";
+import type {
+  Product as CoreProduct,
+  ProductAttributeValue,
+  ProductVariant as CoreProductVariant,
+} from "digital-sales-core";
+import type { Product as NoorProduct } from "../../domain/product";
 import type { ProductVariant as NoorProductVariant } from "../../domain/product-variant";
 
-export interface DigitalSalesProductVariant {
-  readonly id: string;
-  readonly productId: string;
-  readonly title: string;
-  readonly price?: number;
-  readonly availability?: boolean;
-  readonly attributes: Readonly<Record<string, ProductAttributeValue>>;
-}
-
-export interface DigitalSalesProduct {
-  readonly id: string;
-  readonly title: string;
-  readonly category: string;
-  readonly description?: string;
-  readonly price?: number;
-  readonly currency?: string;
-  readonly images?: readonly string[];
-  readonly url?: string;
-  readonly availability?: boolean;
-  readonly attributes: Readonly<Record<string, unknown>>;
-  readonly tags?: readonly string[];
-  readonly variants?: readonly DigitalSalesProductVariant[];
-}
+export type DigitalSalesProductVariant = CoreProductVariant;
+export type DigitalSalesProduct = CoreProduct;
 
 export interface NoorDigitalSalesAdapterConfig {
   readonly locale: string;
@@ -39,17 +23,30 @@ export const NOOR_DIGITAL_SALES_ADAPTER_CONFIG: NoorDigitalSalesAdapterConfig = 
   searchPath: "/fa/search",
 };
 
-function primitiveAttributes(
+function coreAttributes(
   attributes: Readonly<Record<string, unknown>>,
 ): Readonly<Record<string, ProductAttributeValue>> {
-  return Object.fromEntries(
-    Object.entries(attributes).filter(
-      ([, value]) =>
-        typeof value === "string" ||
-        typeof value === "number" ||
-        typeof value === "boolean",
-    ),
-  );
+  const result: Record<string, ProductAttributeValue> = {};
+  for (const [key, value] of Object.entries(attributes)) {
+    if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean"
+    ) {
+      result[key] = value;
+    } else if (
+      Array.isArray(value) &&
+      value.every(
+        (item) =>
+          typeof item === "string" ||
+          typeof item === "number" ||
+          typeof item === "boolean",
+      )
+    ) {
+      result[key] = value as ProductAttributeValue[];
+    }
+  }
+  return result;
 }
 
 function normalizeVariant(
@@ -60,7 +57,7 @@ function normalizeVariant(
     id: variant.identity.id,
     productId: product.externalIds.providerProductId ?? product.identity.id,
     title: variant.name,
-    attributes: primitiveAttributes(variant.attributes.customAttributes),
+    attributes: coreAttributes(variant.attributes.customAttributes),
     availability: variant.availability.isAvailable,
   };
 }
@@ -87,7 +84,7 @@ export function toDigitalSalesProduct(
     product.externalIds.sku ??
     product.identity.id;
 
-  const customAttributes = product.attributes.customAttributes;
+  const customAttributes = coreAttributes(product.attributes.customAttributes);
   const primaryImage = product.media.primaryImage?.url;
   const images = [
     ...(primaryImage ? [primaryImage] : []),
@@ -99,20 +96,21 @@ export function toDigitalSalesProduct(
     title: product.name,
     category: product.attributes.category ?? "eyewear",
     ...(product.description ? { description: product.description } : {}),
-    ...(typeof customAttributes.price === "number"
-      ? { price: customAttributes.price }
-      : {}),
+    ...(typeof customAttributes.price === "number" ? { price: customAttributes.price } : {}),
     currency: "IRR",
     ...(images.length ? { images } : {}),
     ...(productUrl(product, config) ? { url: productUrl(product, config) } : {}),
-    availability: variants.length > 0 ? variants.some((item) => item.availability.isAvailable) : true,
+    availability:
+      variants.length > 0
+        ? variants.some((item) => item.availability.isAvailable)
+        : true,
     attributes: {
       ...customAttributes,
       source: "noor",
       noorProductId: product.identity.id,
       noorReference: reference,
     },
-    ...(product.attributes.tags.length ? { tags: product.attributes.tags } : {}),
+    ...(product.attributes.tags.length ? { tags: [...product.attributes.tags] } : {}),
     ...(variants.length
       ? { variants: variants.map((variant) => normalizeVariant(product, variant)) }
       : {}),
@@ -125,7 +123,11 @@ export function toDigitalSalesProducts(
   config: NoorDigitalSalesAdapterConfig = NOOR_DIGITAL_SALES_ADAPTER_CONFIG,
 ): DigitalSalesProduct[] {
   return products.map((product) =>
-    toDigitalSalesProduct(product, variantsByProductId.get(product.identity.id) ?? [], config),
+    toDigitalSalesProduct(
+      product,
+      variantsByProductId.get(product.identity.id) ?? [],
+      config,
+    ),
   );
 }
 
