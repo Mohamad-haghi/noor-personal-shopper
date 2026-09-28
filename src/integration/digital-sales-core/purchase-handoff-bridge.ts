@@ -52,7 +52,8 @@ export class NoorDigitalSalesPurchaseHandoffBridge {
     destination: string,
     context: Record<string, unknown> = {},
   ): Promise<PurchaseHandoff> {
-    const product = await this.provider.getProduct(productId);
+    const products = await this.provider.getProducts();
+    const product = products.find((item) => item.id === productId) ?? products.find((item) => item.variants?.some((variant) => variant.id === variantId));
     if (!product) throw new Error("محصول انتخاب‌شده در Core پیدا نشد.");
     const variant = product.variants?.find((item) => item.id === variantId);
     if (!variant) throw new Error("تنوع انتخاب‌شده در Core پیدا نشد.");
