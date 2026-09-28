@@ -21,12 +21,14 @@ jobs:
 
       - name: Install dependencies
         env:
-          GIT_CONFIG_COUNT: "2"
-          GIT_CONFIG_KEY_0: url.https://x-access-token:${{ secrets.CORE_REPO_TOKEN }}@github.com/.insteadOf
-          GIT_CONFIG_VALUE_0: ssh://git@github.com/
-          GIT_CONFIG_KEY_1: url.https://x-access-token:${{ secrets.CORE_REPO_TOKEN }}@github.com/.insteadOf
-          GIT_CONFIG_VALUE_1: https://github.com/
-        run: npm install
+          CORE_REPO_TOKEN: ${{ secrets.CORE_REPO_TOKEN }}
+        run: |
+          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git config --global credential.helper store
+          printf '%s\n' "https://x-access-token:${CORE_REPO_TOKEN}@github.com" > "$HOME/.git-credentials"
+          chmod 600 "$HOME/.git-credentials"
+          npm install
 
       - name: Run behavioral tests
         run: npm test
