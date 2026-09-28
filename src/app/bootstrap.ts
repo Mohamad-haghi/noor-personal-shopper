@@ -17,6 +17,7 @@ import { DemoBranchProvider } from "../providers/demo/demo-branch-provider";
 import { DemoVisitProvider } from "../providers/demo/demo-visit-provider";
 import { DemoSelectionProfileProvider } from "../providers/demo/demo-selection-profile-provider";
 import { DemoSearchProvider } from "../providers/demo/demo-search-provider";
+import { NoorDigitalSalesRecommendationBridge } from "../integration/digital-sales-core/recommendation-bridge";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
@@ -40,12 +41,6 @@ import { renderApplicationShell } from "../ui/render-application-shell";
 
 export async function startApplication(root: HTMLElement): Promise<void> {
   const config = readAppConfig();
-
-  if (config.mode !== "demo") {
-    throw new Error(
-      'Integrated mode is not available in this foundation. Set VITE_NOOR_MODE="demo".',
-    );
-  }
 
   root.innerHTML = `
     <main class="app-loading" aria-live="polite">
