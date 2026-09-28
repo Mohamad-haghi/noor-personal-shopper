@@ -70,15 +70,6 @@ function toIntent(
   };
 }
 
-function findNoorProduct(
-  products: readonly Product[],
-  coreProductId: string,
-  catalogProducts: readonly { product: Product; noor: Product }[],
-): Product | null {
-  const core = products.find((item) => item.id === coreProductId);
-  return core ?? null;
-}
-
 export class NoorDigitalSalesRecommendationBridge {
   private readonly provider: NoorDigitalSalesProductProvider;
   private readonly engine: DigitalSalesEngine;
