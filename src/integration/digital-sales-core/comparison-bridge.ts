@@ -1,5 +1,6 @@
 import { DigitalSalesEngine, EYEWEAR_DOMAIN_PACK_V1, type Product as CoreProduct } from "digital-sales-core";
-import type { Comparison, Product } from "../../domain";
+import type { Product } from "../../domain";
+import type { Comparison as CoreComparison } from "digital-sales-core";
 import type { CatalogService } from "../../services/catalog-service";
 
 export class NoorDigitalSalesComparisonBridge {
@@ -56,9 +57,8 @@ export class NoorDigitalSalesComparisonBridge {
   async compare(
     products: readonly Product[],
     attributes: readonly string[],
-  ): Promise<{ coreProductIds: string[]; attributes: string[]; differences: unknown[] }> {
+  ): Promise<CoreComparison> {
     const coreProducts = await this.getCoreProducts();
-    const byNoorId = new Map(products.map((product) => [product.identity.id, product]));
     const selected = coreProducts.filter((coreProduct) =>
       products.some((product) => {
         const externalId =
