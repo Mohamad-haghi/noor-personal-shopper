@@ -20,8 +20,7 @@ jobs:
           node-version: 22
 
       - name: Configure private Core dependency access
-        if: ${{ secrets.CORE_REPO_TOKEN != '' }}
-        run: |
+              run: |
           git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "https://github.com/"
           git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
         env:
