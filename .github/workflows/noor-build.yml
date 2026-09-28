@@ -28,6 +28,8 @@ jobs:
           git config --global credential.helper store
           printf '%s\n' "https://x-access-token:${CORE_REPO_TOKEN}@github.com" > "$HOME/.git-credentials"
           chmod 600 "$HOME/.git-credentials"
+          echo "Verifying read access to private Digital Sales Core..."
+          git ls-remote "https://x-access-token:${CORE_REPO_TOKEN}@github.com/Mohamad-haghi/digital-sales-core.git" HEAD
           npm install
 
       - name: Run behavioral tests
