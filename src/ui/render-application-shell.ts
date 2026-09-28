@@ -611,7 +611,7 @@ export async function renderApplicationShell(
   } else if (match?.route.path === "/choices") {
     await renderChoicesRoute(routeView, catalogService, choicesService);
   } else if (match?.route.path === "/compare") {
-    await renderCompareRoute(routeView, catalogService, choicesService, compareService, digitalSalesComparisonBridge);
+    await renderCompareRoute(routeView, catalogService, choicesService, compareService, digitalSalesComparisonBridge, digitalSalesPurchaseHandoffBridge);
   } else if (match?.route.path === "/account") {
     await renderAccountRoute(routeView, accountService);
   } else if (match?.route.path === "/cart") {
