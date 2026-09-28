@@ -12,3 +12,5 @@ export type { HeroContentProvider, HeroDestinationResolver } from "./interfaces/
 export type { SearchIntegration } from "./interfaces/search-integration";
 export type { IdentityIntegration } from "./interfaces/identity-integration";
 export type { ReservationIntegration } from "./interfaces/reservation-integration";
+
+export * from "./digital-sales-core";
