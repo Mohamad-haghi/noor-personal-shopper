@@ -28,7 +28,10 @@ jobs:
           git config --global credential.helper store
           printf '%s\n' "https://x-access-token:${CORE_REPO_TOKEN}@github.com" > "$HOME/.git-credentials"
           chmod 600 "$HOME/.git-credentials"
-          echo "Verifying read access to private Digital Sales Core..."
+          echo "Checking PAT authentication..."
+          curl -sS -o /tmp/token-check.json -w "GitHub token HTTP %{http_code}\n" -H "Authorization: Bearer ${CORE_REPO_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/user
+          echo "Checking Core repository access..."
+          curl -sS -o /tmp/core-check.json -w "Core repository HTTP %{http_code}\n" -H "Authorization: Bearer ${CORE_REPO_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/Mohamad-haghi/digital-sales-core
           git ls-remote "https://x-access-token:${CORE_REPO_TOKEN}@github.com/Mohamad-haghi/digital-sales-core.git" HEAD
           npm install
 
