@@ -10,7 +10,7 @@ describe("NOOR Digital Sales Core decision-to-purchase bridges", () => {
     const products = await catalogService.listProducts();
     const bridge = new NoorDigitalSalesComparisonBridge(catalogService);
     const result = await bridge.compare(products.slice(0, 2), ["frameMaterial", "frameColor"]);
-    expect(result.coreProductIds).toHaveLength(2);
+    expect(result.productIds).toHaveLength(2);
     expect(result.attributes).toEqual(["frameMaterial", "frameColor"]);
     expect(result.differences).toHaveLength(2);
   });
