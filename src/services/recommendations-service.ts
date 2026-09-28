@@ -6,6 +6,7 @@ import type {
 } from "../domain";
 import type { CatalogService } from "./catalog-service";
 import { RecommendationEngine, type RecommendationCandidate } from "./recommendation-engine";
+import type { NoorDigitalSalesRecommendationBridge } from "../integration/digital-sales-core/recommendation-bridge";
 
 export class RecommendationsService {
   constructor(
