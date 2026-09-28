@@ -28,6 +28,14 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Configure private Digital Sales Core dependency access
+        if: ${{ secrets.CORE_REPO_TOKEN != '' }}
+        run: |
+          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
+          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "git@github.com:"
+        env:
+          CORE_REPO_TOKEN: ${{ secrets.CORE_REPO_TOKEN }}
+
       - name: Install dependencies
         run: npm install
 
