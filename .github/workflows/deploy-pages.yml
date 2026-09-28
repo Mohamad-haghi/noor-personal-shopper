@@ -38,7 +38,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm pkg set dependencies.digital-sales-core="file:../digital-sales-core"
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
           npm install
 
       - name: Verify behavior
