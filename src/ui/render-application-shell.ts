@@ -207,11 +207,6 @@ async function renderCompareRoute(
   }
 }
 
-async function catalogServiceForHandoff(routeView: HTMLElement, productId: string): Promise<string | null> {
-  const button = routeView.querySelector<HTMLButtonElement>(`[data-product-id="${CSS.escape(productId)}"]`);
-  return button?.dataset.productId ?? null;
-}
-
 async function attachPurchaseActions(
   routeView: HTMLElement,
   commerceService: CommerceService,
@@ -225,10 +220,9 @@ async function attachPurchaseActions(
       if (!variantId || !productId) return;
       const offer = await commerceService.getOffer({ id: variantId, productId: { id: productId, source: "demo" } });
       if (!offer) return;
-      const noorReference = (await catalogServiceForHandoff(routeView, productId)) ?? productId;
       await digitalSalesPurchaseHandoffBridge.create(
         "noor-demo-session",
-        noorReference,
+        productId,
         variantId,
         "https://www.nooroptic.com/fa/search",
         { source: "noor-personal-shopper", productId, variantId },
