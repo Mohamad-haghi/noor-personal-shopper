@@ -12,7 +12,7 @@
   "dependencies": {
     "typescript": "^7.0.2",
     "vite": "^8.3.1",
-    "digital-sales-core": "git+https://github.com/Mohamad-haghi/digital-sales-core.git#1bd0ed5f2d4806b1c1f8944a6743636d4f1cc8ad"
+    "digital-sales-core": "git+https://github.com/Mohamad-haghi/digital-sales-core.git#e0c45f0301f3f3944be13ef1825489a32ddb2b4e"
   },
   "devDependencies": {
     "vitest": "^5.0.2"
