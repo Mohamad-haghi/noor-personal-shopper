@@ -18,6 +18,8 @@ import { DemoVisitProvider } from "../providers/demo/demo-visit-provider";
 import { DemoSelectionProfileProvider } from "../providers/demo/demo-selection-profile-provider";
 import { DemoSearchProvider } from "../providers/demo/demo-search-provider";
 import { NoorDigitalSalesRecommendationBridge } from "../integration/digital-sales-core/recommendation-bridge";
+import { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
+import { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
@@ -65,6 +67,8 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const catalogProvider = new DemoCatalogProvider();
     const catalogService = new CatalogService(catalogProvider);
     const digitalSalesRecommendationBridge = new NoorDigitalSalesRecommendationBridge(catalogService);
+    const digitalSalesComparisonBridge = new NoorDigitalSalesComparisonBridge(catalogService);
+    const digitalSalesPurchaseHandoffBridge = new NoorDigitalSalesPurchaseHandoffBridge(catalogService);
     const recommendationsService = new RecommendationsService(catalogService, undefined, digitalSalesRecommendationBridge);
     const searchService = new SearchService(new DemoSearchProvider(catalogProvider), catalogService);
     const choicesService = new ChoicesService(new DemoChoicesProvider());
@@ -92,6 +96,8 @@ export async function startApplication(root: HTMLElement): Promise<void> {
         catalogService,
         choicesService,
         compareService,
+        digitalSalesComparisonBridge,
+        digitalSalesPurchaseHandoffBridge,
         accountService,
         cartService,
         commerceService,
