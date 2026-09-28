@@ -23,8 +23,8 @@ jobs:
         env:
           CORE_REPO_TOKEN: ${{ secrets.CORE_REPO_TOKEN }}
         run: |
-          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
-          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global --add url."https://github.com/".insteadOf "git@github.com:"
           git config --global credential.helper store
           printf '%s\n' "https://x-access-token:${CORE_REPO_TOKEN}@github.com" > "$HOME/.git-credentials"
           chmod 600 "$HOME/.git-credentials"
