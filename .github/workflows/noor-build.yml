@@ -19,15 +19,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Configure private Core dependency access
-        run: |
-          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "https://github.com/"
-          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
-          git config --global url."https://x-access-token:${CORE_REPO_TOKEN}@github.com/".insteadOf "git@github.com:"
-        env:
-          CORE_REPO_TOKEN: ${{ secrets.CORE_REPO_TOKEN }}
-
       - name: Install dependencies
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: url.https://x-access-token:${{ secrets.CORE_REPO_TOKEN }}@github.com/.insteadOf
+          GIT_CONFIG_VALUE_0: ssh://git@github.com/
         run: npm install
 
       - name: Run behavioral tests
