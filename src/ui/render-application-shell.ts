@@ -31,6 +31,8 @@ import { renderBranches } from "./render-branches";
 import { renderVisit } from "./render-visit";
 import { renderProducts, renderProductDetail } from "./render-products";
 import { renderSearch } from "./render-search";
+import type { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
+import type { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -175,6 +177,8 @@ async function renderCompareRoute(
   catalogService: CatalogService,
   choicesService: ChoicesService,
   compareService: CompareService,
+  digitalSalesComparisonBridge: NoorDigitalSalesComparisonBridge,
+  digitalSalesPurchaseHandoffBridge: NoorDigitalSalesPurchaseHandoffBridge,
 ): Promise<void> {
   const choices = await choicesService.listChoices();
   const items = choices.slice(0, 3).map((choice, index) => ({
@@ -195,12 +199,24 @@ async function renderCompareRoute(
 
   const products = await catalogService.listProducts();
   renderCompare(routeView, comparison, products);
+  if (comparison) {
+    await digitalSalesComparisonBridge.compare(
+      products.filter((product) => comparison.items.some((item) => item.variantId.productId.id === product.identity.id)),
+      ["frameShapes", "frameMaterial", "frameColor", "lensWidthMm", "bridgeWidthMm", "templeLengthMm"],
+    );
+  }
+}
+
+async function catalogServiceForHandoff(routeView: HTMLElement, productId: string): Promise<string | null> {
+  const button = routeView.querySelector<HTMLButtonElement>(`[data-product-id="${CSS.escape(productId)}"]`);
+  return button?.dataset.productId ?? null;
 }
 
 async function attachPurchaseActions(
   routeView: HTMLElement,
   commerceService: CommerceService,
   cartService: CartService,
+  digitalSalesPurchaseHandoffBridge: NoorDigitalSalesPurchaseHandoffBridge,
 ): Promise<void> {
   routeView.querySelectorAll<HTMLButtonElement>("[data-add-to-cart]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -209,6 +225,14 @@ async function attachPurchaseActions(
       if (!variantId || !productId) return;
       const offer = await commerceService.getOffer({ id: variantId, productId: { id: productId, source: "demo" } });
       if (!offer) return;
+      const noorReference = (await catalogServiceForHandoff(routeView, productId)) ?? productId;
+      await digitalSalesPurchaseHandoffBridge.create(
+        "noor-demo-session",
+        noorReference,
+        variantId,
+        "https://www.nooroptic.com/fa/search",
+        { source: "noor-personal-shopper", productId, variantId },
+      );
       await cartService.addCommerceOffer({ id: "demo-cart" }, offer);
       button.textContent = "به سبد خرید اضافه شد";
       button.disabled = true;
@@ -535,6 +559,8 @@ export async function renderApplicationShell(
   catalogService: CatalogService,
   choicesService: ChoicesService,
   compareService: CompareService,
+  digitalSalesComparisonBridge: NoorDigitalSalesComparisonBridge,
+  digitalSalesPurchaseHandoffBridge: NoorDigitalSalesPurchaseHandoffBridge,
   accountService: AccountService,
   cartService: CartService,
   commerceService: CommerceService,
@@ -591,7 +617,7 @@ export async function renderApplicationShell(
   } else if (match?.route.path === "/choices") {
     await renderChoicesRoute(routeView, catalogService, choicesService);
   } else if (match?.route.path === "/compare") {
-    await renderCompareRoute(routeView, catalogService, choicesService, compareService);
+    await renderCompareRoute(routeView, catalogService, choicesService, compareService, digitalSalesComparisonBridge);
   } else if (match?.route.path === "/account") {
     await renderAccountRoute(routeView, accountService);
   } else if (match?.route.path === "/cart") {
@@ -612,6 +638,6 @@ export async function renderApplicationShell(
   }
 
   if (match?.route.path !== "/cart" && match?.route.path !== "/confirmation/:id" && match?.route.path !== "/branches" && match?.route.path !== "/visit") {
-    await attachPurchaseActions(routeView, commerceService, cartService);
+    await attachPurchaseActions(routeView, commerceService, cartService, digitalSalesPurchaseHandoffBridge);
   }
 }
