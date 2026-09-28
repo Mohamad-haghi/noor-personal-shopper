@@ -64,7 +64,8 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const shopperFeature = new ShopperFeature(selectionProfileService, selectionProfile);
     const catalogProvider = new DemoCatalogProvider();
     const catalogService = new CatalogService(catalogProvider);
-    const recommendationsService = new RecommendationsService(catalogService);
+    const digitalSalesRecommendationBridge = new NoorDigitalSalesRecommendationBridge(catalogService);
+    const recommendationsService = new RecommendationsService(catalogService, undefined, digitalSalesRecommendationBridge);
     const searchService = new SearchService(new DemoSearchProvider(catalogProvider), catalogService);
     const choicesService = new ChoicesService(new DemoChoicesProvider());
     const compareService = new CompareService(new DemoCompareProvider());
