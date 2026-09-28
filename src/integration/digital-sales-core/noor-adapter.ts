@@ -1,4 +1,4 @@
-import type { Product as NoorProduct } from "../../domain/product";
+import type { Product as CoreProduct, ProductVariant as CoreProductVariant, ProductAttributeValue } from "digital-sales-core";
 import type { ProductVariant as NoorProductVariant } from "../../domain/product-variant";
 
 export interface DigitalSalesProductVariant {
@@ -7,7 +7,7 @@ export interface DigitalSalesProductVariant {
   readonly title: string;
   readonly price?: number;
   readonly availability?: boolean;
-  readonly attributes: Readonly<Record<string, string | number | boolean>>;
+  readonly attributes: Readonly<Record<string, ProductAttributeValue>>;
 }
 
 export interface DigitalSalesProduct {
@@ -41,7 +41,7 @@ export const NOOR_DIGITAL_SALES_ADAPTER_CONFIG: NoorDigitalSalesAdapterConfig = 
 
 function primitiveAttributes(
   attributes: Readonly<Record<string, unknown>>,
-): Readonly<Record<string, string | number | boolean>> {
+): Readonly<Record<string, ProductAttributeValue>> {
   return Object.fromEntries(
     Object.entries(attributes).filter(
       ([, value]) =>
