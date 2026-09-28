@@ -11,8 +11,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout NOOR
         uses: actions/checkout@v4
+
+      - name: Checkout Digital Sales Core
+        uses: actions/checkout@v4
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: ad965af6ebd8889f084b00755db3b5fed16904c2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -20,19 +28,8 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        env:
-          CORE_REPO_TOKEN: ${{ secrets.CORE_REPO_TOKEN }}
         run: |
-          git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
-          git config --global --add url."https://github.com/".insteadOf "git@github.com:"
-          git config --global credential.helper store
-          printf '%s\n' "https://Mohamad-haghi:${CORE_REPO_TOKEN}@github.com" > "$HOME/.git-credentials"
-          chmod 600 "$HOME/.git-credentials"
-          echo "Checking PAT authentication..."
-          curl -sS -o /tmp/token-check.json -w "GitHub token HTTP %{http_code}\n" -H "Authorization: Bearer ${CORE_REPO_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/user
-          echo "Checking Core repository access..."
-          curl -sS -o /tmp/core-check.json -w "Core repository HTTP %{http_code}\n" -H "Authorization: Bearer ${CORE_REPO_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/Mohamad-haghi/digital-sales-core
-          git ls-remote "https://Mohamad-haghi:${CORE_REPO_TOKEN}@github.com/Mohamad-haghi/digital-sales-core.git" HEAD
+          npm pkg set dependencies.digital-sales-core="file:../digital-sales-core"
           npm install
 
       - name: Run behavioral tests
