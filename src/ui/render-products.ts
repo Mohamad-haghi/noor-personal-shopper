@@ -19,7 +19,7 @@ function categoryLabel(product: Product): string {
   return product.attributes.category === "sunglasses" ? "عینک آفتابی" : "عینک طبی";
 }
 
-function productCard(product: Product, variant: ProductVariant | null): string {
+function productCard(product: Product, variant: ProductVariant | null, offer: CommerceOffer | null): string {
   const variantAction = variant
     ? `<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button>`
     : `<span class="product-unavailable">در Demo قابل خرید نیست</span>`;
@@ -31,6 +31,8 @@ function productCard(product: Product, variant: ProductVariant | null): string {
       <h2><a href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>${escapeHtml(product.name)}</a></h2>
       <p>${escapeHtml(product.description ?? "جزئیات این فریم در کاتالوگ Demo ثبت شده است.")}</p>
       <div class="product-card-meta"><span>شناسه: ${escapeHtml(product.externalIds.sku ?? product.identity.id)}</span></div>
+      ${offer ? `<p class="product-demo-price"><strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong><small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small></p>` : `<p class="product-demo-price"><small>قیمت نمایشی برای این گزینه در دسترس نیست.</small></p>`}
+      <p class="product-demo-stock">موجودی فرضی دمو — موجودی واقعی نور نیست</p>
       <div class="product-card-actions">
         <a class="button button-secondary" href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>جزئیات</a>
         ${variantAction}
@@ -43,17 +45,21 @@ export function renderProducts(
   routeView: HTMLElement,
   products: readonly Product[],
   variantsByProduct: ReadonlyMap<string, readonly ProductVariant[]>,
+  offers: readonly CommerceOffer[],
 ): void {
+  const offersByVariant = new Map(offers.filter((offer) => offer.pricing.source === "demo" && offer.availability.source === "demo").map((offer) => [offer.variantId.id, offer]));
   const cards = products.map((product) => {
-    const variant = variantsByProduct.get(product.identity.id)?.find((item) => item.availability.isAvailable) ?? null;
-    return productCard(product, variant);
+    const variant = variantsByProduct.get(product.identity.id)?.find((item) => item.availability.isAvailable && item.availability.source === "demo") ?? null;
+    return productCard(product, variant, variant ? offersByVariant.get(variant.identity.id) ?? null : null);
   }).join("");
 
   routeView.innerHTML = `<main class="products-page" id="main-content" aria-labelledby="products-title">
     <section class="products-intro">
       <p class="eyebrow">NOOR PERSONAL SHOPPER · CATALOG</p>
       <h1 id="products-title">کاتالوگ فریم‌ها</h1>
-      <p>محصولات این صفحه از CatalogService می‌آیند. در این نسخه، کاتالوگ Demo مستقل است و ساختار آن برای اتصال آینده به کاتالوگ واقعی نور حفظ شده است.</p>
+      <p>محصولات این صفحه از کاتالوگ نمونه می‌آیند. این ۱۵ محصول برای نمایش مسیر انتخاب آماده شده‌اند؛ این صفحه به سامانه زنده نور متصل نیست.</p>
+      <aside class="demo-truth-notice" role="note"><strong>اطلاع مهم درباره دمو</strong><span>تمام قیمت‌ها نمایشی و فرضی هستند و قیمت واقعی نور نیستند. موجودی همه محصولات نیز فرضی و فقط برای نمایش عملکرد دمو فعال است؛ موجودی واقعی نور را نشان نمی‌دهد.</span></aside>
+      <div class="catalog-shopper-cta"><a class="button button-primary" href="/shopper" data-app-link>برای انتخاب بهتر از دستیار خرید کمک بگیر</a></div>
     </section>
     <section class="product-grid" aria-label="فهرست محصولات">${cards}</section>
   </main>`;
@@ -70,7 +76,7 @@ export function renderProductDetail(
     return;
   }
 
-  const availableVariants = variants.filter((variant) => variant.availability.isAvailable);
+  const availableVariants = variants.filter((variant) => variant.availability.isAvailable && variant.availability.source === "demo");
   const offerByVariant = new Map(offers.map((offer) => [offer.variantId.id, offer]));
   const shapes = Array.isArray(custom(product, "frameShapes")) ? (custom(product, "frameShapes") as string[]).join(" · ") : "—";
   const material = String(custom(product, "frameMaterial") ?? "—");
@@ -81,7 +87,7 @@ export function renderProductDetail(
   const variantRows = availableVariants.length
     ? availableVariants.map((variant) => {
         const offer = offerByVariant.get(variant.identity.id);
-        const price = offer ? `<span class="product-price">${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ${escapeHtml(offer.pricing.currency)}</span><small>${escapeHtml(offer.pricing.label)}</small>` : "<span>قیمت در دسترس نیست</span>";
+        const price = offer && offer.pricing.source === "demo" && offer.availability.source === "demo" ? `<span class="product-price">${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</span><small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small>` : "<span>قیمت واقعی در این دمو در دسترس نیست</span>";
         return `<article class="product-variant-row">
           <div><strong>${escapeHtml(variant.name)}</strong><p>${escapeHtml([variant.attributes.color,variant.attributes.size,variant.attributes.material].filter(Boolean).join(" · ") || "تنوع Demo")}</p></div>
           <div class="product-variant-purchase">${price}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button></div>
@@ -112,7 +118,8 @@ export function renderProductDetail(
     <section class="product-variants" aria-labelledby="variants-title">
       <p class="eyebrow">PURCHASE OPTIONS</p>
       <h2 id="variants-title">انتخاب نسخه و ادامه خرید</h2>
-      <p class="product-demo-note">قیمت‌ها و موجودی‌های این بخش نمایشی Demo هستند و از CommerceProvider می‌آیند؛ به قیمت یا موجودی واقعی نور متصل نیستند.</p>
+      <aside class="demo-truth-notice" role="note"><strong>اطلاع مهم درباره دمو</strong><span>قیمت نمایشی دمو — قیمت واقعی نور نیست. موجودی فرضی دمو — موجودی واقعی نور نیست. این اطلاعات فقط برای نمایش عملکرد انتخاب و مقایسه ساخته شده‌اند.</span></aside>
+      <div class="product-shopper-cta"><a class="button button-secondary" href="/shopper" data-app-link>برای انتخاب یا مقایسه از دستیار کمک بگیر</a></div>
       <div class="product-variant-list">${variantRows}</div>
     </section>
   </main>`;

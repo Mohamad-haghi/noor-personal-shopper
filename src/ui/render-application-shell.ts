@@ -1,4 +1,4 @@
-import type { HeroContent, Product, Recommendation, SavedChoice, Comparison } from "../domain";
+import type { HeroContent, Product, Recommendation, SavedChoice, Comparison, CommerceOffer } from "../domain";
 import type { RecommendationsService } from "../services/recommendations-service";
 import type { CatalogService } from "../services/catalog-service";
 import type { ChoicesService } from "../services/choices-service";
@@ -31,6 +31,7 @@ import { renderBranches } from "./render-branches";
 import { renderVisit } from "./render-visit";
 import { renderProducts, renderProductDetail } from "./render-products";
 import { renderSearch } from "./render-search";
+import { renderManagerOverview } from "./render-manager-overview";
 import type { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
 import type { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
 
@@ -414,13 +415,19 @@ async function renderSearchRoute(routeView: HTMLElement, searchService: SearchSe
   });
 }
 
-async function renderProductsRoute(routeView: HTMLElement, catalogService: CatalogService): Promise<void> {
+async function renderProductsRoute(routeView: HTMLElement, catalogService: CatalogService, commerceService: CommerceService): Promise<void> {
   const products = await catalogService.listProducts();
   const variantsByProduct = new Map<string, readonly import("../domain").ProductVariant[]>();
+  const offers: CommerceOffer[] = [];
   for (const product of products) {
-    variantsByProduct.set(product.identity.id, await catalogService.listVariants(product.identity));
+    const variants = await catalogService.listVariants(product.identity);
+    variantsByProduct.set(product.identity.id, variants);
+    for (const variant of variants) {
+      const offer = await commerceService.getOffer(variant.identity);
+      if (offer) offers.push(offer);
+    }
   }
-  renderProducts(routeView, products, variantsByProduct);
+  renderProducts(routeView, products, variantsByProduct, offers);
 }
 
 async function renderProductDetailRoute(
@@ -576,6 +583,7 @@ export async function renderApplicationShell(
           <span class="app-brand-name">نور</span>
         </a>
         <div class="app-header-meta">
+          <a class="button button-primary header-shopper-cta" href="/shopper" data-app-link>دستیار خرید شخصی</a>
           <span class="app-mode">دموی مستقل</span>
           <details class="mobile-nav">
             <summary>منو</summary>
@@ -598,10 +606,19 @@ export async function renderApplicationShell(
   if (match?.route.path === "/") {
     if (hero) renderHero(routeView, hero, heroDestination);
     else renderFoundationStatus(routeView, status);
+  } else if (match?.route.path === "/manager") {
+    const products = await catalogService.listProducts();
+    const variants = (await Promise.all(products.map((product) => catalogService.listVariants(product.identity)))).flat();
+    const offers: CommerceOffer[] = [];
+    for (const variant of variants) {
+      const offer = await commerceService.getOffer(variant.identity);
+      if (offer) offers.push(offer);
+    }
+    renderManagerOverview(routeView, { products, variants, offers });
   } else if (match?.route.path === "/search") {
     await renderSearchRoute(routeView, searchService, catalogService);
   } else if (match?.route.path === "/products") {
-    await renderProductsRoute(routeView, catalogService);
+    await renderProductsRoute(routeView, catalogService, commerceService);
   } else if (match?.route.path === "/products/:id") {
     await renderProductDetailRoute(routeView, catalogService, commerceService, match.params.id ?? null);
   } else if (match?.route.path === "/shopper") {
