@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { CommerceOffer } from "../src/domain";
 import { resolveRoute } from "../src/app/routing/routes";
 import { DemoCatalogProvider } from "../src/providers/demo/demo-catalog-provider";
 import { DemoCommerceProvider } from "../src/providers/demo/demo-commerce-provider";
@@ -17,7 +18,7 @@ describe("Level 1 demo truth and manager overview", () => {
     expect(products).toHaveLength(15);
 
     const variantsByProduct = new Map<string, Awaited<ReturnType<typeof catalog.listVariants>>>();
-    const offers = [];
+    const offers: CommerceOffer[] = [];
     for (const product of products) {
       const variants = await catalog.listVariants(product.identity);
       variantsByProduct.set(product.identity.id, variants);
