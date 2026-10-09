@@ -32,7 +32,6 @@ import { renderVisit } from "./render-visit";
 import { renderProducts, renderProductDetail } from "./render-products";
 import { renderSearch } from "./render-search";
 import { renderManagerOverview } from "./render-manager-overview";
-import { renderManagerOverview } from "./render-manager-overview";
 import type { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
 import type { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
 
