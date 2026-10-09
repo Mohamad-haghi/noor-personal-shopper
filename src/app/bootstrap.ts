@@ -1,4 +1,5 @@
 import { readAppConfig } from "../config/app-config";
+import { getCompositionModeError } from "./composition/composition-mode";
 import { FoundationFeature } from "../features/foundation/foundation-feature";
 import { ShopperFeature } from "../features/shopper/shopper-feature";
 import { DemoFoundationProvider } from "../providers/demo/demo-foundation-provider";
@@ -42,8 +43,6 @@ import { createRouter } from "./routing/create-router";
 import { renderApplicationShell } from "../ui/render-application-shell";
 
 export async function startApplication(root: HTMLElement): Promise<void> {
-  const config = readAppConfig();
-
   root.innerHTML = `
     <main class="app-loading" aria-live="polite">
       <p>در حال آماده‌سازی تجربهٔ نور…</p>
@@ -51,6 +50,22 @@ export async function startApplication(root: HTMLElement): Promise<void> {
   `;
 
   try {
+    const config = readAppConfig();
+    const compositionModeError = getCompositionModeError(config.mode);
+
+    if (compositionModeError) {
+      root.innerHTML = `
+        <main class="app-error" aria-labelledby="app-error-title">
+          <p class="eyebrow">NOOR Personal Shopper</p>
+          <h1 id="app-error-title">اتصال واقعی هنوز پیکربندی نشده است</h1>
+          <p>این نسخه فقط برای نمایش آزمایشی آماده است. برای جلوگیری از نمایش اطلاعات نمایشی به‌جای اطلاعات واقعی، حالت اتصال واقعی تا زمان پیکربندی و بررسی منبع داده فعال نمی‌شود.</p>
+          <p>هیچ موجودی، قیمت، سفارش یا پرداخت زنده‌ای از این صفحه تأیید نمی‌شود.</p>
+          <button class="button button-primary" type="button" onclick="window.location.reload()">تلاش دوباره</button>
+        </main>
+      `;
+      return;
+    }
+
     const foundationProvider = new DemoFoundationProvider();
     const foundationService = new FoundationService(foundationProvider);
     const foundationFeature = new FoundationFeature(foundationService);
