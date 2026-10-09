@@ -15,7 +15,7 @@ export const APP_ROUTES: readonly AppRoute[] = [
   { path: "/search", title: "جست‌وجوی فریم", navigationLabel: "جست‌وجو" },
   { path: "/products", title: "محصولات", navigationLabel: "محصولات" },
   { path: "/products/:id", title: "جزئیات محصول", navigationLabel: null },
-  { path: "/shopper", title: "دستیار خرید", navigationLabel: "دستیار خرید" },
+  { path: "/shopper", title: "دستیار خرید", navigationLabel: "دستیار خرید" },\n  { path: "/manager", title: "نمای کلی مدیر", navigationLabel: "نمای کلی مدیر (دمو)" },
   { path: "/recommendations", title: "پیشنهادها", navigationLabel: "پیشنهادها" },
   { path: "/choices", title: "انتخاب‌ها", navigationLabel: "انتخاب‌ها" },
   { path: "/compare", title: "مقایسه", navigationLabel: "مقایسه" },
