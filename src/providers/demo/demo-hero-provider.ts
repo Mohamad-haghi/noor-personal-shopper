@@ -1,6 +1,7 @@
-import heroMediaSource from "../../assets/noor-hero.svg";
 import type { HeroProvider } from "../interfaces/hero-provider";
 import type { HeroContent, HeroContentId } from "../../domain";
+
+const heroMediaSource = `${import.meta.env.BASE_URL}media/products/ray-ban-rb3025-181-71/primary.jpeg`;
 
 const DEMO_HERO: HeroContent = {
   identity: { id: "noor-demo-home" },
@@ -11,7 +12,7 @@ const DEMO_HERO: HeroContent = {
   media: {
     type: "image",
     source: heroMediaSource,
-    altText: "تصویر انتزاعی و مینیمال مشاور انتخاب عینک نور",
+    altText: "عینک آفتابی ریبن RB3025 از مجموعه نمایشی نور",
     poster: null,
   },
   cta: {
