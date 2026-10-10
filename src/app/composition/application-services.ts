@@ -39,6 +39,7 @@ import {
   CheckoutService,
   ReservationService,
 } from "../../services";
+import type { RecommendationDecisionProvider } from "../../services/recommendations-service";
 
 export interface ApplicationServices {
   readonly catalog: CatalogService;
@@ -64,6 +65,7 @@ export interface ApplicationServices {
 
 export interface ApplicationProviders {
   readonly catalog: CatalogProvider;
+  readonly recommendations: RecommendationDecisionProvider;
   readonly shopper: ShopperProvider;
   readonly choices: ChoicesProvider;
   readonly compare: CompareProvider;
@@ -89,7 +91,7 @@ export function composeApplicationServices(providers: ApplicationProviders): App
   return {
     catalog,
     shopper: new ShopperService(providers.shopper),
-    recommendations: new RecommendationsService(catalog),
+    recommendations: new RecommendationsService(catalog, providers.recommendations),
     choices: new ChoicesService(providers.choices),
     compare: new CompareService(providers.compare),
     account: new AccountService(providers.account),
