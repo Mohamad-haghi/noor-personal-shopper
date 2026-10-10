@@ -17,6 +17,33 @@ describe("Level 1 demo truth and manager overview", () => {
     const products = await catalog.listProducts();
     expect(products).toHaveLength(15);
 
+    const expectedImageSlugs: Readonly<Record<string, string>> = {
+      "1000053268": "ray-ban-rb3025-181-71",
+      "1000087540": "persol-po0649-95-31",
+      "1000088890": "oakley-oo9318-02-34",
+      "1000103998": "tom-ford-ft0778-01a-60",
+      "1000127057": "prada-pr03ys-2au6s1",
+      "1000084476": "dolce-gabbana-dg2204-12988g-64",
+      "1000100480": "dior-30montaigne-epz-1i",
+      "1000104615": "gucci-gg0900s-005",
+      "1000058221": "oga-8314o-nn030",
+      "1000109052": "ray-ban-rb6461-2500",
+      "1000104076": "tom-ford-ft5661-001",
+      "1000112234": "prada-pr51yv-04q1o1",
+      "1000106967": "valentino-va1021-3003",
+      "1000127106": "cazal-607-001",
+      "1000044519": "persol-po3011-095",
+    };
+
+    for (const product of products) {
+      const reference = product.externalIds.providerProductId;
+      expect(reference).toBeTruthy();
+      const slug = expectedImageSlugs[reference!];
+      expect(slug, `image mapping for ${reference}`).toBeTruthy();
+      expect(product.media.primaryImage?.url).toContain(`/media/products/${slug}/primary.jpeg`);
+      expect(product.media.primaryImage?.altText).toBe(product.name);
+    }
+
     const variantsByProduct = new Map<string, Awaited<ReturnType<typeof catalog.listVariants>>>();
     const offers: CommerceOffer[] = [];
     for (const product of products) {
