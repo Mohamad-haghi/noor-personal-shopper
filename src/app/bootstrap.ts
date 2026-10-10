@@ -84,7 +84,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const digitalSalesRecommendationBridge = new NoorDigitalSalesRecommendationBridge(catalogService);
     const digitalSalesComparisonBridge = new NoorDigitalSalesComparisonBridge(catalogService);
     const digitalSalesPurchaseHandoffBridge = new NoorDigitalSalesPurchaseHandoffBridge(catalogService);
-    const recommendationsService = new RecommendationsService(catalogService, undefined, digitalSalesRecommendationBridge);
+    const recommendationsService = new RecommendationsService(catalogService, digitalSalesRecommendationBridge);
     const searchService = new SearchService(new DemoSearchProvider(catalogProvider), catalogService);
     const choicesService = new ChoicesService(new DemoChoicesProvider());
     const compareService = new CompareService(new DemoCompareProvider());
