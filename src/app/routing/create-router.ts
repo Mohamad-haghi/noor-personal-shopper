@@ -2,12 +2,34 @@ import { resolveRoute, type RouteMatch } from "./routes";
 
 export type RouteChangeHandler = (match: RouteMatch | null) => void;
 
+/** Convert a hosted URL path (for example /repo/products) to an app route (/products). */
+export function stripBasePath(pathname: string, baseUrl: string): string {
+  const basePath = baseUrl.replace(/\/+$/, "");
+  if (!basePath || basePath === "/") return pathname;
+  if (pathname === basePath || pathname === `${basePath}/`) return "/";
+  if (pathname.startsWith(`${basePath}/`)) {
+    return pathname.slice(basePath.length) || "/";
+  }
+  return pathname;
+}
+
+/** Keep in-app navigation under a deployment prefix such as GitHub Pages' /repo/. */
+export function withBasePath(pathname: string, baseUrl: string): string {
+  const basePath = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+  if (basePath === "/") return pathname;
+  if (pathname === basePath.slice(0, -1) || pathname.startsWith(basePath)) return pathname;
+  const routePath = pathname.startsWith("/") ? pathname.slice(1) : pathname;
+  return `${basePath}${routePath}`;
+}
+
 export function createRouter(
   root: HTMLElement,
   onRouteChange: RouteChangeHandler,
 ): () => void {
+  const baseUrl = import.meta.env.BASE_URL;
+
   const renderCurrentRoute = (): void => {
-    onRouteChange(resolveRoute(window.location.pathname));
+    onRouteChange(resolveRoute(stripBasePath(window.location.pathname, baseUrl)));
   };
 
   const handleClick = (event: MouseEvent): void => {
@@ -38,10 +60,11 @@ export function createRouter(
     }
 
     event.preventDefault();
+    const hostedPath = withBasePath(destination.pathname, baseUrl);
     window.history.pushState(
       null,
       "",
-      `${destination.pathname}${destination.search}${destination.hash}`,
+      `${hostedPath}${destination.search}${destination.hash}`,
     );
     renderCurrentRoute();
   };
