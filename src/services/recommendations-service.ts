@@ -5,15 +5,28 @@ import type {
   Product,
 } from "../domain";
 import type { CatalogService } from "./catalog-service";
-import { RecommendationEngine, type RecommendationCandidate } from "./recommendation-engine";
-import type { NoorDigitalSalesRecommendationBridge } from "../integration/digital-sales-core/recommendation-bridge";
+
+/**
+ * Boundary between the Personal Shopper presentation and the decision provider.
+ * A future integrated composition can implement this with the remote COR API;
+ * this service must never rank products locally as a fallback.
+ */
+export interface RecommendationDecisionProvider {
+  generateRecommendations(
+    shopperId: ShopperProfileId,
+    context: RecommendationContext,
+  ): Promise<readonly Recommendation[]>;
+}
 
 export class RecommendationsService {
   constructor(
     private readonly catalogService: CatalogService,
-    private readonly engine: RecommendationEngine = new RecommendationEngine(),
-    private readonly digitalSalesBridge?: NoorDigitalSalesRecommendationBridge,
-  ) {}
+    private readonly decisionProvider: RecommendationDecisionProvider,
+  ) {
+    if (!decisionProvider) {
+      throw new Error("cor_decision_provider_required");
+    }
+  }
 
   async getProductForVariant(
     variantId: import("../domain").ProductVariantId,
@@ -25,18 +38,12 @@ export class RecommendationsService {
     shopperId: ShopperProfileId,
     context: RecommendationContext,
   ): Promise<readonly Recommendation[]> {
-    if (this.digitalSalesBridge) {
-      return this.digitalSalesBridge.generateRecommendations(shopperId, context);
+    try {
+      return await this.decisionProvider.generateRecommendations(shopperId, context);
+    } catch {
+      // Never replace a failed decision-provider response with local ranking
+      // or demo results. The UI handles this stable error as an unavailable state.
+      throw new Error("cor_recommendation_unavailable");
     }
-
-    const availableVariants = await this.catalogService.listAvailableVariants();
-    const candidates: RecommendationCandidate[] = [];
-
-    for (const variant of availableVariants) {
-      const product = await this.catalogService.getProduct(variant.identity.productId);
-      if (product) candidates.push({ product, variant });
-    }
-
-    return this.engine.generate(shopperId, context, candidates);
   }
 }
