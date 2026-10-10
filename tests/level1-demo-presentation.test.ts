@@ -13,6 +13,15 @@ function fakeRoot(): HTMLElement {
 }
 
 describe("Level 1 demo truth and manager overview", () => {
+  it("keeps the product catalog balanced across desktop, tablet and mobile", () => {
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    expect(css).toContain(".product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}");
+    expect(css).toContain(".product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}");
+    expect(css).toContain(".product-grid{grid-template-columns:minmax(0,1fr);gap:14px}");
+    expect(css).toContain(".product-card:hover");
+    expect(css).toContain("@media(prefers-reduced-motion:reduce)");
+  });
+
   it("keeps all 15 sample products selectable with demo-only availability and pricing", async () => {
     const catalog = new DemoCatalogProvider();
     const commerce = new DemoCommerceProvider(catalog);
