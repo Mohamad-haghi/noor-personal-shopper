@@ -72,12 +72,13 @@ async function renderRecommendationRoute(
 ): Promise<void> {
   routeView.innerHTML = `<main class="app-loading" id="main-content" aria-live="polite"><p>در حال ساخت پیشنهادهای شما…</p></main>`;
   const flow = shopperFeature.getFlowState();
+  let recommendations: readonly Recommendation[];
+  const products: Product[] = [];
   try {
-    const recommendations = await recommendationsService.generateRecommendations(
+    recommendations = await recommendationsService.generateRecommendations(
       { id: "demo-shopper" },
       { occasion: flow.journey.useCase, season: null, requestSource: "shopper_request", journey: flow.journey },
     );
-    const products: Product[] = [];
     for (const recommendation of recommendations) {
       const product = await recommendationsService.getProductForVariant(recommendation.variantId);
       if (product) products.push(product);
@@ -86,11 +87,11 @@ async function renderRecommendationRoute(
       renderRecommendationsUnavailable(routeView);
       return;
     }
-    renderRecommendations(routeView, recommendations, products);
   } catch {
     renderRecommendationsUnavailable(routeView);
     return;
   }
+  renderRecommendations(routeView, recommendations, products);
 
   routeView.querySelectorAll<HTMLButtonElement>("[data-save-choice]").forEach((button) => {
     button.addEventListener("click", async () => {
