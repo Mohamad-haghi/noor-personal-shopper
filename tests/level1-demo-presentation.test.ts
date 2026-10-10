@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import type { CommerceOffer } from "../src/domain";
 import { resolveRoute } from "../src/app/routing/routes";
 import { DemoCatalogProvider } from "../src/providers/demo/demo-catalog-provider";
@@ -42,6 +44,8 @@ describe("Level 1 demo truth and manager overview", () => {
       expect(slug, `image mapping for ${reference}`).toBeTruthy();
       expect(product.media.primaryImage?.url).toContain(`/media/products/${slug}/primary.jpeg`);
       expect(product.media.primaryImage?.altText).toBe(product.name);
+      const assetPath = resolve(process.cwd(), "public", "media", "products", slug, "primary.jpeg");
+      expect(readFileSync(assetPath).byteLength, `image asset for ${reference}`).toBeGreaterThan(0);
     }
 
     const variantsByProduct = new Map<string, Awaited<ReturnType<typeof catalog.listVariants>>>();
