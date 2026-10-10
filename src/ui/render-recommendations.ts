@@ -33,3 +33,23 @@ export function renderRecommendations(routeView: HTMLElement, recommendations: r
 
   routeView.innerHTML = `<main class="recommendations" id="main-content" aria-labelledby="recommendations-title"><section class="recommendations-hero"><p class="eyebrow">NOOR PERSONAL SHOPPER</p><h1 id="recommendations-title">سه انتخاب برای شروع</h1><p>این سه فریم بر اساس پاسخ‌های همین مشاوره و فقط از میان محصولات Demo در دسترس انتخاب شده‌اند.</p><p class="inventory-link-note">هر لینک فروشگاه نور با شناسه ساختاریافته محصول ساخته می‌شود؛ این Demo به موجودی واقعی متصل نیست.</p></section><section class="recommendation-grid">${rows.map(({recommendation,product,index}) => card(product,recommendation,index)).join("")}</section><section class="smart-comparison" aria-labelledby="smart-comparison-title"><div><p class="eyebrow">SMART COMPARISON</p><h2 id="smart-comparison-title">مقایسهٔ سریع سه انتخاب</h2><p>به‌جای رتبه‌بندی ظاهری، تفاوت‌های اصلی را کنار هم ببینید و انتخاب را محدود کنید.</p></div><div class="comparison-table-wrap"><table><thead><tr><th>فریم</th><th>نوع</th><th>فرم</th><th>رنگ</th><th>UV</th></tr></thead><tbody>${compareRows}</tbody></table></div></section><div class="recommendation-actions"><a class="button button-secondary" href="/shopper" data-app-link>تغییر انتخاب‌ها</a><a class="button button-primary" href="/choices" data-app-link>انتخاب‌های من</a><a class="button button-secondary" href="/compare" data-app-link>مقایسه</a></div></main>`;
 }
+
+/**
+ * Truthful failure state for when the decision provider (COR in the target
+ * integrated composition) cannot return a valid response. Never show local or
+ * demo-generated recommendations as a substitute.
+ */
+export function renderRecommendationsUnavailable(routeView: HTMLElement): void {
+  routeView.innerHTML = `
+    <main class="app-error" id="main-content" aria-labelledby="recommendations-unavailable-title">
+      <p class="eyebrow">NOOR PERSONAL SHOPPER</p>
+      <h1 id="recommendations-unavailable-title">دستیار خرید فعلاً در دسترس نیست</h1>
+      <p>پیشنهاد معتبر از سرویس تصمیم‌گیری دریافت نشد؛ برای جلوگیری از راهنمایی اشتباه، پیشنهاد جایگزین نمایش داده نمی‌شود.</p>
+      <p>می‌توانید دوباره تلاش کنید یا محصولات فروشگاه را مستقیماً ببینید.</p>
+      <div class="route-actions">
+        <button class="button button-primary" type="button" onclick="window.location.reload()">تلاش دوباره</button>
+        <a class="button button-secondary" href="/products" data-app-link>مشاهده محصولات</a>
+      </div>
+    </main>
+  `;
+}

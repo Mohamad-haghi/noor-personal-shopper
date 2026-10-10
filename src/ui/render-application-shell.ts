@@ -20,7 +20,7 @@ import { renderFoundationStatus } from "./render-foundation";
 import { renderHero } from "./render-hero";
 import { renderRoutePlaceholder } from "./render-route-placeholder";
 import { renderShopper } from "./render-shopper";
-import { renderRecommendations } from "./render-recommendations";
+import { renderRecommendations, renderRecommendationsUnavailable } from "./render-recommendations";
 import { renderChoices } from "./render-choices";
 import { renderCompare } from "./render-compare";
 import { renderAccount } from "./render-account";
@@ -72,14 +72,24 @@ async function renderRecommendationRoute(
 ): Promise<void> {
   routeView.innerHTML = `<main class="app-loading" id="main-content" aria-live="polite"><p>در حال ساخت پیشنهادهای شما…</p></main>`;
   const flow = shopperFeature.getFlowState();
-  const recommendations = await recommendationsService.generateRecommendations(
-    { id: "demo-shopper" },
-    { occasion: flow.journey.useCase, season: null, requestSource: "shopper_request", journey: flow.journey },
-  );
+  let recommendations: readonly Recommendation[];
   const products: Product[] = [];
-  for (const recommendation of recommendations) {
-    const product = await recommendationsService.getProductForVariant(recommendation.variantId);
-    if (product) products.push(product);
+  try {
+    recommendations = await recommendationsService.generateRecommendations(
+      { id: "demo-shopper" },
+      { occasion: flow.journey.useCase, season: null, requestSource: "shopper_request", journey: flow.journey },
+    );
+    for (const recommendation of recommendations) {
+      const product = await recommendationsService.getProductForVariant(recommendation.variantId);
+      if (product) products.push(product);
+    }
+    if (recommendations.length > 0 && products.length === 0) {
+      renderRecommendationsUnavailable(routeView);
+      return;
+    }
+  } catch {
+    renderRecommendationsUnavailable(routeView);
+    return;
   }
   renderRecommendations(routeView, recommendations, products);
 
