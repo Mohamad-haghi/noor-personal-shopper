@@ -53,7 +53,7 @@ export function renderCompare(
           </tbody>
         </table>
       </section>
-      <div class="d5-compare-purchase-grid">${comparison.items.map((item) => { const product = productByVariant.get(item.variantId.productId.id); return `<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(item.variantId.id)}" data-product-id="${escapeHtml(item.variantId.productId.id)}">انتخاب ${escapeHtml(product?.name ?? "این فریم")} برای خرید</button>`; }).join("")}</div>
+      <div class="d5-compare-purchase-grid">${comparison.items.map((item) => { const productId = item.variantId.productId.id; const product = productByVariant.get(productId); return `<div class="d5-compare-product-actions">${product ? `<a class="button button-secondary" href="/products/${encodeURIComponent(productId)}" data-app-link>جزئیات ${escapeHtml(product.name)}</a>` : ""}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(item.variantId.id)}" data-product-id="${escapeHtml(productId)}">انتخاب ${escapeHtml(product?.name ?? "این فریم")} برای خرید</button></div>`; }).join("")}</div>
       <div class="d5-actions">
         <a class="button button-primary" href="/choices" data-app-link>ویرایش انتخاب‌ها</a>
         <a class="button button-secondary" href="/shopper" data-app-link>مشاورهٔ دوباره</a>
