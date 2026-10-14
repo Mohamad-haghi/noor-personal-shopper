@@ -103,7 +103,7 @@ describe("COR Shopper remote client", () => {
     const body = new ReadableStream<Uint8Array>({
       pull(controller) { controller.enqueue(new TextEncoder().encode("database password leaked")); },
       cancel() { cancelled = true; },
-    });
+    }, { highWaterMark: 0 });
     const fetchImpl = vi.fn(async () => new Response(body, {
       status: 500,
       headers: { "content-type": "text/plain" },
