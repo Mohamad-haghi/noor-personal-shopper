@@ -98,8 +98,13 @@ describe("COR Shopper remote client", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
-  it("does not expose upstream error bodies", async () => {
-    const fetchImpl = vi.fn(async () => new Response("database password leaked", {
+  it("does not expose upstream error bodies and cancels the error response stream", async () => {
+    let cancelled = false;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) { controller.enqueue(new TextEncoder().encode("database password leaked")); },
+      cancel() { cancelled = true; },
+    });
+    const fetchImpl = vi.fn(async () => new Response(body, {
       status: 500,
       headers: { "content-type": "text/plain" },
     }));
@@ -111,6 +116,7 @@ describe("COR Shopper remote client", () => {
 
     await expect(client.recommend({ requestId: "req-3" }))
       .rejects.toMatchObject({ code: "cor_service_unavailable" });
+    expect(cancelled).toBe(true);
   });
 
   it("rejects non-JSON, malformed, and oversized responses", async () => {
@@ -132,6 +138,51 @@ describe("COR Shopper remote client", () => {
       await expect(client.recommend({ requestId: "req-4" }))
         .rejects.toMatchObject({ code: "cor_response_invalid" });
     }
+  });
+
+  it("cancels a chunked response as soon as it exceeds the byte limit", async () => {
+    const encoder = new TextEncoder();
+    let chunksEmitted = 0;
+    let cancelled = false;
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        chunksEmitted += 1;
+        controller.enqueue(encoder.encode(chunksEmitted === 1 ? '{"ok":' : '"x".repeat(80)}'));
+      },
+      cancel() { cancelled = true; },
+    });
+    const client = new CorShopperRemoteClient({
+      baseUrl: "https://cor.example.test",
+      credentials: credentials(),
+      fetchImpl: vi.fn(async () => new Response(body, {
+        headers: { "content-type": "application/json" },
+      })) as unknown as typeof fetch,
+      maxResponseBytes: 16,
+    });
+
+    await expect(client.recommend({ requestId: "req-stream-limit" }))
+      .rejects.toMatchObject({ code: "cor_response_invalid" });
+    expect(cancelled).toBe(true);
+    expect(chunksEmitted).toBeLessThan(3);
+  });
+
+  it("rejects response stream failures with a stable sanitized error", async () => {
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('{"partial":'));
+        controller.error(new Error("private upstream detail"));
+      },
+    });
+    const client = new CorShopperRemoteClient({
+      baseUrl: "https://cor.example.test",
+      credentials: credentials(),
+      fetchImpl: vi.fn(async () => new Response(body, {
+        headers: { "content-type": "application/json" },
+      })) as unknown as typeof fetch,
+    });
+
+    await expect(client.recommend({ requestId: "req-stream-error" }))
+      .rejects.toMatchObject({ code: "cor_response_invalid" });
   });
 
   it("maps aborts to a stable timeout error", async () => {
