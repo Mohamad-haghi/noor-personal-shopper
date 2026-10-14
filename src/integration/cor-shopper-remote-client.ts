@@ -52,6 +52,73 @@ function parseBaseUrl(value: string): URL {
 }
 
 /**
+ * Reads at most maxBytes from the response stream. The byte limit is enforced
+ * while consuming chunks, before an oversized response can be buffered whole.
+ */
+async function readBoundedResponseText(response: Response, maxBytes: number): Promise<string> {
+  const body = response.body;
+  if (!body) throw new CorShopperClientError("cor_response_invalid");
+
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+  let completed = false;
+  try {
+    while (true) {
+      const result = await reader.read();
+      if (result.done) {
+        completed = true;
+        break;
+      }
+      totalBytes += result.value.byteLength;
+      if (totalBytes > maxBytes) {
+        try {
+          await reader.cancel();
+        } catch {
+          // Preserve the stable public error even if the upstream ignores cancellation.
+        }
+        throw new CorShopperClientError("cor_response_invalid");
+      }
+      chunks.push(result.value);
+    }
+
+    const bytes = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    try {
+      return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    } catch {
+      throw new CorShopperClientError("cor_response_invalid");
+    }
+  } catch (error) {
+    if (error instanceof CorShopperClientError) throw error;
+    try {
+      await reader.cancel();
+    } catch {
+      // Best-effort cleanup on stream failure.
+    }
+    throw new CorShopperClientError("cor_response_invalid");
+  } finally {
+    if (completed) {
+      try {
+        reader.releaseLock();
+      } catch {
+        // A reader may already have released its lock in a custom stream.
+      }
+    } else {
+      try {
+        reader.releaseLock();
+      } catch {
+        // A pending read can temporarily prevent releasing the lock.
+      }
+    }
+  }
+}
+
+/**
  * Browser-safe transport to COR's versioned Shopper API.
  * It deliberately has no static-secret support and no local/demo fallback.
  * A deployment must inject a real short-lived credential provider and a live COR URL.
@@ -144,21 +211,16 @@ export class CorShopperRemoteClient {
 
       if (!response.ok) {
         // Do not surface provider error bodies or infrastructure details to the browser.
+        try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
         throw new CorShopperClientError("cor_service_unavailable");
       }
       const contentType = response.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase();
       if (contentType !== "application/json") {
+        try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
         throw new CorShopperClientError("cor_response_invalid");
       }
-      let responseText: string;
-      try {
-        responseText = await response.text();
-      } catch {
-        throw new CorShopperClientError("cor_response_invalid");
-      }
-      if (new TextEncoder().encode(responseText).byteLength > this.maxResponseBytes) {
-        throw new CorShopperClientError("cor_response_invalid");
-      }
+
+      const responseText = await readBoundedResponseText(response, this.maxResponseBytes);
       try {
         return JSON.parse(responseText) as T;
       } catch {
