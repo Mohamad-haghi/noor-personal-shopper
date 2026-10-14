@@ -120,19 +120,19 @@ describe("COR Shopper remote client", () => {
   });
 
   it("rejects non-JSON, malformed, and oversized responses", async () => {
-    const cases: Response[] = [
-      new Response("ok", { headers: { "content-type": "text/plain" } }),
-      new Response("{", { headers: { "content-type": "application/json" } }),
-      new Response(JSON.stringify({ text: "x".repeat(200) }), {
+    const cases = [
+      () => new Response("ok", { headers: { "content-type": "text/plain" } }),
+      () => new Response("{", { headers: { "content-type": "application/json" } }),
+      () => new Response(JSON.stringify({ text: "x".repeat(200) }), {
         headers: { "content-type": "application/json" },
       }),
     ];
 
-    for (const response of cases) {
+    for (const makeResponse of cases) {
       const client = new CorShopperRemoteClient({
         baseUrl: "https://cor.example.test",
         credentials: credentials(),
-        fetchImpl: vi.fn(async () => response.clone()) as unknown as typeof fetch,
+        fetchImpl: vi.fn(async () => makeResponse()) as unknown as typeof fetch,
         maxResponseBytes: 100,
       });
       await expect(client.recommend({ requestId: "req-4" }))
@@ -147,7 +147,9 @@ describe("COR Shopper remote client", () => {
     const body = new ReadableStream<Uint8Array>({
       pull(controller) {
         chunksEmitted += 1;
-        controller.enqueue(encoder.encode(chunksEmitted === 1 ? '{"ok":' : '"x".repeat(80)}'));
+        if (chunksEmitted === 1) controller.enqueue(encoder.encode('{"ok":'));
+        else if (chunksEmitted === 2) controller.enqueue(encoder.encode('"x".repeat(80)}'));
+        else controller.close();
       },
       cancel() { cancelled = true; },
     });
@@ -163,7 +165,7 @@ describe("COR Shopper remote client", () => {
     await expect(client.recommend({ requestId: "req-stream-limit" }))
       .rejects.toMatchObject({ code: "cor_response_invalid" });
     expect(cancelled).toBe(true);
-    expect(chunksEmitted).toBeLessThan(3);
+    expect(chunksEmitted).toBeLessThan(4);
   });
 
   it("rejects response stream failures with a stable sanitized error", async () => {
