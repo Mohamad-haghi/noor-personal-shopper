@@ -152,7 +152,7 @@ describe("COR Shopper remote client", () => {
         else controller.close();
       },
       cancel() { cancelled = true; },
-    });
+    }, { highWaterMark: 0 });
     const client = new CorShopperRemoteClient({
       baseUrl: "https://cor.example.test",
       credentials: credentials(),
