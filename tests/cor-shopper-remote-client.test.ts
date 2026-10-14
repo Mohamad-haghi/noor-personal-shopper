@@ -156,9 +156,11 @@ describe("COR Shopper remote client", () => {
     const client = new CorShopperRemoteClient({
       baseUrl: "https://cor.example.test",
       credentials: credentials(),
-      fetchImpl: vi.fn(async () => new Response(body, {
-        headers: { "content-type": "application/json" },
-      })) as unknown as typeof fetch,
+      fetchImpl: vi.fn(async () => ({
+        ok: true,
+        headers: new Headers({ "content-type": "application/json" }),
+        body,
+      } as Response)) as unknown as typeof fetch,
       maxResponseBytes: 16,
     });
 
