@@ -189,6 +189,20 @@ describe("COR Shopper remote client", () => {
       .rejects.toMatchObject({ code: "cor_response_invalid" });
   });
 
+  it("times out while a credential provider is pending", async () => {
+    const fetchImpl = vi.fn();
+    const client = new CorShopperRemoteClient({
+      baseUrl: "https://cor.example.test",
+      credentials: { getBearerCredential: () => new Promise<string>(() => {}) },
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+      timeoutMs: 10,
+    });
+
+    await expect(client.recommend({ requestId: "req-credential-timeout" }))
+      .rejects.toMatchObject({ code: "cor_request_timeout" });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("maps aborts to a stable timeout error", async () => {
     const fetchImpl = vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
       new Promise<Response>((_resolve, reject) => {
