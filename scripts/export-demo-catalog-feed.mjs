@@ -1,19 +1,23 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import * as ts from "typescript";
+import { createServer } from "vite";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const seedPath = resolve(root, "src/providers/demo/demo-catalog-seed.ts");
 const outputPath = resolve(root, "public/catalog-feed.json");
-const source = (await readFile(seedPath, "utf8"))
-  .replaceAll("import.meta.env.BASE_URL", JSON.stringify("/noor-personal-shopper/"));
-const transpiled = ts.transpileModule(source, {
-  compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext }
-}).outputText;
-const moduleUrl = `data:text/javascript;base64,${Buffer.from(transpiled).toString("base64")}`;
-const loaded = await import(moduleUrl);
-const seed = loaded.DEMO_CATALOG_SEED;
+const vite = await createServer({
+  configFile: resolve(root, "vite.config.ts"),
+  server: { middlewareMode: true },
+  appType: "custom"
+});
+let seed;
+try {
+  const loaded = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-seed.ts");
+  seed = loaded.DEMO_CATALOG_SEED;
+} finally {
+  await vite.close();
+}
 
 if (!seed || !Array.isArray(seed.products) || seed.products.length !== 15) {
   throw new Error("demo_catalog_feed_requires_exactly_15_seed_products");
