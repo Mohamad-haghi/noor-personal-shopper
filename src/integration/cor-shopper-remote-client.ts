@@ -118,6 +118,25 @@ async function readBoundedResponseText(response: Response, maxBytes: number): Pr
   }
 }
 
+function getCredentialWithAbort(provider: CorShopperCredentialProvider, signal: AbortSignal): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const cleanup = () => signal.removeEventListener("abort", onAbort);
+    const onAbort = () => {
+      cleanup();
+      reject(new Error("credential_request_aborted"));
+    };
+    if (signal.aborted) {
+      reject(new Error("credential_request_aborted"));
+      return;
+    }
+    signal.addEventListener("abort", onAbort, { once: true });
+    provider.getBearerCredential(signal).then(
+      value => { cleanup(); resolve(value); },
+      error => { cleanup(); reject(error); }
+    );
+  });
+}
+
 /**
  * Browser-safe transport to COR's versioned Shopper API.
  * It deliberately has no static-secret support and no local/demo fallback.
@@ -175,7 +194,7 @@ export class CorShopperRemoteClient {
     try {
       let credential: string;
       try {
-        credential = await this.options.credentials.getBearerCredential(controller.signal);
+        credential = await getCredentialWithAbort(this.options.credentials, controller.signal);
       } catch {
         throw new CorShopperClientError(controller.signal.aborted
           ? "cor_request_timeout"
