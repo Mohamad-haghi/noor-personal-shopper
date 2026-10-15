@@ -65,3 +65,53 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify deployed demo catalog feed over HTTPS
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          case "$PAGES_URL" in
+            "https://mohamad-haghi.github.io/noor-personal-shopper/" ) ;;
+            * ) echo "Unexpected Pages origin/path"; exit 1 ;;
+          esac
+          feed_url="${PAGES_URL}catalog-feed.json"
+          feed_file="$RUNNER_TEMP/catalog-feed.json"
+          curl --fail --silent --show-error --max-time 20 --max-filesize 1048576 \
+            --retry 8 --retry-delay 5 --retry-all-errors \
+            "$feed_url" --output "$feed_file"
+          node --input-type=module - "$feed_file" "$feed_url" <<'NODE'
+          import { readFile } from "node:fs/promises";
+          const [file, url] = process.argv.slice(2);
+          const raw = await readFile(file, "utf8");
+          if (Buffer.byteLength(raw, "utf8") > 1_048_576) {
+            throw new Error("published_catalog_feed_too_large");
+          }
+          const feed = JSON.parse(raw);
+          if (!feed || feed.contractVersion !== "1.0.0" ||
+              feed.source !== "noor-demo" || feed.demoOnly !== true ||
+              feed.catalogSize !== 15 || !Array.isArray(feed.products) ||
+              feed.products.length !== 15) {
+            throw new Error("published_catalog_feed_contract_invalid");
+          }
+          const ids = new Set();
+          for (const product of feed.products) {
+            if (!product || typeof product.id !== "string" || !product.id.trim() ||
+                ids.has(product.id) || typeof product.name !== "string" ||
+                product.price !== null || product.availabilityStatus !== "unknown" ||
+                product.availabilitySource !== "demo" || !Array.isArray(product.images)) {
+              throw new Error("published_catalog_feed_product_invalid");
+            }
+            ids.add(product.id);
+          }
+          console.log(JSON.stringify({
+            status: "verified",
+            url,
+            contractVersion: feed.contractVersion,
+            source: feed.source,
+            demoOnly: feed.demoOnly,
+            productCount: feed.products.length,
+            pricesExplicitlyNull: true,
+            availabilityExplicitlyUnknown: true
+          }, null, 2));
+          NODE
