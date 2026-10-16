@@ -1,10 +1,9 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const seedPath = resolve(root, "src/providers/demo/demo-catalog-seed.ts");
 const outputPath = resolve(root, "public/catalog-feed.json");
 const vite = await createServer({
   configFile: resolve(root, "vite.config.ts"),
@@ -50,7 +49,10 @@ const products = seed.products.map((product) => {
     image,
     images: image ? [image] : [],
     price: null,
-    availabilityStatus: "unknown",
+    // Synthetic inventory is intentionally usable by COR in demo mode only.
+    // It is not a claim about NOOR's live inventory.
+    availability: true,
+    availabilityStatus: "available_demo",
     availabilitySource: "demo"
   };
 });
@@ -63,4 +65,4 @@ const feed = {
 };
 await mkdir(dirname(outputPath), { recursive: true });
 await writeFile(outputPath, JSON.stringify(feed, null, 2) + "\n", "utf8");
-console.log(`Generated demo-only catalog feed with ${products.length} products.`);
+console.log(`Generated demo-only catalog feed with ${products.length} products; availability is synthetic and demo-only.`);
