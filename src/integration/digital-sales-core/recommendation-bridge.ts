@@ -13,6 +13,7 @@ import type {
 } from "../../domain";
 import type { CatalogService } from "../../services/catalog-service";
 import { NoorDigitalSalesProductProvider } from "./catalog-provider";
+import type { CorShopperRemoteClient } from "../cor-shopper-remote-client";
 
 function categoryFor(productType: string | null): string | undefined {
   if (productType === "عینک طبی") return "optical";
@@ -74,7 +75,10 @@ export class NoorDigitalSalesRecommendationBridge {
   private readonly provider: NoorDigitalSalesProductProvider;
   private readonly engine: DigitalSalesEngine;
 
-  constructor(private readonly catalogService: CatalogService) {
+  constructor(
+    private readonly catalogService: CatalogService,
+    private readonly remoteClient?: CorShopperRemoteClient,
+  ) {
     this.provider = new NoorDigitalSalesProductProvider(catalogService);
     this.engine = new DigitalSalesEngine({
       productProvider: this.provider,
@@ -87,7 +91,37 @@ export class NoorDigitalSalesRecommendationBridge {
     context: RecommendationContext,
   ): Promise<readonly Recommendation[]> {
     const intent = toIntent(shopperId, context);
-    const coreRecommendations = await this.engine.recommend(intent, 3);
+    let coreRecommendations: readonly CoreRecommendation[];
+    if (this.remoteClient) {
+      const requestId = "noor-request-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+      const response = await this.remoteClient.recommend<{
+        contractVersion: string;
+        requestId: string;
+        result?: { source?: string; demoOnly?: boolean; recommendations?: CoreRecommendation[] };
+      }>({
+        contractVersion: "1.0.0",
+        requestId,
+        sessionId: intent.sessionId,
+        intent: {
+          ...(intent.category ? { category: intent.category } : {}),
+          ...(intent.useCase ? { useCase: intent.useCase } : {}),
+          preferences: intent.preferences,
+          constraints: intent.constraints,
+          priorities: intent.priorities,
+          desiredAttributes: intent.desiredAttributes,
+          excludedAttributes: intent.excludedAttributes,
+        },
+        limit: 3,
+      });
+      if (response.contractVersion !== "1.0.0" || response.requestId !== requestId ||
+          response.result?.source !== "cor_canonical_engine" || response.result.demoOnly !== true ||
+          !Array.isArray(response.result.recommendations)) {
+        throw new Error("cor_recommendation_response_invalid");
+      }
+      coreRecommendations = response.result.recommendations;
+    } else {
+      coreRecommendations = await this.engine.recommend(intent, 3);
+    }
     const noorProducts = await this.catalogService.listProducts();
     const results: Recommendation[] = [];
 
