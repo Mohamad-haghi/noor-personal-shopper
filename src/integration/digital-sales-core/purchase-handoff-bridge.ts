@@ -1,11 +1,15 @@
 import { DigitalSalesEngine, EYEWEAR_DOMAIN_PACK_V1, type ProductProvider, type PurchaseHandoff } from "digital-sales-core";
 import type { CatalogService } from "../../services/catalog-service";
+import type { CorShopperRemoteClient } from "../cor-shopper-remote-client";
 
 export class NoorDigitalSalesPurchaseHandoffBridge {
   private readonly engine: DigitalSalesEngine;
   private readonly provider: ProductProvider;
 
-  constructor(private readonly catalogService: CatalogService) {
+  constructor(
+    private readonly catalogService: CatalogService,
+    private readonly remoteClient?: CorShopperRemoteClient,
+  ) {
     this.provider = {
       getProducts: async () => {
         const products = await this.catalogService.listProducts();
@@ -52,6 +56,30 @@ export class NoorDigitalSalesPurchaseHandoffBridge {
     destination: string,
     context: Record<string, unknown> = {},
   ): Promise<PurchaseHandoff> {
+    if (this.remoteClient) {
+      // The browser never supplies a destination URL to COR. It selects only a
+      // server-approved destination kind; COR resolves the actual URL from pinned config.
+      const destinationType = /branch|visit/i.test(destination) ? "branch_visit" : "product_detail";
+      const requestId = "noor-handoff-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+      const response = await this.remoteClient.handoff<{
+        contractVersion: string;
+        requestId: string;
+        result?: { source?: string; demoOnly?: boolean; handoff?: PurchaseHandoff };
+      }>({
+        contractVersion: "1.0.0",
+        requestId,
+        sessionId,
+        productId,
+        destinationType,
+      });
+      if (response.contractVersion !== "1.0.0" || response.requestId !== requestId ||
+          response.result?.source !== "cor_canonical_engine" || response.result.demoOnly !== true ||
+          !response.result.handoff) {
+        throw new Error("cor_handoff_response_invalid");
+      }
+      return response.result.handoff;
+    }
+
     const products = await this.provider.getProducts();
     const product = products.find((item) => item.id === productId) ?? products.find((item) => item.variants?.some((variant) => variant.id === variantId));
     if (!product) throw new Error("محصول انتخاب‌شده در Core پیدا نشد.");
