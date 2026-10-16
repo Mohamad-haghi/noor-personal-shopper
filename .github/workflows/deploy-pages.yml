@@ -98,7 +98,8 @@ jobs:
           for (const product of feed.products) {
             if (!product || typeof product.id !== "string" || !product.id.trim() ||
                 ids.has(product.id) || typeof product.name !== "string" ||
-                product.price !== null || product.availabilityStatus !== "unknown" ||
+                product.price !== null || product.availability !== true ||
+                product.availabilityStatus !== "available_demo" ||
                 product.availabilitySource !== "demo" || !Array.isArray(product.images)) {
               throw new Error("published_catalog_feed_product_invalid");
             }
@@ -112,6 +113,6 @@ jobs:
             demoOnly: feed.demoOnly,
             productCount: feed.products.length,
             pricesExplicitlyNull: true,
-            availabilityExplicitlyUnknown: true
+            availabilityExplicitlyDemoAvailable: true
           }, null, 2));
           NODE
