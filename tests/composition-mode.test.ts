@@ -7,9 +7,9 @@ describe("application composition mode", () => {
     expect(getCompositionModeError("demo")).toBeNull();
   });
 
-  it("fails closed for integrated mode until real providers are configured", () => {
+  it("fails closed for integrated mode until a COR service origin is configured", () => {
     expect(getCompositionModeError("integrated")).toContain(
-      "real providers are configured",
+      "VITE_COR_SHOPPER_BASE_URL",
     );
   });
 
@@ -19,7 +19,7 @@ describe("application composition mode", () => {
       new URL("../src/app/bootstrap.ts", import.meta.url),
       "utf8",
     );
-    const modeCheck = bootstrap.indexOf("getCompositionModeError(config.mode)");
+    const modeCheck = bootstrap.indexOf("getCompositionModeError(config.mode, config.corBaseUrl)");
     const rejectionBranch = bootstrap.indexOf("if (compositionModeError)");
     const firstDemoConstruction = bootstrap.indexOf("new DemoFoundationProvider()");
 

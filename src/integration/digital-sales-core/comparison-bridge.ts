@@ -2,11 +2,15 @@ import { DigitalSalesEngine, EYEWEAR_DOMAIN_PACK_V1, type Product as CoreProduct
 import type { Product } from "../../domain";
 import type { Comparison as CoreComparison } from "digital-sales-core";
 import type { CatalogService } from "../../services/catalog-service";
+import type { CorShopperRemoteClient } from "../cor-shopper-remote-client";
 
 export class NoorDigitalSalesComparisonBridge {
   private readonly engine: DigitalSalesEngine;
 
-  constructor(private readonly catalogService: CatalogService) {
+  constructor(
+    private readonly catalogService: CatalogService,
+    private readonly remoteClient?: CorShopperRemoteClient,
+  ) {
     this.engine = new DigitalSalesEngine({
       productProvider: {
         getProducts: async () => this.getCoreProducts(),
@@ -58,6 +62,32 @@ export class NoorDigitalSalesComparisonBridge {
     products: readonly Product[],
     attributes: readonly string[],
   ): Promise<CoreComparison> {
+    if (this.remoteClient) {
+      const productIds = products.map((product) =>
+        product.externalIds.providerProductId ??
+        product.externalIds.externalSystemIds.noorReference ??
+        product.identity.id,
+      );
+      const requestId = "noor-compare-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+      const response = await this.remoteClient.compare<{
+        contractVersion: string;
+        requestId: string;
+        result?: { source?: string; demoOnly?: boolean; comparison?: CoreComparison };
+      }>({
+        contractVersion: "1.0.0",
+        requestId,
+        sessionId: "noor-session-" + globalThis.crypto.randomUUID(),
+        productIds,
+        attributes: [...attributes],
+      });
+      if (response.contractVersion !== "1.0.0" || response.requestId !== requestId ||
+          response.result?.source !== "cor_canonical_engine" || response.result.demoOnly !== true ||
+          !response.result.comparison) {
+        throw new Error("cor_comparison_response_invalid");
+      }
+      return response.result.comparison;
+    }
+
     const coreProducts = await this.getCoreProducts();
     const selected = coreProducts.filter((coreProduct) =>
       products.some((product) => {
@@ -68,7 +98,6 @@ export class NoorDigitalSalesComparisonBridge {
         return externalId === coreProduct.id;
       }),
     );
-    const comparison = this.engine.compare(selected, [...attributes]);
-    return comparison;
+    return this.engine.compare(selected, [...attributes]);
   }
 }
