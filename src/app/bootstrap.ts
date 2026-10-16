@@ -21,6 +21,8 @@ import { DemoSearchProvider } from "../providers/demo/demo-search-provider";
 import { NoorDigitalSalesRecommendationBridge } from "../integration/digital-sales-core/recommendation-bridge";
 import { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
 import { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
+import { CorShopperRemoteClient } from "../integration/cor-shopper-remote-client";
+import { CorShopperDemoCredentialProvider } from "../integration/cor-shopper-demo-credential-provider";
 import { FoundationService } from "../services/foundation-service";
 import { HeroService } from "../services/hero-service";
 import { CatalogService } from "../services/catalog-service";
@@ -51,7 +53,7 @@ export async function startApplication(root: HTMLElement): Promise<void> {
 
   try {
     const config = readAppConfig();
-    const compositionModeError = getCompositionModeError(config.mode);
+    const compositionModeError = getCompositionModeError(config.mode, config.corBaseUrl);
 
     if (compositionModeError) {
       root.innerHTML = `
@@ -65,6 +67,13 @@ export async function startApplication(root: HTMLElement): Promise<void> {
       `;
       return;
     }
+
+    const remoteCorClient = config.mode === "integrated" && config.corBaseUrl
+      ? new CorShopperRemoteClient({
+          baseUrl: config.corBaseUrl,
+          credentials: new CorShopperDemoCredentialProvider(config.corBaseUrl),
+        })
+      : undefined;
 
     const foundationProvider = new DemoFoundationProvider();
     const foundationService = new FoundationService(foundationProvider);
@@ -81,9 +90,9 @@ export async function startApplication(root: HTMLElement): Promise<void> {
     const shopperFeature = new ShopperFeature(selectionProfileService, selectionProfile);
     const catalogProvider = new DemoCatalogProvider();
     const catalogService = new CatalogService(catalogProvider);
-    const digitalSalesRecommendationBridge = new NoorDigitalSalesRecommendationBridge(catalogService);
-    const digitalSalesComparisonBridge = new NoorDigitalSalesComparisonBridge(catalogService);
-    const digitalSalesPurchaseHandoffBridge = new NoorDigitalSalesPurchaseHandoffBridge(catalogService);
+    const digitalSalesRecommendationBridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteCorClient);
+    const digitalSalesComparisonBridge = new NoorDigitalSalesComparisonBridge(catalogService, remoteCorClient);
+    const digitalSalesPurchaseHandoffBridge = new NoorDigitalSalesPurchaseHandoffBridge(catalogService, remoteCorClient);
     const recommendationsService = new RecommendationsService(catalogService, digitalSalesRecommendationBridge);
     const searchService = new SearchService(new DemoSearchProvider(catalogProvider), catalogService);
     const choicesService = new ChoicesService(new DemoChoicesProvider());
