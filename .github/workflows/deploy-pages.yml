@@ -44,8 +44,17 @@ jobs:
       - name: Verify behavior
         run: npm test
 
-      - name: Build production bundle
+      - name: Build production bundle with live COR Shopper
+        env:
+          VITE_NOOR_MODE: integrated
+          VITE_COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
         run: npm run build
+
+      - name: Verify COR origin is embedded in production bundle
+        run: |
+          set -euo pipefail
+          grep -R -F --quiet 'cor-noor-test.onrender.com' dist/assets
+          echo "Verified: production bundle targets the configured COR service origin."
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
