@@ -20,13 +20,22 @@ jobs:
     steps:
       - name: Checkout NOOR
         uses: actions/checkout@v6
+      - name: Checkout pinned Digital Sales Core dependency
+        uses: actions/checkout@v6
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: e3077aecdadc7c401e466449bd16169f208855e6
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install
       - name: Verify behavior
         run: npm test
       - name: Build production bundle with live COR Shopper
