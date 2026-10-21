@@ -88,3 +88,58 @@ jobs:
           }
           console.log(JSON.stringify({status:"verified",url,productCount:feed.products.length,demoOnly:feed.demoOnly},null,2));
           NODE
+      - name: Verify live COR Shopper session and recommendation API
+        env:
+          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          PAGES_ORIGIN: https://mohamad-haghi.github.io
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const base = process.env.COR_SHOPPER_BASE_URL;
+          const origin = process.env.PAGES_ORIGIN;
+          const sessionResponse = await fetch(new URL("/shopper/v1/demo-session", base), {
+            headers: { Origin: origin },
+            signal: AbortSignal.timeout(20000)
+          });
+          const sessionBody = await sessionResponse.json().catch(() => ({}));
+          if (!sessionResponse.ok || sessionBody.contractVersion !== "1.0.0" ||
+              sessionBody.demoOnly !== true || sessionBody.credentialType !== "short_lived_demo_bearer" ||
+              typeof sessionBody.credential !== "string" || !sessionBody.credential) {
+            throw new Error("live_cor_demo_session_failed: HTTP " + sessionResponse.status + " / " + (sessionBody.error ?? "invalid_response"));
+          }
+          const recommendationResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
+            method: "POST",
+            headers: {
+              Origin: origin,
+              Authorization: "Bearer " + sessionBody.credential,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contractVersion: "1.0.0",
+              requestId: "pages-live-smoke",
+              sessionId: "noor-demo-smoke",
+              intent: {
+                category: "sunglasses",
+                preferences: {},
+                constraints: {},
+                priorities: [],
+                desiredAttributes: [],
+                excludedAttributes: []
+              },
+              limit: 3
+            }),
+            signal: AbortSignal.timeout(20000)
+          });
+          const recommendationBody = await recommendationResponse.json().catch(() => ({}));
+          if (!recommendationResponse.ok || recommendationBody.contractVersion !== "1.0.0" ||
+              recommendationBody.requestId !== "pages-live-smoke" || !("result" in recommendationBody)) {
+            throw new Error("live_cor_recommendations_failed: HTTP " + recommendationResponse.status + " / " + (recommendationBody.error ?? "invalid_response"));
+          }
+          console.log(JSON.stringify({
+            status: "verified",
+            session: "issued",
+            recommendationsApi: "http_200",
+            resultType: recommendationBody.result === null ? "null" : typeof recommendationBody.result,
+            demoOnly: sessionBody.demoOnly
+          }, null, 2));
+          NODE
