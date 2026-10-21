@@ -81,6 +81,9 @@ export class NoorDigitalSalesRecommendationBridge {
   ) {
     this.provider = new NoorDigitalSalesProductProvider(catalogService);
     this.engine = new DigitalSalesEngine({
+      // The offline-only fallback has its own explicit demo tenant scope.
+      // Integrated recommendations use the server-derived COR tenant instead.
+      tenantId: "tenant-noor-demo-local",
       productProvider: this.provider,
       domainPack: EYEWEAR_DOMAIN_PACK_V1,
     });
