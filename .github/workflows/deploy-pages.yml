@@ -26,7 +26,7 @@ jobs:
           repository: Mohamad-haghi/digital-sales-core
           path: digital-sales-core
           token: ${{ secrets.CORE_REPO_TOKEN }}
-          ref: e3077aecdadc7c401e466449bd16169f208855e6
+          ref: 4c0fcfabc415b20175a6214ec67be5878daaf320
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -132,7 +132,8 @@ jobs:
           });
           const recommendationBody = await recommendationResponse.json().catch(() => ({}));
           if (!recommendationResponse.ok || recommendationBody.contractVersion !== "1.0.0" ||
-              recommendationBody.requestId !== "pages-live-smoke" || !("result" in recommendationBody)) {
+              recommendationBody.requestId !== "pages-live-smoke" || !("result" in recommendationBody) ||
+              recommendationBody.result === null || recommendationBody.result === undefined) {
             throw new Error("live_cor_recommendations_failed: HTTP " + recommendationResponse.status + " / " + (recommendationBody.error ?? "invalid_response"));
           }
           console.log(JSON.stringify({
