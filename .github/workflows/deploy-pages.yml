@@ -2,8 +2,7 @@ name: Deploy NOOR Personal Shopper to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -21,49 +20,30 @@ jobs:
     steps:
       - name: Checkout NOOR
         uses: actions/checkout@v6
-
-      - name: Checkout Digital Sales Core
-        uses: actions/checkout@v6
-        with:
-          repository: Mohamad-haghi/digital-sales-core
-          path: digital-sales-core
-          token: ${{ secrets.CORE_REPO_TOKEN }}
-          ref: e3077aecdadc7c401e466449bd16169f208855e6
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
-
       - name: Install dependencies
-        run: |
-          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
-          npm install
-
+        run: npm install
       - name: Verify behavior
         run: npm test
-
       - name: Build production bundle with live COR Shopper
         env:
           VITE_NOOR_MODE: integrated
           VITE_COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
         run: npm run build
-
       - name: Verify COR origin is embedded in production bundle
         run: |
           set -euo pipefail
           grep -R -F --quiet 'cor-noor-test.onrender.com' dist/assets
-          echo "Verified: production bundle targets the configured COR service origin."
-
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -74,7 +54,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
       - name: Verify deployed demo catalog feed over HTTPS
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
@@ -86,42 +65,17 @@ jobs:
           esac
           feed_url="${PAGES_URL}catalog-feed.json"
           feed_file="$RUNNER_TEMP/catalog-feed.json"
-          curl --fail --silent --show-error --max-time 20 --max-filesize 1048576 \
-            --retry 8 --retry-delay 5 --retry-all-errors \
-            "$feed_url" --output "$feed_file"
+          curl --fail --silent --show-error --max-time 20 --max-filesize 1048576 --retry 8 --retry-delay 5 --retry-all-errors "$feed_url" --output "$feed_file"
           node --input-type=module - "$feed_file" "$feed_url" <<'NODE'
           import { readFile } from "node:fs/promises";
           const [file, url] = process.argv.slice(2);
           const raw = await readFile(file, "utf8");
-          if (Buffer.byteLength(raw, "utf8") > 1_048_576) {
-            throw new Error("published_catalog_feed_too_large");
-          }
           const feed = JSON.parse(raw);
-          if (!feed || feed.contractVersion !== "1.0.0" ||
-              feed.source !== "noor-demo" || feed.demoOnly !== true ||
-              feed.catalogSize !== 15 || !Array.isArray(feed.products) ||
-              feed.products.length !== 15) {
-            throw new Error("published_catalog_feed_contract_invalid");
-          }
+          if (!feed || feed.contractVersion !== "1.0.0" || feed.source !== "noor-demo" || feed.demoOnly !== true || feed.catalogSize !== 15 || !Array.isArray(feed.products) || feed.products.length !== 15) throw new Error("published_catalog_feed_contract_invalid");
           const ids = new Set();
-          for (const product of feed.products) {
-            if (!product || typeof product.id !== "string" || !product.id.trim() ||
-                ids.has(product.id) || typeof product.name !== "string" ||
-                product.price !== null || product.availability !== true ||
-                product.availabilityStatus !== "available_demo" ||
-                product.availabilitySource !== "demo" || !Array.isArray(product.images)) {
-              throw new Error("published_catalog_feed_product_invalid");
-            }
-            ids.add(product.id);
+          for (const p of feed.products) {
+            if (!p || typeof p.id !== "string" || !p.id.trim() || ids.has(p.id) || typeof p.name !== "string" || p.price !== null || p.availability !== true || p.availabilityStatus !== "available_demo" || p.availabilitySource !== "demo" || !Array.isArray(p.images)) throw new Error("published_catalog_feed_product_invalid");
+            ids.add(p.id);
           }
-          console.log(JSON.stringify({
-            status: "verified",
-            url,
-            contractVersion: feed.contractVersion,
-            source: feed.source,
-            demoOnly: feed.demoOnly,
-            productCount: feed.products.length,
-            pricesExplicitlyNull: true,
-            availabilityExplicitlyDemoAvailable: true
-          }, null, 2));
+          console.log(JSON.stringify({status:"verified",url,productCount:feed.products.length,demoOnly:feed.demoOnly},null,2));
           NODE
