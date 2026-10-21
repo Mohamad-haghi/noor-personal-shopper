@@ -12,6 +12,8 @@ export class NoorDigitalSalesComparisonBridge {
     private readonly remoteClient?: CorShopperRemoteClient,
   ) {
     this.engine = new DigitalSalesEngine({
+      // Offline-only fallback; integrated operations use COR's authenticated tenant scope.
+      tenantId: "tenant-noor-demo-local",
       productProvider: {
         getProducts: async () => this.getCoreProducts(),
         getProduct: async (id) => (await this.getCoreProducts()).find((product) => product.id === id),
