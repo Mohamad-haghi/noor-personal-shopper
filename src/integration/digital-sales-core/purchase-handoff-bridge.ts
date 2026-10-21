@@ -46,7 +46,12 @@ export class NoorDigitalSalesPurchaseHandoffBridge {
       },
       getProduct: async (id) => (await this.provider.getProducts()).find((product) => product.id === id),
     };
-    this.engine = new DigitalSalesEngine({ productProvider: this.provider, domainPack: EYEWEAR_DOMAIN_PACK_V1 });
+    this.engine = new DigitalSalesEngine({
+      // Offline-only fallback; integrated operations use COR's authenticated tenant scope.
+      tenantId: "tenant-noor-demo-local",
+      productProvider: this.provider,
+      domainPack: EYEWEAR_DOMAIN_PACK_V1,
+    });
   }
 
   async create(
