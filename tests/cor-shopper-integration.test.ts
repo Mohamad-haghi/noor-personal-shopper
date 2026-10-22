@@ -64,20 +64,28 @@ describe("COR demo credential provider", () => {
       .rejects.toThrow("cor_demo_credential_network_error");
   });
 
-  it("distinguishes a CORS-blocked session from an unreachable COR host", async () => {
+  it("uses the CORS-readable liveness endpoint to distinguish a blocked session from an unreachable host", async () => {
     let calls = 0;
+    let probeUrl = "";
+    let probeInit: RequestInit | undefined;
     const provider = new CorShopperDemoCredentialProvider(
       "https://cor.example",
-      (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      (async (input: RequestInfo | URL, init?: RequestInit) => {
         calls += 1;
         if (calls === 1) throw new TypeError("browser CORS failure");
-        expect(init?.mode).toBe("no-cors");
-        return new Response(null, { status: 200 });
+        probeUrl = String(input);
+        probeInit = init;
+        return new Response(JSON.stringify({ status: "alive" }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
       }) as typeof fetch,
     );
     await expect(provider.getBearerCredential(new AbortController().signal))
       .rejects.toThrow("cor_demo_credential_cors_blocked");
     expect(calls).toBe(2);
+    expect(probeUrl).toBe("https://cor.example/health/live");
+    expect(probeInit?.mode).toBeUndefined();
   });
 
   it("reports a distinct diagnostic when both the session request and reachability probe fail", async () => {

@@ -37,22 +37,20 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
       });
     } catch {
       if (signal.aborted) throw new Error("cor_demo_credential_network_error");
-      // A CORS-blocked response rejects like a network failure in browsers. Probe
-      // only the origin in no-cors mode to distinguish a reachable host from a
-      // browser-level cross-origin response block; never read or use this response.
+      // A no-cors probe can itself be blocked by Cross-Origin-Resource-Policy
+      // and therefore cannot reliably prove host reachability. Use COR's public,
+      // allowlisted liveness endpoint as a normal CORS-readable request instead.
       try {
-        await this.fetchImpl(`${origin}/`, {
+        const probe = await this.fetchImpl(`${origin}/health/live`, {
           method: "GET",
-          mode: "no-cors",
           cache: "no-store",
           credentials: "omit",
           redirect: "follow",
           referrerPolicy: "no-referrer",
           signal,
         });
+        try { await probe.body?.cancel(); } catch { /* best-effort cleanup */ }
       } catch {
-        // Keep this separate from the initial request failure so the deployed
-        // diagnostic tells us whether Safari can reach even the opaque probe.
         throw new Error(signal.aborted
           ? "cor_demo_credential_network_error"
           : "cor_demo_credential_probe_failed");
