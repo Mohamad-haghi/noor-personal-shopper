@@ -40,10 +40,17 @@ export class RecommendationsService {
   ): Promise<readonly Recommendation[]> {
     try {
       return await this.decisionProvider.generateRecommendations(shopperId, context);
-    } catch {
-      // Never replace a failed decision-provider response with local ranking
-      // or demo results. The UI handles this stable error as an unavailable state.
-      throw new Error("cor_recommendation_unavailable");
+    } catch (error) {
+      // Preserve only a bounded, machine-safe diagnostic code for troubleshooting.
+      // Never expose response bodies, credentials, or arbitrary provider messages.
+      const candidate = error && typeof error === "object" && "code" in error &&
+        typeof (error as { code?: unknown }).code === "string"
+          ? (error as { code: string }).code
+          : error instanceof Error ? error.message : "";
+      const safeCode = /^cor_[a-z0-9_]{1,80}$/.test(candidate)
+        ? candidate
+        : "cor_recommendation_unavailable";
+      throw new Error(safeCode);
     }
   }
 }

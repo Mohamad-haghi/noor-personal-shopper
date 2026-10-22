@@ -83,12 +83,19 @@ async function renderRecommendationRoute(
       const product = await recommendationsService.getProductForVariant(recommendation.variantId);
       if (product) products.push(product);
     }
-    if (recommendations.length === 0 || (recommendations.length > 0 && products.length === 0)) {
-      renderRecommendationsUnavailable(routeView);
+    if (recommendations.length === 0) {
+      renderRecommendationsUnavailable(routeView, "cor_no_valid_recommendations");
       return;
     }
-  } catch {
-    renderRecommendationsUnavailable(routeView);
+    if (products.length === 0) {
+      renderRecommendationsUnavailable(routeView, "cor_recommendations_unmatched_catalog");
+      return;
+    }
+  } catch (error) {
+    const diagnosticCode = error instanceof Error && /^cor_[a-z0-9_]{1,80}$/.test(error.message)
+      ? error.message
+      : "cor_recommendation_unavailable";
+    renderRecommendationsUnavailable(routeView, diagnosticCode);
     return;
   }
   renderRecommendations(routeView, recommendations, products);

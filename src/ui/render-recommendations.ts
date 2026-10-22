@@ -39,13 +39,17 @@ export function renderRecommendations(routeView: HTMLElement, recommendations: r
  * integrated composition) cannot return a valid response. Never show local or
  * demo-generated recommendations as a substitute.
  */
-export function renderRecommendationsUnavailable(routeView: HTMLElement): void {
+export function renderRecommendationsUnavailable(routeView: HTMLElement, diagnosticCode = "cor_recommendation_unavailable"): void {
+  const safeCode = /^cor_[a-z0-9_]{1,80}$/.test(diagnosticCode)
+    ? diagnosticCode
+    : "cor_recommendation_unavailable";
   routeView.innerHTML = `
     <main class="app-error" id="main-content" aria-labelledby="recommendations-unavailable-title">
       <p class="eyebrow">NOOR PERSONAL SHOPPER</p>
       <h1 id="recommendations-unavailable-title">دستیار خرید فعلاً در دسترس نیست</h1>
       <p>پیشنهاد معتبر از سرویس تصمیم‌گیری دریافت نشد؛ برای جلوگیری از راهنمایی اشتباه، پیشنهاد جایگزین نمایش داده نمی‌شود.</p>
       <p>می‌توانید دوباره تلاش کنید یا محصولات فروشگاه را مستقیماً ببینید.</p>
+      <p class="diagnostic-code" dir="ltr">کد تشخیصی: ${safeCode}</p>
       <div class="route-actions">
         <button class="button button-primary" type="button" onclick="window.location.reload()">تلاش دوباره</button>
         <a class="button button-secondary" href="/products" data-app-link>مشاهده محصولات</a>
