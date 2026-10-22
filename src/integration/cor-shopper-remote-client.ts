@@ -30,7 +30,8 @@ export class CorShopperClientError extends Error {
   }
 }
 
-const DEFAULT_TIMEOUT_MS = 8_000;
+// Render's free service can cold-start after inactivity; include credential issuance and the API request in one bounded window.
+const DEFAULT_TIMEOUT_MS = 25_000;
 const DEFAULT_MAX_REQUEST_BYTES = 16 * 1024;
 const DEFAULT_MAX_RESPONSE_BYTES = 1024 * 1024;
 
