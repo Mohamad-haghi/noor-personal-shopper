@@ -404,3 +404,9 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .product-card,.product-card-media img{transition:none}
   .product-card:hover,.product-card:hover .product-card-media img{transform:none}
 }
+
+
+/* Accessible feedback for interactive demo product actions. */
+.product-action-status{display:block;flex-basis:100%;margin:.35rem 0;color:var(--color-muted,#5b625e);font-size:.9rem;line-height:1.6}
+.product-card-actions{flex-wrap:wrap}
+.product-variant-purchase{flex-wrap:wrap}
