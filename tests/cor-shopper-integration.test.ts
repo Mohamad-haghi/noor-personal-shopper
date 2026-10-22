@@ -64,6 +64,22 @@ describe("COR demo credential provider", () => {
       .rejects.toThrow("cor_demo_credential_network_error");
   });
 
+  it("distinguishes a CORS-blocked session from an unreachable COR host", async () => {
+    let calls = 0;
+    const provider = new CorShopperDemoCredentialProvider(
+      "https://cor.example",
+      (async (_input: RequestInfo | URL, init?: RequestInit) => {
+        calls += 1;
+        if (calls === 1) throw new TypeError("browser CORS failure");
+        expect(init?.mode).toBe("no-cors");
+        return new Response(null, { status: 200 });
+      }) as typeof fetch,
+    );
+    await expect(provider.getBearerCredential(new AbortController().signal))
+      .rejects.toThrow("cor_demo_credential_cors_blocked");
+    expect(calls).toBe(2);
+  });
+
   it("reports a safe network diagnostic when the browser fetch rejects", async () => {
     const provider = new CorShopperDemoCredentialProvider(
       "https://cor.example",

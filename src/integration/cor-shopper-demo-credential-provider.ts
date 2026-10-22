@@ -36,7 +36,24 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
         signal,
       });
     } catch {
-      throw new Error("cor_demo_credential_network_error");
+      if (signal.aborted) throw new Error("cor_demo_credential_network_error");
+      // A CORS-blocked response rejects like a network failure in browsers. Probe
+      // only the origin in no-cors mode to distinguish a reachable host from a
+      // browser-level cross-origin response block; never read or use this response.
+      try {
+        await this.fetchImpl(`${origin}/`, {
+          method: "GET",
+          mode: "no-cors",
+          cache: "no-store",
+          credentials: "omit",
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+          signal,
+        });
+      } catch {
+        throw new Error("cor_demo_credential_network_error");
+      }
+      throw new Error("cor_demo_credential_cors_blocked");
     }
 
     if (response.url) {
