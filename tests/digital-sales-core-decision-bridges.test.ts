@@ -9,9 +9,9 @@ describe("NOOR Digital Sales Core decision-to-purchase bridges", () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const products = await catalogService.listProducts();
     const bridge = new NoorDigitalSalesComparisonBridge(catalogService);
-    const result = await bridge.compare(products.slice(0, 2), ["frame", "shape"]);
+    const result = await bridge.compare(products.slice(0, 2), ["frameMaterial", "frameColor"]);
     expect(result.productIds).toHaveLength(2);
-    expect(result.attributes).toEqual(["frame", "shape"]);
+    expect(result.attributes).toEqual(["frameMaterial", "frameColor"]);
     expect(result.differences).toHaveLength(2);
   });
 
@@ -41,10 +41,12 @@ describe("NOOR Digital Sales Core decision-to-purchase bridges", () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const products = (await catalogService.listProducts()).slice(0, 2);
     let sentProductIds: string[] = [];
+    let sentAttributes: string[] = [];
     const remoteClient = {
       compare: async (payload: unknown) => {
         const request = payload as { requestId: string; productIds: string[]; attributes: string[] };
         sentProductIds = request.productIds;
+        sentAttributes = request.attributes;
         return {
           contractVersion: "1.0.0",
           requestId: request.requestId,
@@ -61,9 +63,10 @@ describe("NOOR Digital Sales Core decision-to-purchase bridges", () => {
       },
     } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
     const bridge = new NoorDigitalSalesComparisonBridge(catalogService, remoteClient);
-    const result = await bridge.compare(products, ["frame", "shape"]);
+    const result = await bridge.compare(products, ["frameShapes", "frameMaterial", "frameColor"]);
 
     expect(sentProductIds).toEqual(products.map((product) => product.identity.id));
+    expect(sentAttributes).toEqual(["shape", "frame"]);
     expect(result.productIds).toEqual(sentProductIds);
   });
 });
