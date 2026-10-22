@@ -222,7 +222,7 @@ async function renderCompareRoute(
     try {
       await digitalSalesComparisonBridge.compare(
         products.filter((product) => comparison.items.some((item) => item.variantId.productId.id === product.identity.id)),
-        ["frameShapes", "frameMaterial", "frameColor", "lensWidthMm", "bridgeWidthMm", "templeLengthMm"],
+        ["frame", "shape", "gender", "sku"],
       );
     } catch {
       const note = document.createElement("p");
