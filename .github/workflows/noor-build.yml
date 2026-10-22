@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
-          npm install
+          npm install --package-lock=false --no-audit --no-fund
 
       - name: Run behavioral tests
         run: npm test
