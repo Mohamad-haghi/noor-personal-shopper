@@ -211,10 +211,18 @@ async function renderCompareRoute(
   const products = await catalogService.listProducts();
   renderCompare(routeView, comparison, products);
   if (comparison) {
-    await digitalSalesComparisonBridge.compare(
-      products.filter((product) => comparison.items.some((item) => item.variantId.productId.id === product.identity.id)),
-      ["frameShapes", "frameMaterial", "frameColor", "lensWidthMm", "bridgeWidthMm", "templeLengthMm"],
-    );
+    try {
+      await digitalSalesComparisonBridge.compare(
+        products.filter((product) => comparison.items.some((item) => item.variantId.productId.id === product.identity.id)),
+        ["frameShapes", "frameMaterial", "frameColor", "lensWidthMm", "bridgeWidthMm", "templeLengthMm"],
+      );
+    } catch {
+      const note = document.createElement("p");
+      note.className = "product-action-status";
+      note.setAttribute("role", "status");
+      note.textContent = "جدول مقایسهٔ نمایشی آماده است؛ سرویس تصمیم‌گیری COR فعلاً پاسخ نداد.";
+      routeView.querySelector(".d5-intro")?.appendChild(note);
+    }
   }
 }
 
