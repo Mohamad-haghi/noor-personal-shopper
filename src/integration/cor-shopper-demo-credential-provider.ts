@@ -51,7 +51,11 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
           signal,
         });
       } catch {
-        throw new Error("cor_demo_credential_network_error");
+        // Keep this separate from the initial request failure so the deployed
+        // diagnostic tells us whether Safari can reach even the opaque probe.
+        throw new Error(signal.aborted
+          ? "cor_demo_credential_network_error"
+          : "cor_demo_credential_probe_failed");
       }
       throw new Error("cor_demo_credential_cors_blocked");
     }

@@ -80,13 +80,18 @@ describe("COR demo credential provider", () => {
     expect(calls).toBe(2);
   });
 
-  it("reports a safe network diagnostic when the browser fetch rejects", async () => {
+  it("reports a distinct diagnostic when both the session request and reachability probe fail", async () => {
+    let calls = 0;
     const provider = new CorShopperDemoCredentialProvider(
       "https://cor.example",
-      (async () => { throw new TypeError("private network detail"); }) as typeof fetch,
+      (async () => {
+        calls += 1;
+        throw new TypeError("private network detail");
+      }) as typeof fetch,
     );
     await expect(provider.getBearerCredential(new AbortController().signal))
-      .rejects.toThrow("cor_demo_credential_network_error");
+      .rejects.toThrow("cor_demo_credential_probe_failed");
+    expect(calls).toBe(2);
   });
 
   it("reports a safe HTTP diagnostic when COR rejects session issuance", async () => {
