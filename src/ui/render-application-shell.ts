@@ -83,7 +83,7 @@ async function renderRecommendationRoute(
       const product = await recommendationsService.getProductForVariant(recommendation.variantId);
       if (product) products.push(product);
     }
-    if (recommendations.length > 0 && products.length === 0) {
+    if (recommendations.length === 0 || (recommendations.length > 0 && products.length === 0)) {
       renderRecommendationsUnavailable(routeView);
       return;
     }
@@ -98,7 +98,14 @@ async function renderRecommendationRoute(
       const variantId = button.dataset.saveChoice;
       const recommendation = recommendations.find((item) => item.variantId.id === variantId);
       if (!recommendation) return;
-      await choicesService.saveChoice(createSavedChoice(recommendation));
+      const savedChoice = createSavedChoice(recommendation);
+      const existingChoices = await choicesService.listChoices();
+      const existing = existingChoices.find((choice) => choice.identity.id === savedChoice.identity.id);
+      await choicesService.saveChoice({
+        ...savedChoice,
+        tags: [...new Set([...(existing?.tags ?? []), "recommendation"])],
+        createdAt: existing?.createdAt ?? savedChoice.createdAt,
+      });
       button.textContent = "در انتخاب‌های من ذخیره شد";
       button.disabled = true;
     });
@@ -192,7 +199,8 @@ async function renderCompareRoute(
   digitalSalesPurchaseHandoffBridge: NoorDigitalSalesPurchaseHandoffBridge,
 ): Promise<void> {
   const choices = await choicesService.listChoices();
-  const items = choices.slice(0, 3).map((choice, index) => ({
+  const compareChoices = choices.filter((choice) => choice.tags.includes("compare"));
+  const items = compareChoices.slice(0, 3).map((choice, index) => ({
     variantId: choice.variantId,
     addedAt: choice.createdAt,
     position: index + 1,
@@ -211,10 +219,91 @@ async function renderCompareRoute(
   const products = await catalogService.listProducts();
   renderCompare(routeView, comparison, products);
   if (comparison) {
-    await digitalSalesComparisonBridge.compare(
-      products.filter((product) => comparison.items.some((item) => item.variantId.productId.id === product.identity.id)),
-      ["frameShapes", "frameMaterial", "frameColor", "lensWidthMm", "bridgeWidthMm", "templeLengthMm"],
-    );
+    try {
+      await digitalSalesComparisonBridge.compare(
+        products.filter((product) => comparison.items.some((item) => item.variantId.productId.id === product.identity.id)),
+        ["frameShapes", "frameMaterial", "frameColor", "lensWidthMm", "bridgeWidthMm", "templeLengthMm"],
+      );
+    } catch {
+      const note = document.createElement("p");
+      note.className = "product-action-status";
+      note.setAttribute("role", "status");
+      note.textContent = "جدول مقایسهٔ نمایشی آماده است؛ سرویس تصمیم‌گیری COR فعلاً پاسخ نداد.";
+      routeView.querySelector(".d5-intro")?.appendChild(note);
+    }
+  }
+}
+
+async function attachProductChoiceActions(
+  routeView: HTMLElement,
+  catalogService: CatalogService,
+  choicesService: ChoicesService,
+): Promise<void> {
+  const actionButtons = routeView.querySelectorAll<HTMLButtonElement>(
+    "[data-save-product-choice], [data-compare-product]",
+  );
+  for (const button of actionButtons) {
+    button.addEventListener("click", async () => {
+      const variantId = button.dataset.saveProductChoice ?? button.dataset.compareProduct;
+      const productId = button.dataset.productId;
+      if (!variantId || !productId || button.disabled) return;
+
+      const isCompare = button.hasAttribute("data-compare-product");
+      const originalLabel = button.textContent ?? "";
+      button.disabled = true;
+      button.textContent = "در حال ذخیره…";
+      try {
+        const variant = await catalogService.getVariant({
+          id: variantId,
+          productId: { id: productId, source: "demo" },
+        });
+        if (!variant) throw new Error("variant_not_found");
+
+        const now = new Date();
+        const choiceId = { id: `demo-choice-${variant.identity.id}` };
+        const existingChoices = await choicesService.listChoices();
+        const existing = existingChoices.find((choice) => choice.identity.id === choiceId.id);
+        const tag = isCompare ? "compare" : "favorite";
+        await choicesService.saveChoice({
+          identity: choiceId,
+          variantId: variant.identity,
+          status: "saved",
+          notes: existing?.notes ?? null,
+          tags: [...new Set([...(existing?.tags ?? []), tag])],
+          createdAt: existing?.createdAt ?? now,
+          updatedAt: now,
+        });
+
+        button.textContent = isCompare ? "به مقایسه اضافه شد" : "به علاقه‌مندی‌ها اضافه شد";
+        const status = document.createElement("span");
+        status.className = "product-action-status";
+        status.setAttribute("role", "status");
+        const updatedChoices = await choicesService.listChoices();
+        status.textContent = isCompare
+          ? (updatedChoices.length >= 2
+              ? "اکنون می‌توانید مقایسه را باز کنید."
+              : "برای مقایسه، یک محصول دیگر هم انتخاب کنید.")
+          : "این محصول در «انتخاب‌های من» ذخیره شد.";
+        button.insertAdjacentElement("afterend", status);
+
+        if (isCompare && updatedChoices.length >= 2) {
+          const compareLink = document.createElement("a");
+          compareLink.className = "button button-secondary";
+          compareLink.href = "/compare";
+          compareLink.dataset.appLink = "";
+          compareLink.textContent = "مشاهده مقایسه";
+          status.insertAdjacentElement("afterend", compareLink);
+        }
+      } catch {
+        button.disabled = false;
+        button.textContent = originalLabel;
+        const status = document.createElement("span");
+        status.className = "product-action-status";
+        status.setAttribute("role", "status");
+        status.textContent = "ذخیره انجام نشد؛ دوباره تلاش کنید.";
+        button.insertAdjacentElement("afterend", status);
+      }
+    });
   }
 }
 
@@ -228,25 +317,62 @@ async function attachPurchaseActions(
     button.addEventListener("click", async () => {
       const variantId = button.dataset.addToCart;
       const productId = button.dataset.productId;
-      if (!variantId || !productId) return;
-      const offer = await commerceService.getOffer({ id: variantId, productId: { id: productId, source: "demo" } });
-      if (!offer) return;
-      await digitalSalesPurchaseHandoffBridge.create(
-        "noor-demo-session",
-        productId,
-        variantId,
-        "https://www.nooroptic.com/fa/search",
-        { source: "noor-personal-shopper", productId, variantId },
-      );
-      await cartService.addCommerceOffer({ id: "demo-cart" }, offer);
-      button.textContent = "به سبد خرید اضافه شد";
+      if (!variantId || !productId || button.disabled) return;
+
+      const originalLabel = button.textContent ?? "انتخاب برای خرید";
       button.disabled = true;
-      const cartLink = document.createElement("a");
-      cartLink.className = "button button-secondary";
-      cartLink.href = "/cart";
-      cartLink.dataset.appLink = "";
-      cartLink.textContent = "مشاهدهٔ سبد خرید";
-      button.parentElement?.appendChild(cartLink);
+      button.textContent = "در حال آماده‌سازی سبد دمو…";
+      const status = document.createElement("span");
+      status.className = "product-action-status";
+      status.setAttribute("role", "status");
+      button.insertAdjacentElement("afterend", status);
+
+      try {
+        const offer = await commerceService.getOffer({
+          id: variantId,
+          productId: { id: productId, source: "demo" },
+        });
+        if (!offer) throw new Error("demo_offer_unavailable");
+
+        // The local cart is explicitly demo-only and must not be blocked by a
+        // separate COR handoff outage. The handoff result is surfaced separately.
+        await cartService.addCommerceOffer({ id: "demo-cart" }, offer);
+        button.textContent = "به سبد خرید دمو اضافه شد";
+        status.textContent = "سبد خرید نمایشی آماده است؛ این مرحله خرید یا پرداخت واقعی انجام نمی‌دهد.";
+
+        const cartLink = document.createElement("a");
+        cartLink.className = "button button-secondary";
+        cartLink.href = "/cart";
+        cartLink.dataset.appLink = "";
+        cartLink.textContent = "مشاهدهٔ سبد خرید";
+        status.insertAdjacentElement("afterend", cartLink);
+
+        try {
+          const handoff = await digitalSalesPurchaseHandoffBridge.create(
+            "noor-demo-session",
+            productId,
+            variantId,
+            "https://www.nooroptic.com/fa/search",
+            { source: "noor-personal-shopper", productId, variantId },
+          );
+          const destination = new URL(handoff.destination);
+          if (destination.protocol === "https:" && destination.origin === "https://www.nooroptic.com") {
+            const storeLink = document.createElement("a");
+            storeLink.className = "button button-secondary";
+            storeLink.href = destination.href;
+            storeLink.target = "_blank";
+            storeLink.rel = "noopener noreferrer";
+            storeLink.textContent = "ادامه در فروشگاه نور";
+            cartLink.insertAdjacentElement("afterend", storeLink);
+          }
+        } catch {
+          status.textContent = "سبد خرید دمو آماده است؛ هدایت به فروشگاه فعلاً پاسخ نداد.";
+        }
+      } catch {
+        button.disabled = false;
+        button.textContent = originalLabel;
+        status.textContent = "افزودن به سبد خرید دمو انجام نشد؛ دوباره تلاش کنید.";
+      }
     });
   });
 }
@@ -658,6 +784,7 @@ export async function renderApplicationShell(
     renderRoutePlaceholder(routeView, match);
   }
 
+  await attachProductChoiceActions(routeView, catalogService, choicesService);
   if (match?.route.path !== "/cart" && match?.route.path !== "/confirmation/:id" && match?.route.path !== "/branches" && match?.route.path !== "/visit") {
     await attachPurchaseActions(routeView, commerceService, cartService, digitalSalesPurchaseHandoffBridge);
   }

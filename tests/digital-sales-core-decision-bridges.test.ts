@@ -36,4 +36,34 @@ describe("NOOR Digital Sales Core decision-to-purchase bridges", () => {
     expect(handoff.quantity).toBe(1);
     expect(handoff.destination).toContain("nooroptic.com");
   });
+
+  it("uses the catalog feed product identities for remote COR comparison", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const products = (await catalogService.listProducts()).slice(0, 2);
+    let sentProductIds: string[] = [];
+    const remoteClient = {
+      compare: async (payload: unknown) => {
+        const request = payload as { requestId: string; productIds: string[]; attributes: string[] };
+        sentProductIds = request.productIds;
+        return {
+          contractVersion: "1.0.0",
+          requestId: request.requestId,
+          result: {
+            source: "cor_canonical_engine",
+            demoOnly: true,
+            comparison: {
+              productIds: request.productIds,
+              attributes: request.attributes,
+              differences: [],
+            },
+          },
+        };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+    const bridge = new NoorDigitalSalesComparisonBridge(catalogService, remoteClient);
+    const result = await bridge.compare(products, ["frameMaterial", "frameColor"]);
+
+    expect(sentProductIds).toEqual(products.map((product) => product.identity.id));
+    expect(result.productIds).toEqual(sentProductIds);
+  });
 });

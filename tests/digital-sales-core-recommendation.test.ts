@@ -54,3 +54,47 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(results[0]?.context.journey?.faceShape).toBe("مربع");
   });
 });
+
+
+describe("COR catalog identity mapping", () => {
+  it("resolves remote recommendations whose productId is the feed product identity", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const products = await catalogService.listProducts();
+    const selected = products[0];
+    if (!selected) throw new Error("test_catalog_product_missing");
+
+    const remoteClient = {
+      recommend: async (payload: unknown) => {
+        const request = payload as { requestId: string };
+        return {
+          contractVersion: "1.0.0",
+          requestId: request.requestId,
+          result: {
+            source: "cor_canonical_engine",
+            demoOnly: true,
+            recommendations: [{
+              productId: selected.identity.id,
+              score: 92,
+              matchedCriteria: ["category"],
+              reasons: [{ result: "matched", criterion: "category", explanationKey: "category_match" }],
+            }],
+          },
+        };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClient);
+    const results = await bridge.generateRecommendations(
+      { id: "remote-verification-shopper" },
+      {
+        occasion: null,
+        season: null,
+        requestSource: "shopper_request",
+        journey: { productType: "هر دو", useCase: null, style: null, faceShape: null },
+      },
+    );
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
+  });
+});

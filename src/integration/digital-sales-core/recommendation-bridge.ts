@@ -131,6 +131,7 @@ export class NoorDigitalSalesRecommendationBridge {
     for (const [index, coreRecommendation] of coreRecommendations.entries()) {
       const noorProduct = noorProducts.find(
         (product) =>
+          product.identity.id === coreRecommendation.productId ||
           product.externalIds.providerProductId === coreRecommendation.productId ||
           product.externalIds.externalSystemIds.noorReference === coreRecommendation.productId,
       );

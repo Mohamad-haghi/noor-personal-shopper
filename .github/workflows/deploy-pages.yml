@@ -132,15 +132,55 @@ jobs:
           });
           const recommendationBody = await recommendationResponse.json().catch(() => ({}));
           if (!recommendationResponse.ok || recommendationBody.contractVersion !== "1.0.0" ||
-              recommendationBody.requestId !== "pages-live-smoke" || !("result" in recommendationBody) ||
-              recommendationBody.result === null || recommendationBody.result === undefined) {
+              recommendationBody.requestId !== "pages-live-smoke" ||
+              recommendationBody.result?.source !== "cor_canonical_engine" ||
+              recommendationBody.result?.demoOnly !== true ||
+              !Array.isArray(recommendationBody.result?.recommendations) ||
+              recommendationBody.result.recommendations.length === 0) {
             throw new Error("live_cor_recommendations_failed: HTTP " + recommendationResponse.status + " / " + (recommendationBody.error ?? "invalid_response"));
           }
+
+          const { readFile } = await import("node:fs/promises");
+          const feed = JSON.parse(await readFile(`${process.env.RUNNER_TEMP}/catalog-feed.json`, "utf8"));
+          const feedIds = new Set(feed.products.map((product) => product.id));
+          if (recommendationBody.result.recommendations.some((item) => !feedIds.has(item.productId))) {
+            throw new Error("live_cor_recommendation_product_id_not_in_feed");
+          }
+
+          const comparisonResponse = await fetch(new URL("/shopper/v1/comparisons", base), {
+            method: "POST",
+            headers: {
+              Origin: origin,
+              Authorization: "Bearer " + sessionBody.credential,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contractVersion: "1.0.0",
+              requestId: "pages-live-comparison-smoke",
+              sessionId: "noor-demo-smoke",
+              productIds: feed.products.slice(0, 2).map((product) => product.id),
+              attributes: ["frame", "frameColor"]
+            }),
+            signal: AbortSignal.timeout(20000)
+          });
+          const comparisonBody = await comparisonResponse.json().catch(() => ({}));
+          if (!comparisonResponse.ok || comparisonBody.contractVersion !== "1.0.0" ||
+              comparisonBody.requestId !== "pages-live-comparison-smoke" ||
+              comparisonBody.result?.source !== "cor_canonical_engine" ||
+              comparisonBody.result?.demoOnly !== true ||
+              !Array.isArray(comparisonBody.result?.comparison?.productIds) ||
+              comparisonBody.result.comparison.productIds.length !== 2) {
+            throw new Error("live_cor_comparisons_failed: HTTP " + comparisonResponse.status + " / " + (comparisonBody.error ?? "invalid_response"));
+          }
+
           console.log(JSON.stringify({
             status: "verified",
             session: "issued",
             recommendationsApi: "http_200",
-            resultType: recommendationBody.result === null ? "null" : typeof recommendationBody.result,
+            recommendationCount: recommendationBody.result.recommendations.length,
+            recommendationIdsMatchFeed: true,
+            comparisonsApi: "http_200",
+            comparisonProductCount: comparisonBody.result.comparison.productIds.length,
             demoOnly: sessionBody.demoOnly
           }, null, 2));
           NODE

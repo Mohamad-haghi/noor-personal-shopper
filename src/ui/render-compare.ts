@@ -19,8 +19,8 @@ export function renderCompare(
         <section class="d5-intro">
           <p class="eyebrow">SMART COMPARISON</p>
           <h1>مقایسه</h1>
-          <p>برای مقایسه، حداقل دو انتخاب را در «انتخاب‌های من» ذخیره کنید.</p>
-          <a class="button button-primary" href="/choices" data-app-link>رفتن به انتخاب‌های من</a>
+          <p>برای مقایسه، از صفحهٔ محصولات حداقل دو فریم را با دکمهٔ «افزودن به مقایسه» انتخاب کنید.</p>
+          <a class="button button-primary" href="/products" data-app-link>رفتن به محصولات</a>
         </section>
       </main>
     `;
