@@ -97,7 +97,9 @@ export class NoorDigitalSalesRecommendationBridge {
         sessionId: intent.sessionId,
         intent: {
           ...(intent.category ? { category: intent.category } : {}),
-          ...(intent.useCase ? { useCase: intent.useCase } : {}),
+          // NOOR's journey labels are Persian presentation copy, not canonical
+          // COR useCase identifiers. Omit until an explicit mapping is defined;
+          // sending UI labels can yield an unranked/empty decision result.
           preferences: intent.preferences,
           constraints: intent.constraints,
           priorities: intent.priorities,
