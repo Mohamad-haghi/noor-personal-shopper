@@ -98,6 +98,23 @@ describe("COR Shopper remote client", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
+  it.each([
+    "cor_demo_credential_unavailable",
+    "cor_demo_credential_response_invalid",
+    "cor_demo_credential_configuration_invalid",
+  ] as const)("preserves the safe credential diagnostic %s", async (diagnostic) => {
+    const fetchImpl = vi.fn();
+    const client = new CorShopperRemoteClient({
+      baseUrl: "https://cor.example.test",
+      credentials: { getBearerCredential: async () => { throw new Error(diagnostic); } },
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.recommend({ requestId: "req-credential-diagnostic" }))
+      .rejects.toMatchObject({ code: diagnostic });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("does not expose upstream error bodies and cancels the error response stream", async () => {
     let cancelled = false;
     const body = new ReadableStream<Uint8Array>({
