@@ -164,11 +164,28 @@ export class CorShopperRemoteClient {
   }
 
   recommend<T>(request: unknown): Promise<T> {
-    return this.post<T>("recommendations", request);
+    return this.postReadOnly<T>("recommendations", request);
   }
 
   compare<T>(request: unknown): Promise<T> {
-    return this.post<T>("comparisons", request);
+    return this.postReadOnly<T>("comparisons", request);
+  }
+
+  /**
+   * A free hosted service may need a second request after waking from sleep.
+   * Retry only read-only decisions once; never retry handoffs or use local fallback.
+   */
+  private async postReadOnly<T>(operation: "recommendations" | "comparisons", request: unknown): Promise<T> {
+    try {
+      return await this.post<T>(operation, request);
+    } catch (error) {
+      const retryable = error instanceof CorShopperClientError &&
+        (error.code === "cor_request_timeout" ||
+         error.code === "cor_service_unavailable" ||
+         error.code === "cor_credential_unavailable");
+      if (!retryable) throw error;
+      return this.post<T>(operation, request);
+    }
   }
 
   handoff<T>(request: unknown): Promise<T> {
