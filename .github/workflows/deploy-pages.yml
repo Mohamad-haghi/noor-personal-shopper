@@ -137,7 +137,18 @@ jobs:
               recommendationBody.result?.demoOnly !== true ||
               !Array.isArray(recommendationBody.result?.recommendations) ||
               recommendationBody.result.recommendations.length === 0) {
-            throw new Error("live_cor_recommendations_failed: HTTP " + recommendationResponse.status + " / " + (recommendationBody.error ?? "invalid_response"));
+            const result = recommendationBody.result;
+            const diagnostic = {
+              contractVersion: recommendationBody.contractVersion ?? null,
+              requestIdMatches: recommendationBody.requestId === "pages-live-smoke",
+              resultSource: result?.source ?? null,
+              demoOnly: result?.demoOnly ?? null,
+              recommendationsType: Array.isArray(result?.recommendations) ? "array" : typeof result?.recommendations,
+              recommendationCount: Array.isArray(result?.recommendations) ? result.recommendations.length : null,
+              error: recommendationBody.error ?? null
+            };
+            console.error("Live COR recommendation response diagnostic:", JSON.stringify(diagnostic));
+            throw new Error("live_cor_recommendations_failed: HTTP " + recommendationResponse.status);
           }
 
           const { readFile } = await import("node:fs/promises");
