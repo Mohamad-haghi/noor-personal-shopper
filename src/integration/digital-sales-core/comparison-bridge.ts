@@ -65,11 +65,9 @@ export class NoorDigitalSalesComparisonBridge {
     attributes: readonly string[],
   ): Promise<CoreComparison> {
     if (this.remoteClient) {
-      const productIds = products.map((product) =>
-        product.externalIds.providerProductId ??
-        product.externalIds.externalSystemIds.noorReference ??
-        product.identity.id,
-      );
+      // COR's pinned catalog feed uses the NOOR demo product identity as its ID.
+      // External NOOR reference numbers are separate metadata and are not COR product IDs.
+      const productIds = products.map((product) => product.identity.id);
       const requestId = "noor-compare-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
       const response = await this.remoteClient.compare<{
         contractVersion: string;
