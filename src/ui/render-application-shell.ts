@@ -192,7 +192,8 @@ async function renderCompareRoute(
   digitalSalesPurchaseHandoffBridge: NoorDigitalSalesPurchaseHandoffBridge,
 ): Promise<void> {
   const choices = await choicesService.listChoices();
-  const items = choices.slice(0, 3).map((choice, index) => ({
+  const compareChoices = choices.filter((choice) => choice.tags.includes("compare"));
+  const items = compareChoices.slice(0, 3).map((choice, index) => ({
     variantId: choice.variantId,
     addedAt: choice.createdAt,
     position: index + 1,
