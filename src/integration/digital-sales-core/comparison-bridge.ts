@@ -68,6 +68,22 @@ export class NoorDigitalSalesComparisonBridge {
       // COR's pinned catalog feed uses the NOOR demo product identity as its ID.
       // External NOOR reference numbers are separate metadata and are not COR product IDs.
       const productIds = products.map((product) => product.identity.id);
+      // The active COR request boundary permits lowercase keys only. Map the
+      // local catalog's camelCase fields to the pinned source mapping's fields.
+      const remoteAttributeMap: Readonly<Record<string, string>> = {
+        frameShapes: "shape",
+        frameMaterial: "frame",
+        frame: "frame",
+        shape: "shape",
+        gender: "gender",
+        sku: "sku",
+      };
+      const remoteAttributes = [...new Set(
+        attributes.map((attribute) => remoteAttributeMap[attribute])
+          .filter((attribute): attribute is string => typeof attribute === "string"),
+      )];
+      if (remoteAttributes.length === 0) throw new Error("cor_comparison_attributes_unsupported");
+
       const requestId = "noor-compare-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
       const response = await this.remoteClient.compare<{
         contractVersion: string;
