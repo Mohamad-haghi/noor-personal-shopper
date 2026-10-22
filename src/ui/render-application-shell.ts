@@ -98,7 +98,14 @@ async function renderRecommendationRoute(
       const variantId = button.dataset.saveChoice;
       const recommendation = recommendations.find((item) => item.variantId.id === variantId);
       if (!recommendation) return;
-      await choicesService.saveChoice(createSavedChoice(recommendation));
+      const savedChoice = createSavedChoice(recommendation);
+      const existingChoices = await choicesService.listChoices();
+      const existing = existingChoices.find((choice) => choice.identity.id === savedChoice.identity.id);
+      await choicesService.saveChoice({
+        ...savedChoice,
+        tags: [...new Set([...(existing?.tags ?? []), "recommendation"])],
+        createdAt: existing?.createdAt ?? savedChoice.createdAt,
+      });
       button.textContent = "در انتخاب‌های من ذخیره شد";
       button.disabled = true;
     });
