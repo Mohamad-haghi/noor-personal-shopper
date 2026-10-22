@@ -97,11 +97,41 @@ jobs:
           node --input-type=module <<'NODE'
           const base = process.env.COR_SHOPPER_BASE_URL;
           const origin = process.env.PAGES_ORIGIN;
+          const preflightResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
+            method: "OPTIONS",
+            headers: {
+              Origin: origin,
+              "Access-Control-Request-Method": "POST",
+              "Access-Control-Request-Headers": "authorization,content-type"
+            },
+            signal: AbortSignal.timeout(20000)
+          });
+          const preflightOrigin = preflightResponse.headers.get("access-control-allow-origin");
+          const preflightMethods = preflightResponse.headers.get("access-control-allow-methods") ?? "";
+          const preflightHeaders = preflightResponse.headers.get("access-control-allow-headers") ?? "";
+          console.log(JSON.stringify({
+            diagnostic: "cor_browser_cors_preflight",
+            httpStatus: preflightResponse.status,
+            allowOriginMatches: preflightOrigin === origin,
+            allowsPost: preflightMethods.split(",").map(value => value.trim().toUpperCase()).includes("POST"),
+            allowsAuthorization: preflightHeaders.toLowerCase().split(",").map(value => value.trim()).includes("authorization"),
+            allowsContentType: preflightHeaders.toLowerCase().split(",").map(value => value.trim()).includes("content-type")
+          }));
+          if (preflightResponse.status !== 204 || preflightOrigin !== origin ||
+              !preflightMethods.split(",").map(value => value.trim().toUpperCase()).includes("POST") ||
+              !preflightHeaders.toLowerCase().split(",").map(value => value.trim()).includes("authorization") ||
+              !preflightHeaders.toLowerCase().split(",").map(value => value.trim()).includes("content-type")) {
+            throw new Error("live_cor_browser_cors_preflight_failed");
+          }
+
           const sessionResponse = await fetch(new URL("/shopper/v1/demo-session", base), {
             headers: { Origin: origin },
             signal: AbortSignal.timeout(20000)
           });
           const sessionBody = await sessionResponse.json().catch(() => ({}));
+          if (sessionResponse.headers.get("access-control-allow-origin") !== origin) {
+            throw new Error("live_cor_demo_session_cors_header_missing");
+          }
           if (!sessionResponse.ok || sessionBody.contractVersion !== "1.0.0" ||
               sessionBody.demoOnly !== true || sessionBody.credentialType !== "short_lived_demo_bearer" ||
               typeof sessionBody.credential !== "string" || !sessionBody.credential) {
@@ -131,6 +161,9 @@ jobs:
             signal: AbortSignal.timeout(20000)
           });
           const recommendationBody = await recommendationResponse.json().catch(() => ({}));
+          if (recommendationResponse.headers.get("access-control-allow-origin") !== origin) {
+            throw new Error("live_cor_recommendations_cors_header_missing");
+          }
           console.log(JSON.stringify({
             diagnostic: "cor_recommendation_response",
             httpStatus: recommendationResponse.status,
@@ -189,6 +222,9 @@ jobs:
             signal: AbortSignal.timeout(20000)
           });
           const comparisonBody = await comparisonResponse.json().catch(() => ({}));
+          if (comparisonResponse.headers.get("access-control-allow-origin") !== origin) {
+            throw new Error("live_cor_comparisons_cors_header_missing");
+          }
           console.log(JSON.stringify({
             diagnostic: "cor_comparison_response",
             httpStatus: comparisonResponse.status,
