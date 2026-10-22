@@ -218,4 +218,15 @@ describe("COR Shopper remote client", () => {
     await expect(client.recommend({ requestId: "req-5" }))
       .rejects.toMatchObject({ code: "cor_request_timeout" });
   });
+  it("allows a timeout long enough for a free Render cold start", async () => {
+    const client = new CorShopperRemoteClient({
+      baseUrl: "https://cor.example.test",
+      credentials: credentials(),
+      fetchImpl: vi.fn(async () => jsonResponse({ ok: true })) as unknown as typeof fetch,
+      timeoutMs: 60_000,
+    });
+
+    await expect(client.recommend({ requestId: "req-cold-start" })).resolves.toEqual({ ok: true });
+  });
+
 });
