@@ -31,6 +31,19 @@ describe("COR demo credential provider", () => {
     await expect(provider.getBearerCredential(new AbortController().signal)).resolves.toBe(credential);
   });
 
+  it("rejects a credential response redirected to a different origin", async () => {
+    const response = new Response(JSON.stringify(validBody()), {
+      headers: { "content-type": "application/json; charset=utf-8" },
+    });
+    Object.defineProperty(response, "url", { value: "https://other.example/demo-session" });
+    const provider = new CorShopperDemoCredentialProvider(
+      "https://cor.example",
+      (async () => response) as typeof fetch,
+    );
+    await expect(provider.getBearerCredential(new AbortController().signal))
+      .rejects.toThrow("cor_demo_credential_network_error");
+  });
+
   it("reports a safe network diagnostic when the browser fetch rejects", async () => {
     const provider = new CorShopperDemoCredentialProvider(
       "https://cor.example",

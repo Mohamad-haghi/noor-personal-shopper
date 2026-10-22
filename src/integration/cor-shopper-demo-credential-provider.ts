@@ -28,12 +28,28 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
         headers: { accept: "application/json" },
         cache: "no-store",
         credentials: "omit",
-        redirect: "error",
+        // Render may issue a same-origin redirect while waking or normalizing a route.
+        // Follow it, but never accept a credential response from another origin.
+        redirect: "follow",
         referrerPolicy: "no-referrer",
         signal,
       });
     } catch {
       throw new Error("cor_demo_credential_network_error");
+    }
+
+    if (response.url) {
+      let responseOrigin: string;
+      try {
+        responseOrigin = new URL(response.url).origin;
+      } catch {
+        try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
+        throw new Error("cor_demo_credential_network_error");
+      }
+      if (responseOrigin !== origin) {
+        try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
+        throw new Error("cor_demo_credential_network_error");
+      }
     }
 
     if (!response.ok) {
