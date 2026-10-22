@@ -33,12 +33,12 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
         signal,
       });
     } catch {
-      throw new Error("cor_demo_credential_unavailable");
+      throw new Error("cor_demo_credential_network_error");
     }
 
     if (!response.ok) {
       try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
-      throw new Error("cor_demo_credential_unavailable");
+      throw new Error("cor_demo_credential_http_error");
     }
     const contentType = response.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase();
     if (contentType !== "application/json") {
