@@ -104,7 +104,7 @@ jobs:
               "Access-Control-Request-Method": "POST",
               "Access-Control-Request-Headers": "authorization,content-type"
             },
-            signal: AbortSignal.timeout(20000)
+            signal: AbortSignal.timeout(90000)
           });
           const preflightOrigin = preflightResponse.headers.get("access-control-allow-origin");
           const preflightMethods = preflightResponse.headers.get("access-control-allow-methods") ?? "";
@@ -126,7 +126,7 @@ jobs:
 
           const sessionResponse = await fetch(new URL("/shopper/v1/demo-session", base), {
             headers: { Origin: origin },
-            signal: AbortSignal.timeout(20000)
+            signal: AbortSignal.timeout(90000)
           });
           const sessionBody = await sessionResponse.json().catch(() => ({}));
           if (sessionResponse.headers.get("access-control-allow-origin") !== origin) {
@@ -158,7 +158,7 @@ jobs:
               },
               limit: 3
             }),
-            signal: AbortSignal.timeout(20000)
+            signal: AbortSignal.timeout(90000)
           });
           const recommendationBody = await recommendationResponse.json().catch(() => ({}));
           if (recommendationResponse.headers.get("access-control-allow-origin") !== origin) {
@@ -219,7 +219,7 @@ jobs:
               productIds: feed.products.slice(0, 2).map((product) => product.id),
               attributes: ["frame", "shape"]
             }),
-            signal: AbortSignal.timeout(20000)
+            signal: AbortSignal.timeout(90000)
           });
           const comparisonBody = await comparisonResponse.json().catch(() => ({}));
           if (comparisonResponse.headers.get("access-control-allow-origin") !== origin) {

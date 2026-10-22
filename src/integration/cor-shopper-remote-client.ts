@@ -30,8 +30,8 @@ export class CorShopperClientError extends Error {
   }
 }
 
-// Render's free service can cold-start after inactivity; include credential issuance and the API request in one bounded window.
-const DEFAULT_TIMEOUT_MS = 25_000;
+// Render's free service can take about a minute to cold-start after inactivity. Keep credential issuance and the API request within one bounded window.
+const DEFAULT_TIMEOUT_MS = 90_000;
 const DEFAULT_MAX_REQUEST_BYTES = 16 * 1024;
 const DEFAULT_MAX_RESPONSE_BYTES = 1024 * 1024;
 
@@ -157,7 +157,7 @@ export class CorShopperRemoteClient {
     this.maxRequestBytes = options.maxRequestBytes ?? DEFAULT_MAX_REQUEST_BYTES;
     this.maxResponseBytes = options.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES;
     if (!options.credentials ||
-        !Number.isSafeInteger(this.timeoutMs) || this.timeoutMs < 1 || this.timeoutMs > 30_000 ||
+        !Number.isSafeInteger(this.timeoutMs) || this.timeoutMs < 1 || this.timeoutMs > 90_000 ||
         !Number.isSafeInteger(this.maxRequestBytes) || this.maxRequestBytes < 1 || this.maxRequestBytes > 16 * 1024 ||
         !Number.isSafeInteger(this.maxResponseBytes) || this.maxResponseBytes < 1 || this.maxResponseBytes > 5 * 1024 * 1024) {
       throw new CorShopperClientError("cor_client_configuration_invalid");
