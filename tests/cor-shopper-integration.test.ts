@@ -31,6 +31,24 @@ describe("COR demo credential provider", () => {
     await expect(provider.getBearerCredential(new AbortController().signal)).resolves.toBe(credential);
   });
 
+  it("reports a safe network diagnostic when the browser fetch rejects", async () => {
+    const provider = new CorShopperDemoCredentialProvider(
+      "https://cor.example",
+      (async () => { throw new TypeError("private network detail"); }) as typeof fetch,
+    );
+    await expect(provider.getBearerCredential(new AbortController().signal))
+      .rejects.toThrow("cor_demo_credential_network_error");
+  });
+
+  it("reports a safe HTTP diagnostic when COR rejects session issuance", async () => {
+    const provider = new CorShopperDemoCredentialProvider(
+      "https://cor.example",
+      fetchWith({ error: "private detail" }, 503),
+    );
+    await expect(provider.getBearerCredential(new AbortController().signal))
+      .rejects.toThrow("cor_demo_credential_http_error");
+  });
+
   it("rejects a credential response that is not explicitly demo-only", async () => {
     const provider = new CorShopperDemoCredentialProvider(
       "https://cor.example",
