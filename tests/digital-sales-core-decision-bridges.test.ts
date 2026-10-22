@@ -9,9 +9,9 @@ describe("NOOR Digital Sales Core decision-to-purchase bridges", () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const products = await catalogService.listProducts();
     const bridge = new NoorDigitalSalesComparisonBridge(catalogService);
-    const result = await bridge.compare(products.slice(0, 2), ["frameMaterial", "frameColor"]);
+    const result = await bridge.compare(products.slice(0, 2), ["frame", "shape"]);
     expect(result.productIds).toHaveLength(2);
-    expect(result.attributes).toEqual(["frameMaterial", "frameColor"]);
+    expect(result.attributes).toEqual(["frame", "shape"]);
     expect(result.differences).toHaveLength(2);
   });
 
@@ -61,7 +61,7 @@ describe("NOOR Digital Sales Core decision-to-purchase bridges", () => {
       },
     } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
     const bridge = new NoorDigitalSalesComparisonBridge(catalogService, remoteClient);
-    const result = await bridge.compare(products, ["frameMaterial", "frameColor"]);
+    const result = await bridge.compare(products, ["frame", "shape"]);
 
     expect(sentProductIds).toEqual(products.map((product) => product.identity.id));
     expect(result.productIds).toEqual(sentProductIds);
