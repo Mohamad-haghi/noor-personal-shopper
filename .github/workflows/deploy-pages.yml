@@ -131,6 +131,20 @@ jobs:
             signal: AbortSignal.timeout(20000)
           });
           const recommendationBody = await recommendationResponse.json().catch(() => ({}));
+          console.log(JSON.stringify({
+            diagnostic: "cor_recommendation_response",
+            httpStatus: recommendationResponse.status,
+            contractVersion: recommendationBody.contractVersion ?? null,
+            requestIdMatches: recommendationBody.requestId === "pages-live-smoke",
+            resultKeys: recommendationBody.result && typeof recommendationBody.result === "object"
+              ? Object.keys(recommendationBody.result) : [],
+            source: recommendationBody.result?.source ?? null,
+            demoOnly: recommendationBody.result?.demoOnly ?? null,
+            recommendationsType: Array.isArray(recommendationBody.result?.recommendations)
+              ? "array" : typeof recommendationBody.result?.recommendations,
+            recommendationCount: Array.isArray(recommendationBody.result?.recommendations)
+              ? recommendationBody.result.recommendations.length : null
+          }));
           if (!recommendationResponse.ok || recommendationBody.contractVersion !== "1.0.0" ||
               recommendationBody.requestId !== "pages-live-smoke" ||
               recommendationBody.result?.source !== "cor_canonical_engine" ||
