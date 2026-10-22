@@ -36,6 +36,7 @@ function productCard(product: Product, variant: ProductVariant | null, offer: Co
       <div class="product-card-actions">
         <a class="button button-secondary" href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>جزئیات</a>
         ${variantAction}
+        ${variant ? `<button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به علاقه‌مندی‌ها</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button>` : ""}
       </div>
     </div>
   </article>`;
@@ -90,7 +91,7 @@ export function renderProductDetail(
         const price = offer && offer.pricing.source === "demo" && offer.availability.source === "demo" ? `<span class="product-price">${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</span><small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small>` : "<span>قیمت واقعی در این دمو در دسترس نیست</span>";
         return `<article class="product-variant-row">
           <div><strong>${escapeHtml(variant.name)}</strong><p>${escapeHtml([variant.attributes.color,variant.attributes.size,variant.attributes.material].filter(Boolean).join(" · ") || "تنوع Demo")}</p></div>
-          <div class="product-variant-purchase">${price}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button></div>
+          <div class="product-variant-purchase">${price}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button><button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به علاقه‌مندی‌ها</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button></div>
         </article>`;
       }).join("")
     : `<p class="product-unavailable">در حال حاضر هیچ تنوع قابل خریدی برای این محصول ثبت نشده است.</p>`;
