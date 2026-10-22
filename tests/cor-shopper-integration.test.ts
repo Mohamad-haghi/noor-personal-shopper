@@ -31,6 +31,26 @@ describe("COR demo credential provider", () => {
     await expect(provider.getBearerCredential(new AbortController().signal)).resolves.toBe(credential);
   });
 
+  it("uses a header-free GET for Safari-compatible CORS behavior", async () => {
+    let observedUrl = "";
+    let observedInit: RequestInit | undefined;
+    const provider = new CorShopperDemoCredentialProvider(
+      "https://cor.example",
+      (async (input: RequestInfo | URL, init?: RequestInit) => {
+        observedUrl = String(input);
+        observedInit = init;
+        return new Response(JSON.stringify(validBody()), {
+          headers: { "content-type": "application/json; charset=utf-8" },
+        });
+      }) as typeof fetch,
+    );
+    await expect(provider.getBearerCredential(new AbortController().signal)).resolves.toBe(credential);
+    expect(observedUrl).toBe("https://cor.example/shopper/v1/demo-session");
+    expect(observedInit?.method).toBe("GET");
+    expect(observedInit?.headers).toBeUndefined();
+    expect(observedInit?.credentials).toBe("omit");
+  });
+
   it("rejects a credential response redirected to a different origin", async () => {
     const response = new Response(JSON.stringify(validBody()), {
       headers: { "content-type": "application/json; charset=utf-8" },
