@@ -63,9 +63,11 @@ describe("COR catalog identity mapping", () => {
     const selected = products[0];
     if (!selected) throw new Error("test_catalog_product_missing");
 
+    let sentPreferences: Record<string, unknown> = {};
     const remoteClient = {
       recommend: async (payload: unknown) => {
-        const request = payload as { requestId: string };
+        const request = payload as { requestId: string; intent: { preferences: Record<string, unknown> } };
+        sentPreferences = request.intent.preferences;
         return {
           contractVersion: "1.0.0",
           requestId: request.requestId,
@@ -90,11 +92,14 @@ describe("COR catalog identity mapping", () => {
         occasion: null,
         season: null,
         requestSource: "shopper_request",
-        journey: { productType: "هر دو", useCase: null, style: null, faceShape: null },
+        journey: { productType: "هر دو", useCase: null, style: "کلاسیک و ماندگار", faceShape: "گرد" },
       },
     );
 
     expect(results).toHaveLength(1);
     expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
+    expect(sentPreferences.shape).toBe("aviator");
+    expect(sentPreferences).not.toHaveProperty("frameShapes");
+    expect(sentPreferences).not.toHaveProperty("faceCompatibility");
   });
 });
