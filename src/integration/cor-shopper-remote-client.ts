@@ -17,6 +17,9 @@ export interface CorShopperClientOptions {
 export type CorShopperClientErrorCode =
   | "cor_client_configuration_invalid"
   | "cor_credential_unavailable"
+  | "cor_demo_credential_configuration_invalid"
+  | "cor_demo_credential_response_invalid"
+  | "cor_demo_credential_unavailable"
   | "cor_request_invalid"
   | "cor_request_too_large"
   | "cor_request_timeout"
@@ -196,10 +199,15 @@ export class CorShopperRemoteClient {
       let credential: string;
       try {
         credential = await getCredentialWithAbort(this.options.credentials, controller.signal);
-      } catch {
-        throw new CorShopperClientError(controller.signal.aborted
-          ? "cor_request_timeout"
-          : "cor_credential_unavailable");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "";
+        const safeCredentialCodes: readonly CorShopperClientErrorCode[] = [
+          "cor_demo_credential_configuration_invalid",
+          "cor_demo_credential_response_invalid",
+          "cor_demo_credential_unavailable",
+        ];
+        const diagnostic = safeCredentialCodes.find(code => code === message) ?? "cor_credential_unavailable";
+        throw new CorShopperClientError(controller.signal.aborted ? "cor_request_timeout" : diagnostic);
       }
       if (controller.signal.aborted) throw new CorShopperClientError("cor_request_timeout");
       if (typeof credential !== "string" || !credential || credential.length > 8192 ||
