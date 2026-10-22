@@ -2,6 +2,7 @@ name: Deploy NOOR Personal Shopper to GitHub Pages
 # Re-run Pages deployment after the same-origin credential redirect fix.
 # Publish the Safari-compatible header-free demo-session request.
 # Publish explicit browser CORS-versus-network diagnostics.
+# Publish distinct reachability-probe failure diagnostics.
 
 on:
   push:
@@ -258,7 +259,6 @@ jobs:
             recommendationCount: recommendationBody.result.recommendations.length,
             recommendationIdsMatchFeed: true,
             comparisonsApi: "http_200",
-            comparisonProductCount: comparisonBody.result.comparison.productIds.length,
-            demoOnly: sessionBody.demoOnly
+            comparisonProductCount: comparisonBody.result.comparison.productIds.length
           }, null, 2));
           NODE
