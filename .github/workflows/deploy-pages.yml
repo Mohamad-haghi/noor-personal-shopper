@@ -120,7 +120,7 @@ jobs:
               sessionId: "noor-demo-smoke",
               intent: {
                 category: "sunglasses",
-                preferences: {},
+                preferences: { shape: "aviator" },
                 constraints: {},
                 priorities: [],
                 desiredAttributes: [],

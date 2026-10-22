@@ -21,17 +21,6 @@ function categoryFor(productType: string | null): string | undefined {
   return undefined;
 }
 
-function faceFor(value: string | null): string | undefined {
-  const map: Record<string, string> = {
-    "گرد": "round",
-    "بیضی": "oval",
-    "مربع": "rectangle",
-    "قلبی": "heart",
-    "کشیده": "rectangle",
-  };
-  return value ? map[value] : undefined;
-}
-
 function shapeForStyle(value: string | null): string | undefined {
   const map: Record<string, string> = {
     "مینیمال و ظریف": "round",
@@ -47,7 +36,9 @@ function toIntent(
   context: RecommendationContext,
 ): CustomerIntent {
   const journey = context.journey;
-  const faceShape = faceFor(journey?.faceShape ?? null);
+  // The active NOOR Domain Pack evaluates the source field "shape".
+  // Do not send UI-only keys such as faceCompatibility/frameShapes that the
+  // pinned pack cannot score; an unmatched key can leave the result unranked.
   const frameShape = shapeForStyle(journey?.style ?? null);
   const category = categoryFor(journey?.productType ?? null);
 
@@ -57,8 +48,7 @@ function toIntent(
     ...(category ? { category } : {}),
     ...(context.occasion ? { useCase: context.occasion } : {}),
     preferences: {
-      ...(faceShape ? { faceCompatibility: faceShape } : {}),
-      ...(frameShape ? { frameShapes: frameShape } : {}),
+      ...(frameShape ? { shape: frameShape } : {}),
     },
     constraints: {},
     priorities: [],
