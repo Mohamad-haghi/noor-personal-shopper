@@ -25,7 +25,8 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
     try {
       response = await this.fetchImpl(`${origin}/shopper/v1/demo-session`, {
         method: "GET",
-        headers: { accept: "application/json" },
+        // Keep this cross-origin GET header-free: Safari/WebKit can apply stricter
+        // preflight rules to nonstandard Accept values than other browsers.
         cache: "no-store",
         credentials: "omit",
         // Render may issue a same-origin redirect while waking or normalizing a route.
