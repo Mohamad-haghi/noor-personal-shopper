@@ -33,6 +33,22 @@ describe("recommendation decision-provider boundary", () => {
     ).rejects.toThrow("cor_recommendation_unavailable");
   });
 
+  it("preserves safe COR diagnostic codes without exposing arbitrary provider errors", async () => {
+    const knownFailure = new RecommendationsService(
+      new CatalogService(new DemoCatalogProvider()),
+      { generateRecommendations: async () => { throw new Error("cor_request_timeout"); } },
+    );
+    await expect(knownFailure.generateRecommendations({ id: "verification-shopper" }, context))
+      .rejects.toThrow("cor_request_timeout");
+
+    const unsafeFailure = new RecommendationsService(
+      new CatalogService(new DemoCatalogProvider()),
+      { generateRecommendations: async () => { throw new Error("secret token abc"); } },
+    );
+    await expect(unsafeFailure.generateRecommendations({ id: "verification-shopper" }, context))
+      .rejects.toThrow("cor_recommendation_unavailable");
+  });
+
   it("requires an explicit decision provider", () => {
     const catalog = new CatalogService(new DemoCatalogProvider());
     expect(() => new RecommendationsService(catalog, undefined as never)).toThrow(
