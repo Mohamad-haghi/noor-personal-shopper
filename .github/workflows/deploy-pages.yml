@@ -1,5 +1,6 @@
 name: Deploy NOOR Personal Shopper to GitHub Pages
 # Re-run Pages deployment after the same-origin credential redirect fix.
+# Publish the Safari-compatible header-free demo-session request.
 
 on:
   push:
