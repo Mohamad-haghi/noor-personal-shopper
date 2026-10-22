@@ -94,7 +94,7 @@ export class NoorDigitalSalesComparisonBridge {
         requestId,
         sessionId: "noor-session-" + globalThis.crypto.randomUUID(),
         productIds,
-        attributes: [...attributes],
+        attributes: remoteAttributes,
       });
       if (response.contractVersion !== "1.0.0" || response.requestId !== requestId ||
           response.result?.source !== "cor_canonical_engine" || response.result.demoOnly !== true ||
