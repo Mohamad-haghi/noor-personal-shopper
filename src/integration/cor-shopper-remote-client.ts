@@ -18,6 +18,8 @@ export type CorShopperClientErrorCode =
   | "cor_client_configuration_invalid"
   | "cor_credential_unavailable"
   | "cor_demo_credential_configuration_invalid"
+  | "cor_demo_credential_http_error"
+  | "cor_demo_credential_network_error"
   | "cor_demo_credential_response_invalid"
   | "cor_demo_credential_unavailable"
   | "cor_request_invalid"
@@ -203,6 +205,8 @@ export class CorShopperRemoteClient {
         const message = error instanceof Error ? error.message : "";
         const safeCredentialCodes: readonly CorShopperClientErrorCode[] = [
           "cor_demo_credential_configuration_invalid",
+          "cor_demo_credential_http_error",
+          "cor_demo_credential_network_error",
           "cor_demo_credential_response_invalid",
           "cor_demo_credential_unavailable",
         ];
