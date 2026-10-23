@@ -108,6 +108,45 @@ try {
   if (!result.ok) {
     throw new Error("noor_real_browser_cor_smoke_failed:" + result.stage + ":" + result.outcome);
   }
+
+  // Exercise the actual NOOR UI and its own integration path, not just direct
+  // fetches from the browser context. This catches wiring/configuration issues
+  // that an API-only smoke test cannot detect.
+  const browserErrors = [];
+  page.on("console", message => {
+    if (message.type() === "error") browserErrors.push(message.text().slice(0, 240));
+  });
+  await page.goto(pagesUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await page.getByRole("link", { name: "دستیار خرید" }).first().click();
+  await page.getByRole("button", { name: "شروع مشاوره" }).click();
+
+  for (const answer of ["عینک آفتابی", "رانندگی و فضای باز", "کلاسیک و ماندگار", "بیضی"]) {
+    await page.getByRole("button", { name: answer, exact: true }).click();
+    await page.getByRole("button", { name: "ادامه", exact: true }).click();
+  }
+
+  await page.getByRole("button", { name: "مشاهده مسیر پیشنهادها" }).click();
+  await page.waitForFunction(
+    () => Boolean(document.querySelector("#recommendations-title") ||
+                  document.querySelector("#recommendations-unavailable-title")),
+    null,
+    { timeout: 120_000 },
+  );
+
+  const uiResult = await page.evaluate(() => ({
+    title: document.querySelector("#recommendations-title")?.textContent?.trim() ?? null,
+    diagnostic: document.querySelector(".diagnostic-code")?.textContent?.trim() ?? null,
+    recommendationCards: document.querySelectorAll(".recommendation-card").length,
+  }));
+  console.log(JSON.stringify({
+    diagnostic: "noor_real_ui_recommendation_flow",
+    ...uiResult,
+    browserConsoleErrorCount: browserErrors.length,
+  }));
+
+  if (!uiResult.title || uiResult.recommendationCards < 1 || uiResult.diagnostic) {
+    throw new Error("noor_real_ui_recommendation_flow_failed:" + (uiResult.diagnostic ?? "no_recommendation_cards"));
+  }
 } finally {
   await browser.close();
 }
