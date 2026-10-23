@@ -82,17 +82,6 @@ jobs:
         uses: actions/deploy-pages@v4
       # Publish the verified build before installing optional browser-test engines.
       # If browser downloads are slow, the diagnostic UI still reaches the live demo.
-      - name: Install dependencies and Chromium + WebKit
-        timeout-minutes: 15
-        env:
-          PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: 10000
-        run: |
-          set -euo pipefail
-          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
-          npm install --package-lock=false --no-audit --no-fund
-          # WebKit needs system libraries that are not preinstalled on all GitHub runners.
-          # Install the required browser dependencies as well as both browser engines.
-          npx playwright install --with-deps chromium webkit
       - name: Verify deployed demo catalog feed over HTTPS
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
@@ -289,6 +278,17 @@ jobs:
           }, null, 2));
           NODE
 
+      - name: Install dependencies and Chromium + WebKit
+        timeout-minutes: 15
+        env:
+          PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: 10000
+        run: |
+          set -euo pipefail
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install --package-lock=false --no-audit --no-fund
+          # WebKit needs system libraries that are not preinstalled on all GitHub runners.
+          # Install the required browser dependencies as well as both browser engines.
+          npx playwright install --with-deps chromium webkit
       - name: Verify live COR Shopper in a real Chromium browser
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
