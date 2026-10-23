@@ -85,9 +85,9 @@ jobs:
           set -euo pipefail
           npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
           npm install --package-lock=false --no-audit --no-fund
-          # Avoid a known Ubuntu man-db package-trigger stall during Playwright's apt setup.
-          sudo apt-get remove --purge -y man-db || true
-          npx playwright install --with-deps chromium
+          # Install only the Chromium browser binary. GitHub-hosted Ubuntu runners already
+          # include common browser libraries; avoid apt-based dependency installation here.
+          npx playwright install chromium
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
