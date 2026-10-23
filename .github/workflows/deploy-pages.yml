@@ -279,16 +279,18 @@ jobs:
           NODE
 
       - name: Install dependencies and Chromium + WebKit
-        timeout-minutes: 15
+        timeout-minutes: 12
         env:
           PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: 10000
         run: |
           set -euo pipefail
           npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
           npm install --package-lock=false --no-audit --no-fund
-          # WebKit needs system libraries that are not preinstalled on all GitHub runners.
-          # Install the required browser dependencies as well as both browser engines.
-          npx playwright install --with-deps chromium webkit
+          # GitHub-hosted Ubuntu runners already include most browser system libraries.
+          # Download the engines without apt-based --with-deps, which stalled before
+          # the real-browser checks could run. If a missing library is reported,
+          # install only that package in a targeted follow-up.
+          npx playwright install chromium webkit
       - name: Verify live COR Shopper in a real Chromium browser
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
