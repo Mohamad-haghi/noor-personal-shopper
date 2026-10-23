@@ -1,5 +1,16 @@
 import type { CorShopperCredentialProvider } from "./cor-shopper-remote-client";
 
+type BrowserFetchStage = "demo-session" | "health-live";
+
+function logBrowserFetchFailure(stage: BrowserFetchStage, outcome: "fetch_rejected" | "http_error", status?: number): void {
+  // Safe diagnostics only: never log credentials, response bodies, headers, or exception messages.
+  console.warn("[noor.cor.browser_fetch]", JSON.stringify({
+    stage,
+    outcome,
+    ...(status === undefined ? {} : { status }),
+  }));
+}
+
 export class CorShopperDemoCredentialProvider implements CorShopperCredentialProvider {
   constructor(
     private readonly baseUrl: string,
@@ -36,6 +47,7 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
         signal,
       });
     } catch {
+      logBrowserFetchFailure("demo-session", "fetch_rejected");
       if (signal.aborted) throw new Error("cor_demo_credential_network_error");
       // A no-cors probe can itself be blocked by Cross-Origin-Resource-Policy
       // and therefore cannot reliably prove host reachability. Use COR's public,
@@ -51,11 +63,13 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
           signal,
         });
       } catch {
+        logBrowserFetchFailure("health-live", "fetch_rejected");
         throw new Error(signal.aborted
           ? "cor_demo_credential_network_error"
           : "cor_demo_credential_session_and_health_fetch_failed");
       }
       if (!probe.ok) {
+        logBrowserFetchFailure("health-live", "http_error", probe.status);
         try { await probe.body?.cancel(); } catch { /* best-effort cleanup */ }
         throw new Error("cor_demo_credential_health_probe_http_error");
       }
@@ -78,6 +92,7 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
     }
 
     if (!response.ok) {
+      logBrowserFetchFailure("demo-session", "http_error", response.status);
       try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
       throw new Error("cor_demo_credential_http_error");
     }
