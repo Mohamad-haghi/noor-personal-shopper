@@ -72,7 +72,7 @@ describe("COR demo credential provider", () => {
       "https://cor.example",
       (async (input: RequestInfo | URL, init?: RequestInit) => {
         calls += 1;
-        if (calls === 1) throw new TypeError("browser CORS failure");
+        if (calls <= 2) throw new TypeError("browser CORS failure");
         probeUrl = String(input);
         probeInit = init;
         return new Response(JSON.stringify({ status: "alive" }), {
@@ -83,7 +83,7 @@ describe("COR demo credential provider", () => {
     );
     await expect(provider.getBearerCredential(new AbortController().signal))
       .rejects.toThrow("cor_demo_credential_cors_blocked");
-    expect(calls).toBe(2);
+    expect(calls).toBe(3);
     expect(probeUrl).toBe("https://cor.example/health/live");
     expect(probeInit?.mode).toBeUndefined();
   });
@@ -103,7 +103,7 @@ describe("COR demo credential provider", () => {
       );
       await expect(provider.getBearerCredential(new AbortController().signal))
         .rejects.toThrow("cor_demo_credential_session_and_health_fetch_failed");
-      expect(calls).toBe(2);
+      expect(calls).toBe(3);
       expect(warnings).toHaveLength(2);
       expect(warnings[0]).toContain('"stage":"demo-session"');
       expect(warnings[1]).toContain('"stage":"health-live"');
@@ -120,7 +120,7 @@ describe("COR demo credential provider", () => {
       "https://cor.example",
       (async () => {
         calls += 1;
-        if (calls === 1) throw new TypeError("session request rejected");
+        if (calls <= 2) throw new TypeError("session request rejected");
         return new Response(JSON.stringify({ status: "unavailable" }), {
           status: 503,
           headers: { "content-type": "application/json" },
@@ -129,7 +129,7 @@ describe("COR demo credential provider", () => {
     );
     await expect(provider.getBearerCredential(new AbortController().signal)
       ).rejects.toThrow("cor_demo_credential_health_probe_http_error");
-    expect(calls).toBe(2);
+    expect(calls).toBe(3);
   });
 
   it("reports a safe HTTP diagnostic when COR rejects session issuance", async () => {
