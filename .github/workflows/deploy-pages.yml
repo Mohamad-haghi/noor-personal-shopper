@@ -15,7 +15,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: github-pages
+  # Bump the group to release a stale run blocked in the old apt-based browser install.
+  group: github-pages-v2
   cancel-in-progress: true
 
 jobs:
