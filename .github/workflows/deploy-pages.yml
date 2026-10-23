@@ -66,14 +66,21 @@ jobs:
     steps:
       - name: Checkout NOOR for browser smoke test
         uses: actions/checkout@v6
+      - name: Checkout pinned Digital Sales Core dependency
+        uses: actions/checkout@v6
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: 54065f21cc9134bd6de6196aa5f4b41a9ec3fd0e
       - name: Setup Node.js for browser smoke test
         uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: npm
       - name: Install dependencies and Chromium
         run: |
-          npm install
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install --package-lock=false --no-audit --no-fund
           npx playwright install --with-deps chromium
       - name: Deploy to GitHub Pages
         id: deployment
