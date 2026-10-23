@@ -11,6 +11,20 @@ function logBrowserFetchFailure(stage: BrowserFetchStage, outcome: "fetch_reject
   }));
 }
 
+function waitBeforeRetry(signal: AbortSignal): Promise<boolean> {
+  if (signal.aborted) return Promise.resolve(false);
+  return new Promise(resolve => {
+    const finish = (ready: boolean) => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", onAbort);
+      resolve(ready && !signal.aborted);
+    };
+    const timer = setTimeout(() => finish(true), 350);
+    const onAbort = () => finish(false);
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
 export class CorShopperDemoCredentialProvider implements CorShopperCredentialProvider {
   constructor(
     private readonly baseUrl: string,
@@ -37,6 +51,9 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
     // shopper flow. Retry the credential request once, with the same bounded
     // operation signal and identical credential-safe request options.
     for (let attempt = 0; attempt < 2; attempt += 1) {
+      if (attempt > 0 && !(await waitBeforeRetry(signal))) {
+        throw new Error("cor_demo_credential_network_error");
+      }
       try {
         response = await this.fetchImpl(`${origin}/shopper/v1/demo-session`, {
           method: "GET",
@@ -64,22 +81,33 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
       // A no-cors probe can itself be blocked by Cross-Origin-Resource-Policy
       // and therefore cannot reliably prove host reachability. Use COR's public,
       // allowlisted liveness endpoint as a normal CORS-readable request instead.
-      let probe: Response;
-      try {
-        probe = await this.fetchImpl(`${origin}/health/live`, {
-          method: "GET",
-          cache: "no-store",
-          credentials: "omit",
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-          signal,
-        });
-      } catch {
-        logBrowserFetchFailure("health-live", "fetch_rejected");
-        throw new Error(signal.aborted
-          ? "cor_demo_credential_network_error"
-          : "cor_demo_credential_session_and_health_fetch_failed");
+      let probe: Response | undefined;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        if (attempt > 0 && !(await waitBeforeRetry(signal))) {
+          throw new Error("cor_demo_credential_network_error");
+        }
+        try {
+          probe = await this.fetchImpl(`${origin}/health/live`, {
+            method: "GET",
+            cache: "no-store",
+            credentials: "omit",
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            signal,
+          });
+          break;
+        } catch {
+          if (signal.aborted) {
+            logBrowserFetchFailure("health-live", "fetch_rejected");
+            throw new Error("cor_demo_credential_network_error");
+          }
+          if (attempt === 1) {
+            logBrowserFetchFailure("health-live", "fetch_rejected");
+            throw new Error("cor_demo_credential_session_and_health_fetch_failed");
+          }
+        }
       }
+      if (!probe) throw new Error("cor_demo_credential_session_and_health_fetch_failed");
       if (!probe.ok) {
         logBrowserFetchFailure("health-live", "http_error", probe.status);
         try { await probe.body?.cancel(); } catch { /* best-effort cleanup */ }
