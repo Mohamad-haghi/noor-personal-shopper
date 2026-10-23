@@ -40,8 +40,9 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
       // A no-cors probe can itself be blocked by Cross-Origin-Resource-Policy
       // and therefore cannot reliably prove host reachability. Use COR's public,
       // allowlisted liveness endpoint as a normal CORS-readable request instead.
+      let probe: Response;
       try {
-        const probe = await this.fetchImpl(`${origin}/health/live`, {
+        probe = await this.fetchImpl(`${origin}/health/live`, {
           method: "GET",
           cache: "no-store",
           credentials: "omit",
@@ -49,12 +50,16 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
           referrerPolicy: "no-referrer",
           signal,
         });
-        try { await probe.body?.cancel(); } catch { /* best-effort cleanup */ }
       } catch {
         throw new Error(signal.aborted
           ? "cor_demo_credential_network_error"
-          : "cor_demo_credential_probe_failed");
+          : "cor_demo_credential_session_and_health_fetch_failed");
       }
+      if (!probe.ok) {
+        try { await probe.body?.cancel(); } catch { /* best-effort cleanup */ }
+        throw new Error("cor_demo_credential_health_probe_http_error");
+      }
+      try { await probe.body?.cancel(); } catch { /* best-effort cleanup */ }
       throw new Error("cor_demo_credential_cors_blocked");
     }
 

@@ -88,7 +88,7 @@ describe("COR demo credential provider", () => {
     expect(probeInit?.mode).toBeUndefined();
   });
 
-  it("reports a distinct diagnostic when both the session request and reachability probe fail", async () => {
+  it("identifies when both the session request and reachability probe are rejected", async () => {
     let calls = 0;
     const provider = new CorShopperDemoCredentialProvider(
       "https://cor.example",
@@ -98,7 +98,26 @@ describe("COR demo credential provider", () => {
       }) as typeof fetch,
     );
     await expect(provider.getBearerCredential(new AbortController().signal))
-      .rejects.toThrow("cor_demo_credential_probe_failed");
+      .rejects.toThrow("cor_demo_credential_session_and_health_fetch_failed");
+    expect(calls).toBe(2);
+  });
+
+
+  it("distinguishes a readable non-success response from the health endpoint", async () => {
+    let calls = 0;
+    const provider = new CorShopperDemoCredentialProvider(
+      "https://cor.example",
+      (async () => {
+        calls += 1;
+        if (calls === 1) throw new TypeError("session request rejected");
+        return new Response(JSON.stringify({ status: "unavailable" }), {
+          status: 503,
+          headers: { "content-type": "application/json" },
+        });
+      }) as typeof fetch,
+    );
+    await expect(provider.getBearerCredential(new AbortController().signal)
+      ).rejects.toThrow("cor_demo_credential_health_probe_http_error");
     expect(calls).toBe(2);
   });
 

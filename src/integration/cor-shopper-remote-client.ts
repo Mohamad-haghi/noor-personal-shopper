@@ -20,8 +20,10 @@ export type CorShopperClientErrorCode =
   | "cor_demo_credential_configuration_invalid"
   | "cor_demo_credential_cors_blocked"
   | "cor_demo_credential_http_error"
+  | "cor_demo_credential_health_probe_http_error"
   | "cor_demo_credential_network_error"
   | "cor_demo_credential_probe_failed"
+  | "cor_demo_credential_session_and_health_fetch_failed"
   | "cor_demo_credential_response_invalid"
   | "cor_demo_credential_unavailable"
   | "cor_request_invalid"
@@ -209,8 +211,10 @@ export class CorShopperRemoteClient {
           "cor_demo_credential_configuration_invalid",
           "cor_demo_credential_cors_blocked",
           "cor_demo_credential_http_error",
+          "cor_demo_credential_health_probe_http_error",
           "cor_demo_credential_network_error",
           "cor_demo_credential_probe_failed",
+          "cor_demo_credential_session_and_health_fetch_failed",
           "cor_demo_credential_response_invalid",
           "cor_demo_credential_unavailable",
         ];
