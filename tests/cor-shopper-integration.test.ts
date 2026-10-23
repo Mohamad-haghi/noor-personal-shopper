@@ -103,7 +103,7 @@ describe("COR demo credential provider", () => {
       );
       await expect(provider.getBearerCredential(new AbortController().signal))
         .rejects.toThrow("cor_demo_credential_session_and_health_fetch_failed");
-      expect(calls).toBe(3);
+      expect(calls).toBe(4);
       expect(warnings).toHaveLength(2);
       expect(warnings[0]).toContain('"stage":"demo-session"');
       expect(warnings[1]).toContain('"stage":"health-live"');
@@ -111,6 +111,24 @@ describe("COR demo credential provider", () => {
     } finally {
       console.warn = originalWarn;
     }
+  });
+
+  it("retries a transient health fetch rejection before reporting the host unreachable", async () => {
+    let calls = 0;
+    const provider = new CorShopperDemoCredentialProvider(
+      "https://cor.example",
+      (async () => {
+        calls += 1;
+        if (calls <= 2 || calls === 3) throw new TypeError("transient fetch rejection");
+        return new Response(JSON.stringify({ status: "alive" }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }) as typeof fetch,
+    );
+    await expect(provider.getBearerCredential(new AbortController().signal))
+      .rejects.toThrow("cor_demo_credential_cors_blocked");
+    expect(calls).toBe(4);
   });
 
 
