@@ -88,18 +88,29 @@ describe("COR demo credential provider", () => {
     expect(probeInit?.mode).toBeUndefined();
   });
 
-  it("identifies when both the session request and reachability probe are rejected", async () => {
+  it("logs safe, separate stages when both browser fetches are rejected", async () => {
     let calls = 0;
-    const provider = new CorShopperDemoCredentialProvider(
-      "https://cor.example",
-      (async () => {
-        calls += 1;
-        throw new TypeError("private network detail");
-      }) as typeof fetch,
-    );
-    await expect(provider.getBearerCredential(new AbortController().signal))
-      .rejects.toThrow("cor_demo_credential_session_and_health_fetch_failed");
-    expect(calls).toBe(2);
+    const warnings: string[] = [];
+    const originalWarn = console.warn;
+    console.warn = ((...args: unknown[]) => { warnings.push(args.map(String).join(" ")); }) as typeof console.warn;
+    try {
+      const provider = new CorShopperDemoCredentialProvider(
+        "https://cor.example",
+        (async () => {
+          calls += 1;
+          throw new TypeError("private network detail");
+        }) as typeof fetch,
+      );
+      await expect(provider.getBearerCredential(new AbortController().signal))
+        .rejects.toThrow("cor_demo_credential_session_and_health_fetch_failed");
+      expect(calls).toBe(2);
+      expect(warnings).toHaveLength(2);
+      expect(warnings[0]).toContain('"stage":"demo-session"');
+      expect(warnings[1]).toContain('"stage":"health-live"');
+      expect(warnings.join(" ")).not.toContain("private network detail");
+    } finally {
+      console.warn = originalWarn;
+    }
   });
 
 
