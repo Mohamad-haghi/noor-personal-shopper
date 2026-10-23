@@ -32,23 +32,35 @@ export class CorShopperDemoCredentialProvider implements CorShopperCredentialPro
       throw new Error("cor_demo_credential_configuration_invalid");
     }
 
-    let response: Response;
-    try {
-      response = await this.fetchImpl(`${origin}/shopper/v1/demo-session`, {
-        method: "GET",
-        // Keep this cross-origin GET header-free: Safari/WebKit can apply stricter
-        // preflight rules to nonstandard Accept values than other browsers.
-        cache: "no-store",
-        credentials: "omit",
-        // Render may issue a same-origin redirect while waking or normalizing a route.
-        // Follow it, but never accept a credential response from another origin.
-        redirect: "follow",
-        referrerPolicy: "no-referrer",
-        signal,
-      });
-    } catch {
-      logBrowserFetchFailure("demo-session", "fetch_rejected");
-      if (signal.aborted) throw new Error("cor_demo_credential_network_error");
+    let response: Response | undefined;
+    // A transient browser fetch rejection must not immediately take down the
+    // shopper flow. Retry the credential request once, with the same bounded
+    // operation signal and identical credential-safe request options.
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        response = await this.fetchImpl(`${origin}/shopper/v1/demo-session`, {
+          method: "GET",
+          // Keep this cross-origin GET header-free: Safari/WebKit can apply stricter
+          // preflight rules to nonstandard Accept values than other browsers.
+          cache: "no-store",
+          credentials: "omit",
+          // Render may issue a same-origin redirect while waking or normalizing a route.
+          // Follow it, but never accept a credential response from another origin.
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+          signal,
+        });
+        break;
+      } catch {
+        if (signal.aborted) {
+          logBrowserFetchFailure("demo-session", "fetch_rejected");
+          throw new Error("cor_demo_credential_network_error");
+        }
+        if (attempt === 1) logBrowserFetchFailure("demo-session", "fetch_rejected");
+      }
+    }
+
+    if (!response) {
       // A no-cors probe can itself be blocked by Cross-Origin-Resource-Policy
       // and therefore cannot reliably prove host reachability. Use COR's public,
       // allowlisted liveness endpoint as a normal CORS-readable request instead.
