@@ -1,4 +1,4 @@
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 
 const pagesUrl = process.env.PAGES_URL;
 const corBaseUrl = process.env.COR_SHOPPER_BASE_URL;
@@ -6,7 +6,10 @@ if (!pagesUrl || !corBaseUrl) {
   throw new Error("browser_smoke_configuration_missing");
 }
 
-const browser = await chromium.launch({ headless: true });
+const browserEngine = process.env.NOOR_BROWSER_ENGINE ?? "chromium";
+const browserType = browserEngine === "webkit" ? webkit : browserEngine === "chromium" ? chromium : null;
+if (!browserType) throw new Error("browser_smoke_engine_invalid:" + browserEngine);
+const browser = await browserType.launch({ headless: true });
 try {
   const page = await browser.newPage();
   await page.goto(pagesUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
@@ -104,7 +107,7 @@ try {
     };
   }, { corBaseUrl });
 
-  console.log(JSON.stringify({ diagnostic: "noor_real_browser_cor_smoke", ...result }));
+  console.log(JSON.stringify({ diagnostic: "noor_real_browser_cor_smoke", browserEngine, ...result }));
   if (!result.ok) {
     throw new Error("noor_real_browser_cor_smoke_failed:" + result.stage + ":" + result.outcome);
   }
@@ -200,6 +203,7 @@ try {
   }));
   console.log(JSON.stringify({
     diagnostic: "noor_real_ui_recommendation_flow",
+    browserEngine,
     ...uiResult,
     browserConsoleErrors: browserErrors.slice(-12),
     browserWarnings: browserWarnings.slice(-12),
