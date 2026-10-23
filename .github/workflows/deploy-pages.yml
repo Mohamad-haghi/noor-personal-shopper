@@ -64,6 +64,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout NOOR for browser smoke test
+        uses: actions/checkout@v6
+      - name: Setup Node.js for browser smoke test
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies and Chromium
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
@@ -262,3 +273,9 @@ jobs:
             comparisonProductCount: comparisonBody.result.comparison.productIds.length
           }, null, 2));
           NODE
+
+      - name: Verify live COR Shopper in a real Chromium browser
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+        run: node scripts/verify-browser-cor-shopper.mjs
