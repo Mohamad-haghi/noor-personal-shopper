@@ -298,6 +298,14 @@ jobs:
           COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
         run: node scripts/verify-browser-cor-shopper.mjs
 
+      - name: Install WebKit system dependencies
+        timeout-minutes: 8
+        run: |
+          set -euo pipefail
+          # Keep this separate from Chromium verification so missing WebKit libraries
+          # cannot prevent the primary browser smoke test from running.
+          npx playwright install-deps webkit
+
       - name: Verify live COR Shopper in WebKit (Safari engine)
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
