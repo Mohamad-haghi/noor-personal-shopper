@@ -78,9 +78,15 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies and Chromium
+        timeout-minutes: 10
+        env:
+          PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: 10000
         run: |
+          set -euo pipefail
           npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
           npm install --package-lock=false --no-audit --no-fund
+          # Avoid a known Ubuntu man-db package-trigger stall during Playwright's apt setup.
+          sudo apt-get remove --purge -y man-db || true
           npx playwright install --with-deps chromium
       - name: Deploy to GitHub Pages
         id: deployment
