@@ -77,7 +77,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Install dependencies and Chromium
+      - name: Install dependencies and Chromium + WebKit
         timeout-minutes: 10
         env:
           PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: 10000
@@ -87,7 +87,7 @@ jobs:
           npm install --package-lock=false --no-audit --no-fund
           # Install only the Chromium browser binary. GitHub-hosted Ubuntu runners already
           # include common browser libraries; avoid apt-based dependency installation here.
-          npx playwright install chromium
+          npx playwright install chromium webkit
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
@@ -291,4 +291,11 @@ jobs:
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
           COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+        run: node scripts/verify-browser-cor-shopper.mjs
+
+      - name: Verify live COR Shopper in WebKit (Safari engine)
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          NOOR_BROWSER_ENGINE: webkit
         run: node scripts/verify-browser-cor-shopper.mjs
