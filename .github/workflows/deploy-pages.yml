@@ -77,6 +77,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      # Publish the verified build before installing optional browser-test engines.
+      # If browser downloads are slow, the diagnostic UI still reaches the live demo.
       - name: Install dependencies and Chromium + WebKit
         timeout-minutes: 15
         env:
@@ -88,9 +93,6 @@ jobs:
           # WebKit needs system libraries that are not preinstalled on all GitHub runners.
           # Install the required browser dependencies as well as both browser engines.
           npx playwright install --with-deps chromium webkit
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
       - name: Verify deployed demo catalog feed over HTTPS
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
