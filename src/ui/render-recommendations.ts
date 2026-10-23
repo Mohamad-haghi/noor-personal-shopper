@@ -81,8 +81,12 @@ export function renderRecommendationsUnavailable(routeView: HTMLElement, diagnos
       return;
     }
 
-    const probe = async (path: "/shopper/v1/demo-session" | "/health/live"): Promise<string> => {
+    const probe = async (
+      path: "/shopper/v1/demo-session" | "/health/live",
+      withAbortSignal = false,
+    ): Promise<string> => {
       let response: Response;
+      const controller = withAbortSignal ? new AbortController() : undefined;
       try {
         response = await fetch(new URL(path, baseUrl).toString(), {
           method: "GET",
@@ -90,9 +94,11 @@ export function renderRecommendationsUnavailable(routeView: HTMLElement, diagnos
           credentials: "omit",
           redirect: "follow",
           referrerPolicy: "no-referrer",
+          ...(controller ? { signal: controller.signal } : {}),
         });
-      } catch {
-        return "FETCH_REJECTED";
+      } catch (error) {
+        const name = error instanceof Error ? error.name : "unknown";
+        return `FETCH_REJECTED_${name}`;
       }
       const status = response.status;
       try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
@@ -102,7 +108,10 @@ export function renderRecommendationsUnavailable(routeView: HTMLElement, diagnos
     try {
       const session = await probe("/shopper/v1/demo-session");
       const health = await probe("/health/live");
-      diagnosticResult.textContent = `demo-session=${session}; health-live=${health}`;
+      const sessionWithSignal = await probe("/shopper/v1/demo-session", true);
+      const healthWithSignal = await probe("/health/live", true);
+      diagnosticResult.textContent =
+        `demo-session=${session}; health-live=${health}; signal-demo-session=${sessionWithSignal}; signal-health-live=${healthWithSignal}`;
     } finally {
       diagnosticButton.disabled = false;
       diagnosticButton.textContent = "بررسی دوباره اتصال";
