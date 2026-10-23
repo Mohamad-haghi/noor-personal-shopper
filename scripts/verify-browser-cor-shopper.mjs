@@ -31,15 +31,6 @@ try {
           errorName: error instanceof Error ? error.name : "unknown",
         };
       }
-      if (response.headers.get("access-control-allow-origin") !== origin) {
-        return {
-          ok: false,
-          stage,
-          outcome: "allow_origin_header_mismatch",
-          status: response.status,
-          responseOk: response.ok,
-        };
-      }
       let body;
       try {
         body = await response.json();
