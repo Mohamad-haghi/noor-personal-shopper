@@ -299,7 +299,7 @@ jobs:
         run: node scripts/verify-browser-cor-shopper.mjs
 
       - name: Install WebKit system dependencies
-        timeout-minutes: 8
+        timeout-minutes: 20
         run: |
           set -euo pipefail
           # Keep this separate from Chromium verification so missing WebKit libraries
