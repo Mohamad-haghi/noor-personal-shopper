@@ -52,7 +52,7 @@ export function renderRecommendationsUnavailable(routeView: HTMLElement, diagnos
       <p>می‌توانید دوباره تلاش کنید یا محصولات فروشگاه را مستقیماً ببینید.</p>
       <p class="diagnostic-code" dir="ltr">کد تشخیصی: ${safeCode}</p>
       <div class="route-actions">
-        <button class="button button-primary" type="button" onclick="window.location.assign(new URL(`${import.meta.env.BASE_URL}shopper`, window.location.origin).toString())">بازگشت به مشاوره و تلاش دوباره</button>
+        <button class="button button-primary" type="button" onclick="window.location.assign(new URL(import.meta.env.BASE_URL + &quot;shopper&quot;, window.location.origin).toString())">بازگشت به مشاوره و تلاش دوباره</button>
         <button class="button button-secondary" type="button" id="cor-connection-diagnostic">بررسی اتصال COR</button>
         <a class="button button-secondary" href="/products" data-app-link>مشاهده محصولات</a>
       </div>
