@@ -116,6 +116,34 @@ try {
   const browserWarnings = [];
   const failedRequests = [];
   const corRequests = [];
+  await page.addInitScript(() => {
+    const originalFetch = window.fetch.bind(window);
+    (window).__noorFetchDebug = [];
+    window.fetch = async (input, init) => {
+      const rawUrl = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+      const safeUrl = (() => {
+        try {
+          const url = new URL(rawUrl, window.location.href);
+          return url.origin + url.pathname;
+        } catch {
+          return "invalid_url";
+        }
+      })();
+      try {
+        const response = await originalFetch(input, init);
+        (window).__noorFetchDebug.push({ url: safeUrl, outcome: "response", status: response.status });
+        return response;
+      } catch (error) {
+        (window).__noorFetchDebug.push({
+          url: safeUrl,
+          outcome: "rejected",
+          errorName: error instanceof Error ? error.name : "unknown",
+          errorMessage: error instanceof Error ? error.message.slice(0, 240) : "unknown",
+        });
+        throw error;
+      }
+    };
+  });
   page.on("console", message => {
     const text = message.text().slice(0, 500);
     if (message.type() === "error") browserErrors.push(text);
@@ -164,6 +192,11 @@ try {
     title: document.querySelector("#recommendations-title")?.textContent?.trim() ?? null,
     diagnostic: document.querySelector(".diagnostic-code")?.textContent?.trim() ?? null,
     recommendationCards: document.querySelectorAll(".recommendation-card").length,
+    fetchDebug: ((window).__noorFetchDebug ?? []).slice(-20),
+    resourceUrls: performance.getEntriesByType("resource")
+      .map(entry => entry.name)
+      .filter(name => name.includes("cor-noor-test") || name.includes("shopper/v1") || name.includes("health/live"))
+      .slice(-20),
   }));
   console.log(JSON.stringify({
     diagnostic: "noor_real_ui_recommendation_flow",
