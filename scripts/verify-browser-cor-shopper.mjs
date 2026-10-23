@@ -113,8 +113,35 @@ try {
   // fetches from the browser context. This catches wiring/configuration issues
   // that an API-only smoke test cannot detect.
   const browserErrors = [];
+  const browserWarnings = [];
+  const failedRequests = [];
+  const corRequests = [];
   page.on("console", message => {
-    if (message.type() === "error") browserErrors.push(message.text().slice(0, 240));
+    const text = message.text().slice(0, 500);
+    if (message.type() === "error") browserErrors.push(text);
+    if (message.type() === "warning" && (text.includes("noor.cor.browser_fetch") || text.includes("COR") || text.includes("cor_"))) {
+      browserWarnings.push(text);
+    }
+  });
+  page.on("pageerror", error => browserErrors.push("pageerror:" + error.message.slice(0, 400)));
+  page.on("requestfailed", request => {
+    if (request.url().includes("cor-noor-test.onrender.com")) {
+      failedRequests.push({
+        url: request.url(),
+        method: request.method(),
+        failure: request.failure()?.errorText ?? "unknown",
+      });
+    }
+  });
+  page.on("request", request => {
+    if (request.url().includes("cor-noor-test.onrender.com")) {
+      corRequests.push({ url: request.url(), method: request.method() });
+    }
+  });
+  page.on("response", response => {
+    if (response.url().includes("cor-noor-test.onrender.com")) {
+      corRequests.push({ url: response.url(), method: response.request().method(), status: response.status() });
+    }
   });
   await page.goto(pagesUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
   await page.getByRole("link", { name: "دستیار خرید" }).first().click();
@@ -141,7 +168,10 @@ try {
   console.log(JSON.stringify({
     diagnostic: "noor_real_ui_recommendation_flow",
     ...uiResult,
-    browserConsoleErrorCount: browserErrors.length,
+    browserConsoleErrors: browserErrors.slice(-12),
+    browserWarnings: browserWarnings.slice(-12),
+    failedRequests,
+    corRequests: corRequests.slice(-30),
   }));
 
   if (!uiResult.title || uiResult.recommendationCards < 1 || uiResult.diagnostic) {
