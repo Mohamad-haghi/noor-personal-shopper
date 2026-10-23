@@ -1,4 +1,5 @@
 import type { Product, Recommendation } from "../domain";
+import { readAppConfig } from "../config/app-config";
 import { getNoorInventoryDestination } from "./noor-inventory-link";
 
 function escapeHtml(value: string): string { return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\"","&quot;").replaceAll("'","&#039;"); }
@@ -52,8 +53,54 @@ export function renderRecommendationsUnavailable(routeView: HTMLElement, diagnos
       <p class="diagnostic-code" dir="ltr">کد تشخیصی: ${safeCode}</p>
       <div class="route-actions">
         <button class="button button-primary" type="button" onclick="window.location.reload()">تلاش دوباره</button>
+        <button class="button button-secondary" type="button" id="cor-connection-diagnostic">بررسی اتصال COR</button>
         <a class="button button-secondary" href="/products" data-app-link>مشاهده محصولات</a>
       </div>
+      <p id="cor-connection-diagnostic-result" class="diagnostic-code" dir="ltr" role="status" aria-live="polite" hidden></p>
     </main>
   `;
+
+  const diagnosticButton = routeView.querySelector<HTMLButtonElement>("#cor-connection-diagnostic");
+  const diagnosticResult = routeView.querySelector<HTMLElement>("#cor-connection-diagnostic-result");
+  diagnosticButton?.addEventListener("click", async () => {
+    if (!diagnosticResult || diagnosticButton.disabled) return;
+    diagnosticButton.disabled = true;
+    diagnosticButton.textContent = "در حال بررسی…";
+    diagnosticResult.hidden = false;
+    diagnosticResult.textContent = "COR connection check: running";
+    const baseUrl = readAppConfig().corBaseUrl;
+    if (!baseUrl) {
+      diagnosticResult.textContent = "configuration: COR_BASE_URL_MISSING";
+      diagnosticButton.disabled = false;
+      diagnosticButton.textContent = "بررسی دوباره اتصال";
+      return;
+    }
+
+    const probe = async (path: "/shopper/v1/demo-session" | "/health/live"): Promise<string> => {
+      let response: Response;
+      try {
+        response = await fetch(new URL(path, baseUrl).toString(), {
+          method: "GET",
+          cache: "no-store",
+          credentials: "omit",
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+        });
+      } catch {
+        return "FETCH_REJECTED";
+      }
+      const status = response.status;
+      try { await response.body?.cancel(); } catch { /* best-effort cleanup */ }
+      return response.ok ? `HTTP_${status}` : `HTTP_ERROR_${status}`;
+    };
+
+    try {
+      const session = await probe("/shopper/v1/demo-session");
+      const health = await probe("/health/live");
+      diagnosticResult.textContent = `demo-session=${session}; health-live=${health}`;
+    } finally {
+      diagnosticButton.disabled = false;
+      diagnosticButton.textContent = "بررسی دوباره اتصال";
+    }
+  });
 }
