@@ -178,7 +178,7 @@ try {
   await page.getByRole("link", { name: "دستیار خرید" }).first().click();
   await page.getByRole("button", { name: "شروع مشاوره" }).click();
 
-  for (const answer of ["عینک آفتابی", "رانندگی و فضای باز", "کلاسیک و ماندگار", "بیضی"]) {
+  for (const answer of ["عینک آفتابی", "رانندگی و فضای باز", "خلبانی", "بیضی"]) {
     await page.getByRole("button", { name: answer, exact: true }).click();
     await page.getByRole("button", { name: "ادامه", exact: true }).click();
   }
