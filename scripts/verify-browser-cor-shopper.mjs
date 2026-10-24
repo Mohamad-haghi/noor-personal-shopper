@@ -77,7 +77,7 @@ try {
           sessionId: "noor-real-browser-smoke",
           intent: {
             category: "sunglasses",
-            preferences: { shape: "aviator" },
+            preferences: { frameShapes: "aviator", faceCompatibility: "oval" },
             constraints: {},
             priorities: [],
             desiredAttributes: [],
@@ -104,6 +104,11 @@ try {
       sessionStatus: session.status,
       recommendationStatus: recommendation.status,
       recommendationCount: recommendation.body.result.recommendations.length,
+      recommendationSummaries: recommendation.body.result.recommendations.map(item => ({
+        productId: item?.productId ?? null,
+        score: item?.score ?? null,
+        matchedCriteria: Array.isArray(item?.matchedCriteria) ? item.matchedCriteria : [],
+      })),
     };
   }, { corBaseUrl });
 

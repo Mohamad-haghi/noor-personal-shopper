@@ -170,7 +170,7 @@ jobs:
               sessionId: "noor-demo-smoke",
               intent: {
                 category: "sunglasses",
-                preferences: { shape: "aviator" },
+                preferences: { frameShapes: "aviator", faceCompatibility: "oval" },
                 constraints: {},
                 priorities: [],
                 desiredAttributes: [],
@@ -196,7 +196,13 @@ jobs:
             recommendationsType: Array.isArray(recommendationBody.result?.recommendations)
               ? "array" : typeof recommendationBody.result?.recommendations,
             recommendationCount: Array.isArray(recommendationBody.result?.recommendations)
-              ? recommendationBody.result.recommendations.length : null
+              ? recommendationBody.result.recommendations.length : null,
+            recommendationSummaries: Array.isArray(recommendationBody.result?.recommendations)
+              ? recommendationBody.result.recommendations.map(item => ({
+                  productId: item?.productId ?? null,
+                  score: item?.score ?? null,
+                  matchedCriteria: Array.isArray(item?.matchedCriteria) ? item.matchedCriteria : []
+                })) : null
           }));
           if (!recommendationResponse.ok || recommendationBody.contractVersion !== "1.0.0" ||
               recommendationBody.requestId !== "pages-live-smoke" ||
