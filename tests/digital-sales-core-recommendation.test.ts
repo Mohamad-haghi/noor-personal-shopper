@@ -86,7 +86,7 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(topProduct?.attributes.customAttributes.faceCompatibility).toContain("round");
   });
 
-  it("preserves journey answers without treating face shape or style as approved COR criteria", async () => {
+  it("preserves journey answers in recommendation context", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
 
