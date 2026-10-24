@@ -21,25 +21,16 @@ function categoryFor(productType: string | null): string | undefined {
   return undefined;
 }
 
-function shapeForStyle(value: string | null): string | undefined {
-  const map: Record<string, string> = {
-    "مینیمال و ظریف": "round",
-    "کلاسیک و ماندگار": "aviator",
-    "مدرن و شاخص": "square",
-    "جسور و متفاوت": "butterfly",
-  };
-  return value ? map[value] : undefined;
-}
-
 function toIntent(
   shopperId: ShopperProfileId,
   context: RecommendationContext,
 ): CustomerIntent {
   const journey = context.journey;
-  // The active NOOR Domain Pack evaluates the source field "shape".
-  // Do not send UI-only keys such as faceCompatibility/frameShapes that the
-  // pinned pack cannot score; an unmatched key can leave the result unranked.
-  const frameShape = shapeForStyle(journey?.style ?? null);
+  // Category is a supported canonical filter. NOOR's style labels and face
+  // shape answers do not have an approved mapping to the active COR criteria.
+  // Do not infer a frame shape from an aesthetic label or send unsupported
+  // fields; enable those preferences only after the NOOR Domain Pack approves
+  // their semantics and matching rules.
   const category = categoryFor(journey?.productType ?? null);
 
   return {
@@ -47,9 +38,7 @@ function toIntent(
     sessionId: `noor-session-${shopperId.id}`,
     ...(category ? { category } : {}),
     ...(context.occasion ? { useCase: context.occasion } : {}),
-    preferences: {
-      ...(frameShape ? { shape: frameShape } : {}),
-    },
+    preferences: {},
     constraints: {},
     priorities: [],
     desiredAttributes: [],
