@@ -161,7 +161,9 @@ export class CorShopperRemoteClient {
 
   constructor(private readonly options: CorShopperClientOptions) {
     this.baseUrl = parseBaseUrl(options.baseUrl).origin;
-    this.fetchImpl = options.fetchImpl ?? fetch;
+    // Keep native fetch bound to the global scope; injected test transports are
+    // preserved unchanged. Some browser engines reject an unbound receiver.
+    this.fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.maxRequestBytes = options.maxRequestBytes ?? DEFAULT_MAX_REQUEST_BYTES;
     this.maxResponseBytes = options.maxResponseBytes ?? DEFAULT_MAX_RESPONSE_BYTES;
