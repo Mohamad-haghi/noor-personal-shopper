@@ -30,6 +30,34 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(results.every((item) => item.reason.explanation)).toBe(true);
   });
 
+  it("ranks an available frame matching the requested shape ahead of non-matching frames", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
+    const products = await catalogService.listProducts();
+
+    for (const [style, canonicalShape] of [["خلبانی", "aviator"], ["مستطیلی", "rectangular"]] as const) {
+      const results = await bridge.generateRecommendations(
+        { id: `shape-check-${canonicalShape}` },
+        {
+          occasion: null,
+          season: null,
+          requestSource: "shopper_request",
+          journey: {
+            productType: "عینک آفتابی",
+            useCase: null,
+            style,
+            faceShape: null,
+          },
+        },
+      );
+
+      expect(results.length).toBeGreaterThan(0);
+      const topProduct = products.find((product) => product.identity.id === results[0]?.variantId.productId.id);
+      expect(topProduct).toBeDefined();
+      expect(topProduct?.attributes.customAttributes.frameShapes).toContain(canonicalShape);
+    }
+  });
+
   it("preserves journey answers without treating face shape or style as approved COR criteria", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
@@ -79,8 +107,8 @@ describe("COR catalog identity mapping", () => {
             recommendations: [{
               productId: selected.identity.id,
               score: 0.92,
-              matchedCriteria: ["category"],
-              reasons: [{ result: "matched", criterion: "category", explanationKey: "category_match" }],
+              matchedCriteria: ["frame-shape"],
+              reasons: [{ result: "matched", criterion: "frame-shape", explanationKey: "eyewear.frame_shape_match" }],
             }],
           },
         };
@@ -101,10 +129,10 @@ describe("COR catalog identity mapping", () => {
     expect(results).toHaveLength(1);
     expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
     expect(sentCategory).toBeUndefined();
-    expect(sentPreferences.shape).toBe("aviator");
-    expect(results[0]?.reason.primaryReason).toBe("shopper_request");
-    expect(results[0]?.reason.explanation).toBe("تناسب با نوع عینک انتخابی شما");
-    expect(sentPreferences).not.toHaveProperty("frameShapes");
+    expect(sentPreferences.frameShapes).toBe("aviator");
+    expect(results[0]?.reason.primaryReason).toBe("style_match");
+    expect(results[0]?.reason.explanation).toBe("تناسب با فرم فریم انتخابی شما");
+    expect(sentPreferences).not.toHaveProperty("shape");
     expect(sentPreferences).not.toHaveProperty("faceCompatibility");
   });
 });
