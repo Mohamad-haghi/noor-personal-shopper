@@ -26,6 +26,25 @@ function shapeForPreference(value: string | null): string | undefined {
   return value ? map[value] : undefined;
 }
 
+const SHAPE_CRITERIA = new Set(["shape", "frame_shape", "frameShapes", "style"]);
+const REASON_LABELS: Record<string, string> = {
+  category: "تناسب با نوع عینک انتخابی شما",
+  category_match: "تناسب با نوع عینک انتخابی شما",
+  shape: "تناسب با فرم فریم انتخابی شما",
+  shape_match: "تناسب با فرم فریم انتخابی شما",
+  frame_shape: "تناسب با فرم فریم انتخابی شما",
+  frame_shape_match: "تناسب با فرم فریم انتخابی شما",
+  availability: "در دسترس بودن محصول",
+  availability_match: "در دسترس بودن محصول",
+  uv_protection: "ویژگی محافظت در برابر فرابنفش",
+  uv_protection_match: "ویژگی محافظت در برابر فرابنفش",
+};
+
+function localizedReason(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  return REASON_LABELS[value] ?? REASON_LABELS[value.toLowerCase()];
+}
+
 function toIntent(
   shopperId: ShopperProfileId,
   context: RecommendationContext,
@@ -136,13 +155,16 @@ export class NoorDigitalSalesRecommendationBridge {
           popularityScore: null,
         },
         reason: {
-          primaryReason: coreRecommendation.matchedCriteria.length
-            ? "style_match"
-            : "shopper_request",
+          // A category or availability match is not evidence of a style match.
+          primaryReason: coreRecommendation.matchedCriteria.some((criterion) =>
+            SHAPE_CRITERIA.has(criterion) || SHAPE_CRITERIA.has(criterion.toLowerCase()),
+          ) ? "style_match" : "shopper_request",
           secondaryReasons: [],
+          // Never expose raw internal criterion/explanation keys in the Persian UI.
           explanation: coreRecommendation.reasons
             .filter((reason) => reason.result === "matched")
-            .map((reason) => reason.explanationKey ?? reason.criterion)
+            .map((reason) => localizedReason(reason.explanationKey) ?? localizedReason(reason.criterion))
+            .filter((reason): reason is string => Boolean(reason))
             .slice(0, 3)
             .join(" · ") || null,
         },
