@@ -53,3 +53,9 @@ Copy `.env.example` to `.env` if you need to set the mode explicitly. Do not add
 ## Readiness status
 
 The integrated recommendation bridge omits Persian presentation-only use-case labels from COR requests until an explicit canonical mapping exists; this avoids unranked or empty decision results. The current deployment has passed the build, catalog-feed contract check, demo-session credential check, and live COR recommendation API smoke test. This confirms the core recommendation connection for the demo only; it does not establish production readiness. Before presenting the full journey as verified, separately test comparison, handoff destination safety, and the customer-facing UI. Before commercial production use, replace demo data and demo credentials with an approved tenant/source configuration and complete security, privacy, image-rights, monitoring, and operational reviews.
+
+## Engineering documentation
+
+- [Documentation index](docs/README.md)
+- [COR connection incident and verification runbook](docs/COR_CONNECTION_INCIDENT_AND_RUNBOOK.md) — original browser failure, fix history, diagnostic codes, and the checklist for future installations.
+- [COR Shopper integration guide](docs/COR_SHOPPER_DEMO_INTEGRATION_V1.md)
