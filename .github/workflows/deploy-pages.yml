@@ -157,6 +157,57 @@ jobs:
               typeof sessionBody.credential !== "string" || !sessionBody.credential) {
             throw new Error("live_cor_demo_session_failed: HTTP " + sessionResponse.status + " / " + (sessionBody.error ?? "invalid_response"));
           }
+          // Diagnostic control: same category and installation, but no optional preferences.
+          // This distinguishes a preference/mapping interaction from an empty eligible catalog.
+          const baselineResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
+            method: "POST",
+            headers: {
+              Origin: origin,
+              Authorization: "Bearer " + sessionBody.credential,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contractVersion: "1.0.0",
+              requestId: "pages-live-smoke-baseline",
+              sessionId: "noor-demo-smoke",
+              intent: {
+                category: "sunglasses",
+                preferences: {},
+                constraints: {},
+                priorities: [],
+                desiredAttributes: [],
+                excludedAttributes: []
+              },
+              limit: 3
+            }),
+            signal: AbortSignal.timeout(90000)
+          });
+          const baselineBody = await baselineResponse.json().catch(() => ({}));
+          console.log(JSON.stringify({
+            diagnostic: "cor_recommendation_baseline_without_preferences",
+            httpStatus: baselineResponse.status,
+            contractVersion: baselineBody.contractVersion ?? null,
+            requestIdMatches: baselineBody.requestId === "pages-live-smoke-baseline",
+            source: baselineBody.result?.source ?? null,
+            demoOnly: baselineBody.result?.demoOnly ?? null,
+            recommendationCount: Array.isArray(baselineBody.result?.recommendations)
+              ? baselineBody.result.recommendations.length : null,
+            recommendationSummaries: Array.isArray(baselineBody.result?.recommendations)
+              ? baselineBody.result.recommendations.map(item => ({
+                  productId: item?.productId ?? null,
+                  score: item?.score ?? null,
+                  matchedCriteria: Array.isArray(item?.matchedCriteria) ? item.matchedCriteria : []
+                })) : null,
+            error: baselineBody.error ?? null
+          }));
+          if (!baselineResponse.ok || baselineBody.contractVersion !== "1.0.0" ||
+              baselineBody.requestId !== "pages-live-smoke-baseline" ||
+              baselineBody.result?.source !== "cor_canonical_engine" ||
+              baselineBody.result?.demoOnly !== true ||
+              !Array.isArray(baselineBody.result?.recommendations)) {
+            throw new Error("live_cor_recommendation_baseline_failed: HTTP " + baselineResponse.status);
+          }
+
           const recommendationResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
             method: "POST",
             headers: {
