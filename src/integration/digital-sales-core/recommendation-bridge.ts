@@ -21,16 +21,18 @@ function categoryFor(productType: string | null): string | undefined {
   return undefined;
 }
 
+function shapeForPreference(value: string | null): string | undefined {
+  const map: Record<string, string> = { "خلبانی": "aviator", "مستطیلی": "rectangular", "گرد": "round", "مربعی": "square", "پروانه‌ای": "butterfly", "ویفِرر": "wayfarer" };
+  return value ? map[value] : undefined;
+}
+
 function toIntent(
   shopperId: ShopperProfileId,
   context: RecommendationContext,
 ): CustomerIntent {
   const journey = context.journey;
-  // Category is a supported canonical filter. NOOR's style labels and face
-  // shape answers do not have an approved mapping to the active COR criteria.
-  // Do not infer a frame shape from an aesthetic label or send unsupported
-  // fields; enable those preferences only after the NOOR Domain Pack approves
-  // their semantics and matching rules.
+  // The UI asks for a literal frame shape, not a vague aesthetic label.
+  const frameShape = shapeForPreference(journey?.style ?? null);
   const category = categoryFor(journey?.productType ?? null);
 
   return {
@@ -38,7 +40,7 @@ function toIntent(
     sessionId: `noor-session-${shopperId.id}`,
     ...(category ? { category } : {}),
     ...(context.occasion ? { useCase: context.occasion } : {}),
-    preferences: {},
+    preferences: { ...(frameShape ? { shape: frameShape } : {}) },
     constraints: {},
     priorities: [],
     desiredAttributes: [],
