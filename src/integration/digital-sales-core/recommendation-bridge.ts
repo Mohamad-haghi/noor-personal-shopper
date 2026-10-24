@@ -26,6 +26,18 @@ function shapeForPreference(value: string | null): string | undefined {
   return value ? map[value] : undefined;
 }
 
+function faceShapeForPreference(value: string | null): string | undefined {
+  const map: Record<string, string> = {
+    "گرد": "round",
+    "بیضی": "oval",
+    "مربع": "square",
+    "مستطیل": "rectangle",
+    "قلبی": "heart",
+    "مثلثی": "triangle",
+  };
+  return value ? map[value] : undefined;
+}
+
 const SHAPE_CRITERIA = new Set(["frame-shape", "shape", "frame_shape", "frameShapes", "style"]);
 const REASON_LABELS: Record<string, string> = {
   "eyewear.frame_shape_match": "تناسب با فرم فریم انتخابی شما",
@@ -66,6 +78,7 @@ function toIntent(
   const journey = context.journey;
   // The UI asks for a literal frame shape, not a vague aesthetic label.
   const frameShape = shapeForPreference(journey?.style ?? null);
+  const faceShape = faceShapeForPreference(journey?.faceShape ?? null);
   const category = categoryFor(journey?.productType ?? null);
 
   return {
@@ -73,7 +86,10 @@ function toIntent(
     sessionId: `noor-session-${shopperId.id}`,
     ...(category ? { category } : {}),
     ...(context.occasion ? { useCase: context.occasion } : {}),
-    preferences: { ...(frameShape ? { frameShapes: frameShape } : {}) },
+    preferences: {
+      ...(frameShape ? { frameShapes: frameShape } : {}),
+      ...(faceShape ? { faceCompatibility: faceShape } : {}),
+    },
     constraints: {},
     priorities: [],
     desiredAttributes: [],
