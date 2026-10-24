@@ -29,7 +29,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
   const summary = isComplete ? `<div class="shopper-summary">
     <div><span>نوع عینک</span><strong>${escapeHtml(flow.journey.productType ?? "—")}</strong></div>
     <div><span>کاربرد</span><strong>${escapeHtml(flow.journey.useCase ?? "—")}</strong></div>
-    <div><span>استایل</span><strong>${escapeHtml(flow.journey.style ?? "—")}</strong></div>
+    <div><span>فرم فریم ترجیحی</span><strong>${escapeHtml(flow.journey.style ?? "—")}</strong></div>
     <div><span>فرم صورت</span><strong>${escapeHtml(flow.journey.faceShape ?? "—")}</strong></div>
   </div>
   <p class="shopper-profile-note" aria-live="polite">پروفایل انتخاب شما به‌صورت ساختاریافته در لایهٔ Profile نگه‌داری شده و برای اتصال آینده به حساب و سیستم نور آماده است.</p>` : "";
