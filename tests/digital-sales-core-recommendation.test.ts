@@ -58,6 +58,34 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     }
   });
 
+  it("ranks products compatible with the shopper's selected face shape", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
+    const products = await catalogService.listProducts();
+
+    const results = await bridge.generateRecommendations(
+      { id: "face-fit-check" },
+      {
+        occasion: null,
+        season: null,
+        requestSource: "shopper_request",
+        journey: {
+          productType: "عینک آفتابی",
+          useCase: null,
+          style: null,
+          faceShape: "گرد",
+        },
+      },
+    );
+
+    expect(results.length).toBeGreaterThan(0);
+    const topProduct = products.find(
+      (product) => product.identity.id === results[0]?.variantId.productId.id,
+    );
+    expect(topProduct).toBeDefined();
+    expect(topProduct?.attributes.customAttributes.faceCompatibility).toContain("round");
+  });
+
   it("preserves journey answers without treating face shape or style as approved COR criteria", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
