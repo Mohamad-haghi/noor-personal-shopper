@@ -1,5 +1,6 @@
 import type { Product, Recommendation } from "../domain";
 import { readAppConfig } from "../config/app-config";
+import { CorShopperDemoCredentialProvider } from "../integration/cor-shopper-demo-credential-provider";
 import { getNoorInventoryDestination } from "./noor-inventory-link";
 
 function escapeHtml(value: string): string { return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\"","&quot;").replaceAll("'","&#039;"); }
@@ -110,8 +111,26 @@ export function renderRecommendationsUnavailable(routeView: HTMLElement, diagnos
       const health = await probe("/health/live");
       const sessionWithSignal = await probe("/shopper/v1/demo-session", true);
       const healthWithSignal = await probe("/health/live", true);
+
+      // Exercise the exact credential provider used by the real recommendation
+      // client, including response JSON/schema/expiry validation. Never expose
+      // the credential or response body in the diagnostic output.
+      const providerController = new AbortController();
+      const providerTimer = window.setTimeout(() => providerController.abort(), 15_000);
+      let providerResult = "UNKNOWN";
+      try {
+        const provider = new CorShopperDemoCredentialProvider(baseUrl);
+        const credential = await provider.getBearerCredential(providerController.signal);
+        providerResult = credential ? "OK" : "EMPTY";
+      } catch (error) {
+        const code = error instanceof Error ? error.message : "";
+        providerResult = /^cor_[a-z0-9_]{1,80}$/.test(code) ? code : "UNEXPECTED_ERROR";
+      } finally {
+        window.clearTimeout(providerTimer);
+      }
+
       diagnosticResult.textContent =
-        `demo-session=${session}; health-live=${health}; signal-demo-session=${sessionWithSignal}; signal-health-live=${healthWithSignal}`;
+        `demo-session=${session}; health-live=${health}; signal-demo-session=${sessionWithSignal}; signal-health-live=${healthWithSignal}; actual-provider=${providerResult}`;
     } finally {
       diagnosticButton.disabled = false;
       diagnosticButton.textContent = "بررسی دوباره اتصال";
