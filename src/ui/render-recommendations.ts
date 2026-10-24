@@ -3,6 +3,13 @@ import { readAppConfig } from "../config/app-config";
 import { CorShopperDemoCredentialProvider } from "../integration/cor-shopper-demo-credential-provider";
 import { getNoorInventoryDestination } from "./noor-inventory-link";
 
+/** COR's canonical decision engine returns normalized scores in the 0..1 range. */
+export function formatRecommendationScore(score: number): string {
+  if (!Number.isFinite(score)) return "—";
+  const normalized = Math.max(0, Math.min(1, score));
+  return String(Math.round(normalized * 100));
+}
+
 function escapeHtml(value: string): string { return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\"","&quot;").replaceAll("'","&#039;"); }
 function custom(product: Product, key: string): unknown { return product.attributes.customAttributes[key]; }
 
@@ -17,7 +24,7 @@ function card(product: Product, recommendation: Recommendation, index: number): 
     ? `<a class="button button-secondary" href="${escapeHtml(inventory.url)}" target="_blank" rel="noopener noreferrer">مشاهده در فروشگاه نور</a>`
     : "";
 
-  return `<article class="recommendation-card"><div class="recommendation-rank">0${index + 1}</div><div class="recommendation-card-body"><p class="eyebrow">پیشنهاد ${index + 1} · ${recommendation.score.overall}%</p><h2>${escapeHtml(product.name)}</h2><p class="recommendation-reason">${escapeHtml(recommendation.reason.explanation ?? "هماهنگ با انتخاب‌های شما")}</p><dl class="recommendation-specs"><div><dt>فرم</dt><dd>${escapeHtml(shape)}</dd></div><div><dt>جنس</dt><dd>${escapeHtml(material)}</dd></div><div><dt>ابعاد</dt><dd>${escapeHtml(size)}</dd></div></dl><p class="inventory-link-note">شناسه مرجع نور: ${escapeHtml(inventory?.reference ?? "در دسترس نیست")}</p><div class="recommendation-card-actions"><button class="button button-secondary recommendation-save" type="button" data-save-choice="${escapeHtml(recommendation.variantId.id)}">ذخیره در انتخاب‌های من</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button><button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button>${inventoryLink}</div></div></article>`;
+  return `<article class="recommendation-card"><div class="recommendation-rank">0${index + 1}</div><div class="recommendation-card-body"><p class="eyebrow">پیشنهاد ${index + 1} · ${formatRecommendationScore(recommendation.score.overall)}%</p><h2>${escapeHtml(product.name)}</h2><p class="recommendation-reason">${escapeHtml(recommendation.reason.explanation ?? "هماهنگ با انتخاب‌های شما")}</p><dl class="recommendation-specs"><div><dt>فرم</dt><dd>${escapeHtml(shape)}</dd></div><div><dt>جنس</dt><dd>${escapeHtml(material)}</dd></div><div><dt>ابعاد</dt><dd>${escapeHtml(size)}</dd></div></dl><p class="inventory-link-note">شناسه مرجع نور: ${escapeHtml(inventory?.reference ?? "در دسترس نیست")}</p><div class="recommendation-card-actions"><button class="button button-secondary recommendation-save" type="button" data-save-choice="${escapeHtml(recommendation.variantId.id)}">ذخیره در انتخاب‌های من</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button><button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button>${inventoryLink}</div></div></article>`;
 }
 
 export function renderRecommendations(routeView: HTMLElement, recommendations: readonly Recommendation[], products: readonly Product[]): void {
