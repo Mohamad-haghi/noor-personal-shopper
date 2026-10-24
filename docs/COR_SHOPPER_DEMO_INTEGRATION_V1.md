@@ -1,6 +1,13 @@
 # NOOR → COR Shopper Demo Integration V1
 
-Status: code path implemented on a feature branch; not yet merged, deployed, or end-to-end verified.
+Status: integrated demo deployed; live recommendation/session path observed working. Comparison and handoff still require separate end-to-end verification.
+
+## Current verification status
+
+- The NOOR Pages deployment workflow for commit `a52d9cffe98bc262b639bcde7b04fb3c3999b568` passed (run [40066154430](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/40066154430)).
+- The published NOOR demo subsequently displayed three product recommendations, and the repository README records a successful live COR recommendation smoke test.
+- The earlier browser error `cor_demo_credential_session_and_health_fetch_failed` is documented in [the connection incident and runbook](./COR_CONNECTION_INCIDENT_AND_RUNBOOK.md). The exact root cause has not been conclusively proven from contemporaneous browser/network logs.
+- Do not claim comparison or handoff are verified until each has passed a published-site browser end-to-end test. CI success is not runtime proof.
 
 ## What integrated mode does
 
