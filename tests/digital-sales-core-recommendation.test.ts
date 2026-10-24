@@ -58,7 +58,35 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     }
   });
 
-  it("preserves journey answers without treating face shape or style as approved COR criteria", async () => {
+  it("ranks products compatible with the shopper's selected face shape", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
+    const products = await catalogService.listProducts();
+
+    const results = await bridge.generateRecommendations(
+      { id: "face-fit-check" },
+      {
+        occasion: null,
+        season: null,
+        requestSource: "shopper_request",
+        journey: {
+          productType: "عینک آفتابی",
+          useCase: null,
+          style: null,
+          faceShape: "گرد",
+        },
+      },
+    );
+
+    expect(results.length).toBeGreaterThan(0);
+    const topProduct = products.find(
+      (product) => product.identity.id === results[0]?.variantId.productId.id,
+    );
+    expect(topProduct).toBeDefined();
+    expect(topProduct?.attributes.customAttributes.faceCompatibility).toContain("round");
+  });
+
+  it("preserves journey answers in recommendation context", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
 
@@ -130,9 +158,9 @@ describe("COR catalog identity mapping", () => {
     expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
     expect(sentCategory).toBeUndefined();
     expect(sentPreferences.frameShapes).toBe("aviator");
+    expect(sentPreferences.faceCompatibility).toBe("round");
     expect(results[0]?.reason.primaryReason).toBe("style_match");
     expect(results[0]?.reason.explanation).toBe("تناسب با فرم فریم انتخابی شما");
     expect(sentPreferences).not.toHaveProperty("shape");
-    expect(sentPreferences).not.toHaveProperty("faceCompatibility");
   });
 });
