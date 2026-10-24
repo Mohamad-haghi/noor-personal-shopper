@@ -31,7 +31,7 @@ jobs:
           repository: Mohamad-haghi/digital-sales-core
           path: digital-sales-core
           token: ${{ secrets.CORE_REPO_TOKEN }}
-          ref: b112e232d494cde3b1938836aa8398ec2f031c06
+          ref: 7d2d787d96949eb0df94231bba0874b3b0d169b8
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -73,7 +73,7 @@ jobs:
           repository: Mohamad-haghi/digital-sales-core
           path: digital-sales-core
           token: ${{ secrets.CORE_REPO_TOKEN }}
-          ref: b112e232d494cde3b1938836aa8398ec2f031c06
+          ref: 7d2d787d96949eb0df94231bba0874b3b0d169b8
       - name: Setup Node.js for browser smoke test
         uses: actions/setup-node@v6
         with:
