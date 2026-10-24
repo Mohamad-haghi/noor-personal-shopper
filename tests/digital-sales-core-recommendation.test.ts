@@ -30,7 +30,7 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(results.every((item) => item.reason.explanation)).toBe(true);
   });
 
-  it("passes journey context into Core so product type and face shape affect results", async () => {
+  it("preserves journey answers without treating face shape or style as approved COR criteria", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
 
@@ -64,10 +64,12 @@ describe("COR catalog identity mapping", () => {
     if (!selected) throw new Error("test_catalog_product_missing");
 
     let sentPreferences: Record<string, unknown> = {};
+    let sentCategory: string | undefined;
     const remoteClient = {
       recommend: async (payload: unknown) => {
-        const request = payload as { requestId: string; intent: { preferences: Record<string, unknown> } };
+        const request = payload as { requestId: string; intent: { category?: string; preferences: Record<string, unknown> } };
         sentPreferences = request.intent.preferences;
+        sentCategory = request.intent.category;
         return {
           contractVersion: "1.0.0",
           requestId: request.requestId,
@@ -98,7 +100,9 @@ describe("COR catalog identity mapping", () => {
 
     expect(results).toHaveLength(1);
     expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
-    expect(sentPreferences.shape).toBe("aviator");
+    expect(sentCategory).toBeUndefined();
+    expect(sentPreferences).toEqual({});
+    expect(sentPreferences).not.toHaveProperty("shape");
     expect(sentPreferences).not.toHaveProperty("frameShapes");
     expect(sentPreferences).not.toHaveProperty("faceCompatibility");
   });
