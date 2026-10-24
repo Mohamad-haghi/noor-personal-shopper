@@ -26,10 +26,17 @@ function waitBeforeRetry(signal: AbortSignal): Promise<boolean> {
 }
 
 export class CorShopperDemoCredentialProvider implements CorShopperCredentialProvider {
+  private readonly fetchImpl: typeof fetch;
+
   constructor(
     private readonly baseUrl: string,
-    private readonly fetchImpl: typeof fetch = fetch,
-  ) {}
+    fetchImpl?: typeof fetch,
+  ) {
+    // Invoke the platform fetch with its required global receiver. Calling it as
+    // this.fetchImpl(...) can be rejected by browsers that brand-check the
+    // WindowOrWorkerGlobalScope receiver, even though direct window.fetch works.
+    this.fetchImpl = fetchImpl ?? globalThis.fetch.bind(globalThis);
+  }
 
   async getBearerCredential(signal: AbortSignal): Promise<string> {
     let origin: string;
