@@ -102,6 +102,8 @@ describe("COR catalog identity mapping", () => {
     expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
     expect(sentCategory).toBeUndefined();
     expect(sentPreferences.shape).toBe("aviator");
+    expect(results[0]?.reason.primaryReason).toBe("shopper_request");
+    expect(results[0]?.reason.explanation).toBe("تناسب با نوع عینک انتخابی شما");
     expect(sentPreferences).not.toHaveProperty("frameShapes");
     expect(sentPreferences).not.toHaveProperty("faceCompatibility");
   });
