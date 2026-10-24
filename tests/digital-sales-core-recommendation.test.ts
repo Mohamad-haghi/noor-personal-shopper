@@ -17,7 +17,7 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
         journey: {
           productType: "عینک آفتابی",
           useCase: "رانندگی و فضای باز",
-          style: "مدرن و شاخص",
+          style: "مستطیلی",
           faceShape: "گرد",
         },
       },
@@ -43,7 +43,7 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
         journey: {
           productType: "عینک طبی",
           useCase: "کار و جلسات",
-          style: "کلاسیک و ماندگار",
+          style: "خلبانی",
           faceShape: "مربع",
         },
       },
@@ -94,15 +94,14 @@ describe("COR catalog identity mapping", () => {
         occasion: null,
         season: null,
         requestSource: "shopper_request",
-        journey: { productType: "هر دو", useCase: null, style: "کلاسیک و ماندگار", faceShape: "گرد" },
+        journey: { productType: "هر دو", useCase: null, style: "خلبانی", faceShape: "گرد" },
       },
     );
 
     expect(results).toHaveLength(1);
     expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
     expect(sentCategory).toBeUndefined();
-    expect(sentPreferences).toEqual({});
-    expect(sentPreferences).not.toHaveProperty("shape");
+    expect(sentPreferences.shape).toBe("aviator");
     expect(sentPreferences).not.toHaveProperty("frameShapes");
     expect(sentPreferences).not.toHaveProperty("faceCompatibility");
   });
