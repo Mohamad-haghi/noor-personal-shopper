@@ -76,7 +76,7 @@ describe("COR catalog identity mapping", () => {
             demoOnly: true,
             recommendations: [{
               productId: selected.identity.id,
-              score: 92,
+              score: 0.92,
               matchedCriteria: ["category"],
               reasons: [{ result: "matched", criterion: "category", explanationKey: "category_match" }],
             }],
