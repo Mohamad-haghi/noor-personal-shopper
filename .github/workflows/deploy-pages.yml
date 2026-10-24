@@ -208,6 +208,57 @@ jobs:
             throw new Error("live_cor_recommendation_baseline_failed: HTTP " + baselineResponse.status);
           }
 
+          // Diagnostic control for the suspected Domain Pack key mismatch.
+          // The mapped catalog exposes attributes.frameShapes; the pinned pack may use "shape".
+          const shapeAliasResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
+            method: "POST",
+            headers: {
+              Origin: origin,
+              Authorization: "Bearer " + sessionBody.credential,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contractVersion: "1.0.0",
+              requestId: "pages-live-smoke-shape-alias",
+              sessionId: "noor-demo-smoke",
+              intent: {
+                category: "sunglasses",
+                preferences: { shape: "aviator" },
+                constraints: {},
+                priorities: [],
+                desiredAttributes: [],
+                excludedAttributes: []
+              },
+              limit: 3
+            }),
+            signal: AbortSignal.timeout(90000)
+          });
+          const shapeAliasBody = await shapeAliasResponse.json().catch(() => ({}));
+          console.log(JSON.stringify({
+            diagnostic: "cor_recommendation_shape_alias_control",
+            httpStatus: shapeAliasResponse.status,
+            contractVersion: shapeAliasBody.contractVersion ?? null,
+            requestIdMatches: shapeAliasBody.requestId === "pages-live-smoke-shape-alias",
+            source: shapeAliasBody.result?.source ?? null,
+            demoOnly: shapeAliasBody.result?.demoOnly ?? null,
+            recommendationCount: Array.isArray(shapeAliasBody.result?.recommendations)
+              ? shapeAliasBody.result.recommendations.length : null,
+            recommendationSummaries: Array.isArray(shapeAliasBody.result?.recommendations)
+              ? shapeAliasBody.result.recommendations.map(item => ({
+                  productId: item?.productId ?? null,
+                  score: item?.score ?? null,
+                  matchedCriteria: Array.isArray(item?.matchedCriteria) ? item.matchedCriteria : []
+                })) : null,
+            error: shapeAliasBody.error ?? null
+          }));
+          if (!shapeAliasResponse.ok || shapeAliasBody.contractVersion !== "1.0.0" ||
+              shapeAliasBody.requestId !== "pages-live-smoke-shape-alias" ||
+              shapeAliasBody.result?.source !== "cor_canonical_engine" ||
+              shapeAliasBody.result?.demoOnly !== true ||
+              !Array.isArray(shapeAliasBody.result?.recommendations)) {
+            throw new Error("live_cor_recommendation_shape_alias_failed: HTTP " + shapeAliasResponse.status);
+          }
+
           const recommendationResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
             method: "POST",
             headers: {
