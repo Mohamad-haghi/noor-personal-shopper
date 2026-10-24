@@ -26,8 +26,22 @@ function shapeForPreference(value: string | null): string | undefined {
   return value ? map[value] : undefined;
 }
 
-const SHAPE_CRITERIA = new Set(["shape", "frame_shape", "frameShapes", "style"]);
+const SHAPE_CRITERIA = new Set(["frame-shape", "shape", "frame_shape", "frameShapes", "style"]);
 const REASON_LABELS: Record<string, string> = {
+  "eyewear.frame_shape_match": "تناسب با فرم فریم انتخابی شما",
+  "eyewear.face_compatibility_match": "تناسب با فرم صورت انتخابی شما",
+  "eyewear.frame_material_match": "تناسب با جنس فریم انتخابی شما",
+  "eyewear.frame_color_match": "تناسب با رنگ فریم انتخابی شما",
+  "eyewear.uv_protection_match": "دارای ویژگی محافظت در برابر فرابنفش",
+  "eyewear.prescription_capable_match": "مناسب برای عدسی طبی",
+  "eyewear.lens_feature_match": "تناسب با ویژگی عدسی انتخابی شما",
+  "frame-shape": "تناسب با فرم فریم انتخابی شما",
+  "face-compatibility": "تناسب با فرم صورت انتخابی شما",
+  "frame-material": "تناسب با جنس فریم انتخابی شما",
+  "frame-color": "تناسب با رنگ فریم انتخابی شما",
+  "uv-protection": "دارای ویژگی محافظت در برابر فرابنفش",
+  "prescription-capable": "مناسب برای عدسی طبی",
+  "lens-feature": "تناسب با ویژگی عدسی انتخابی شما",
   category: "تناسب با نوع عینک انتخابی شما",
   category_match: "تناسب با نوع عینک انتخابی شما",
   shape: "تناسب با فرم فریم انتخابی شما",
@@ -59,7 +73,7 @@ function toIntent(
     sessionId: `noor-session-${shopperId.id}`,
     ...(category ? { category } : {}),
     ...(context.occasion ? { useCase: context.occasion } : {}),
-    preferences: { ...(frameShape ? { shape: frameShape } : {}) },
+    preferences: { ...(frameShape ? { frameShapes: frameShape } : {}) },
     constraints: {},
     priorities: [],
     desiredAttributes: [],
