@@ -159,6 +159,9 @@ export class NoorDigitalSalesRecommendationBridge {
     }
     const noorProducts = await this.catalogService.listProducts();
     const results: Recommendation[] = [];
+    let matchedProductCount = 0;
+    let skippedMissingProductCount = 0;
+    let skippedMissingVariantCount = 0;
 
     for (const [index, coreRecommendation] of coreRecommendations.entries()) {
       const noorProduct = noorProducts.find(
@@ -167,11 +170,18 @@ export class NoorDigitalSalesRecommendationBridge {
           product.externalIds.providerProductId === coreRecommendation.productId ||
           product.externalIds.externalSystemIds.noorReference === coreRecommendation.productId,
       );
-      if (!noorProduct) continue;
+      if (!noorProduct) {
+        skippedMissingProductCount += 1;
+        continue;
+      }
+      matchedProductCount += 1;
 
       const variants = await this.catalogService.listAvailableVariants(noorProduct.identity);
       const variant = variants[0] ?? (await this.catalogService.listVariants(noorProduct.identity))[0];
-      if (!variant) continue;
+      if (!variant) {
+        skippedMissingVariantCount += 1;
+        continue;
+      }
 
       results.push({
         identity: { id: `core-recommendation-${index + 1}-${variant.identity.id}` },
@@ -201,6 +211,26 @@ export class NoorDigitalSalesRecommendationBridge {
         context,
         createdAt: new Date(),
         expiresAt: null,
+      });
+    }
+
+    if (results.length !== coreRecommendations.length) {
+      // Counts only: never log shopper IDs, product IDs, credentials, or response bodies.
+      console.warn("[NOOR][COR] recommendation reconciliation", {
+        source: this.remoteClient ? "cor_remote" : "local_fallback",
+        outcome: coreRecommendations.length === 0
+          ? "cor_returned_empty_recommendations"
+          : matchedProductCount === 0
+            ? "no_cor_product_ids_matched_noor_catalog"
+            : skippedMissingVariantCount > 0 && results.length === 0
+              ? "matched_products_have_no_variants"
+              : "some_recommendations_were_dropped",
+        coreRecommendationCount: coreRecommendations.length,
+        noorCatalogCount: noorProducts.length,
+        matchedProductCount,
+        skippedMissingProductCount,
+        skippedMissingVariantCount,
+        finalRecommendationCount: results.length,
       });
     }
 
