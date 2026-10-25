@@ -43,7 +43,10 @@ const products = seed.products.map((product) => {
     frame: typeof custom.frameMaterial === "string" ? custom.frameMaterial : null,
     frameColor: typeof custom.frameColor === "string" ? custom.frameColor : null,
     shape: Array.isArray(custom.frameShapes) ? custom.frameShapes.join(", ") : null,
+    faceCompatibility: Array.isArray(custom.faceCompatibility) ? custom.faceCompatibility : null,
     lensColor: typeof custom.lensColor === "string" ? custom.lensColor : null,
+    lensFeature: typeof custom.lensFeature === "string" ? custom.lensFeature : null,
+    prescriptionCapable: typeof custom.prescriptionCapable === "boolean" ? custom.prescriptionCapable : null,
     uvProtection: typeof custom.uvProtection === "string" ? custom.uvProtection : null,
     lensWidthMm: typeof custom.lensWidthMm === "number" ? custom.lensWidthMm : null,
     image,
@@ -56,6 +59,31 @@ const products = seed.products.map((product) => {
     availabilitySource: "demo"
   };
 });
+
+// Recommendation-critical attributes must survive the seed-to-feed transformation.
+// Unknown source data stays null; never invent product compatibility to make the build pass.
+for (const product of products) {
+  if (product.faceCompatibility !== null &&
+      (!Array.isArray(product.faceCompatibility) ||
+       product.faceCompatibility.length === 0 ||
+       product.faceCompatibility.some(value => typeof value !== "string" || !value.trim()))) {
+    throw new Error("demo_catalog_feed_face_compatibility_invalid:" + product.id);
+  }
+  if (product.lensFeature !== null && typeof product.lensFeature !== "string") {
+    throw new Error("demo_catalog_feed_lens_feature_invalid:" + product.id);
+  }
+  if (product.prescriptionCapable !== null && typeof product.prescriptionCapable !== "boolean") {
+    throw new Error("demo_catalog_feed_prescription_capability_invalid:" + product.id);
+  }
+}
+const knownFaceCompatibilityProducts = products.filter(product => Array.isArray(product.faceCompatibility));
+const roundCompatibleIds = knownFaceCompatibilityProducts.filter(product => product.faceCompatibility.includes("round")).map(product => product.id).sort();
+const heartCompatibleIds = knownFaceCompatibilityProducts.filter(product => product.faceCompatibility.includes("heart")).map(product => product.id).sort();
+if (roundCompatibleIds.length === 0 || heartCompatibleIds.length === 0 ||
+    JSON.stringify(roundCompatibleIds) === JSON.stringify(heartCompatibleIds)) {
+  throw new Error("demo_catalog_feed_face_compatibility_must_distinguish_face_shapes");
+}
+
 const feed = {
   contractVersion: "1.0.0",
   source: "noor-demo",
@@ -65,4 +93,14 @@ const feed = {
 };
 await mkdir(dirname(outputPath), { recursive: true });
 await writeFile(outputPath, JSON.stringify(feed, null, 2) + "\n", "utf8");
-console.log(`Generated demo-only catalog feed with ${products.length} products; availability is synthetic and demo-only.`);
+console.log(JSON.stringify({
+  status: "verified",
+  productCount: products.length,
+  faceCompatibility: {
+    knownProducts: knownFaceCompatibilityProducts.length,
+    unknownProducts: products.length - knownFaceCompatibilityProducts.length,
+    roundCandidates: roundCompatibleIds.length,
+    heartCandidates: heartCompatibleIds.length
+  },
+  demoOnly: true
+}));
