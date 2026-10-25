@@ -214,7 +214,7 @@ export class NoorDigitalSalesRecommendationBridge {
       });
     }
 
-    if (results.length !== coreRecommendations.length) {
+    if (coreRecommendations.length === 0 || results.length !== coreRecommendations.length) {
       // Counts only: never log shopper IDs, product IDs, credentials, or response bodies.
       console.warn("[NOOR][COR] recommendation reconciliation", {
         source: this.remoteClient ? "cor_remote" : "local_fallback",
