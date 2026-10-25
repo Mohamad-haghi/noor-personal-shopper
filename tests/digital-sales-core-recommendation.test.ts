@@ -157,11 +157,11 @@ describe("COR catalog identity mapping", () => {
     expect(results).toHaveLength(1);
     expect(results[0]?.variantId.productId.id).toBe(selected.identity.id);
     expect(sentCategory).toBeUndefined();
+    expect(sentPreferences.shape).toBe("aviator");
     expect(sentPreferences.frameShapes).toBe("aviator");
     expect(sentPreferences.faceCompatibility).toBe("round");
     expect(results[0]?.reason.primaryReason).toBe("style_match");
     expect(results[0]?.reason.explanation).toBe("تناسب با فرم فریم انتخابی شما");
-    expect(sentPreferences).not.toHaveProperty("shape");
   });
 });
 
