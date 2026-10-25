@@ -77,7 +77,7 @@ try {
           sessionId: "noor-real-browser-smoke",
           intent: {
             category: "sunglasses",
-            preferences: { frameShapes: "aviator", faceCompatibility: "oval" },
+            preferences: { shape: "aviator", frameShapes: "aviator", faceCompatibility: "oval" },
             constraints: {},
             priorities: [],
             desiredAttributes: [],
