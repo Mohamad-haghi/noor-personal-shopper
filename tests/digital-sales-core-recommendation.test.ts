@@ -222,6 +222,28 @@ describe("COR recommendation reconciliation diagnostics", () => {
     expect(logged).not.toContain("unmatched-test-product");
   });
 
+  it("does not present zero-score candidates as valid recommendations", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const bridge = new NoorDigitalSalesRecommendationBridge(
+      catalogService,
+      remoteClientWithRecommendations([
+        { productId: "zero-score-a", score: 0, matchedCriteria: [], reasons: [] },
+        { productId: "zero-score-b", score: 0, matchedCriteria: [], reasons: [] },
+      ]),
+    );
+
+    const results = await bridge.generateRecommendations({ id: "zero-score-shopper" }, context);
+
+    expect(results).toHaveLength(0);
+    expect(warn).toHaveBeenCalledWith("[NOOR][COR] recommendation reconciliation", expect.objectContaining({
+      outcome: "no_positive_score_recommendations",
+      coreRecommendationCount: 2,
+      positiveScoreRecommendationCount: 0,
+      finalRecommendationCount: 0,
+    }));
+  });
+
   it("distinguishes an empty COR recommendation list from catalog identity mismatches", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
