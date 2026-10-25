@@ -61,22 +61,24 @@ const products = seed.products.map((product) => {
 });
 
 // Recommendation-critical attributes must survive the seed-to-feed transformation.
-// In particular, a green build must not publish a catalog that cannot score face shape.
+// Unknown source data stays null; never invent product compatibility to make the build pass.
 for (const product of products) {
-  if (!Array.isArray(product.faceCompatibility) ||
-      product.faceCompatibility.length === 0 ||
-      product.faceCompatibility.some(value => typeof value !== "string" || !value.trim())) {
-    throw new Error("demo_catalog_feed_face_compatibility_missing");
+  if (product.faceCompatibility !== null &&
+      (!Array.isArray(product.faceCompatibility) ||
+       product.faceCompatibility.length === 0 ||
+       product.faceCompatibility.some(value => typeof value !== "string" || !value.trim()))) {
+    throw new Error("demo_catalog_feed_face_compatibility_invalid:" + product.id);
   }
   if (product.lensFeature !== null && typeof product.lensFeature !== "string") {
-    throw new Error("demo_catalog_feed_lens_feature_invalid");
+    throw new Error("demo_catalog_feed_lens_feature_invalid:" + product.id);
   }
   if (product.prescriptionCapable !== null && typeof product.prescriptionCapable !== "boolean") {
-    throw new Error("demo_catalog_feed_prescription_capability_invalid");
+    throw new Error("demo_catalog_feed_prescription_capability_invalid:" + product.id);
   }
 }
-const roundCompatibleIds = products.filter(product => product.faceCompatibility.includes("round")).map(product => product.id).sort();
-const heartCompatibleIds = products.filter(product => product.faceCompatibility.includes("heart")).map(product => product.id).sort();
+const knownFaceCompatibilityProducts = products.filter(product => Array.isArray(product.faceCompatibility));
+const roundCompatibleIds = knownFaceCompatibilityProducts.filter(product => product.faceCompatibility.includes("round")).map(product => product.id).sort();
+const heartCompatibleIds = knownFaceCompatibilityProducts.filter(product => product.faceCompatibility.includes("heart")).map(product => product.id).sort();
 if (roundCompatibleIds.length === 0 || heartCompatibleIds.length === 0 ||
     JSON.stringify(roundCompatibleIds) === JSON.stringify(heartCompatibleIds)) {
   throw new Error("demo_catalog_feed_face_compatibility_must_distinguish_face_shapes");
@@ -95,6 +97,8 @@ console.log(JSON.stringify({
   status: "verified",
   productCount: products.length,
   faceCompatibility: {
+    knownProducts: knownFaceCompatibilityProducts.length,
+    unknownProducts: products.length - knownFaceCompatibilityProducts.length,
     roundCandidates: roundCompatibleIds.length,
     heartCandidates: heartCompatibleIds.length
   },
