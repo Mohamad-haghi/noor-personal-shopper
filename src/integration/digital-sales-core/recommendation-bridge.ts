@@ -221,7 +221,7 @@ export class NoorDigitalSalesRecommendationBridge {
       });
     }
 
-    if (coreRecommendations.length === 0 || results.length !== positiveScoreRecommendations.length) {
+    if (coreRecommendations.length === 0 || results.length !== coreRecommendations.length) {
       // Counts only: never log shopper IDs, product IDs, credentials, or response bodies.
       const source = this.remoteClient ? "cor_remote" : "local_fallback";
       const outcome = coreRecommendations.length === 0
