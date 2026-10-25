@@ -216,15 +216,22 @@ export class NoorDigitalSalesRecommendationBridge {
 
     if (coreRecommendations.length === 0 || results.length !== coreRecommendations.length) {
       // Counts only: never log shopper IDs, product IDs, credentials, or response bodies.
-      console.warn("[NOOR][COR] recommendation reconciliation", {
-        source: this.remoteClient ? "cor_remote" : "local_fallback",
-        outcome: coreRecommendations.length === 0
+      const source = this.remoteClient ? "cor_remote" : "local_fallback";
+      const outcome = coreRecommendations.length === 0
+        ? source === "cor_remote"
           ? "cor_returned_empty_recommendations"
-          : matchedProductCount === 0
+          : "local_fallback_returned_empty_recommendations"
+        : matchedProductCount === 0
+          ? source === "cor_remote"
             ? "no_cor_product_ids_matched_noor_catalog"
-            : skippedMissingVariantCount > 0 && results.length === 0
-              ? "matched_products_have_no_variants"
-              : "some_recommendations_were_dropped",
+            : "no_fallback_product_ids_matched_noor_catalog"
+          : skippedMissingVariantCount > 0 && results.length === 0
+            ? "matched_products_have_no_variants"
+            : "some_recommendations_were_dropped";
+
+      console.warn("[NOOR][COR] recommendation reconciliation", {
+        source,
+        outcome,
         coreRecommendationCount: coreRecommendations.length,
         noorCatalogCount: noorProducts.length,
         matchedProductCount,
