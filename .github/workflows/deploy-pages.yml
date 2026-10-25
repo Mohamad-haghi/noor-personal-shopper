@@ -221,7 +221,9 @@ jobs:
               sessionId: "noor-demo-smoke",
               intent: {
                 category: "sunglasses",
-                preferences: { frameShapes: "aviator", faceCompatibility: "oval" },
+                // Active installation 745 pins Domain Pack 1.1.0, which reads "shape".
+        // Keep modern keys too for compatibility with the newer Domain Pack contract.
+        preferences: { shape: "aviator", frameShapes: "aviator", faceCompatibility: "oval" },
                 constraints: {},
                 priorities: [],
                 desiredAttributes: [],
