@@ -77,7 +77,8 @@ try {
           sessionId: "noor-real-browser-smoke",
           intent: {
             category: "sunglasses",
-            preferences: { frameShapes: "aviator", faceCompatibility: "oval" },
+            // Active installation 745 uses Domain Pack 1.1.0, which reads "shape".
+            preferences: { shape: "aviator", frameShapes: "aviator", faceCompatibility: "oval" },
             constraints: {},
             priorities: [],
             desiredAttributes: [],
