@@ -99,7 +99,7 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
         journey: {
           productType: "عینک طبی",
           useCase: "کار و جلسات",
-          style: "خلبانی",
+          style: "مستطیلی",
           faceShape: "مربع",
         },
       },
