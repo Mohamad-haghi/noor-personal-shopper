@@ -159,13 +159,18 @@ export class NoorDigitalSalesRecommendationBridge {
     } else {
       coreRecommendations = await this.engine.recommend(intent, 3);
     }
+    // A zero score means no preferred criterion matched. Do not present such
+    // candidates as recommendations; an empty result is safer than false confidence.
+    const positiveScoreRecommendations = coreRecommendations.filter(
+      (recommendation) => Number.isFinite(recommendation.score) && recommendation.score > 0,
+    );
     const noorProducts = await this.catalogService.listProducts();
     const results: Recommendation[] = [];
     let matchedProductCount = 0;
     let skippedMissingProductCount = 0;
     let skippedMissingVariantCount = 0;
 
-    for (const [index, coreRecommendation] of coreRecommendations.entries()) {
+    for (const [index, coreRecommendation] of positiveScoreRecommendations.entries()) {
       const noorProduct = noorProducts.find(
         (product) =>
           product.identity.id === coreRecommendation.productId ||
@@ -223,7 +228,9 @@ export class NoorDigitalSalesRecommendationBridge {
         ? source === "cor_remote"
           ? "cor_returned_empty_recommendations"
           : "local_fallback_returned_empty_recommendations"
-        : matchedProductCount === 0
+        : positiveScoreRecommendations.length === 0
+          ? "no_positive_score_recommendations"
+          : matchedProductCount === 0
           ? source === "cor_remote"
             ? "no_cor_product_ids_matched_noor_catalog"
             : "no_fallback_product_ids_matched_noor_catalog"
@@ -235,6 +242,7 @@ export class NoorDigitalSalesRecommendationBridge {
         source,
         outcome,
         coreRecommendationCount: coreRecommendations.length,
+        positiveScoreRecommendationCount: positiveScoreRecommendations.length,
         noorCatalogCount: noorProducts.length,
         matchedProductCount,
         skippedMissingProductCount,
