@@ -4,6 +4,22 @@ import { CorShopperDemoCredentialProvider } from "../integration/cor-shopper-dem
 import { getNoorInventoryDestination } from "./noor-inventory-link";
 
 /** COR's canonical decision engine returns normalized scores in the 0..1 range. */
+/** Human-readable labels based on the number of renderable recommendation cards. */
+export function recommendationCountLabel(count: number): string {
+  const safeCount = Math.max(0, Math.floor(Number.isFinite(count) ? count : 0));
+  if (safeCount === 1) return "یک پیشنهاد";
+  if (safeCount === 2) return "دو پیشنهاد";
+  if (safeCount === 3) return "سه پیشنهاد";
+  return `${safeCount} پیشنهاد`;
+}
+
+export function recommendationHeadline(count: number): string {
+  if (count === 1) return "یک پیشنهاد برای شروع";
+  if (count === 2) return "دو پیشنهاد برای شروع";
+  if (count === 3) return "سه پیشنهاد برای شروع";
+  return `${Math.max(0, Math.floor(Number.isFinite(count) ? count : 0))} پیشنهاد برای شروع`;
+}
+
 export function formatRecommendationScore(score: number): string {
   if (!Number.isFinite(score)) return "—";
   const normalized = Math.max(0, Math.min(1, score));
@@ -40,7 +56,14 @@ export function renderRecommendations(routeView: HTMLElement, recommendations: r
     return `<tr><th>${escapeHtml(product.name)}</th><td>${category}</td><td>${escapeHtml(shape)}</td><td>${escapeHtml(String(custom(product,"frameColor") ?? "—"))}</td><td>${escapeHtml(String(custom(product,"uvProtection") ?? "—"))}</td></tr>`;
   }).join("");
 
-  routeView.innerHTML = `<main class="recommendations" id="main-content" aria-labelledby="recommendations-title"><section class="recommendations-hero"><p class="eyebrow">NOOR PERSONAL SHOPPER</p><h1 id="recommendations-title">سه انتخاب برای شروع</h1><p>این سه فریم بر اساس پاسخ‌های همین مشاوره و فقط از میان محصولات Demo در دسترس انتخاب شده‌اند.</p><p class="inventory-link-note">هر لینک فروشگاه نور با شناسه ساختاریافته محصول ساخته می‌شود؛ این Demo به موجودی واقعی متصل نیست.</p></section><section class="recommendation-grid">${rows.map(({recommendation,product,index}) => card(product,recommendation,index)).join("")}</section><section class="smart-comparison" aria-labelledby="smart-comparison-title"><div><p class="eyebrow">SMART COMPARISON</p><h2 id="smart-comparison-title">مقایسهٔ سریع سه انتخاب</h2><p>به‌جای رتبه‌بندی ظاهری، تفاوت‌های اصلی را کنار هم ببینید و انتخاب را محدود کنید.</p></div><div class="comparison-table-wrap"><table><thead><tr><th>فریم</th><th>نوع</th><th>فرم</th><th>رنگ</th><th>UV</th></tr></thead><tbody>${compareRows}</tbody></table></div></section><div class="recommendation-actions"><a class="button button-secondary" href="/shopper" data-app-link>تغییر انتخاب‌ها</a><a class="button button-primary" href="/choices" data-app-link>انتخاب‌های من</a><a class="button button-secondary" href="/compare" data-app-link>مقایسه</a></div></main>`;
+  const count = rows.length;
+  const headline = recommendationHeadline(count);
+  const comparisonTitle = count === 1 ? "مشخصات پیشنهاد شما" : `مقایسهٔ سریع ${recommendationCountLabel(count)}`;
+  const comparisonDescription = count === 1
+    ? "مشخصات محصول پیشنهادی را بررسی کنید."
+    : "به‌جای رتبه‌بندی ظاهری، تفاوت‌های اصلی را کنار هم ببینید و انتخاب را محدود کنید.";
+
+  routeView.innerHTML = `<main class="recommendations" id="main-content" aria-labelledby="recommendations-title"><section class="recommendations-hero"><p class="eyebrow">NOOR PERSONAL SHOPPER</p><h1 id="recommendations-title">${headline}</h1><p>${count === 1 ? "این پیشنهاد بر اساس پاسخ‌های همین مشاوره و فقط از میان محصولات Demo در دسترس انتخاب شده است." : `این ${recommendationCountLabel(count)} بر اساس پاسخ‌های همین مشاوره و فقط از میان محصولات Demo در دسترس انتخاب شده‌اند.`}</p><p class="inventory-link-note">هر لینک فروشگاه نور با شناسه ساختاریافته محصول ساخته می‌شود؛ این Demo به موجودی واقعی متصل نیست.</p></section><section class="recommendation-grid">${rows.map(({recommendation,product,index}) => card(product,recommendation,index)).join("")}</section><section class="smart-comparison" aria-labelledby="smart-comparison-title"><div><p class="eyebrow">${count === 1 ? "PRODUCT DETAILS" : "SMART COMPARISON"}</p><h2 id="smart-comparison-title">${comparisonTitle}</h2><p>${comparisonDescription}</p></div><div class="comparison-table-wrap"><table><thead><tr><th>فریم</th><th>نوع</th><th>فرم</th><th>رنگ</th><th>UV</th></tr></thead><tbody>${compareRows}</tbody></table></div></section><div class="recommendation-actions"><a class="button button-secondary" href="/shopper" data-app-link>تغییر انتخاب‌ها</a><a class="button button-primary" href="/choices" data-app-link>انتخاب‌های من</a><a class="button button-secondary" href="/compare" data-app-link>مقایسه</a></div></main>`;
 }
 
 /**
