@@ -87,7 +87,9 @@ function toIntent(
     ...(category ? { category } : {}),
     ...(context.occasion ? { useCase: context.occasion } : {}),
     preferences: {
-      ...(frameShape ? { frameShapes: frameShape } : {}),
+      // Keep the legacy key understood by the currently active COR Domain Pack 1.1.0.
+      // Newer packs consume frameShapes; sending both preserves forward compatibility.
+      ...(frameShape ? { shape: frameShape, frameShapes: frameShape } : {}),
       ...(faceShape ? { faceCompatibility: faceShape } : {}),
     },
     constraints: {},
