@@ -59,6 +59,29 @@ const products = seed.products.map((product) => {
     availabilitySource: "demo"
   };
 });
+
+// Recommendation-critical attributes must survive the seed-to-feed transformation.
+// In particular, a green build must not publish a catalog that cannot score face shape.
+for (const product of products) {
+  if (!Array.isArray(product.faceCompatibility) ||
+      product.faceCompatibility.length === 0 ||
+      product.faceCompatibility.some(value => typeof value !== "string" || !value.trim())) {
+    throw new Error("demo_catalog_feed_face_compatibility_missing");
+  }
+  if (product.lensFeature !== null && typeof product.lensFeature !== "string") {
+    throw new Error("demo_catalog_feed_lens_feature_invalid");
+  }
+  if (product.prescriptionCapable !== null && typeof product.prescriptionCapable !== "boolean") {
+    throw new Error("demo_catalog_feed_prescription_capability_invalid");
+  }
+}
+const roundCompatibleIds = products.filter(product => product.faceCompatibility.includes("round")).map(product => product.id).sort();
+const heartCompatibleIds = products.filter(product => product.faceCompatibility.includes("heart")).map(product => product.id).sort();
+if (roundCompatibleIds.length === 0 || heartCompatibleIds.length === 0 ||
+    JSON.stringify(roundCompatibleIds) === JSON.stringify(heartCompatibleIds)) {
+  throw new Error("demo_catalog_feed_face_compatibility_must_distinguish_face_shapes");
+}
+
 const feed = {
   contractVersion: "1.0.0",
   source: "noor-demo",
@@ -68,4 +91,12 @@ const feed = {
 };
 await mkdir(dirname(outputPath), { recursive: true });
 await writeFile(outputPath, JSON.stringify(feed, null, 2) + "\n", "utf8");
-console.log(`Generated demo-only catalog feed with ${products.length} products; availability is synthetic and demo-only.`);
+console.log(JSON.stringify({
+  status: "verified",
+  productCount: products.length,
+  faceCompatibility: {
+    roundCandidates: roundCompatibleIds.length,
+    heartCandidates: heartCompatibleIds.length
+  },
+  demoOnly: true
+}));
