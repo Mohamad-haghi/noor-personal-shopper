@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { DemoCatalogProvider } from "../src/providers/demo/demo-catalog-provider";
 import { CatalogService } from "../src/services/catalog-service";
 import { NoorDigitalSalesRecommendationBridge } from "../src/integration/digital-sales-core/recommendation-bridge";
@@ -162,5 +162,79 @@ describe("COR catalog identity mapping", () => {
     expect(results[0]?.reason.primaryReason).toBe("style_match");
     expect(results[0]?.reason.explanation).toBe("تناسب با فرم فریم انتخابی شما");
     expect(sentPreferences).not.toHaveProperty("shape");
+  });
+});
+
+
+describe("COR recommendation reconciliation diagnostics", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const context = {
+    occasion: null,
+    season: null,
+    requestSource: "shopper_request" as const,
+    journey: { productType: "عینک آفتابی", useCase: null, style: null, faceShape: null },
+  };
+
+  function remoteClientWithRecommendations(recommendations: Array<{
+    productId: string;
+    score: number;
+    matchedCriteria: string[];
+    reasons: Array<{ result: string; criterion: string; explanationKey: string }>;
+  }>) {
+    return {
+      recommend: async (payload: unknown) => ({
+        contractVersion: "1.0.0",
+        requestId: (payload as { requestId: string }).requestId,
+        result: { source: "cor_canonical_engine", demoOnly: true, recommendations },
+      }),
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+  }
+
+  it("logs only counts when COR product IDs do not match the NOOR catalog", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const bridge = new NoorDigitalSalesRecommendationBridge(
+      catalogService,
+      remoteClientWithRecommendations([{
+        productId: "unmatched-test-product",
+        score: 0.8,
+        matchedCriteria: [],
+        reasons: [],
+      }]),
+    );
+
+    const results = await bridge.generateRecommendations({ id: "diagnostic-test-shopper" }, context);
+
+    expect(results).toHaveLength(0);
+    expect(warn).toHaveBeenCalledWith("[NOOR][COR] recommendation reconciliation", expect.objectContaining({
+      outcome: "no_cor_product_ids_matched_noor_catalog",
+      coreRecommendationCount: 1,
+      matchedProductCount: 0,
+      skippedMissingProductCount: 1,
+      skippedMissingVariantCount: 0,
+      finalRecommendationCount: 0,
+    }));
+    const logged = JSON.stringify(warn.mock.calls);
+    expect(logged).not.toContain("diagnostic-test-shopper");
+    expect(logged).not.toContain("unmatched-test-product");
+  });
+
+  it("distinguishes an empty COR recommendation list from catalog identity mismatches", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClientWithRecommendations([]));
+
+    const results = await bridge.generateRecommendations({ id: "diagnostic-empty-shopper" }, context);
+
+    expect(results).toHaveLength(0);
+    expect(warn).toHaveBeenCalledWith("[NOOR][COR] recommendation reconciliation", expect.objectContaining({
+      outcome: "cor_returned_empty_recommendations",
+      coreRecommendationCount: 0,
+      skippedMissingProductCount: 0,
+      finalRecommendationCount: 0,
+    }));
   });
 });
