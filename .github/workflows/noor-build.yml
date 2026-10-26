@@ -8,12 +8,18 @@ on:
   workflow_dispatch:
     inputs:
       live_cor_smoke:
-        description: "Run the live Chromium and WebKit COR browser smoke"
+        description: "Run the live Chromium COR browser smoke"
+        type: boolean
+        required: false
+        default: false
+      live_cor_webkit:
+        description: "Also run the live WebKit COR browser smoke (extra CI time)"
         type: boolean
         required: false
         default: false
 
-# Live browser checks are opt-in: PR title marker [live-cor-smoke] or workflow_dispatch input live_cor_smoke=true.
+# Chromium live checks are opt-in: PR title marker [live-cor-smoke] or workflow_dispatch input live_cor_smoke=true.
+# WebKit is separately opt-in on manual dispatch to avoid blocking the primary Chromium gate on system package installation.
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -60,17 +66,17 @@ jobs:
         run: node scripts/verify-browser-cor-shopper.mjs
 
       - name: Install WebKit system dependencies
-        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        if: github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke && inputs.live_cor_webkit
         timeout-minutes: 5
         run: npx playwright install-deps webkit
 
       - name: Install WebKit for live COR browser smoke
-        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        if: github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke && inputs.live_cor_webkit
         timeout-minutes: 3
         run: npx playwright install webkit
 
       - name: Run live COR browser smoke (WebKit)
-        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        if: github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke && inputs.live_cor_webkit
         env:
           PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
           COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
