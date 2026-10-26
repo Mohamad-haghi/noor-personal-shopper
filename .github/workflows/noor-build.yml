@@ -59,6 +59,11 @@ jobs:
           NOOR_BROWSER_ENGINE: chromium
         run: node scripts/verify-browser-cor-shopper.mjs
 
+      - name: Install WebKit system dependencies
+        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        timeout-minutes: 5
+        run: npx playwright install-deps webkit
+
       - name: Install WebKit for live COR browser smoke
         if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
         timeout-minutes: 3
