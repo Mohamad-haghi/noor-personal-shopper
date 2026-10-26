@@ -274,6 +274,49 @@ try {
   if (!uiResult.title || uiResult.recommendationCards < 1 || uiResult.diagnostic) {
     throw new Error("noor_real_ui_recommendation_flow_failed:" + (uiResult.diagnostic ?? "no_recommendation_cards"));
   }
+
+  // Regression: a preference with no positive-scoring COR candidates must not
+  // render zero-score products as recommendations. Reset only this isolated
+  // browser context, then exercise the real NOOR journey and remote COR path.
+  await page.evaluate(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
+  await page.goto(pagesUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await page.getByRole("link", { name: "دستیار خرید" }).first().click();
+  await page.getByRole("button", { name: "شروع مشاوره" }).click();
+
+  for (const answer of ["عینک آفتابی", "رانندگی و فضای باز", "گرد", "بیضی"]) {
+    await page.getByRole("button", { name: answer, exact: true }).click();
+    await page.getByRole("button", { name: "ادامه", exact: true }).click();
+  }
+
+  await page.getByRole("button", { name: "مشاهده مسیر پیشنهادها" }).click();
+  await page.waitForFunction(
+    () => Boolean(document.querySelector("#recommendations-title") ||
+                  document.querySelector("#recommendations-unavailable-title")),
+    null,
+    { timeout: 120_000 },
+  );
+
+  const noMatchUiResult = await page.evaluate(() => ({
+    unavailableTitle: document.querySelector("#recommendations-unavailable-title")?.textContent?.trim() ?? null,
+    diagnostic: document.querySelector(".diagnostic-code")?.textContent?.trim() ?? null,
+    recommendationCards: document.querySelectorAll(".recommendation-card").length,
+    fetchDebug: ((window).__noorFetchDebug ?? []).slice(-20),
+  }));
+  console.log(JSON.stringify({
+    diagnostic: "noor_zero_positive_score_empty_state",
+    browserEngine,
+    ...noMatchUiResult,
+  }));
+
+  if (!noMatchUiResult.unavailableTitle ||
+      !noMatchUiResult.diagnostic?.includes("cor_no_valid_recommendations") ||
+      noMatchUiResult.recommendationCards !== 0) {
+    throw new Error("noor_zero_positive_score_empty_state_failed:" +
+      (noMatchUiResult.diagnostic ?? "unexpected_recommendation_cards"));
+  }
 } finally {
   await browser.close();
 }
