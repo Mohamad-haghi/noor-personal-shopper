@@ -98,6 +98,54 @@ try {
       return { ok: false, stage: "recommendations", outcome: "unexpected_contract", status: recommendation.status };
     }
 
+    // A live preference-sensitivity check: change only frame shape and ensure
+    // COR's returned recommendation order or scores reflect the changed intent.
+    const alternateRecommendation = await fetchJson(
+      "alternate-preferences",
+      new URL("/shopper/v1/recommendations", corBaseUrl),
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + credential,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contractVersion: "1.0.0",
+          requestId: "noor-real-browser-smoke-round",
+          sessionId: "noor-real-browser-smoke-round",
+          intent: {
+            category: "sunglasses",
+            preferences: { shape: "round", frameShapes: "round", faceCompatibility: "oval" },
+            constraints: {},
+            priorities: [],
+            desiredAttributes: [],
+            excludedAttributes: [],
+          },
+          limit: 3,
+        }),
+      },
+    );
+    if (!alternateRecommendation.ok) return alternateRecommendation;
+    const primaryRows = recommendation.body.result.recommendations;
+    const alternateRows = alternateRecommendation.body?.result?.recommendations;
+    if (alternateRecommendation.body?.contractVersion !== "1.0.0" ||
+        alternateRecommendation.body?.requestId !== "noor-real-browser-smoke-round" ||
+        alternateRecommendation.body?.result?.source !== "cor_canonical_engine" ||
+        alternateRecommendation.body?.result?.demoOnly !== true ||
+        !Array.isArray(alternateRows) || alternateRows.length === 0) {
+      return { ok: false, stage: "alternate-preferences", outcome: "unexpected_contract", status: alternateRecommendation.status };
+    }
+    const primarySignature = primaryRows.map(item => `${item?.productId ?? ""}:${item?.score ?? ""}`).join("|");
+    const alternateSignature = alternateRows.map(item => `${item?.productId ?? ""}:${item?.score ?? ""}`).join("|");
+    if (primarySignature === alternateSignature) {
+      return {
+        ok: false,
+        stage: "alternate-preferences",
+        outcome: "preference_change_did_not_change_ranking_or_scores",
+        status: alternateRecommendation.status,
+      };
+    }
+
     return {
       ok: true,
       origin,
@@ -106,6 +154,12 @@ try {
       recommendationStatus: recommendation.status,
       recommendationCount: recommendation.body.result.recommendations.length,
       recommendationSummaries: recommendation.body.result.recommendations.map(item => ({
+        productId: item?.productId ?? null,
+        score: item?.score ?? null,
+        matchedCriteria: Array.isArray(item?.matchedCriteria) ? item.matchedCriteria : [],
+      })),
+      alternatePreferenceStatus: alternateRecommendation.status,
+      alternatePreferenceSummaries: alternateRows.map(item => ({
         productId: item?.productId ?? null,
         score: item?.score ?? null,
         matchedCriteria: Array.isArray(item?.matchedCriteria) ? item.matchedCriteria : [],
