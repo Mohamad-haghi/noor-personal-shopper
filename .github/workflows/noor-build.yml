@@ -13,6 +13,7 @@ on:
         required: false
         default: false
 
+# Live browser checks are opt-in: PR title marker [live-cor-smoke] or workflow_dispatch input live_cor_smoke=true.
 jobs:
   build:
     runs-on: ubuntu-latest
