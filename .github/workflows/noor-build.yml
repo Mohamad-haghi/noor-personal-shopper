@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: ["main"]
   workflow_dispatch:
+    inputs:
+      live_cor_smoke:
+        description: "Run the live Chromium and WebKit COR browser smoke"
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build:
@@ -37,3 +43,27 @@ jobs:
 
       - name: Type-check and build
         run: npm run build
+
+      - name: Install Chromium for live COR browser smoke
+        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        run: npx playwright install --with-deps chromium
+
+      - name: Run live COR browser smoke (Chromium)
+        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        env:
+          PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
+          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          NOOR_BROWSER_ENGINE: chromium
+        run: node scripts/verify-browser-cor-shopper.mjs
+
+      - name: Install WebKit for live COR browser smoke
+        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        run: npx playwright install --with-deps webkit
+
+      - name: Run live COR browser smoke (WebKit)
+        if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
+        env:
+          PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
+          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          NOOR_BROWSER_ENGINE: webkit
+        run: node scripts/verify-browser-cor-shopper.mjs
