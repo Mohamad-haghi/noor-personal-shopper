@@ -17,6 +17,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout NOOR
         uses: actions/checkout@v4
@@ -47,7 +48,8 @@ jobs:
 
       - name: Install Chromium for live COR browser smoke
         if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
-        run: npx playwright install --with-deps chromium
+        timeout-minutes: 3
+        run: npx playwright install chromium
 
       - name: Run live COR browser smoke (Chromium)
         if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
@@ -59,7 +61,8 @@ jobs:
 
       - name: Install WebKit for live COR browser smoke
         if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
-        run: npx playwright install --with-deps webkit
+        timeout-minutes: 3
+        run: npx playwright install webkit
 
       - name: Run live COR browser smoke (WebKit)
         if: (github.event_name == 'workflow_dispatch' && inputs.live_cor_smoke) || (github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[live-cor-smoke]'))
