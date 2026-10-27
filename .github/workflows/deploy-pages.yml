@@ -46,12 +46,12 @@ jobs:
       - name: Build production bundle with live COR Shopper
         env:
           VITE_NOOR_MODE: integrated
-          VITE_COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          VITE_COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
         run: npm run build
       - name: Verify COR origin is embedded in production bundle
         run: |
           set -euo pipefail
-          grep -R -F --quiet 'cor-noor-test.onrender.com' dist/assets
+          grep -R -F --quiet 'digital-sales-core.onrender.com' dist/assets
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
@@ -110,7 +110,7 @@ jobs:
           NODE
       - name: Verify live COR Shopper session and recommendation API
         env:
-          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
           PAGES_ORIGIN: https://mohamad-haghi.github.io
         run: |
           set -euo pipefail
@@ -221,7 +221,7 @@ jobs:
               sessionId: "noor-demo-smoke",
               intent: {
                 category: "sunglasses",
-                // Active installation 745 pins Domain Pack 1.1.0, which reads "shape".
+                // Isolated staging installation 708 uses Domain Pack 1.2.0; retain compatible shape keys.
                 // Keep modern keys too for compatibility with the newer Domain Pack contract.
                 preferences: { shape: "aviator", frameShapes: "aviator", faceCompatibility: "oval" },
                 constraints: {},
@@ -354,7 +354,7 @@ jobs:
       - name: Verify live COR Shopper in a real Chromium browser
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
-          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
         run: node scripts/verify-browser-cor-shopper.mjs
 
       - name: Install WebKit system dependencies
@@ -368,6 +368,6 @@ jobs:
       - name: Verify live COR Shopper in WebKit (Safari engine)
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
-          COR_SHOPPER_BASE_URL: https://cor-noor-test.onrender.com
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
           NOOR_BROWSER_ENGINE: webkit
         run: node scripts/verify-browser-cor-shopper.mjs
