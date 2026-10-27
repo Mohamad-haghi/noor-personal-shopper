@@ -15,6 +15,18 @@ import type { CatalogService } from "../../services/catalog-service";
 import { NoorDigitalSalesProductProvider } from "./catalog-provider";
 import type { CorShopperRemoteClient } from "../cor-shopper-remote-client";
 
+/** Creates the remote request ID. The query marker only labels a run; COR must independently enable tracing server-side. */
+export function createCorRecommendationRequestId(
+  search: string,
+  now = Date.now(),
+  random = Math.random,
+): string {
+  const suffix = `${now}-${random().toString(36).slice(2, 10)}`;
+  return new URLSearchParams(search).get("corTrace") === "1"
+    ? `noor-test-${suffix}`
+    : `noor-request-${suffix}`;
+}
+
 function categoryFor(productType: string | null): string | undefined {
   if (productType === "عینک طبی") return "optical";
   if (productType === "عینک آفتابی") return "sunglasses";
@@ -128,7 +140,7 @@ export class NoorDigitalSalesRecommendationBridge {
     const intent = toIntent(shopperId, context);
     let coreRecommendations: readonly CoreRecommendation[];
     if (this.remoteClient) {
-      const requestId = "noor-request-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+      const requestId = createCorRecommendationRequestId(typeof window === "undefined" ? "" : window.location.search);
       const response = await this.remoteClient.recommend<{
         contractVersion: string;
         requestId: string;
