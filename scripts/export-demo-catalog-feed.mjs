@@ -43,6 +43,8 @@ const products = seed.products.map((product) => {
     frame: typeof custom.frameMaterial === "string" ? custom.frameMaterial : null,
     frameColor: typeof custom.frameColor === "string" ? custom.frameColor : null,
     shape: Array.isArray(custom.frameShapes) ? custom.frameShapes.join(", ") : null,
+    // COR mapping v1.2.0 accepts scalar attributes; serialize the source list consistently with `shape`.
+    faceCompatibility: Array.isArray(custom.faceCompatibility) ? custom.faceCompatibility.join(", ") : null,
     lensColor: typeof custom.lensColor === "string" ? custom.lensColor : null,
     uvProtection: typeof custom.uvProtection === "string" ? custom.uvProtection : null,
     lensWidthMm: typeof custom.lensWidthMm === "number" ? custom.lensWidthMm : null,
