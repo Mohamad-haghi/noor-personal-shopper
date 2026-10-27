@@ -15,10 +15,17 @@ import type { CatalogService } from "../../services/catalog-service";
 import { NoorDigitalSalesProductProvider } from "./catalog-provider";
 import type { CorShopperRemoteClient } from "../cor-shopper-remote-client";
 
-/** Capture the opt-in marker before in-app navigation can replace the URL and drop its query string. */
-const INITIAL_COR_TRACE_REQUESTED =
-  typeof window !== "undefined" &&
-  new URLSearchParams(window.location.search).get("corTrace") === "1";
+/** Read the marker captured by the app entry point before lazy-loaded routes lose the query string. */
+const INITIAL_COR_TRACE_REQUESTED = (() => {
+  if (typeof window === "undefined") return false;
+  if (new URLSearchParams(window.location.search).get("corTrace") === "1") return true;
+  if ((window as Window & { __COR_TRACE_REQUESTED__?: boolean }).__COR_TRACE_REQUESTED__ === true) return true;
+  try {
+    return window.sessionStorage.getItem("corTraceRequested") === "1";
+  } catch {
+    return false;
+  }
+})();
 
 /** Creates the remote request ID. The query marker only labels a run; COR must independently enable tracing server-side. */
 export function createCorRecommendationRequestId(
