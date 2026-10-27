@@ -284,6 +284,56 @@ jobs:
             throw new Error("live_cor_recommendation_product_id_not_in_feed");
           }
 
+          // Differential test: keep frame shape fixed and change only face compatibility.
+          // The seed catalog deliberately has aviator products with different face-compatibility sets.
+          const faceTriangleResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
+            method: "POST",
+            headers: {
+              Origin: origin,
+              Authorization: "Bearer " + sessionBody.credential,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contractVersion: "1.0.0",
+              requestId: "noor-test-pages-live-face-triangle",
+              sessionId: "noor-demo-smoke",
+              intent: {
+                category: "sunglasses",
+                preferences: { shape: "aviator", frameShapes: "aviator", faceCompatibility: "triangle" },
+                constraints: {},
+                priorities: [],
+                desiredAttributes: [],
+                excludedAttributes: []
+              },
+              limit: 3
+            }),
+            signal: AbortSignal.timeout(90000)
+          });
+          const faceTriangleBody = await faceTriangleResponse.json().catch(() => ({}));
+          console.log(JSON.stringify({
+            diagnostic: "cor_recommendation_face_compatibility_differential",
+            httpStatus: faceTriangleResponse.status,
+            requestIdMatches: faceTriangleBody.requestId === "noor-test-pages-live-face-triangle",
+            source: faceTriangleBody.result?.source ?? null,
+            demoOnly: faceTriangleBody.result?.demoOnly ?? null,
+            recommendationSummaries: Array.isArray(faceTriangleBody.result?.recommendations)
+              ? faceTriangleBody.result.recommendations.map(item => ({
+                  productId: item?.productId ?? null,
+                  score: item?.score ?? null,
+                  matchedCriteria: Array.isArray(item?.matchedCriteria) ? item.matchedCriteria : []
+                })) : null,
+            error: faceTriangleBody.error ?? null
+          }));
+          if (!faceTriangleResponse.ok || faceTriangleBody.contractVersion !== "1.0.0" ||
+              faceTriangleBody.requestId !== "noor-test-pages-live-face-triangle" ||
+              faceTriangleBody.result?.source !== "cor_canonical_engine" ||
+              faceTriangleBody.result?.demoOnly !== true ||
+              !Array.isArray(faceTriangleBody.result?.recommendations) ||
+              faceTriangleBody.result.recommendations.length === 0 ||
+              faceTriangleBody.result.recommendations.some(item => !feedIds.has(item.productId))) {
+            throw new Error("live_cor_recommendation_face_compatibility_differential_failed: HTTP " + faceTriangleResponse.status);
+          }
+
           const comparisonResponse = await fetch(new URL("/shopper/v1/comparisons", base), {
             method: "POST",
             headers: {
