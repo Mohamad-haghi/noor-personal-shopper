@@ -217,7 +217,7 @@ jobs:
             },
             body: JSON.stringify({
               contractVersion: "1.0.0",
-              requestId: "pages-live-smoke",
+              requestId: "noor-test-pages-live-smoke",
               sessionId: "noor-demo-smoke",
               intent: {
                 category: "sunglasses",
@@ -241,7 +241,7 @@ jobs:
             diagnostic: "cor_recommendation_response",
             httpStatus: recommendationResponse.status,
             contractVersion: recommendationBody.contractVersion ?? null,
-            requestIdMatches: recommendationBody.requestId === "pages-live-smoke",
+            requestIdMatches: recommendationBody.requestId === "noor-test-pages-live-smoke",
             resultKeys: recommendationBody.result && typeof recommendationBody.result === "object"
               ? Object.keys(recommendationBody.result) : [],
             source: recommendationBody.result?.source ?? null,
@@ -258,7 +258,7 @@ jobs:
                 })) : null
           }));
           if (!recommendationResponse.ok || recommendationBody.contractVersion !== "1.0.0" ||
-              recommendationBody.requestId !== "pages-live-smoke" ||
+              recommendationBody.requestId !== "noor-test-pages-live-smoke" ||
               recommendationBody.result?.source !== "cor_canonical_engine" ||
               recommendationBody.result?.demoOnly !== true ||
               !Array.isArray(recommendationBody.result?.recommendations) ||
@@ -266,7 +266,7 @@ jobs:
             const result = recommendationBody.result;
             const diagnostic = {
               contractVersion: recommendationBody.contractVersion ?? null,
-              requestIdMatches: recommendationBody.requestId === "pages-live-smoke",
+              requestIdMatches: recommendationBody.requestId === "noor-test-pages-live-smoke",
               resultSource: result?.source ?? null,
               demoOnly: result?.demoOnly ?? null,
               recommendationsType: Array.isArray(result?.recommendations) ? "array" : typeof result?.recommendations,
