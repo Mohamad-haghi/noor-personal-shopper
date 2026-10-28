@@ -5,6 +5,9 @@ export interface ShopperJourneyProfile {
   readonly useCase: string | null;
   readonly style: string | null;
   readonly faceShape: string | null;
+  readonly frameMaterial?: string | null;
+  readonly frameColor?: string | null;
+  readonly gender?: string | null;
 }
 
 export interface ShopperFlowState {
