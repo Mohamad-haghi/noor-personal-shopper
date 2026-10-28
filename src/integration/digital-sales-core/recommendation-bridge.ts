@@ -164,6 +164,12 @@ function toIntent(
   const frameColor = frameColorForPreference(journey?.frameColor);
   const gender = genderForPreference(journey?.gender);
   const category = categoryFor(journey?.productType ?? null);
+  const mandatory = new Set(journey?.mandatoryCriteria ?? []);
+  const constraints: Record<string, string | number | boolean> = {};
+  if (mandatory.has("frameShape") && frameShape) constraints.frameShapes = frameShape;
+  if (mandatory.has("faceShape") && faceShape) constraints.faceCompatibility = faceShape;
+  if (mandatory.has("frameMaterial") && frameMaterial) constraints.frameMaterial = frameMaterial;
+  if (mandatory.has("frameColor") && frameColor) constraints.frameColor = frameColor;
 
   return {
     id: `noor-intent-${shopperId.id}`,
@@ -179,7 +185,7 @@ function toIntent(
       ...(frameColor ? { frameColor } : {}),
       ...(gender ? { gender } : {}),
     },
-    constraints: {},
+    constraints,
     priorities: [],
     desiredAttributes: [],
     excludedAttributes: [],
