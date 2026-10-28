@@ -187,8 +187,9 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
       },
     });
 
-    expect(sentConstraints).toEqual({ frameShapes: "round", frameMaterial: "titanium" });
+    expect(sentConstraints).toEqual({ shape: "round", frameShapes: "round", frame: "titanium", frameMaterial: "titanium" });
     expect(sentPreferences.frameShapes).toBe("round");
+    expect(sentPreferences.frame).toBe("titanium");
     expect(sentPreferences.frameMaterial).toBe("titanium");
   });
 
