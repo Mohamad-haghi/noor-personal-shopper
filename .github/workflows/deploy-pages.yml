@@ -481,7 +481,7 @@ jobs:
           if (handoffResponse.headers.get("access-control-allow-origin") !== origin) {
             throw new Error("live_cor_handoffs_cors_header_missing");
           }
-          const handoffUrl = handoffBody.result?.handoff?.destinationUrl;
+          const handoffUrl = handoffBody.result?.handoff?.destination;
           let handoffUrlIsApprovedHttps = false;
           try {
             const parsedHandoffUrl = new URL(handoffUrl);
