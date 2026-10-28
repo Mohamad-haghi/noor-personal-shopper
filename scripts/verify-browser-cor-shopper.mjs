@@ -162,7 +162,7 @@ try {
   });
   page.on("pageerror", error => browserErrors.push("pageerror:" + error.message.slice(0, 400)));
   page.on("requestfailed", request => {
-    if (request.url().includes("cor-noor-test.onrender.com")) {
+    if (request.url().includes(new URL(corBaseUrl).host)) {
       failedRequests.push({
         url: request.url(),
         method: request.method(),
@@ -176,7 +176,7 @@ try {
     }
   });
   page.on("response", response => {
-    if (response.url().includes("cor-noor-test.onrender.com")) {
+    if (response.url().includes(new URL(corBaseUrl).host)) {
       corRequests.push({ url: response.url(), method: response.request().method(), status: response.status() });
     }
   });
@@ -184,12 +184,23 @@ try {
   await page.getByRole("link", { name: "دستیار خرید" }).first().click();
   await page.getByRole("button", { name: "شروع مشاوره" }).click();
 
-  for (const answer of ["عینک آفتابی", "رانندگی و فضای باز", "خلبانی", "بیضی"]) {
+  // Complete every step in the current journey. Previously this loop stopped
+  // after face shape, while the UI now asks material, color, and product group
+  // before the final "مشاهده مسیر پیشنهادها" action becomes available.
+  for (const answer of [
+    "عینک آفتابی",
+    "رانندگی و فضای باز",
+    "خلبانی",
+    "بیضی",
+    "تیتانیوم",
+    "مشکی",
+    "یونیسکس",
+  ]) {
     await page.getByRole("button", { name: answer, exact: true }).click();
     await page.getByRole("button", { name: "ادامه", exact: true }).click();
   }
 
-  await page.getByRole("button", { name: "مشاهده مسیر پیشنهادها" }).click();
+  await page.getByRole("button", { name: "مشاهده مسیر پیشنهادها", exact: true }).click();
   await page.waitForFunction(
     () => Boolean(document.querySelector("#recommendations-title") ||
                   document.querySelector("#recommendations-unavailable-title")),
