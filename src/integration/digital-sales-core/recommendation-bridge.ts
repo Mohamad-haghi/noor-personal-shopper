@@ -167,7 +167,6 @@ function toIntent(
   const mandatory = new Set(journey?.mandatoryCriteria ?? []);
   const constraints: Record<string, string | number | boolean> = {};
   if (mandatory.has("frameShape") && frameShape) { constraints.shape = frameShape; constraints.frameShapes = frameShape; }
-  if (mandatory.has("faceShape") && faceShape) constraints.faceCompatibility = faceShape;
   if (mandatory.has("frameMaterial") && frameMaterial) { constraints.frame = frameMaterial; constraints.frameMaterial = frameMaterial; }
   if (mandatory.has("frameColor") && frameColor) constraints.frameColor = frameColor;
 
