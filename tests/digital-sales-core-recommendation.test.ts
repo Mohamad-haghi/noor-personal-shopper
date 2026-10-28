@@ -220,6 +220,24 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
   });
 
 
+
+  it("returns no recommendations when explicit hard constraints have no eligible catalog match", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
+
+    const results = await bridge.generateRecommendations({ id: "mandatory-no-match" }, {
+      occasion: null, season: null, requestSource: "shopper_request",
+      journey: {
+        productType: "عینک آفتابی", useCase: null, style: "گرد", faceShape: null,
+        frameMaterial: "تیتانیوم",
+        mandatoryCriteria: ["frameShape", "frameMaterial"],
+      },
+    });
+
+    expect(results).toHaveLength(0);
+  });
+
+
 describe("COR catalog identity mapping", () => {
   it("resolves remote recommendations whose productId is the feed product identity", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
