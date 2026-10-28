@@ -70,7 +70,7 @@ function faceShapeForPreference(value: string | null): string | undefined {
     "گرد": "round",
     "بیضی": "oval",
     "مربع": "square",
-    "مستطیل": "rectangle",
+    "مستطیل": "rectangle", "مستطیلی / کشیده": "rectangle", "مستطیلی": "rectangle", "کشیده": "rectangle",
     "قلبی": "heart",
     "مثلثی": "triangle",
   };
