@@ -20,7 +20,7 @@ import { renderFoundationStatus } from "./render-foundation";
 import { renderHero } from "./render-hero";
 import { renderRoutePlaceholder } from "./render-route-placeholder";
 import { renderShopper } from "./render-shopper";
-import { renderRecommendations, renderRecommendationsUnavailable } from "./render-recommendations";
+import { renderMandatoryCriteriaNoMatch, renderRecommendations, renderRecommendationsUnavailable } from "./render-recommendations";
 import { renderChoices } from "./render-choices";
 import { renderCompare } from "./render-compare";
 import { renderAccount } from "./render-account";
@@ -84,7 +84,12 @@ async function renderRecommendationRoute(
       if (product) products.push(product);
     }
     if (recommendations.length === 0) {
-      renderRecommendationsUnavailable(routeView, "cor_no_valid_recommendations");
+      const mandatoryCriteria = flow.journey.mandatoryCriteria ?? [];
+      if (mandatoryCriteria.length > 0) {
+        renderMandatoryCriteriaNoMatch(routeView, mandatoryCriteria);
+      } else {
+        renderRecommendationsUnavailable(routeView, "cor_no_valid_recommendations");
+      }
       return;
     }
     if (products.length === 0) {
