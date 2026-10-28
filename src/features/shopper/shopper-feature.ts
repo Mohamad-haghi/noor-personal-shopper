@@ -152,7 +152,7 @@ export class ShopperFeature {
     await this.persistProfile();
   }
 
-  async setCriterionMandatory(criterion: "frameShape" | "faceShape" | "frameMaterial" | "frameColor", mandatory: boolean): Promise<void> {
+  async setCriterionMandatory(criterion: "frameShape" | "frameMaterial" | "frameColor", mandatory: boolean): Promise<void> {
     const current = new Set(this.journey.mandatoryCriteria ?? []);
     if (mandatory) current.add(criterion);
     else current.delete(criterion);
