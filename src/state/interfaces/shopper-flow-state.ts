@@ -8,6 +8,7 @@ export interface ShopperJourneyProfile {
   readonly frameMaterial?: string | null;
   readonly frameColor?: string | null;
   readonly gender?: string | null;
+  readonly mandatoryCriteria?: readonly ("frameShape" | "faceShape" | "frameMaterial" | "frameColor")[];
 }
 
 export interface ShopperFlowState {
