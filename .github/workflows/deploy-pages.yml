@@ -343,8 +343,8 @@ jobs:
           const controlledScenarios = [
             { requestId: "noor-test-pages-square-round", category: "sunglasses", shape: "square", faceCompatibility: "round" },
             { requestId: "noor-test-pages-optical-square-round", category: "optical", shape: "square", faceCompatibility: "round" },
-            { requestId: "noor-test-pages-live-face-triangle", category: "sunglasses", shape: "aviator", faceCompatibility: "triangle" },
-            { requestId: "noor-test-pages-live-smoke", category: "sunglasses", shape: "aviator", faceCompatibility: "oval" },
+            { requestId: "noor-test-pages-aviator-triangle", category: "sunglasses", shape: "aviator", faceCompatibility: "triangle" },
+            { requestId: "noor-test-pages-aviator-oval", category: "sunglasses", shape: "aviator", faceCompatibility: "oval" },
             { requestId: "noor-test-pages-optical-round-round", category: "optical", shape: "round", faceCompatibility: "round" },
             { requestId: "noor-test-pages-sunglasses-rectangular-round", category: "sunglasses", shape: "rectangular", faceCompatibility: "round" }
           ];
