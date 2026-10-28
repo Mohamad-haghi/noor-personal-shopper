@@ -86,6 +86,53 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(topProduct?.attributes.customAttributes.faceCompatibility).toContain("round");
   });
 
+  it("maps optional material, color and catalog gender preferences to COR canonical values", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    let sentPreferences: Record<string, unknown> = {};
+    const remoteClient = {
+      recommend: async (payload: unknown) => {
+        const request = payload as { requestId: string; intent: { preferences: Record<string, unknown> } };
+        sentPreferences = request.intent.preferences;
+        return {
+          contractVersion: "1.0.0",
+          requestId: request.requestId,
+          result: { source: "cor_canonical_engine", demoOnly: true, recommendations: [] },
+        };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClient);
+    await bridge.generateRecommendations({ id: "optional-preferences" }, {
+      occasion: null, season: null, requestSource: "shopper_request",
+      journey: { productType: "عینک آفتابی", useCase: null, style: null, faceShape: null,
+        frameMaterial: "نایلونی", frameColor: "هاوانا قهوه‌ای", gender: "زنانه" },
+    });
+    expect(sentPreferences.frameMaterial).toBe("nylon");
+    expect(sentPreferences.frameColor).toBe("havana brown");
+    expect(sentPreferences.gender).toBe("female");
+  });
+
+  it("omits optional COR criteria when the shopper selects no preference", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    let sentPreferences: Record<string, unknown> = {};
+    const remoteClient = {
+      recommend: async (payload: unknown) => {
+        const request = payload as { requestId: string; intent: { preferences: Record<string, unknown> } };
+        sentPreferences = request.intent.preferences;
+        return { contractVersion: "1.0.0", requestId: request.requestId,
+          result: { source: "cor_canonical_engine", demoOnly: true, recommendations: [] } };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClient);
+    await bridge.generateRecommendations({ id: "no-preference" }, {
+      occasion: null, season: null, requestSource: "shopper_request",
+      journey: { productType: "عینک آفتابی", useCase: null, style: null, faceShape: null,
+        frameMaterial: "فرقی ندارد", frameColor: "فرقی ندارد", gender: "فرقی ندارد" },
+    });
+    expect(sentPreferences).not.toHaveProperty("frameMaterial");
+    expect(sentPreferences).not.toHaveProperty("frameColor");
+    expect(sentPreferences).not.toHaveProperty("gender");
+  });
+
   it("preserves journey answers in recommendation context", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);

@@ -50,6 +50,21 @@ function shapeForPreference(value: string | null): string | undefined {
   return value ? map[value] : undefined;
 }
 
+function frameMaterialForPreference(value: string | null | undefined): string | undefined {
+  const map: Record<string, string> = { "فلزی": "metal", "نایلونی": "nylon", "استات": "acetate", "تیتانیوم": "titanium" };
+  return value ? map[value] : undefined;
+}
+
+function frameColorForPreference(value: string | null | undefined): string | undefined {
+  const map: Record<string, string> = { "طلایی": "gold", "هاوانا قهوه‌ای": "havana brown", "مشکی": "black", "نقره‌ای": "silver" };
+  return value ? map[value] : undefined;
+}
+
+function genderForPreference(value: string | null | undefined): string | undefined {
+  const map: Record<string, string> = { "زنانه": "female", "مردانه": "male", "یونیسکس": "unisex" };
+  return value ? map[value] : undefined;
+}
+
 function faceShapeForPreference(value: string | null): string | undefined {
   const map: Record<string, string> = {
     "گرد": "round",
@@ -103,6 +118,9 @@ function toIntent(
   // The UI asks for a literal frame shape, not a vague aesthetic label.
   const frameShape = shapeForPreference(journey?.style ?? null);
   const faceShape = faceShapeForPreference(journey?.faceShape ?? null);
+  const frameMaterial = frameMaterialForPreference(journey?.frameMaterial);
+  const frameColor = frameColorForPreference(journey?.frameColor);
+  const gender = genderForPreference(journey?.gender);
   const category = categoryFor(journey?.productType ?? null);
 
   return {
@@ -115,6 +133,9 @@ function toIntent(
       // Newer packs consume frameShapes; sending both preserves forward compatibility.
       ...(frameShape ? { shape: frameShape, frameShapes: frameShape } : {}),
       ...(faceShape ? { faceCompatibility: faceShape } : {}),
+      ...(frameMaterial ? { frameMaterial } : {}),
+      ...(frameColor ? { frameColor } : {}),
+      ...(gender ? { gender } : {}),
     },
     constraints: {},
     priorities: [],
