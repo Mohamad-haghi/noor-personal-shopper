@@ -83,6 +83,10 @@ const REASON_LABELS: Record<string, string> = {
   "eyewear.face_compatibility_match": "تناسب با فرم صورت انتخابی شما",
   "eyewear.frame_material_match": "تناسب با جنس فریم انتخابی شما",
   "eyewear.frame_color_match": "تناسب با رنگ فریم انتخابی شما",
+  "gender_matches_customer_preference": "تناسب با گروه محصول انتخابی شما",
+  "eyewear.gender_match": "تناسب با گروه محصول انتخابی شما",
+  "gender": "تناسب با گروه محصول انتخابی شما",
+  "gender-match": "تناسب با گروه محصول انتخابی شما",
   "eyewear.uv_protection_match": "دارای ویژگی محافظت در برابر فرابنفش",
   "eyewear.prescription_capable_match": "مناسب برای عدسی طبی",
   "eyewear.lens_feature_match": "تناسب با ویژگی عدسی انتخابی شما",
@@ -108,6 +112,44 @@ const REASON_LABELS: Record<string, string> = {
 function localizedReason(value: string | undefined): string | undefined {
   if (!value) return undefined;
   return REASON_LABELS[value] ?? REASON_LABELS[value.toLowerCase()];
+}
+
+function localizedMismatch(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const key = value.toLowerCase().replace(/_/g, "-");
+  if (key.includes("frame-material") || key.includes("material")) {
+    return "با جنس فریم انتخابی شما مطابقت ندارد";
+  }
+  if (key.includes("frame-color") || key.includes("color")) {
+    return "با رنگ فریم انتخابی شما مطابقت ندارد";
+  }
+  if (key.includes("face-compatibility") || key.includes("face-shape")) {
+    return "با فرم صورت انتخابی شما مطابقت ندارد";
+  }
+  if (key.includes("frame-shape") || key === "shape" || key.includes("frameshapes")) {
+    return "با فرم فریم انتخابی شما مطابقت ندارد";
+  }
+  if (key.includes("gender")) {
+    return "با گروه محصول انتخابی شما مطابقت ندارد";
+  }
+  return undefined;
+}
+
+function recommendationExplanation(
+  reasons: readonly { result: string; criterion: string; explanationKey?: string }[],
+): string | null {
+  const matched = reasons
+    .filter((reason) => reason.result === "matched")
+    .map((reason) => localizedReason(reason.explanationKey) ?? localizedReason(reason.criterion))
+    .filter((reason): reason is string => Boolean(reason));
+  const preferenceMatches = matched.filter((reason) => reason !== "در دسترس بودن محصول");
+  const mismatches = reasons
+    .filter((reason) => ["unmatched", "not_matched", "not-matched", "mismatch"].includes(reason.result.toLowerCase()))
+    .map((reason) => localizedMismatch(reason.criterion) ?? localizedMismatch(reason.explanationKey))
+    .filter((reason): reason is string => Boolean(reason));
+  const explanations = [...new Set([...preferenceMatches, ...mismatches])].slice(0, 4);
+  if (explanations.length > 0) return explanations.join(" · ");
+  return [...new Set(matched)].slice(0, 3).join(" · ") || null;
 }
 
 function toIntent(
@@ -255,12 +297,7 @@ export class NoorDigitalSalesRecommendationBridge {
           ) ? "style_match" : "shopper_request",
           secondaryReasons: [],
           // Never expose raw internal criterion/explanation keys in the Persian UI.
-          explanation: coreRecommendation.reasons
-            .filter((reason) => reason.result === "matched")
-            .map((reason) => localizedReason(reason.explanationKey) ?? localizedReason(reason.criterion))
-            .filter((reason): reason is string => Boolean(reason))
-            .slice(0, 3)
-            .join(" · ") || null,
+          explanation: recommendationExplanation(coreRecommendation.reasons),
         },
         context,
         createdAt: new Date(),

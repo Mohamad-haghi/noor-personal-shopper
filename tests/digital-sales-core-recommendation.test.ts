@@ -182,8 +182,12 @@ describe("COR catalog identity mapping", () => {
             recommendations: [{
               productId: selected.identity.id,
               score: 0.92,
-              matchedCriteria: ["frame-shape"],
-              reasons: [{ result: "matched", criterion: "frame-shape", explanationKey: "eyewear.frame_shape_match" }],
+              matchedCriteria: ["frame-shape", "gender"],
+              reasons: [
+                { result: "matched", criterion: "frame-shape", explanationKey: "eyewear.frame_shape_match" },
+                { result: "matched", criterion: "gender", explanationKey: "gender_matches_customer_preference" },
+                { result: "unmatched", criterion: "frame-material", explanationKey: "eyewear.frame_material_match" },
+              ],
             }],
           },
         };
@@ -208,7 +212,7 @@ describe("COR catalog identity mapping", () => {
     expect(sentPreferences.frameShapes).toBe("aviator");
     expect(sentPreferences.faceCompatibility).toBe("round");
     expect(results[0]?.reason.primaryReason).toBe("style_match");
-    expect(results[0]?.reason.explanation).toBe("تناسب با فرم فریم انتخابی شما");
+    expect(results[0]?.reason.explanation).toBe("تناسب با فرم فریم انتخابی شما · تناسب با گروه محصول انتخابی شما · با جنس فریم انتخابی شما مطابقت ندارد");
   });
 });
 
