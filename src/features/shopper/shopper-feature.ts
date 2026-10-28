@@ -67,10 +67,10 @@ function journeyToCriteria(journey: ShopperJourneyProfile): SelectionProfileCrit
     useCase: journey.useCase,
     style: journey.style,
     faceShape: journey.faceShape,
-    frameMaterial: journey.frameMaterial,
-    frameColor: journey.frameColor,
-    gender: journey.gender,
-    mandatoryCriteria: journey.mandatoryCriteria ?? [],
+    ...(journey.frameMaterial ? { frameMaterial: journey.frameMaterial } : {}),
+    ...(journey.frameColor ? { frameColor: journey.frameColor } : {}),
+    ...(journey.gender ? { gender: journey.gender } : {}),
+    ...((journey.mandatoryCriteria?.length ?? 0) > 0 ? { mandatoryCriteria: journey.mandatoryCriteria } : {}),
   };
 }
 
