@@ -71,6 +71,40 @@ export function renderRecommendations(routeView: HTMLElement, recommendations: r
   routeView.innerHTML = `<main class="recommendations" id="main-content" aria-labelledby="recommendations-title"><section class="recommendations-hero"><p class="eyebrow">NOOR PERSONAL SHOPPER</p><h1 id="recommendations-title">${headline}</h1><p>${count === 1 ? "این پیشنهاد بر اساس پاسخ‌های همین مشاوره و فقط از میان محصولات Demo در دسترس انتخاب شده است." : `این ${recommendationCountLabel(count)} بر اساس پاسخ‌های همین مشاوره و فقط از میان محصولات Demo در دسترس انتخاب شده‌اند.`}</p><p class="inventory-link-note">درصد، امتیاز تطابق نرمال‌شدهٔ COR بر اساس معیارها و وزن‌های مدل است؛ احتمال آماری مناسب‌بودن محصول نیست.</p><p class="inventory-link-note">هر لینک فروشگاه نور با شناسه ساختاریافته محصول ساخته می‌شود؛ این Demo به موجودی واقعی متصل نیست.</p></section><section class="recommendation-grid">${rows.map(({recommendation,product,index}) => card(product,recommendation,index)).join("")}</section><section class="smart-comparison" aria-labelledby="smart-comparison-title"><div><p class="eyebrow">${count === 1 ? "PRODUCT DETAILS" : "SMART COMPARISON"}</p><h2 id="smart-comparison-title">${comparisonTitle}</h2><p>${comparisonDescription}</p></div><div class="comparison-table-wrap"><table><thead><tr><th>فریم</th><th>نوع</th><th>فرم</th><th>رنگ</th><th>UV</th></tr></thead><tbody>${compareRows}</tbody></table></div></section><div class="recommendation-actions"><a class="button button-secondary" href="/shopper" data-app-link>تغییر انتخاب‌ها</a><a class="button button-primary" href="/choices" data-app-link>انتخاب‌های من</a><a class="button button-secondary" href="/compare" data-app-link>مقایسه</a></div></main>`;
 }
 
+/** Human-readable labels for criteria the shopper explicitly marked as mandatory. */
+export function mandatoryCriteriaLabels(criteria: readonly string[]): string[] {
+  const labels: Record<string, string> = {
+    frameShape: "فرم فریم",
+    frameMaterial: "جنس فریم",
+    frameColor: "رنگ فریم",
+  };
+  return [...new Set(criteria)].map((criterion) => labels[criterion] ?? criterion);
+}
+
+/** Truthful empty state when COR returned no eligible products for mandatory criteria. */
+export function renderMandatoryCriteriaNoMatch(
+  routeView: HTMLElement,
+  criteria: readonly string[],
+): void {
+  const labels = mandatoryCriteriaLabels(criteria);
+  const criteriaText = labels.length
+    ? labels.map(escapeHtml).join("، ")
+    : "شرط‌های اجباری شما";
+  routeView.innerHTML = `
+    <main class="app-error" id="main-content" aria-labelledby="mandatory-no-match-title">
+      <p class="eyebrow">NOOR PERSONAL SHOPPER</p>
+      <h1 id="mandatory-no-match-title">محصول منطبق با شرط‌های اجباری پیدا نشد</h1>
+      <p>موتور تصمیم‌گیری COR هیچ محصول معتبری پیدا نکرد که تمام شرط‌های اجباری انتخاب‌شده را برآورده کند.</p>
+      <p>شرط‌های اجباری شما: <strong>${criteriaText}</strong></p>
+      <p>برای جلوگیری از پیشنهاد گمراه‌کننده، محصول ناسازگار نمایش داده نمی‌شود. می‌توانید به مشاور برگردید و یکی از شرط‌های اجباری را تغییر دهید یا غیرفعال کنید.</p>
+      <div class="route-actions">
+        <a class="button button-primary" href="/shopper" data-app-link>تغییر انتخاب‌ها</a>
+        <a class="button button-secondary" href="/products" data-app-link>مشاهده همه محصولات آزمایشی</a>
+      </div>
+    </main>
+  `;
+}
+
 /**
  * Truthful failure state for when the decision provider (COR in the target
  * integrated composition) cannot return a valid response. Never show local or
