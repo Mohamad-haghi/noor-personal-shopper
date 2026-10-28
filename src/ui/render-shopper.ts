@@ -24,6 +24,18 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
       }).join("")}</div>`
     : "";
 
+  const mandatoryByStep: Partial<Record<ShopperStep["id"], "frameShape" | "frameMaterial" | "frameColor">> = {
+    style: "frameShape",
+    "frame-material": "frameMaterial",
+    "frame-color": "frameColor",
+  };
+  const mandatoryCriterion = mandatoryByStep[step.id];
+  const selectedValue = step.field ? flow.journey[step.field] : null;
+  const canMarkMandatory = Boolean(mandatoryCriterion && selectedValue &&
+    selectedValue !== "فرقی ندارد" && selectedValue !== "مطمئن نیستم");
+  const mandatoryControl = canMarkMandatory && mandatoryCriterion
+    ? `<label class="shopper-mandatory-control"><input type="checkbox" data-shopper-mandatory="${mandatoryCriterion}" ${(flow.journey.mandatoryCriteria ?? []).includes(mandatoryCriterion) ? "checked" : ""}><span>این معیار برای من اجباری است</span><small>اگر هیچ محصولی با این شرط پیدا نشود، پیشنهاد نامنطبق نمایش داده نمی‌شود.</small></label>`
+    : "";
   const isComplete = step.id === "complete";
   const continueLabel = isComplete ? "مشاهده مسیر پیشنهادها" : step.id === "intro" ? "شروع مشاوره" : "ادامه";
   const summary = isComplete ? `<div class="shopper-summary">
@@ -34,6 +46,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
     <div><span>جنس فریم</span><strong>${escapeHtml(flow.journey.frameMaterial ?? "فرقی ندارد")}</strong></div>
     <div><span>رنگ فریم</span><strong>${escapeHtml(flow.journey.frameColor ?? "فرقی ندارد")}</strong></div>
     <div><span>گروه محصول</span><strong>${escapeHtml(flow.journey.gender ?? "فرقی ندارد")}</strong></div>
+    <div><span>شرط‌های اجباری</span><strong>${(flow.journey.mandatoryCriteria ?? []).length ? escapeHtml((flow.journey.mandatoryCriteria ?? []).join("، ")) : "هیچ‌کدام"}</strong></div>
   </div>
   <p class="shopper-profile-note" aria-live="polite">پروفایل انتخاب شما به‌صورت ساختاریافته در لایهٔ Profile نگه‌داری شده و برای اتصال آینده به حساب و سیستم نور آماده است.</p>` : "";
 
@@ -50,7 +63,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
           <p class="eyebrow">راهنمای انتخاب</p>
           <h1 id="shopper-title">${escapeHtml(step.title)}</h1>
           <p class="shopper-description">${escapeHtml(step.description)}</p>
-          ${summary}${options}
+          ${summary}${options}${mandatoryControl}
         </div>
         <div class="shopper-actions">
           ${currentIndex > 0 ? '<button class="button button-secondary" type="button" data-shopper-back>بازگشت</button>' : '<a class="button button-secondary" href="/" data-app-link>خروج</a>'}
@@ -71,6 +84,18 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
         renderShopper(routeView, feature);
       }
     });
+  });
+
+  routeView.querySelector<HTMLInputElement>("[data-shopper-mandatory]")?.addEventListener("change", async (event) => {
+    const checkbox = event.currentTarget as HTMLInputElement;
+    const criterion = checkbox.dataset.shopperMandatory as "frameShape" | "frameMaterial" | "frameColor" | undefined;
+    if (!criterion) return;
+    checkbox.disabled = true;
+    try {
+      await feature.setCriterionMandatory(criterion, checkbox.checked);
+    } finally {
+      renderShopper(routeView, feature);
+    }
   });
 
   routeView.querySelector<HTMLButtonElement>("[data-shopper-back]")?.addEventListener("click", () => {

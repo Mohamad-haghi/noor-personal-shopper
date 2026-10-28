@@ -159,6 +159,86 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
 });
 
 
+
+  it("sends only explicitly mandatory criteria as hard COR constraints", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    let sentPreferences: Record<string, unknown> = {};
+    let sentConstraints: Record<string, unknown> = {};
+    const remoteClient = {
+      recommend: async (payload: unknown) => {
+        const request = payload as { requestId: string; intent: { preferences: Record<string, unknown>; constraints: Record<string, unknown> } };
+        sentPreferences = request.intent.preferences;
+        sentConstraints = request.intent.constraints;
+        return {
+          contractVersion: "1.0.0",
+          requestId: request.requestId,
+          result: { source: "cor_canonical_engine", demoOnly: true, recommendations: [] },
+        };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClient);
+
+    await bridge.generateRecommendations({ id: "mandatory-criteria" }, {
+      occasion: null, season: null, requestSource: "shopper_request",
+      journey: {
+        productType: "عینک آفتابی", useCase: null, style: "گرد", faceShape: null,
+        frameMaterial: "تیتانیوم",
+        mandatoryCriteria: ["frameShape", "frameMaterial"],
+      },
+    });
+
+    expect(sentConstraints).toEqual({ shape: "round", frameShapes: "round", frame: "titanium", frameMaterial: "titanium" });
+    expect(sentPreferences.frameShapes).toBe("round");
+    expect(sentPreferences.frame).toBe("titanium");
+    expect(sentPreferences.frameMaterial).toBe("titanium");
+  });
+
+  it("keeps selected criteria soft when no mandatory criteria are explicitly marked", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    let sentConstraints: Record<string, unknown> = {};
+    const remoteClient = {
+      recommend: async (payload: unknown) => {
+        const request = payload as { requestId: string; intent: { constraints: Record<string, unknown> } };
+        sentConstraints = request.intent.constraints;
+        return {
+          contractVersion: "1.0.0",
+          requestId: request.requestId,
+          result: { source: "cor_canonical_engine", demoOnly: true, recommendations: [] },
+        };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClient);
+
+    await bridge.generateRecommendations({ id: "soft-criteria-default" }, {
+      occasion: null, season: null, requestSource: "shopper_request",
+      journey: {
+        productType: "عینک آفتابی", useCase: null, style: "گرد", faceShape: null,
+        frameMaterial: "تیتانیوم",
+      },
+    });
+
+    expect(sentConstraints).toEqual({});
+  });
+
+
+
+  it("returns no recommendations when explicit hard constraints have no eligible catalog match", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService);
+
+    const results = await bridge.generateRecommendations({ id: "mandatory-no-match" }, {
+      occasion: null, season: null, requestSource: "shopper_request",
+      journey: {
+        productType: "عینک آفتابی", useCase: null, style: "گرد", faceShape: null,
+        frameMaterial: "تیتانیوم",
+        mandatoryCriteria: ["frameShape", "frameMaterial"],
+      },
+    });
+
+    expect(results).toHaveLength(0);
+  });
+
+
 describe("COR catalog identity mapping", () => {
   it("resolves remote recommendations whose productId is the feed product identity", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
