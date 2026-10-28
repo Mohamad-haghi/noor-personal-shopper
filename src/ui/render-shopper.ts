@@ -45,7 +45,8 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
     <div><span>فرم صورت</span><strong>${escapeHtml(flow.journey.faceShape ?? "—")}</strong></div>
     <div><span>جنس فریم</span><strong>${escapeHtml(flow.journey.frameMaterial ?? "فرقی ندارد")}</strong></div>
     <div><span>رنگ فریم</span><strong>${escapeHtml(flow.journey.frameColor ?? "فرقی ندارد")}</strong></div>
-    <div><span>گروه محصول</span><strong>${escapeHtml(flow.journey.gender ?? "فرقی ندارد")}</strong></div>\n    <div><span>شرط‌های اجباری</span><strong>${(flow.journey.mandatoryCriteria ?? []).length ? escapeHtml((flow.journey.mandatoryCriteria ?? []).join("، ")) : "هیچ‌کدام"}</strong></div>
+    <div><span>گروه محصول</span><strong>${escapeHtml(flow.journey.gender ?? "فرقی ندارد")}</strong></div>
+    <div><span>شرط‌های اجباری</span><strong>${(flow.journey.mandatoryCriteria ?? []).length ? escapeHtml((flow.journey.mandatoryCriteria ?? []).join("، ")) : "هیچ‌کدام"}</strong></div>
   </div>
   <p class="shopper-profile-note" aria-live="polite">پروفایل انتخاب شما به‌صورت ساختاریافته در لایهٔ Profile نگه‌داری شده و برای اتصال آینده به حساب و سیستم نور آماده است.</p>` : "";
 
