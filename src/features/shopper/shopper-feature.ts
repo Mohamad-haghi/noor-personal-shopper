@@ -42,6 +42,7 @@ const INITIAL_JOURNEY: ShopperJourneyProfile = {
   frameMaterial: null,
   frameColor: null,
   gender: null,
+  mandatoryCriteria: [],
 };
 
 const DEFAULT_SELECTION_PROFILE_ID: SelectionProfileId = {
@@ -66,6 +67,10 @@ function journeyToCriteria(journey: ShopperJourneyProfile): SelectionProfileCrit
     useCase: journey.useCase,
     style: journey.style,
     faceShape: journey.faceShape,
+    frameMaterial: journey.frameMaterial,
+    frameColor: journey.frameColor,
+    gender: journey.gender,
+    mandatoryCriteria: journey.mandatoryCriteria ?? [],
   };
 }
 
@@ -78,6 +83,7 @@ function profileToJourney(profile: SelectionProfile): ShopperJourneyProfile {
     frameMaterial: profile.criteria.frameMaterial ?? null,
     frameColor: profile.criteria.frameColor ?? null,
     gender: profile.criteria.gender ?? null,
+    mandatoryCriteria: profile.criteria.mandatoryCriteria ?? [],
   };
 }
 
@@ -138,6 +144,19 @@ export class ShopperFeature {
 
   async setAnswer(field: keyof ShopperJourneyProfile, value: string): Promise<void> {
     this.journey = { ...this.journey, [field]: value };
+    this.selectionProfile = {
+      ...this.selectionProfile,
+      criteria: journeyToCriteria(this.journey),
+      updatedAt: new Date(),
+    };
+    await this.persistProfile();
+  }
+
+  async setCriterionMandatory(criterion: "frameShape" | "faceShape" | "frameMaterial" | "frameColor", mandatory: boolean): Promise<void> {
+    const current = new Set(this.journey.mandatoryCriteria ?? []);
+    if (mandatory) current.add(criterion);
+    else current.delete(criterion);
+    this.journey = { ...this.journey, mandatoryCriteria: [...current] };
     this.selectionProfile = {
       ...this.selectionProfile,
       criteria: journeyToCriteria(this.journey),
