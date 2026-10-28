@@ -24,9 +24,8 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
       }).join("")}</div>`
     : "";
 
-  const mandatoryByStep: Partial<Record<ShopperStep["id"], "frameShape" | "faceShape" | "frameMaterial" | "frameColor">> = {
+  const mandatoryByStep: Partial<Record<ShopperStep["id"], "frameShape" | "frameMaterial" | "frameColor">> = {
     style: "frameShape",
-    "face-shape": "faceShape",
     "frame-material": "frameMaterial",
     "frame-color": "frameColor",
   };
@@ -88,7 +87,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
 
   routeView.querySelector<HTMLInputElement>("[data-shopper-mandatory]")?.addEventListener("change", async (event) => {
     const checkbox = event.currentTarget as HTMLInputElement;
-    const criterion = checkbox.dataset.shopperMandatory as "frameShape" | "faceShape" | "frameMaterial" | "frameColor" | undefined;
+    const criterion = checkbox.dataset.shopperMandatory as "frameShape" | "frameMaterial" | "frameColor" | undefined;
     if (!criterion) return;
     checkbox.disabled = true;
     try {
