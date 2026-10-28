@@ -54,7 +54,7 @@ const STEPS: readonly ShopperStep[] = [
   { id: "product-type", title: "برای چه نوع عینکی جست‌وجو می‌کنید؟", description: "نوع اصلی عینکی را که در ذهن دارید انتخاب کنید.", field: "productType", options: ["عینک طبی", "عینک آفتابی", "هر دو"] },
   { id: "use-case", title: "بیشتر برای چه موقعیتی؟", description: "کاربردی که بیشتر برایتان اهمیت دارد را مشخص کنید.", field: "useCase", options: ["استفاده روزمره", "کار و جلسات", "رانندگی و فضای باز", "مناسبت و استایل"] },
   { id: "style", title: "چه فرم فریمی را ترجیح می‌دهید؟", description: "شکل فریم را مستقیماً انتخاب کنید تا سیستم همان ترجیح را به COR بفرستد؛ این گزینه ادعایی درباره سازگاری قطعی با فرم صورت ندارد.", field: "style", options: ["خلبانی", "مستطیلی", "گرد", "مربعی", "پروانه‌ای", "ویفِرر"] },
-  { id: "face-shape", title: "فرم صورتتان را چطور توصیف می‌کنید؟", description: "اگر مطمئن نیستید، گزینه نزدیک‌تر را انتخاب کنید؛ بعداً قابل تغییر است.", field: "faceShape", options: ["گرد", "بیضی", "مربع", "کشیده", "قلبی", "مطمئن نیستم"] },
+  { id: "face-shape", title: "فرم صورتتان را چطور توصیف می‌کنید؟", description: "اگر مطمئن نیستید، گزینه نزدیک‌تر را انتخاب کنید؛ بعداً قابل تغییر است.", field: "faceShape", options: ["گرد", "بیضی", "مستطیلی / کشیده", "قلبی", "مثلثی", "مطمئن نیستم"] },
   { id: "frame-material", title: "جنس فریم دلخواهتان چیست؟", description: "این ترجیح به موتور COR ارسال می‌شود؛ اگر برایتان مهم نیست، «فرقی ندارد» را انتخاب کنید.", field: "frameMaterial", options: ["فلزی", "نایلونی", "استات", "تیتانیوم", "فرقی ندارد"] },
   { id: "frame-color", title: "چه رنگی را ترجیح می‌دهید؟", description: "رنگ به‌عنوان ترجیح امتیازدهی می‌شود؛ «فرقی ندارد» یعنی رنگ در رتبه‌بندی دخالت نکند.", field: "frameColor", options: ["طلایی", "هاوانا قهوه‌ای", "مشکی", "نقره‌ای", "فرقی ندارد"] },
   { id: "gender", title: "کدام گروه محصول را ترجیح می‌دهید؟", description: "این گزینه فقط با برچسب گروه محصول در کاتالوگ آزمایشی تطبیق داده می‌شود؛ «فرقی ندارد» آن را از امتیازدهی خارج می‌کند.", field: "gender", options: ["زنانه", "مردانه", "یونیسکس", "فرقی ندارد"] },
@@ -139,8 +139,27 @@ export class ShopperFeature {
     return this.selectionProfile;
   }
 
-  getCurrentStep(): ShopperStep { return STEPS[this.stepIndex]; }
-  getSteps(): readonly ShopperStep[] { return STEPS; }
+  getCurrentStep(): ShopperStep { return this.getSteps()[this.stepIndex]; }
+  getSteps(): readonly ShopperStep[] {
+    const productType = this.journey.productType;
+    const styleOptions = productType === "عینک آفتابی"
+      ? ["خلبانی", "مستطیلی", "مربعی", "پروانه‌ای"]
+      : productType === "عینک طبی"
+        ? ["گرد", "مستطیلی", "مربعی", "ویفِرر"]
+        : ["خلبانی", "مستطیلی", "گرد", "مربعی", "پروانه‌ای", "ویفِرر"];
+    const materialOptions = productType === "عینک آفتابی"
+      ? ["فلزی", "نایلونی", "استات", "فرقی ندارد"]
+      : ["فلزی", "نایلونی", "استات", "تیتانیوم", "فرقی ندارد"];
+    const colorOptions = productType === "عینک طبی"
+      ? ["طلایی", "مشکی", "فرقی ندارد"]
+      : ["طلایی", "هاوانا قهوه‌ای", "مشکی", "سفید", "فرقی ندارد"];
+    return STEPS.map((step) => {
+      if (step.id === "style") return { ...step, options: styleOptions };
+      if (step.id === "frame-material") return { ...step, options: materialOptions };
+      if (step.id === "frame-color") return { ...step, options: colorOptions };
+      return step;
+    });
+  }
 
   async setAnswer(field: keyof ShopperJourneyProfile, value: string): Promise<void> {
     this.journey = { ...this.journey, [field]: value };
