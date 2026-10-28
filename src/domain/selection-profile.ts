@@ -14,7 +14,7 @@ export interface SelectionProfileCriteria {
   readonly frameColor?: string | null;
   readonly gender?: string | null;
   /** Criteria the shopper explicitly marked as mandatory. */
-  readonly mandatoryCriteria?: readonly ("frameShape" | "faceShape" | "frameMaterial" | "frameColor")[];
+  readonly mandatoryCriteria?: readonly ("frameShape" | "frameMaterial" | "frameColor")[];
 }
 
 export interface SelectionProfile {
