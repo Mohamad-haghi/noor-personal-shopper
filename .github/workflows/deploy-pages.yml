@@ -342,14 +342,16 @@ jobs:
               category: "sunglasses",
               shape: "square",
               faceCompatibility: "round",
-              expectedFirstProductId: "noor-demo-007-dior-30montaigne-epz-1i"
+              expectedFirstProductId: "noor-demo-007-dior-30montaigne-epz-1i",
+              expectedScores: [1, 1, 0.5]
             },
             {
               requestId: "noor-test-pages-optical-square-round",
               category: "optical",
               shape: "square",
               faceCompatibility: "round",
-              expectedFirstProductId: "noor-demo-011-tom-ford-ft5661-001"
+              expectedFirstProductId: "noor-demo-011-tom-ford-ft5661-001",
+              expectedScores: [1, 1, 0.625]
             }
           ];
           for (const scenario of controlledScenarios) {
@@ -382,6 +384,13 @@ jobs:
             });
             const body = await response.json().catch(() => ({}));
             const recommendations = body.result?.recommendations;
+            const actualScores = Array.isArray(recommendations)
+              ? recommendations.map(item => item?.score?.overall ?? null) : null;
+            const scoreMismatch = !Array.isArray(actualScores) ||
+              actualScores.length !== scenario.expectedScores.length ||
+              actualScores.some((score, index) =>
+                typeof score !== "number" || Math.abs(score - scenario.expectedScores[index]) > 1e-9
+              );
             console.log(JSON.stringify({
               diagnostic: "cor_controlled_recommendation_scenario",
               requestId: scenario.requestId,
@@ -392,15 +401,18 @@ jobs:
               source: body.result?.source ?? null,
               demoOnly: body.result?.demoOnly ?? null,
               recommendationIds: Array.isArray(recommendations) ? recommendations.map(item => item?.productId ?? null) : null,
-              scores: Array.isArray(recommendations) ? recommendations.map(item => item?.score ?? null) : null,
+              scores: actualScores,
+              expectedScores: scenario.expectedScores,
+              scoreMismatch,
               error: body.error ?? null
             }));
             if (!response.ok || body.contractVersion !== "1.0.0" ||
                 body.requestId !== scenario.requestId ||
                 body.result?.source !== "cor_canonical_engine" ||
                 body.result?.demoOnly !== true ||
-                !Array.isArray(recommendations) || recommendations.length === 0 ||
-                recommendations[0]?.productId !== scenario.expectedFirstProductId) {
+                !Array.isArray(recommendations) || recommendations.length !== scenario.expectedScores.length ||
+                recommendations[0]?.productId !== scenario.expectedFirstProductId ||
+                scoreMismatch) {
               throw new Error("live_cor_controlled_recommendation_scenario_failed: " + scenario.requestId);
             }
           }
