@@ -454,6 +454,67 @@ jobs:
             }
           }
 
+          // Hard-constraint negative test: no demo sunglasses have BOTH a round frame shape and a titanium frame.
+          // Send both legacy and canonical aliases because NOOR's live adapter currently emits both aliases.
+          // A hard constraint must exclude every mismatch; returning soft-ranked fallback products is a failure.
+          const hardNoMatchRequestId = "noor-test-pages-hard-no-match-round-titanium";
+          const hardNoMatchResponse = await fetch(new URL("/shopper/v1/recommendations", base), {
+            method: "POST",
+            headers: {
+              Origin: origin,
+              Authorization: "Bearer " + sessionBody.credential,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contractVersion: "1.0.0",
+              requestId: hardNoMatchRequestId,
+              sessionId: "noor-demo-smoke",
+              intent: {
+                category: "sunglasses",
+                preferences: {},
+                constraints: {
+                  shape: "round",
+                  frameShapes: "round",
+                  frame: "titanium",
+                  frameMaterial: "titanium"
+                },
+                priorities: [],
+                desiredAttributes: [],
+                excludedAttributes: []
+              },
+              limit: 3
+            }),
+            signal: AbortSignal.timeout(90000)
+          });
+          const hardNoMatchBody = await hardNoMatchResponse.json().catch(() => ({}));
+          const hardNoMatchRecommendations = hardNoMatchBody.result?.recommendations;
+          const hardNoMatchCount = Array.isArray(hardNoMatchRecommendations)
+            ? hardNoMatchRecommendations.length : null;
+          console.log(JSON.stringify({
+            diagnostic: "cor_hard_constraint_no_match",
+            requestId: hardNoMatchRequestId,
+            httpStatus: hardNoMatchResponse.status,
+            contractVersion: hardNoMatchBody.contractVersion ?? null,
+            requestIdMatches: hardNoMatchBody.requestId === hardNoMatchRequestId,
+            source: hardNoMatchBody.result?.source ?? null,
+            demoOnly: hardNoMatchBody.result?.demoOnly ?? null,
+            resultStatus: hardNoMatchBody.result?.status ?? hardNoMatchBody.result?.resultStatus ?? null,
+            recommendationCount: hardNoMatchCount,
+            recommendationIds: Array.isArray(hardNoMatchRecommendations)
+              ? hardNoMatchRecommendations.map(item => item?.productId ?? null) : null,
+            error: hardNoMatchBody.error ?? null
+          }));
+          if (!hardNoMatchResponse.ok ||
+              hardNoMatchBody.contractVersion !== "1.0.0" ||
+              hardNoMatchBody.requestId !== hardNoMatchRequestId ||
+              hardNoMatchBody.result?.source !== "cor_canonical_engine" ||
+              hardNoMatchBody.result?.demoOnly !== true ||
+              !Array.isArray(hardNoMatchRecommendations) ||
+              hardNoMatchRecommendations.length !== 0) {
+            throw new Error("live_cor_hard_constraint_no_match_failed: HTTP " + hardNoMatchResponse.status +
+              " / recommendations=" + (hardNoMatchCount === null ? "invalid" : hardNoMatchCount));
+          }
+
           const comparisonResponse = await fetch(new URL("/shopper/v1/comparisons", base), {
             method: "POST",
             headers: {
