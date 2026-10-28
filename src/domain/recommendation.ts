@@ -62,7 +62,7 @@ export interface RecommendationContext {
     readonly frameColor?: string | null;
     readonly gender?: string | null;
     /** Explicitly mandatory criteria; absent/empty means every selected value remains a soft preference. */
-    readonly mandatoryCriteria?: readonly ("frameShape" | "faceShape" | "frameMaterial" | "frameColor")[];
+    readonly mandatoryCriteria?: readonly ("frameShape" | "frameMaterial" | "frameColor")[];
   };
 }
 
