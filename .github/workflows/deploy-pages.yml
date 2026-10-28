@@ -385,7 +385,7 @@ jobs:
             const body = await response.json().catch(() => ({}));
             const recommendations = body.result?.recommendations;
             const actualScores = Array.isArray(recommendations)
-              ? recommendations.map(item => item?.score?.overall ?? null) : null;
+              ? recommendations.map(item => item?.score ?? null) : null;
             const scoreMismatch = !Array.isArray(actualScores) ||
               actualScores.length !== scenario.expectedScores.length ||
               actualScores.some((score, index) =>
