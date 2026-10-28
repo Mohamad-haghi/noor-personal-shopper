@@ -639,13 +639,9 @@ jobs:
           COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
         run: node scripts/verify-browser-cor-shopper.mjs
 
-      - name: Install WebKit system dependencies
-        timeout-minutes: 20
-        run: |
-          set -euo pipefail
-          # Keep this separate from Chromium verification so missing WebKit libraries
-          # cannot prevent the primary browser smoke test from running.
-          npx playwright install-deps webkit
+      # Do not run apt-based Playwright dependency installation here: it can stall
+      # on hosted runners. Try WebKit with the runner's existing libraries first;
+      # if a specific library is missing, install only that package in a follow-up.
 
       - name: Verify live COR Shopper in WebKit (Safari engine)
         env:
