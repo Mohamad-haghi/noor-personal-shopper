@@ -21,6 +21,9 @@ export type ShopperStepId =
   | "use-case"
   | "style"
   | "face-shape"
+  | "frame-material"
+  | "frame-color"
+  | "gender"
   | "complete";
 
 export interface ShopperStep {
@@ -36,6 +39,9 @@ const INITIAL_JOURNEY: ShopperJourneyProfile = {
   useCase: null,
   style: null,
   faceShape: null,
+  frameMaterial: null,
+  frameColor: null,
+  gender: null,
 };
 
 const DEFAULT_SELECTION_PROFILE_ID: SelectionProfileId = {
@@ -48,6 +54,9 @@ const STEPS: readonly ShopperStep[] = [
   { id: "use-case", title: "بیشتر برای چه موقعیتی؟", description: "کاربردی که بیشتر برایتان اهمیت دارد را مشخص کنید.", field: "useCase", options: ["استفاده روزمره", "کار و جلسات", "رانندگی و فضای باز", "مناسبت و استایل"] },
   { id: "style", title: "چه فرم فریمی را ترجیح می‌دهید؟", description: "شکل فریم را مستقیماً انتخاب کنید تا سیستم همان ترجیح را به COR بفرستد؛ این گزینه ادعایی درباره سازگاری قطعی با فرم صورت ندارد.", field: "style", options: ["خلبانی", "مستطیلی", "گرد", "مربعی", "پروانه‌ای", "ویفِرر"] },
   { id: "face-shape", title: "فرم صورتتان را چطور توصیف می‌کنید؟", description: "اگر مطمئن نیستید، گزینه نزدیک‌تر را انتخاب کنید؛ بعداً قابل تغییر است.", field: "faceShape", options: ["گرد", "بیضی", "مربع", "کشیده", "قلبی", "مطمئن نیستم"] },
+  { id: "frame-material", title: "جنس فریم دلخواهتان چیست؟", description: "این ترجیح به موتور COR ارسال می‌شود؛ اگر برایتان مهم نیست، «فرقی ندارد» را انتخاب کنید.", field: "frameMaterial", options: ["فلزی", "نایلونی", "استات", "تیتانیوم", "فرقی ندارد"] },
+  { id: "frame-color", title: "چه رنگی را ترجیح می‌دهید؟", description: "رنگ به‌عنوان ترجیح امتیازدهی می‌شود؛ «فرقی ندارد» یعنی رنگ در رتبه‌بندی دخالت نکند.", field: "frameColor", options: ["طلایی", "هاوانا قهوه‌ای", "مشکی", "نقره‌ای", "فرقی ندارد"] },
+  { id: "gender", title: "کدام گروه محصول را ترجیح می‌دهید؟", description: "این گزینه فقط با برچسب گروه محصول در کاتالوگ آزمایشی تطبیق داده می‌شود؛ «فرقی ندارد» آن را از امتیازدهی خارج می‌کند.", field: "gender", options: ["زنانه", "مردانه", "یونیسکس", "فرقی ندارد"] },
   { id: "complete", title: "پروفایل انتخاب شما آماده است", description: "انتخاب‌های شما در یک Selection Profile ساختاریافته ذخیره شد و برای مرحله پیشنهادها آماده است." },
 ];
 
@@ -66,6 +75,9 @@ function profileToJourney(profile: SelectionProfile): ShopperJourneyProfile {
     useCase: profile.criteria.useCase,
     style: profile.criteria.style,
     faceShape: profile.criteria.faceShape,
+    frameMaterial: profile.criteria.frameMaterial ?? null,
+    frameColor: profile.criteria.frameColor ?? null,
+    gender: profile.criteria.gender ?? null,
   };
 }
 
