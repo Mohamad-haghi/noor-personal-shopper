@@ -24,6 +24,25 @@ describe("ShopperFeature structured SelectionProfile", () => {
     expect(feature.getFlowState().selections?.identity.id).toBe("demo-selection-profile");
   });
 
+  it("offers only frame shapes and materials represented by the selected catalog category", async () => {
+    const service = new SelectionProfileService(new DemoSelectionProfileProvider());
+    const feature = new ShopperFeature(service, null);
+    await feature.setAnswer("productType", "عینک آفتابی");
+    const sunglassesSteps = feature.getSteps();
+    expect(sunglassesSteps.find((step) => step.id === "style")?.options).toEqual([
+      "خلبانی", "مستطیلی", "مربعی", "پروانه‌ای",
+    ]);
+    expect(sunglassesSteps.find((step) => step.id === "frame-material")?.options).not.toContain("تیتانیوم");
+
+    await feature.setAnswer("productType", "عینک طبی");
+    const opticalSteps = feature.getSteps();
+    expect(opticalSteps.find((step) => step.id === "style")?.options).toEqual([
+      "گرد", "مستطیلی", "مربعی", "ویفِرر",
+    ]);
+    expect(opticalSteps.find((step) => step.id === "frame-material")?.options).toContain("تیتانیوم");
+    expect(opticalSteps.find((step) => step.id === "frame-color")?.options).not.toContain("هاوانا قهوه‌ای");
+  });
+
   it("restores structured criteria from an existing SelectionProfile", async () => {
     const service = new SelectionProfileService(new DemoSelectionProfileProvider());
     const first = new ShopperFeature(service, null);
