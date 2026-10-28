@@ -136,7 +136,7 @@ function localizedMismatch(value: string | undefined): string | undefined {
 }
 
 function recommendationExplanation(
-  reasons: readonly { result: string; criterion: string; explanationKey: string }[],
+  reasons: readonly { result: string; criterion: string; explanationKey?: string }[],
 ): string | null {
   const matched = reasons
     .filter((reason) => reason.result === "matched")
