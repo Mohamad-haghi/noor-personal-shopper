@@ -27,6 +27,10 @@ The deployed Pages build uses integrated mode and calls COR for recommendations,
 - Product image provenance and commercial-use rights still require confirmation before customer-facing commercial use.
 - Never put a COR secret or static API key in a Vite environment variable. The browser obtains a short-lived, demo-only bearer credential from COR at runtime.
 
+## Environment and installation map
+
+Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md). It documents the observed branch/deployment pins, service and database links (including what is still unverified), and the distinct roles of installations 745…, 65c9…, and 70826…. The map lives in COR as the canonical copy; re-check its evidence date against live metadata before acting.
+
 ## Architecture
 
 - The app uses the pinned `digital-sales-core` package for canonical domain contracts and bridge logic.
