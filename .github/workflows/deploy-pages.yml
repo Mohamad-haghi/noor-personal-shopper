@@ -334,28 +334,40 @@ jobs:
             throw new Error("live_cor_recommendation_face_compatibility_differential_failed: HTTP " + faceTriangleResponse.status);
           }
 
-          // Controlled ranking checks: change category/shape/face while keeping the session and installation fixed.
-          // These requests are opt-in trace runs and never alter ranking configuration.
-          // Independent oracle: calculate expected scores from the published catalog attributes,
-          // not from COR's returned scores. V1 controlled trace weights are availability=1,
-          // requested frame shape=4, and face compatibility=3; all three remain in denominator 8.
-          // Catalog feed order is the source's stable display-priority order for deterministic ties.
+          // Controlled ranking checks cover every shopper preference criterion in the active
+          // NOOR Domain Pack v1.2.0: frame material, frame color, frame shape,
+          // face compatibility, and gender. Availability remains the hard eligibility gate
+          // and contributes weight 1. The oracle is calculated independently from the public
+          // demo feed; it never uses COR's returned scores to derive expected scores.
+          // Active soft-criterion weights: material=3, color=3, shape=4, face=3, gender=2.
+          // Only criteria explicitly supplied by a scenario enter its denominator.
+          // Catalog feed order is the stable display-priority order for deterministic ties.
           const controlledScenarios = [
             { requestId: "noor-test-pages-square-round", category: "sunglasses", shape: "square", faceCompatibility: "round" },
             { requestId: "noor-test-pages-optical-square-round", category: "optical", shape: "square", faceCompatibility: "round" },
             { requestId: "noor-test-pages-aviator-triangle", category: "sunglasses", shape: "aviator", faceCompatibility: "triangle" },
             { requestId: "noor-test-pages-aviator-oval", category: "sunglasses", shape: "aviator", faceCompatibility: "oval" },
             { requestId: "noor-test-pages-optical-round-round", category: "optical", shape: "round", faceCompatibility: "round" },
-            { requestId: "noor-test-pages-sunglasses-rectangular-round", category: "sunglasses", shape: "rectangular", faceCompatibility: "round" }
+            { requestId: "noor-test-pages-sunglasses-rectangular-round", category: "sunglasses", shape: "rectangular", faceCompatibility: "round" },
+            { requestId: "noor-test-pages-material-metal", category: "sunglasses", frameMaterial: "metal" },
+            { requestId: "noor-test-pages-color-gold", category: "sunglasses", frameColor: "gold" },
+            { requestId: "noor-test-pages-gender-female", category: "sunglasses", gender: "female" },
+            { requestId: "noor-test-pages-all-preferences", category: "sunglasses", shape: "butterfly", faceCompatibility: "heart", frameMaterial: "nylon", frameColor: "havana brown", gender: "female" }
           ];
+          function listIncludes(value, expected) {
+            return typeof value === "string" &&
+              value.split(",").map(item => item.trim().toLowerCase()).includes(expected.toLowerCase());
+          }
           function expectedScoreFromCatalog(product, scenario) {
-            const shapes = typeof product.shape === "string"
-              ? product.shape.split(",").map(value => value.trim().toLowerCase()) : [];
-            const faces = typeof product.faceCompatibility === "string"
-              ? product.faceCompatibility.split(",").map(value => value.trim().toLowerCase()) : null;
-            const shapeMatch = shapes.includes(scenario.shape) ? 1 : 0;
-            const faceMatch = faces?.includes(scenario.faceCompatibility) ? 1 : 0;
-            return (1 + 4 * shapeMatch + 3 * faceMatch) / 8;
+            const active = [];
+            if (scenario.frameMaterial !== undefined) active.push({ weight: 3, matched: product.frame?.trim().toLowerCase() === scenario.frameMaterial.toLowerCase() });
+            if (scenario.frameColor !== undefined) active.push({ weight: 3, matched: product.frameColor?.trim().toLowerCase() === scenario.frameColor.toLowerCase() });
+            if (scenario.shape !== undefined) active.push({ weight: 4, matched: listIncludes(product.shape, scenario.shape) });
+            if (scenario.faceCompatibility !== undefined) active.push({ weight: 3, matched: listIncludes(product.faceCompatibility, scenario.faceCompatibility) });
+            if (scenario.gender !== undefined) active.push({ weight: 2, matched: product.gender?.trim().toLowerCase() === scenario.gender.toLowerCase() });
+            const denominator = 1 + active.reduce((sum, criterion) => sum + criterion.weight, 0);
+            const numerator = 1 + active.reduce((sum, criterion) => sum + (criterion.matched ? criterion.weight : 0), 0);
+            return numerator / denominator;
           }
           for (const scenario of controlledScenarios) {
             const response = await fetch(new URL("/shopper/v1/recommendations", base), {
@@ -372,9 +384,11 @@ jobs:
                 intent: {
                   category: scenario.category,
                   preferences: {
-                    shape: scenario.shape,
-                    frameShapes: scenario.shape,
-                    faceCompatibility: scenario.faceCompatibility
+                    ...(scenario.shape !== undefined ? { shape: scenario.shape, frameShapes: scenario.shape } : {}),
+                    ...(scenario.faceCompatibility !== undefined ? { faceCompatibility: scenario.faceCompatibility } : {}),
+                    ...(scenario.frameMaterial !== undefined ? { frameMaterial: scenario.frameMaterial } : {}),
+                    ...(scenario.frameColor !== undefined ? { frameColor: scenario.frameColor } : {}),
+                    ...(scenario.gender !== undefined ? { gender: scenario.gender } : {})
                   },
                   constraints: {},
                   priorities: [],
@@ -413,8 +427,11 @@ jobs:
               diagnostic: "cor_controlled_recommendation_scenario",
               requestId: scenario.requestId,
               category: scenario.category,
-              shape: scenario.shape,
-              faceCompatibility: scenario.faceCompatibility,
+              shape: scenario.shape ?? null,
+              faceCompatibility: scenario.faceCompatibility ?? null,
+              frameMaterial: scenario.frameMaterial ?? null,
+              frameColor: scenario.frameColor ?? null,
+              gender: scenario.gender ?? null,
               httpStatus: response.status,
               source: body.result?.source ?? null,
               demoOnly: body.result?.demoOnly ?? null,
