@@ -15,17 +15,30 @@ import type { CatalogService } from "../../services/catalog-service";
 import { NoorDigitalSalesProductProvider } from "./catalog-provider";
 import type { CorShopperRemoteClient } from "../cor-shopper-remote-client";
 
-/** Read the marker captured by the app entry point before lazy-loaded routes lose the query string. */
-const INITIAL_COR_TRACE_REQUESTED = (() => {
+/** Pure marker check so both the query and the entry-point/session marker are testable. */
+export function isCorTraceRequested(
+  search: string,
+  windowMarker = false,
+  storedMarker = false,
+): boolean {
+  return new URLSearchParams(search).get("corTrace") === "1" || windowMarker || storedMarker;
+}
+
+/** Read the marker when a recommendation is requested, not while modules are being imported. */
+function hasCorTraceMarker(): boolean {
   if (typeof window === "undefined") return false;
-  if (new URLSearchParams(window.location.search).get("corTrace") === "1") return true;
-  if ((window as Window & { __COR_TRACE_REQUESTED__?: boolean }).__COR_TRACE_REQUESTED__ === true) return true;
+  let storedMarker = false;
   try {
-    return window.sessionStorage.getItem("corTraceRequested") === "1";
+    storedMarker = window.sessionStorage.getItem("corTraceRequested") === "1";
   } catch {
-    return false;
+    // The in-memory marker remains available when session storage is blocked.
   }
-})();
+  return isCorTraceRequested(
+    window.location.search,
+    (window as Window & { __COR_TRACE_REQUESTED__?: boolean }).__COR_TRACE_REQUESTED__ === true,
+    storedMarker,
+  );
+}
 
 /** Creates the remote request ID. The query marker only labels a run; COR must independently enable tracing server-side. */
 export function createCorRecommendationRequestId(
@@ -220,8 +233,9 @@ export class NoorDigitalSalesRecommendationBridge {
     const intent = toIntent(shopperId, context);
     let coreRecommendations: readonly CoreRecommendation[];
     if (this.remoteClient) {
+      // Check at request time: ES module dependencies evaluate before main.ts sets its marker.
       const requestId = createCorRecommendationRequestId(
-        INITIAL_COR_TRACE_REQUESTED ? "?corTrace=1" : (typeof window === "undefined" ? "" : window.location.search),
+        hasCorTraceMarker() ? "?corTrace=1" : (typeof window === "undefined" ? "" : window.location.search),
       );
       const response = await this.remoteClient.recommend<{
         contractVersion: string;
