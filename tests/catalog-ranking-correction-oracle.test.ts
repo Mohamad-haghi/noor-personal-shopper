@@ -30,7 +30,7 @@ function coreProducts(overrides: Record<string, Record<string, unknown>> = {}): 
   });
 }
 
-async function scoreCatalog(products: CoreProduct[]) {
+async function scoreCatalog(products: CoreProduct[], category: "optical" | "sunglasses" = "optical") {
   const engine = new DigitalSalesEngine({
     tenantId: "tenant-noor-oracle-test",
     domainPack,
@@ -39,8 +39,8 @@ async function scoreCatalog(products: CoreProduct[]) {
   return engine.recommend({
     id: "fixed-catalog-oracle",
     sessionId: "fixed-catalog-oracle-session",
-    category: "optical",
-    preferences: { frameMaterial: "acetate" },
+    category,
+    preferences: category === "optical" ? { frameMaterial: "acetate" } : {},
     constraints: {},
     priorities: [],
     desiredAttributes: [],
@@ -67,10 +67,10 @@ describe("independent COR canonical-engine catalog correction oracle", () => {
   });
 
   it("proves Ray-Ban lensColor and templeLengthMm are non-ranking fields in Domain Pack 1.2.0", async () => {
-    const baseline = await scoreCatalog(coreProducts());
+    const baseline = await scoreCatalog(coreProducts(), "sunglasses");
     const changedNonRankingFacts = await scoreCatalog(coreProducts({
       "noor-demo-001-ray-ban-rb3025-181-71": { lensColor: "not-the-same", templeLengthMm: 999 },
-    }));
+    }), "sunglasses");
     expect(changedNonRankingFacts.map((item) => [item.productId, item.score, item.matchedCriteria, item.unmatchedCriteria]))
       .toEqual(baseline.map((item) => [item.productId, item.score, item.matchedCriteria, item.unmatchedCriteria]));
   });
