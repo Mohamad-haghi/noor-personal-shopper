@@ -94,21 +94,21 @@ The product data is not yet an approved ranking oracle. Complete the 15-SKU audi
 | #92 | fix/catalog-exact-sku-facts | draft; exact SKU corrections |
 | #90 | docs/use-case-product-evidence-audit | draft; evidence requirements for use-case scoring |
 | #60 | test/live-cor-browser-smoke-workflow | draft; opt-in live browser smoke |
-| #56 | fix/browser-smoke-cor-shape-v11 | open; browser smoke / Domain Pack alignment |
+| #56 | fix/browser-smoke-cor-shape-v11 | closed unmerged; superseded because main already sends `shape` and `frameShapes` |
 | #52 | fix/cor-recommendation-feed-v1-2 | open; canonical catalog attribute export |
 | #51 | diagnose/cor-domain-pack-shape-alias | open; shape-key diagnostic |
 | #6 | docs/prepare-demo-hero-image-upload-v1 | open; demo asset documentation |
-| #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; Build Verification run #738 passed on final head 91340235b3711159ef2c1307395518497ba189ac |
+| #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; verify exact latest PR-head Build Verification before merge |
 
 An open PR is not a live fix. Check target branch, merge commit, deployed NOOR SHA, COR package pin, and live runtime before closing any issue.
 
 ## 7. NOOR branch inventory and cleanup
 
-At audit time GitHub returned 98 NOOR branches. Main is the Pages source. Eight open PRs are listed above, including #96; duplicate documentation PR #97 was closed as superseded by #96 and its branch remains. Other branches must be classified by merged/closed PR ancestry, unique commits, workflow references, and evidence value before cleanup.
+At audit time GitHub returned 98 NOOR branches. Main is the Pages source. Seven open PRs are listed above, including #96; duplicate documentation PR #97 was closed as superseded by #96 and its branch remains. Other branches must be classified by merged/closed PR ancestry, unique commits, workflow references, and evidence value before cleanup.
 
 Do not mass-delete branches. Preserve main, open-PR heads, refs referenced by Render/Pages workflows, and evidence/checkpoint branches until their content is represented in canonical docs.
 
-PR #56 was closed as superseded because current main already sends both legacy shape and current frameShapes in the browser smoke request. Its branch remains a closed-unmerged cleanup candidate. No published NOOR GitHub Release was found. The default branch was reported unprotected; add required CI/PR protections before treating main as a controlled release branch.
+PR #56 was closed as superseded because current main already sends both legacy `shape` and current `frameShapes` in the browser smoke request. Its branch remains a closed-unmerged cleanup candidate. The script comment still refers to installation 745 / Domain Pack 1.1, while the NOOR-facing staging runtime now has installation 708 / Domain Pack 1.2; align this fixture comment before treating it as a current runtime assertion. No published NOOR GitHub Release was found. The default branch was reported unprotected; add required CI/PR protections before treating main as a controlled release branch.
 
 ## 8. Current blockers and next sequence
 
