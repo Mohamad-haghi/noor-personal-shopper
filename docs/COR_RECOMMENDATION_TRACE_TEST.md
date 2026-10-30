@@ -44,7 +44,7 @@ The first complete paired browser evidence record is:
 
 `docs/evidence/2026-10-30-live-noor-cor-browser-traces.json`
 
-It contains separate Chromium and WebKit runs with their own request IDs and complete COR trace events. Render logs remain the live operational source; the checked-in evidence JSON preserves the exact reviewed records for future audits.
+It contains 13 direct live COR scenario traces plus separate Chromium and WebKit UI runs, each with its own request ID and complete COR trace event. Render logs remain the live operational source; the checked-in evidence JSON preserves the exact reviewed records for future audits.
 
 ## Evidence and limitations
 
