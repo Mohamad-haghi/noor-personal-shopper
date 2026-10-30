@@ -13,7 +13,6 @@ A Persian-first, right-to-left demo of a product-led shopping journey for the NO
 
 - Website: https://mohamad-haghi.github.io/noor-personal-shopper/
 - Demo catalog feed: https://mohamad-haghi.github.io/noor-personal-shopper/catalog-feed.json
-- COR operator console: https://cor-noor-test.onrender.com/operator-console
 
 The deployed Pages build uses integrated mode and calls the COR Shopper API at https://digital-sales-core.onrender.com. The 2026-10-30 Pages workflow passed live HTTP smoke checks for demo-session, recommendations, comparison, and demo product-detail handoff; its Chromium/WebKit browser smoke validates the recommendation journey. These checks do not verify real inventory, order creation, payment, or commercial checkout. See the [current COR integration evidence and operations map](docs/COR_INTEGRATION_OPERATIONS_MAP_2026-10-30.md) for exact SHAs, run IDs, and evidence limits.
 
@@ -34,9 +33,11 @@ The deployed Pages build uses integrated mode and calls the COR Shopper API at h
 - Product image provenance and commercial-use rights still require confirmation before customer-facing commercial use.
 - Never put a COR secret or static API key in a Vite environment variable. The browser obtains a short-lived, demo-only bearer credential from COR at runtime.
 
-## Environment and installation map
+## Product proof and internal operations
 
-Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [current COR environment and branch map — PR #308](https://github.com/Mohamad-haghi/digital-sales-core/pull/308) and [branch/PR hygiene register — PR #308](https://github.com/Mohamad-haghi/digital-sales-core/pull/308/files). These are documentation-only updates awaiting review; the existing main-branch map remains the previous snapshot until #308 merges. They distinguish the NOOR Pages package pin from the live COR API runtime, identify the staging installation and protected historical baseline, and mark unverified infrastructure links. Re-check live metadata before acting.
+- Public-safe capability claims and current proof status: [Product Proof Overview](docs/PRODUCT_PROOF_OVERVIEW_V1.md).
+- Registered live traces and required screenshots/recording: [Evidence Index](docs/evidence/README.md).
+- Detailed COR service, branch, database and installation topology is maintained in the private COR repository for authorized engineers; it is intentionally not linked as a public operations document here.
 
 ## Architecture
 
