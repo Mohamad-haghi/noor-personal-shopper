@@ -2,7 +2,7 @@ name: NOOR Build Verification
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "audit/live-ui-comparison-handoff-proof-v2"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
