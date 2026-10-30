@@ -253,7 +253,7 @@ try {
     recommendationCardDetails: Array.from(document.querySelectorAll(".recommendation-card")).map(card => {
       const productId = card.querySelector("[data-product-id]")?.getAttribute("data-product-id") ?? null;
       const scoreText = card.querySelector(".recommendation-card-body .eyebrow")?.textContent?.trim() ?? "";
-      const scoreMatch = scoreText.match(/امتیاز تطابق\\s+(\\d+)%/);
+      const scoreMatch = scoreText.match(/امتیاز تطابق\s+(\d+)%/);
       return {
         productId,
         productName: card.querySelector("h2")?.textContent?.trim() ?? null,
