@@ -16,7 +16,7 @@ NOOR is a Persian-first reference storefront. In integrated mode, its recommenda
 - Criterion-level decision traces with candidate scores and score recomputation.
 - Preference-sensitive ranking and hard-constraint no-match behavior.
 - NOOR rendering of COR product IDs, candidate order and normalized match scores.
-- Product comparison and product-level handoff are implemented in the Core/NOOR integration boundary; their independent live browser acceptance evidence is still a release gate.
+- Live COR API smoke for comparison (two product IDs) and product-level HTTPS handoff passed in NOOR Pages run #277. The corresponding NOOR UI states still need real visual/browser evidence before they are claimed as fully demonstrated end-to-end.
 - Selection Profile and demo checkout/confirmation are NOOR demo capabilities, not real COR customer storage or payment processing.
 
 ## Existing technical evidence
