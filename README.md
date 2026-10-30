@@ -1,3 +1,10 @@
+> **PRODUCT PROOF DOSSIER — COR + NOOR**  
+> This repository presents the public-safe evidence for the working COR + NOOR demonstration. Start with the [Product Proof Overview](docs/PRODUCT_PROOF_OVERVIEW_V1.md) and [Evidence Index](docs/evidence/README.md). This is a demo/reference product, not a live NOOR commerce integration or commercial-production claim.
+
+
+
+---
+
 # NOOR Personal Shopper Demo
 
 A Persian-first, right-to-left demo of a product-led shopping journey for the NOOR reference case. This is a **demo/reference implementation** connected to the independently deployed COR Shopper API for demo-only decisioning. It is not a production storefront or a live NOOR systems integration.
