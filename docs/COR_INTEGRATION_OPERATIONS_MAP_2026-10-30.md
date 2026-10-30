@@ -93,7 +93,7 @@ The product data is not yet an approved ranking oracle. Complete the 15-SKU audi
 |---|---|---|
 | #92 | fix/catalog-exact-sku-facts | draft; exact SKU corrections |
 | #90 | docs/use-case-product-evidence-audit | draft; evidence requirements for use-case scoring |
-| #60 | test/live-cor-browser-smoke-workflow | draft; blocked for merge: branch switches public Pages API origin to `cor-noor-test.onrender.com` instead of the verified `digital-sales-core.onrender.com` |
+| #60 | test/live-cor-browser-smoke-workflow | draft; run #635 failed: preflight on `cor-noor-test` passed, but actual UI called `digital-sales-core` and got demo-session 503; branch also switches public Pages API origin to `cor-noor-test` |
 
 | #52 | fix/cor-recommendation-feed-v1-2 | open; canonical catalog attribute export |
 | #51 | diagnose/cor-domain-pack-shape-alias | open; diagnostic; branch's deploy workflow switches API origin to `cor-noor-test.onrender.com`; not valid for current NOOR path until corrected |
