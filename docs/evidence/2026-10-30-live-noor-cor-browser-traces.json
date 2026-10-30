@@ -1,0 +1,1918 @@
+{
+  "evidenceSchema": "noor.cor.live-browser-evidence/1.0.0",
+  "recordedAt": "2026-10-30T07:59:00Z",
+  "purpose": "Pair each real NOOR browser recommendation request with its complete COR decision trace and the rendered cards/percentages.",
+  "sourceOfTruth": {
+    "corService": "digital-sales-core",
+    "renderServiceId": "srv-dbfk5qmi0phs73b018t0",
+    "renderBranch": "feat/database-backed-installation-trust",
+    "runtimeCommit": "d5737543918c92401ebf5dbff1f0e5c0ef50dc70",
+    "installationId": "70826f81-a11d-455b-9c33-de7e02303512",
+    "configurationVersion": "v2",
+    "mappingId": "noor-eyewear-catalog",
+    "mappingVersion": "1.2.0",
+    "domainPackId": "noor-eyewear-demo",
+    "domainPackVersion": "1.2.0",
+    "decisionModelVersion": "1.1.0"
+  },
+  "verification": {
+    "bothBrowserRunsSucceeded": true,
+    "allCandidatesTraced": true,
+    "allCandidateScoresRecomputed": true,
+    "noCriterionTraceTruncated": true,
+    "visibleOrderMatchesCorResponse": true,
+    "visiblePercentagesMatchCorScores": true
+  },
+  "runs": [
+    {
+      "requestId": "noor-test-1793347090239-os04p22x",
+      "renderTimestamp": "2026-10-30T07:58:12.180666021Z",
+      "browser": "chromium",
+      "browserEvidence": {
+        "browserEngine": "chromium",
+        "pageTitle": "سه پیشنهاد برای شروع",
+        "recommendationCardCount": 3,
+        "visibleCards": [
+          {
+            "productId": "noor-demo-002-persol-po0649-95-31",
+            "productName": "عینک آفتابی پرسول PO0649 95/31",
+            "scoreText": "پیشنهاد 1 · امتیاز تطابق 88%",
+            "displayedScorePercent": 88
+          },
+          {
+            "productId": "noor-demo-004-tom-ford-ft0778-01a-60",
+            "productName": "عینک آفتابی تام فورد FT0778 01A 60",
+            "scoreText": "پیشنهاد 2 · امتیاز تطابق 88%",
+            "displayedScorePercent": 88
+          },
+          {
+            "productId": "noor-demo-008-gucci-gg0900s-005",
+            "productName": "عینک آفتابی گوچی GG0900S 005",
+            "scoreText": "پیشنهاد 3 · امتیاز تطابق 75%",
+            "displayedScorePercent": 75
+          }
+        ],
+        "requestIds": [
+          "noor-test-1793347090239-os04p22x"
+        ],
+        "response": {
+          "requestId": "noor-test-1793347090239-os04p22x",
+          "recommendations": [
+            {
+              "productId": "noor-demo-002-persol-po0649-95-31",
+              "score": 0.875
+            },
+            {
+              "productId": "noor-demo-004-tom-ford-ft0778-01a-60",
+              "score": 0.875
+            },
+            {
+              "productId": "noor-demo-008-gucci-gg0900s-005",
+              "score": 0.75
+            }
+          ]
+        },
+        "browserConsoleErrors": [],
+        "browserWarnings": [],
+        "failedRequests": [],
+        "corRequests": [
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/demo-session",
+            "method": "GET"
+          },
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/demo-session",
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/recommendations",
+            "method": "POST"
+          },
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/recommendations",
+            "method": "POST",
+            "status": 200
+          }
+        ]
+      },
+      "corTrace": {
+        "event": "cor.shopper.recommendation_test_trace",
+        "schemaVersion": "1.1.0",
+        "testRunId": "1793347090239-os04p22x",
+        "requestId": "noor-test-1793347090239-os04p22x",
+        "runtimeCommit": "d5737543918c92401ebf5dbff1f0e5c0ef50dc70",
+        "tenantId": "tenant-cor-test",
+        "installationId": "70826f81-a11d-455b-9c33-de7e02303512",
+        "configurationVersion": "v2",
+        "mappingId": "noor-eyewear-catalog",
+        "mappingVersion": "1.2.0",
+        "domainPackId": "noor-eyewear-demo",
+        "domainPackVersion": "1.2.0",
+        "decisionId": "decision:noor-test-1793347090239-os04p22x:1",
+        "decisionModelVersion": "1.1.0",
+        "resultStatus": "completed",
+        "eligibleCount": 8,
+        "ineligibleCount": 0,
+        "candidateResultCount": 8,
+        "candidateTraceLimit": 20,
+        "candidateTraceCount": 8,
+        "candidateTraceTruncated": false,
+        "selectedCandidateIds": [
+          "noor-demo-002-persol-po0649-95-31",
+          "noor-demo-004-tom-ford-ft0778-01a-60",
+          "noor-demo-008-gucci-gg0900s-005"
+        ],
+        "intentTraceLimits": {
+          "preferences": {
+            "originalKeyCount": 7,
+            "safeKeyCount": 7,
+            "truncated": false,
+            "redactedKeyCount": 0
+          },
+          "constraints": {
+            "originalKeyCount": 0,
+            "safeKeyCount": 0,
+            "truncated": false,
+            "redactedKeyCount": 0
+          },
+          "prioritiesTruncated": false,
+          "desiredAttributesTruncated": false,
+          "excludedAttributesTruncated": false
+        },
+        "intent": {
+          "category": "sunglasses",
+          "useCase": null,
+          "preferences": {
+            "faceCompatibility": "oval",
+            "frame": "acetate",
+            "frameColor": "black",
+            "frameMaterial": "acetate",
+            "frameShapes": "aviator",
+            "gender": "unisex",
+            "shape": "aviator"
+          },
+          "constraints": {},
+          "priorities": [],
+          "desiredAttributes": [],
+          "excludedAttributes": []
+        },
+        "candidates": [
+          {
+            "productId": "noor-demo-002-persol-po0649-95-31",
+            "eligible": true,
+            "rank": 1,
+            "score": 0.875,
+            "scoreNumerator": 14,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.875,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "acetate",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "black",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "aviator",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 4,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "oval, heart, round, triangle, rectangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "male",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-004-tom-ford-ft0778-01a-60",
+            "eligible": true,
+            "rank": 2,
+            "score": 0.875,
+            "scoreNumerator": 14,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.875,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "acetate",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "black",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "aviator",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 4,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "male",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-008-gucci-gg0900s-005",
+            "eligible": true,
+            "rank": 3,
+            "score": 0.75,
+            "scoreNumerator": 12,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.75,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "acetate",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "black",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "square",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "unisex",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 2,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-001-ray-ban-rb3025-181-71",
+            "eligible": true,
+            "rank": 4,
+            "score": 0.625,
+            "scoreNumerator": 10,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.625,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "metal",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "gold",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "aviator",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 4,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "unisex",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 2,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-003-oakley-oo9318-02-34",
+            "eligible": true,
+            "rank": 5,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "nylon",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "white",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "rectangular, sporty",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "male",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-005-prada-pr03ys-2au6s1",
+            "eligible": true,
+            "rank": 6,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "nylon",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "havana brown",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "butterfly",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "female",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-006-dolce-gabbana-dg2204-12988g-64",
+            "eligible": true,
+            "rank": 7,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "metal",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "gold",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "butterfly",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "female",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-007-dior-30montaigne-epz-1i",
+            "eligible": true,
+            "rank": 8,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "nylon",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "havana brown",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "square",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "female",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "requestId": "noor-test-1793347129444-hjdyv5fo",
+      "renderTimestamp": "2026-10-30T07:58:51.435968644Z",
+      "browser": "webkit",
+      "browserEvidence": {
+        "browserEngine": "webkit",
+        "pageTitle": "سه پیشنهاد برای شروع",
+        "recommendationCardCount": 3,
+        "visibleCards": [
+          {
+            "productId": "noor-demo-002-persol-po0649-95-31",
+            "productName": "عینک آفتابی پرسول PO0649 95/31",
+            "scoreText": "پیشنهاد 1 · امتیاز تطابق 88%",
+            "displayedScorePercent": 88
+          },
+          {
+            "productId": "noor-demo-004-tom-ford-ft0778-01a-60",
+            "productName": "عینک آفتابی تام فورد FT0778 01A 60",
+            "scoreText": "پیشنهاد 2 · امتیاز تطابق 88%",
+            "displayedScorePercent": 88
+          },
+          {
+            "productId": "noor-demo-008-gucci-gg0900s-005",
+            "productName": "عینک آفتابی گوچی GG0900S 005",
+            "scoreText": "پیشنهاد 3 · امتیاز تطابق 75%",
+            "displayedScorePercent": 75
+          }
+        ],
+        "requestIds": [
+          "noor-test-1793347129444-hjdyv5fo"
+        ],
+        "response": {
+          "requestId": "noor-test-1793347129444-hjdyv5fo",
+          "recommendations": [
+            {
+              "productId": "noor-demo-002-persol-po0649-95-31",
+              "score": 0.875
+            },
+            {
+              "productId": "noor-demo-004-tom-ford-ft0778-01a-60",
+              "score": 0.875
+            },
+            {
+              "productId": "noor-demo-008-gucci-gg0900s-005",
+              "score": 0.75
+            }
+          ]
+        },
+        "browserConsoleErrors": [],
+        "browserWarnings": [],
+        "failedRequests": [],
+        "corRequests": [
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/demo-session",
+            "method": "GET"
+          },
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/demo-session",
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/recommendations",
+            "method": "POST"
+          },
+          {
+            "url": "https://digital-sales-core.onrender.com/shopper/v1/recommendations",
+            "method": "POST",
+            "status": 200
+          }
+        ]
+      },
+      "corTrace": {
+        "event": "cor.shopper.recommendation_test_trace",
+        "schemaVersion": "1.1.0",
+        "testRunId": "1793347129444-hjdyv5fo",
+        "requestId": "noor-test-1793347129444-hjdyv5fo",
+        "runtimeCommit": "d5737543918c92401ebf5dbff1f0e5c0ef50dc70",
+        "tenantId": "tenant-cor-test",
+        "installationId": "70826f81-a11d-455b-9c33-de7e02303512",
+        "configurationVersion": "v2",
+        "mappingId": "noor-eyewear-catalog",
+        "mappingVersion": "1.2.0",
+        "domainPackId": "noor-eyewear-demo",
+        "domainPackVersion": "1.2.0",
+        "decisionId": "decision:noor-test-1793347129444-hjdyv5fo:1",
+        "decisionModelVersion": "1.1.0",
+        "resultStatus": "completed",
+        "eligibleCount": 8,
+        "ineligibleCount": 0,
+        "candidateResultCount": 8,
+        "candidateTraceLimit": 20,
+        "candidateTraceCount": 8,
+        "candidateTraceTruncated": false,
+        "selectedCandidateIds": [
+          "noor-demo-002-persol-po0649-95-31",
+          "noor-demo-004-tom-ford-ft0778-01a-60",
+          "noor-demo-008-gucci-gg0900s-005"
+        ],
+        "intentTraceLimits": {
+          "preferences": {
+            "originalKeyCount": 7,
+            "safeKeyCount": 7,
+            "truncated": false,
+            "redactedKeyCount": 0
+          },
+          "constraints": {
+            "originalKeyCount": 0,
+            "safeKeyCount": 0,
+            "truncated": false,
+            "redactedKeyCount": 0
+          },
+          "prioritiesTruncated": false,
+          "desiredAttributesTruncated": false,
+          "excludedAttributesTruncated": false
+        },
+        "intent": {
+          "category": "sunglasses",
+          "useCase": null,
+          "preferences": {
+            "faceCompatibility": "oval",
+            "frame": "acetate",
+            "frameColor": "black",
+            "frameMaterial": "acetate",
+            "frameShapes": "aviator",
+            "gender": "unisex",
+            "shape": "aviator"
+          },
+          "constraints": {},
+          "priorities": [],
+          "desiredAttributes": [],
+          "excludedAttributes": []
+        },
+        "candidates": [
+          {
+            "productId": "noor-demo-002-persol-po0649-95-31",
+            "eligible": true,
+            "rank": 1,
+            "score": 0.875,
+            "scoreNumerator": 14,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.875,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "acetate",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "black",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "aviator",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 4,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "oval, heart, round, triangle, rectangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "male",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-004-tom-ford-ft0778-01a-60",
+            "eligible": true,
+            "rank": 2,
+            "score": 0.875,
+            "scoreNumerator": 14,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.875,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "acetate",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "black",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "aviator",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 4,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "male",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-008-gucci-gg0900s-005",
+            "eligible": true,
+            "rank": 3,
+            "score": 0.75,
+            "scoreNumerator": 12,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.75,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "acetate",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "black",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "square",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "unisex",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 2,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-001-ray-ban-rb3025-181-71",
+            "eligible": true,
+            "rank": 4,
+            "score": 0.625,
+            "scoreNumerator": 10,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.625,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "metal",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "gold",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "aviator",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 4,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "unisex",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 2,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-003-oakley-oo9318-02-34",
+            "eligible": true,
+            "rank": 5,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "nylon",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "white",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "rectangular, sporty",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "male",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-005-prada-pr03ys-2au6s1",
+            "eligible": true,
+            "rank": 6,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "nylon",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "havana brown",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "butterfly",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "female",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-006-dolce-gabbana-dg2204-12988g-64",
+            "eligible": true,
+            "rank": 7,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "metal",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "gold",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "butterfly",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, triangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "female",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          },
+          {
+            "productId": "noor-demo-007-dior-30montaigne-epz-1i",
+            "eligible": true,
+            "rank": 8,
+            "score": 0.25,
+            "scoreNumerator": 4,
+            "scoreDenominator": 16,
+            "recomputedScore": 0.25,
+            "scoreMatchesRecomputed": true,
+            "confidence": "high",
+            "unresolvedCriteria": [],
+            "exclusionReasonCodes": [],
+            "criteriaCount": 7,
+            "criteriaTruncated": false,
+            "criteria": [
+              {
+                "criterionKey": "availability",
+                "source": "constraint",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "hard",
+                "weight": 0,
+                "scoreContribution": 0,
+                "reasonCode": "availability_required"
+              },
+              {
+                "criterionKey": "available-demo-item",
+                "source": "domain_rule",
+                "operator": "eq",
+                "requestedValue": true,
+                "actualValue": true,
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 1,
+                "scoreContribution": 1,
+                "reasonCode": "available-demo-item"
+              },
+              {
+                "criterionKey": "frame-material",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "acetate",
+                "actualValue": "nylon",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-material"
+              },
+              {
+                "criterionKey": "frame-color",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "black",
+                "actualValue": "havana brown",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 0,
+                "reasonCode": "frame-color"
+              },
+              {
+                "criterionKey": "frame-shape",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "aviator",
+                "actualValue": "square",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 4,
+                "scoreContribution": 0,
+                "reasonCode": "frame-shape"
+              },
+              {
+                "criterionKey": "face-compatibility",
+                "source": "preference",
+                "operator": "contains",
+                "requestedValue": "oval",
+                "actualValue": "round, oval, heart, rectangle",
+                "match": "matched",
+                "hardness": "soft",
+                "weight": 3,
+                "scoreContribution": 3,
+                "reasonCode": "face-compatibility"
+              },
+              {
+                "criterionKey": "gender",
+                "source": "preference",
+                "operator": "eq",
+                "requestedValue": "unisex",
+                "actualValue": "female",
+                "match": "not_matched",
+                "hardness": "soft",
+                "weight": 2,
+                "scoreContribution": 0,
+                "reasonCode": "gender"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
