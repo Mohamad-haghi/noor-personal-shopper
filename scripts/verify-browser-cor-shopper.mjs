@@ -126,6 +126,8 @@ try {
   const failedRequests = [];
   const corRequests = [];
   const uiRecommendationRequestIds = [];
+  const uiRecommendationResponses = [];
+  const uiRecommendationResponseCaptures = [];
   await page.addInitScript(() => {
     const originalFetch = window.fetch.bind(window);
     (window).__noorFetchDebug = [];
@@ -188,8 +190,29 @@ try {
     }
   });
   page.on("response", response => {
+    const responseUrl = new URL(response.url());
+    const isRecommendationPost =
+      responseUrl.origin === new URL(corBaseUrl).origin &&
+      responseUrl.pathname === "/shopper/v1/recommendations" &&
+      response.request().method() === "POST";
     if (response.url().includes(new URL(corBaseUrl).host)) {
-      corRequests.push({ url: response.url(), method: response.request().method(), status: response.status() });
+      corRequests.push({ url: responseUrl.origin + responseUrl.pathname, method: response.request().method(), status: response.status() });
+    }
+    if (isRecommendationPost) {
+      const capture = response.json().then(body => {
+        uiRecommendationResponses.push({
+          requestId: body?.requestId ?? null,
+          recommendations: Array.isArray(body?.result?.recommendations)
+            ? body.result.recommendations.map(item => ({
+                productId: item?.productId ?? null,
+                score: typeof item?.score === "number" ? item.score : null,
+              }))
+            : [],
+        });
+      }).catch(() => {
+        uiRecommendationResponses.push({ requestId: null, recommendations: [] });
+      });
+      uiRecommendationResponseCaptures.push(capture);
     }
   });
   const traceEntryUrl = new URL(pagesUrl);
@@ -222,10 +245,22 @@ try {
     { timeout: 120_000 },
   );
 
+  await Promise.all(uiRecommendationResponseCaptures);
   const uiResult = await page.evaluate(() => ({
     title: document.querySelector("#recommendations-title")?.textContent?.trim() ?? null,
     diagnostic: document.querySelector(".diagnostic-code")?.textContent?.trim() ?? null,
     recommendationCards: document.querySelectorAll(".recommendation-card").length,
+    recommendationCardDetails: Array.from(document.querySelectorAll(".recommendation-card")).map(card => {
+      const productId = card.querySelector("[data-product-id]")?.getAttribute("data-product-id") ?? null;
+      const scoreText = card.querySelector(".recommendation-card-body .eyebrow")?.textContent?.trim() ?? "";
+      const scoreMatch = scoreText.match(/امتیاز تطابق\\s+(\\d+)%/);
+      return {
+        productId,
+        productName: card.querySelector("h2")?.textContent?.trim() ?? null,
+        scoreText,
+        displayedScorePercent: scoreMatch ? Number(scoreMatch[1]) : null,
+      };
+    }),
     fetchDebug: ((window).__noorFetchDebug ?? []).slice(-20),
     resourceUrls: performance.getEntriesByType("resource")
       .map(entry => entry.name)
@@ -241,6 +276,7 @@ try {
     failedRequests,
     corRequests: corRequests.slice(-30),
     uiRecommendationRequestIds,
+    uiRecommendationResponses,
   }));
 
   const controlledUiRequestId = uiRecommendationRequestIds.at(-1);
@@ -249,6 +285,24 @@ try {
   }
   if (!uiResult.title || uiResult.recommendationCards < 1 || uiResult.diagnostic) {
     throw new Error("noor_real_ui_recommendation_flow_failed:" + (uiResult.diagnostic ?? "no_recommendation_cards"));
+  }
+
+  const controlledResponse = uiRecommendationResponses.find(item => item.requestId === controlledUiRequestId);
+  if (!controlledResponse || controlledResponse.recommendations.length !== uiResult.recommendationCards) {
+    throw new Error("noor_real_ui_recommendation_response_missing_or_count_mismatch");
+  }
+  if (uiResult.recommendationCardDetails.length !== controlledResponse.recommendations.length) {
+    throw new Error("noor_real_ui_card_evidence_count_mismatch");
+  }
+  for (let index = 0; index < controlledResponse.recommendations.length; index += 1) {
+    const expected = controlledResponse.recommendations[index];
+    const displayed = uiResult.recommendationCardDetails[index];
+    if (displayed.productId !== expected.productId) {
+      throw new Error("noor_real_ui_product_order_mismatch_at:" + index);
+    }
+    if (expected.score === null || displayed.displayedScorePercent !== Math.round(Math.max(0, Math.min(1, expected.score)) * 100)) {
+      throw new Error("noor_real_ui_score_mismatch_at:" + index);
+    }
   }
 } finally {
   await browser.close();
