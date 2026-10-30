@@ -9,6 +9,19 @@
       content="پایهٔ دموی مستقل نور، بدون اتصال به سامانه‌های واقعی"
     />
     <title>دموی نور | Personal Shopper</title>
+    <script>
+      // Capture trace intent before the module graph and SPA routing can alter the URL.
+      (() => {
+        try {
+          if (new URLSearchParams(window.location.search).get("corTrace") === "1") {
+            window.__COR_TRACE_REQUESTED__ = true;
+            window.sessionStorage.setItem("corTraceRequested", "1");
+          }
+        } catch {
+          // The URL and in-memory marker remain available when storage is blocked.
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

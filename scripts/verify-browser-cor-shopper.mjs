@@ -125,6 +125,7 @@ try {
   const browserWarnings = [];
   const failedRequests = [];
   const corRequests = [];
+  const uiRecommendationRequestIds = [];
   await page.addInitScript(() => {
     const originalFetch = window.fetch.bind(window);
     (window).__noorFetchDebug = [];
@@ -171,8 +172,19 @@ try {
     }
   });
   page.on("request", request => {
-    if (request.url().includes("cor-noor-test.onrender.com")) {
-      corRequests.push({ url: request.url(), method: request.method() });
+    const requestUrl = new URL(request.url());
+    if (requestUrl.origin === new URL(corBaseUrl).origin) {
+      corRequests.push({ url: requestUrl.origin + requestUrl.pathname, method: request.method() });
+      if (request.method() === "POST" && requestUrl.pathname === "/shopper/v1/recommendations") {
+        try {
+          const payload = request.postDataJSON();
+          if (typeof payload?.requestId === "string") {
+            uiRecommendationRequestIds.push(payload.requestId);
+          }
+        } catch {
+          uiRecommendationRequestIds.push("unreadable-request-body");
+        }
+      }
     }
   });
   page.on("response", response => {
@@ -180,7 +192,9 @@ try {
       corRequests.push({ url: response.url(), method: response.request().method(), status: response.status() });
     }
   });
-  await page.goto(pagesUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  const traceEntryUrl = new URL(pagesUrl);
+  traceEntryUrl.searchParams.set("corTrace", "1");
+  await page.goto(traceEntryUrl.toString(), { waitUntil: "domcontentloaded", timeout: 60_000 });
   await page.getByRole("link", { name: "دستیار خرید" }).first().click();
   await page.getByRole("button", { name: "شروع مشاوره" }).click();
 
@@ -226,8 +240,13 @@ try {
     browserWarnings: browserWarnings.slice(-12),
     failedRequests,
     corRequests: corRequests.slice(-30),
+    uiRecommendationRequestIds,
   }));
 
+  const controlledUiRequestId = uiRecommendationRequestIds.at(-1);
+  if (!controlledUiRequestId?.startsWith("noor-test-")) {
+    throw new Error("noor_real_ui_trace_request_id_missing:" + (controlledUiRequestId ?? "no_request_id"));
+  }
   if (!uiResult.title || uiResult.recommendationCards < 1 || uiResult.diagnostic) {
     throw new Error("noor_real_ui_recommendation_flow_failed:" + (uiResult.diagnostic ?? "no_recommendation_cards"));
   }

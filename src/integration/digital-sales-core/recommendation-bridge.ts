@@ -45,9 +45,10 @@ export function createCorRecommendationRequestId(
   search: string,
   now = Date.now(),
   random = Math.random,
+  capturedMarker = false,
 ): string {
   const suffix = `${now}-${random().toString(36).slice(2, 10)}`;
-  return new URLSearchParams(search).get("corTrace") === "1"
+  return isCorTraceRequested(search, capturedMarker)
     ? `noor-test-${suffix}`
     : `noor-request-${suffix}`;
 }
@@ -234,8 +235,12 @@ export class NoorDigitalSalesRecommendationBridge {
     let coreRecommendations: readonly CoreRecommendation[];
     if (this.remoteClient) {
       // Check at request time: ES module dependencies evaluate before main.ts sets its marker.
+      const traceRequested = hasCorTraceMarker();
       const requestId = createCorRecommendationRequestId(
-        hasCorTraceMarker() ? "?corTrace=1" : (typeof window === "undefined" ? "" : window.location.search),
+        typeof window === "undefined" ? "" : window.location.search,
+        Date.now(),
+        Math.random,
+        traceRequested,
       );
       const response = await this.remoteClient.recommend<{
         contractVersion: string;
