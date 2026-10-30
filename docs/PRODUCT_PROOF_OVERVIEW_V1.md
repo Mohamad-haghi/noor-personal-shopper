@@ -1,5 +1,8 @@
 # COR + NOOR — Product Proof Overview v1.0
 
+> **Engineering status and execution order:** Use [COR Issue #266 — Product Proof Execution Board](https://github.com/Mohamad-haghi/digital-sales-core/issues/266) as the mandatory cross-repository status board. The detailed gate plan is [COR/NOOR Product Proof Release Plan v1.0](https://github.com/Mohamad-haghi/digital-sales-core/blob/docs/cor-noor-operations-map-20261030/docs/COR_NOOR_PRODUCT_PROOF_RELEASE_PLAN_V1.md). This file is the public-safe product overview, not a second execution plan. Do not repeat accepted tests; contribute only evidence for currently open gates.
+
+
 **Purpose:** Public-safe overview of a working product demonstration. This is not a commercial-production or customer-launch claim.
 
 ## Live product
