@@ -1,3 +1,12 @@
+## Product proof — start here
+
+- [COR + NOOR Product Proof Overview](./PRODUCT_PROOF_OVERVIEW_V1.md) — public-safe description of the product, demonstrated capabilities and explicit limitations.
+- [Product Proof Evidence Index](./evidence/README.md) — registered live traces and required visual evidence.
+
+
+
+---
+
 # CURRENT COR INTEGRATION MAP — 2026-10-30
 
 For cross-repository work, the canonical deployment/branch/installation map is maintained in the COR repository:
