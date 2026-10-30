@@ -11,6 +11,8 @@ Current NOOR source facts:
 - The 15-item catalog, prices and availability are demo-only; there is no live NOOR inventory, order, payment or checkout integration.
 - The latest checked-in evidence is `docs/evidence/2026-10-30-live-noor-cor-browser-traces.json`; it contains 13 direct COR scenarios plus separate Chromium and WebKit UI runs. It is bounded scenario evidence, not a general accuracy guarantee.
 
+**15-product catalog source audit:** [NOOR Demo Catalog Source Audit — 2026-10-30](NOOR_DEMO_CATALOG_SOURCE_AUDIT_2026-10-30.md). It compares exact SKU variants with NOOR Optic pages and independent product sources; it is evidence-only and does not change catalog records.
+
 Do not use old connection incidents or dated checkpoints as the current topology without checking the canonical COR map and exact commit pins.
 
 ---
