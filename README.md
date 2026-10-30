@@ -29,7 +29,7 @@ The deployed Pages build uses integrated mode and calls the COR Shopper API at h
 
 ## Environment and installation map
 
-Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [current COR environment and branch map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md) and [branch/PR hygiene register](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_BRANCH_AND_PR_REGISTER_2026-10-30.md). They distinguish the NOOR Pages package pin from the live COR API runtime, identify the staging installation and protected historical baseline, and mark unverified infrastructure links. Re-check live metadata before acting.
+Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [current COR environment and branch map — PR #308](https://github.com/Mohamad-haghi/digital-sales-core/pull/308) and [branch/PR hygiene register — PR #308](https://github.com/Mohamad-haghi/digital-sales-core/pull/308/files). These are documentation-only updates awaiting review; the existing main-branch map remains the previous snapshot until #308 merges. They distinguish the NOOR Pages package pin from the live COR API runtime, identify the staging installation and protected historical baseline, and mark unverified infrastructure links. Re-check live metadata before acting.
 
 ## Architecture
 
@@ -63,3 +63,4 @@ The integrated recommendation bridge omits Persian presentation-only use-case la
 - [Documentation index](docs/README.md)
 - [COR connection incident and verification runbook](docs/COR_CONNECTION_INCIDENT_AND_RUNBOOK.md) — original browser failure, fix history, diagnostic codes, and the checklist for future installations.
 - [COR Shopper integration guide](docs/COR_SHOPPER_DEMO_INTEGRATION_V1.md)
+- [15-product demo catalog source audit](docs/NOOR_DEMO_CATALOG_SOURCE_AUDIT_2026-10-30.md) — exact-SKU comparison, source conflicts, and unverified attributes.
