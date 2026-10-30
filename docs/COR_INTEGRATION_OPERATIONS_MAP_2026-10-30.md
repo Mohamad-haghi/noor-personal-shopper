@@ -1,3 +1,8 @@
+> **CURRENT MISSION OVERRIDE — 2026-10-30**  
+> For the active COR/NOOR Product Proof Release, follow [Product Proof Overview](./PRODUCT_PROOF_OVERVIEW_V1.md) and the internal [COR Product Proof Release Plan](https://github.com/Mohamad-haghi/digital-sales-core/blob/docs/cor-noor-operations-map-20261030/docs/COR_NOOR_PRODUCT_PROOF_RELEASE_PLAN_V1.md). This operations map remains the environment/integration reference. Its older broad catalog and live-test backlog below is historical context from the former commercial-pilot/quality-audit sequence; it is not an instruction to repeat the completed 15-item audit or previously accepted live recommendation tests. For this mission, verify only exact product facts used in the public showcase, and run only the still-open proof gates in the Product Proof Release Plan. The live API comparison and product-level handoff smoke are already covered by Pages run #277; the NOOR UI visual evidence remains to be captured.
+
+---
+
 # NOOR ↔ COR Integration Operations Map — 2026-10-30
 
 **Purpose:** engineer entry point for the NOOR demo and its COR decision-service connection.
