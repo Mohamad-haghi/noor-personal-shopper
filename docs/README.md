@@ -1,8 +1,9 @@
 # CURRENT COR INTEGRATION MAP — 2026-10-30
 
 For cross-repository work, the canonical deployment/branch/installation map is maintained in the COR repository:
-- [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md)
-- [COR ↔ NOOR Branch and PR Hygiene Register](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_BRANCH_AND_PR_REGISTER_2026-10-30.md)
+- [Current COR ↔ NOOR Environment and Branch Map — PR #308](https://github.com/Mohamad-haghi/digital-sales-core/pull/308)
+- [Current COR ↔ NOOR Branch and PR Hygiene Register — PR #308](https://github.com/Mohamad-haghi/digital-sales-core/pull/308/files)
+- After PR #308 merges, these documents will be available on COR `main` at `docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md` and `docs/COR_NOOR_BRANCH_AND_PR_REGISTER_2026-10-30.md`.
 
 Current NOOR source facts:
 - NOOR Pages source: `main`; the latest audited source commit is `d58ba221122b9124460cd17c267ead53abaaac2c`.
