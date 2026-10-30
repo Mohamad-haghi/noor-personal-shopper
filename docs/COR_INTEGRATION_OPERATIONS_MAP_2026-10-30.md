@@ -108,7 +108,7 @@ At audit time GitHub returned 98 NOOR branches. Main is the Pages source. Eight 
 
 Do not mass-delete branches. Preserve main, open-PR heads, refs referenced by Render/Pages workflows, and evidence/checkpoint branches until their content is represented in canonical docs.
 
-No published NOOR GitHub Release was found. The default branch was reported unprotected; add required CI/PR protections before treating main as a controlled release branch.
+PR #56 was closed as superseded because current main already sends both legacy shape and current frameShapes in the browser smoke request. Its branch remains a closed-unmerged cleanup candidate. No published NOOR GitHub Release was found. The default branch was reported unprotected; add required CI/PR protections before treating main as a controlled release branch.
 
 ## 8. Current blockers and next sequence
 
