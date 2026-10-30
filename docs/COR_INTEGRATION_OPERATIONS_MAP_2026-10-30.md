@@ -2,7 +2,7 @@
 
 **Purpose:** engineer entry point for the NOOR demo and its COR decision-service connection.
 **Status:** verified operational snapshot; demo-only.
-**Canonical cross-system map:** [COR environment map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md) and [branch/PR hygiene register](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_BRANCH_AND_PR_REGISTER_2026-10-30.md).
+**Canonical cross-system map:** [COR environment map PR #308](https://github.com/Mohamad-haghi/digital-sales-core/pull/308), which updates the canonical topology and adds the branch/PR hygiene register.
 
 ## 1. Actual live request path
 
@@ -98,12 +98,13 @@ The product data is not yet an approved ranking oracle. Complete the 15-SKU audi
 | #52 | fix/cor-recommendation-feed-v1-2 | open; canonical catalog attribute export |
 | #51 | diagnose/cor-domain-pack-shape-alias | open; shape-key diagnostic |
 | #6 | docs/prepare-demo-hero-image-upload-v1 | open; demo asset documentation |
+| #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; latest PR-head Build Verification #733 passed |
 
 An open PR is not a live fix. Check target branch, merge commit, deployed NOOR SHA, COR package pin, and live runtime before closing any issue.
 
 ## 7. NOOR branch inventory and cleanup
 
-At audit time GitHub returned 97 NOOR branches. Main is the Pages source. Seven open PRs are listed above; other branches must be classified by merged/closed PR ancestry, unique commits, workflow references, and evidence value before cleanup.
+At audit time GitHub returned 98 NOOR branches. Main is the Pages source. Eight open PRs are listed above; other branches must be classified by merged/closed PR ancestry, unique commits, workflow references, and evidence value before cleanup.
 
 Do not mass-delete branches. Preserve main, open-PR heads, refs referenced by Render/Pages workflows, and evidence/checkpoint branches until their content is represented in canonical docs.
 
