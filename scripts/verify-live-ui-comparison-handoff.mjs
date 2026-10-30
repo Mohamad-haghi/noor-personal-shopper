@@ -62,7 +62,7 @@ try {
   if (cardCount < 2) throw new Error("ui_comparison_requires_two_recommendation_cards");
   const recommendedIds = [];
   for (let i = 0; i < Math.min(2, cardCount); i += 1) {
-    recommendedIds.push(await cards.nth(i).locator("[data-product-id]").getAttribute("data-product-id"));
+    recommendedIds.push(await cards.nth(i).locator("[data-compare-product]").getAttribute("data-product-id"));
   }
   evidence.steps.recommendations = { cardCount, selectedProductIds: recommendedIds };
 
