@@ -17,7 +17,12 @@ Do not use old connection incidents or dated checkpoints as the current topology
 
 # NOOR Documentation Index
 
-Use this directory as the entry point for integration and operational documentation.
+Use this directory as the entry point for integration, evidence, and operational documentation. For cross-repository branch, runtime, database and installation topology, see the canonical COR environment map and branch/PR hygiene register linked below.
+
+## Cross-repository operations
+
+- [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md)
+- [COR ↔ NOOR Branch and PR Hygiene Register](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_BRANCH_AND_PR_REGISTER_2026-10-30.md)
 
 ## Integration
 
@@ -28,6 +33,6 @@ Use this directory as the entry point for integration and operational documentat
 
 - Distinguish automated CI checks, direct HTTP endpoint checks, and browser end-to-end tests.
 - Record the tested commit SHA and deployment/workflow run when documenting a result.
-- Mark untested operations as unverified; a working recommendation flow does not prove comparison or handoff.
+- Distinguish CI, direct HTTP API smoke, and real-browser UI tests. A successful recommendation UI smoke does not prove all criteria combinations or catalog truth; comparison/handoff API smoke is not an order/payment/checkout test.
 - Keep demo-only behavior explicit. Do not describe this demo as connected to live NOOR inventory, accounts, cart, checkout, payment, or orders.
 - Never commit secrets, bearer tokens, authorization headers, or raw credential responses.
