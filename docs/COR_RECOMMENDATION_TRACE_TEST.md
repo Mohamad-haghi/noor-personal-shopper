@@ -6,20 +6,51 @@ Use this test path to collect evidence about COR's current recommendation logic 
 
 ## Manual trace marker
 
-For a browser-driven trace test, use the following URL:
+For a browser-driven trace test, use this URL:
 
 `https://mohamad-haghi.github.io/noor-personal-shopper/?corTrace=1`
 
-The marker should survive in-app navigation and result in a request ID beginning `noor-test-`. A normal URL without the query marker is not expected to request criterion-level tracing.
+The marker must survive in-app navigation and produce a request ID beginning `noor-test-`. A normal URL without the query marker is not expected to request criterion-level tracing.
 
-## Automated live smoke test
+## Required staging configuration
 
-The GitHub Pages deployment workflow includes a dedicated trace-marked recommendation request with request ID `noor-test-pages-live-smoke`. This makes the deployment's controlled test identifiable in COR staging logs without asking the operator to manually change the URL. The test is a technical smoke test, not a user-personalization test.
+The approved staging Render service must have `COR_SHOPPER_RECOMMENDATION_TRACE_ENABLED=true`. The URL marker only labels a controlled request; it does not enable server-side tracing. Keep this flag limited to the approved staging service. Never enable it on production or alter the protected legacy installation.
+
+## Automated live browser verification
+
+The GitHub Pages deployment workflow runs controlled COR cases and then drives the actual NOOR UI in both Chromium and WebKit. For each real UI request it:
+
+- captures the actual `noor-test-*` request ID;
+- captures the response's product IDs and normalized scores;
+- captures the rendered NOOR card product IDs, names, and displayed percentages;
+- fails if the visible product order, card count, or displayed whole percentages differ from the COR response.
+
+This closes the UI-to-COR comparison gap. A successful HTTP response or a green browser flow without these comparisons is not sufficient evidence of ranking correctness.
+
+## Evidence storage
+
+Every accepted live browser run must have one durable evidence record in the NOOR repository under `docs/evidence/`. The record must contain:
+
+- exact request ID and matching Render `testRunId`;
+- full `cor.shopper.recommendation_test_trace` event;
+- runtime commit and installation/configuration/mapping/Domain Pack/decision-model pins;
+- normalized intent actually received by COR;
+- every candidate and every criterion's requested/actual value, match, hardness, weight, and score contribution;
+- score numerator, denominator, recomputed score, and recomputation result;
+- Chromium/WebKit browser output, including visible card IDs/names/percentages and the paired COR response;
+- explicit pass/fail checks for truncation, score recomputation, candidate order, and displayed percentage equality.
+
+The first complete paired browser evidence record is:
+
+`docs/evidence/2026-10-30-live-noor-cor-browser-traces.json`
+
+It contains separate Chromium and WebKit runs with their own request IDs and complete COR trace events. Render logs remain the live operational source; the checked-in evidence JSON preserves the exact reviewed records for future audits.
 
 ## Evidence and limitations
 
-- GitHub Actions workflow run records the HTTP/browser checks and returned public recommendation summary.
-- COR staging server logs are the authoritative source for criterion-level requested/actual values, match status, weights, contributions, and pinned configuration versions.
+- COR staging logs are authoritative for the actual criterion-level decision trace and pinned runtime configuration.
 - A successful recommendation response does not by itself prove score correctness.
-- Keep trace limited to controlled test requests. Never log credentials, raw authorization headers, shopper names, email addresses, or account identifiers.
-- The trace flag must be enabled only on the intended staging service; do not modify the protected legacy installation or production configuration.
+- Do not log credentials, raw authorization headers, shopper names, email addresses, phone numbers, or account identifiers.
+- Any missing trace, mismatched request ID, truncated intent/candidate/criterion list, missing version pin, failed score recomputation, or mismatch between COR response and visible NOOR cards makes the run incomplete or failed.
+- The UI percentage is a normalized match score, not a calibrated probability of suitability.
+- A trace proves what the deployed engine received and calculated; it does not prove the product facts themselves are accurate or that the weights are commercially optimal. Those require separate source-backed catalog verification and ranking-quality review.
