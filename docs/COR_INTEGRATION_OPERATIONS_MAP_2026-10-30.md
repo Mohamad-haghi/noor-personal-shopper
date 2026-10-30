@@ -98,7 +98,7 @@ The product data is not yet an approved ranking oracle. Complete the 15-SKU audi
 | #52 | fix/cor-recommendation-feed-v1-2 | open; canonical catalog attribute export |
 | #51 | diagnose/cor-domain-pack-shape-alias | open; shape-key diagnostic |
 | #6 | docs/prepare-demo-hero-image-upload-v1 | open; demo asset documentation |
-| #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; final-head Build Verification must be checked before merge |
+| #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; Build Verification run #738 passed on final head 91340235b3711159ef2c1307395518497ba189ac |
 
 An open PR is not a live fix. Check target branch, merge commit, deployed NOOR SHA, COR package pin, and live runtime before closing any issue.
 
