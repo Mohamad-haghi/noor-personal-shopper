@@ -16,8 +16,12 @@ describe("opt-in COR recommendation trace request IDs", () => {
     // marker at request time rather than freezing it during module initialization.
     expect(isCorTraceRequested("", true, false)).toBe(true);
     expect(isCorTraceRequested("", false, true)).toBe(true);
-    expect(createCorRecommendationRequestId("?route=results&corTrace=1", 456, () => 0.5))
+    // The route has removed the query; the captured in-memory/session marker
+    // must still control the exact request ID sent to COR.
+    expect(createCorRecommendationRequestId("?route=results", 456, () => 0.5, true))
       .toMatch(/^noor-test-456-/);
+    expect(createCorRecommendationRequestId("?route=results", 457, () => 0.5, false))
+      .toMatch(/^noor-request-457-/);
   });
 
   it("does not mark ordinary requests as controlled tests", () => {
