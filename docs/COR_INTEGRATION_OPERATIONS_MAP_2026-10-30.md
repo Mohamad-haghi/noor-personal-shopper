@@ -2,7 +2,7 @@
 
 **Purpose:** engineer entry point for the NOOR demo and its COR decision-service connection.
 **Status:** verified operational snapshot; demo-only.
-**Canonical cross-system map:** [COR operations/environment map](https://github.com/Mohamad-haghi/digital-sales-core/blob/feat/database-backed-installation-trust/docs/COR_NOOR_OPERATIONS_MAP_2026-10-30.md) (documentation PR pending at time of writing).
+**Canonical cross-system map:** [COR operations/environment map PR #309](https://github.com/Mohamad-haghi/digital-sales-core/pull/309) (pending review; canonical file will be available on the deployed COR branch after merge).
 
 ## 1. Actual live request path
 
