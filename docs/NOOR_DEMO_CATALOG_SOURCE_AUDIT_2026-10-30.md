@@ -59,6 +59,8 @@ The seed stores a `noorReference` and sometimes a free-text `sourceNote`, but do
 
 ### 3. Derived face compatibility needs its own provenance
 
+In this audit, face-compatibility values were directly confirmed on the exact NOOR Optic pages for products 1 (RB3025), 2 (PO0649) and 4 (FT0778). For the remaining products, the non-null seed faceCompatibility arrays were not independently verified against an accessible exact-SKU NOOR Optic page or manufacturer fit statement. Cazal 607 001 remains null, which is safer than inventing a value. Treat the other unverified arrays as `derived` or `unknown` until their source/rule is recorded; do not use them as unquestioned product facts in acceptance tests.
+
 NOOR Optic product pages sometimes explicitly list face suitability and provide a face-fit explanation. When that field is present, preserve the source list and the capture date. If a future value is inferred from shape rather than copied from the page, label it `derived`, record the rule/version and do not represent it as a manufacturer fact.
 
 ### 4. The correct demo acceptance boundary
