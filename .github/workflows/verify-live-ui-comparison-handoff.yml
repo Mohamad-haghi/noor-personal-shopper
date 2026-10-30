@@ -1,0 +1,50 @@
+name: Verify live NOOR UI comparison and handoff
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "scripts/verify-live-ui-comparison-handoff.mjs"
+      - ".github/workflows/verify-live-ui-comparison-handoff.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  live-ui-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout NOOR test harness
+        uses: actions/checkout@v6
+      - name: Checkout pinned COR package dependency
+        uses: actions/checkout@v6
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: d306c5efee32707362ac2ee449ef85f95cd876a5
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: |
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise live deployed NOOR comparison and product handoff UI
+        env:
+          PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+          EVIDENCE_PATH: artifacts/noor-ui-comparison-handoff.json
+        run: node scripts/verify-live-ui-comparison-handoff.mjs
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: noor-live-ui-comparison-handoff
+          path: artifacts/noor-ui-comparison-handoff.json
+          if-no-files-found: warn
