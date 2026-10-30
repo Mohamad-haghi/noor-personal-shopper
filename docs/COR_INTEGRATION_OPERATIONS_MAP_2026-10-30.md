@@ -98,13 +98,13 @@ The product data is not yet an approved ranking oracle. Complete the 15-SKU audi
 | #52 | fix/cor-recommendation-feed-v1-2 | open; canonical catalog attribute export |
 | #51 | diagnose/cor-domain-pack-shape-alias | open; shape-key diagnostic |
 | #6 | docs/prepare-demo-hero-image-upload-v1 | open; demo asset documentation |
-| #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; latest PR-head Build Verification #733 passed |
+| #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; final-head Build Verification must be checked before merge |
 
 An open PR is not a live fix. Check target branch, merge commit, deployed NOOR SHA, COR package pin, and live runtime before closing any issue.
 
 ## 7. NOOR branch inventory and cleanup
 
-At audit time GitHub returned 98 NOOR branches. Main is the Pages source. Eight open PRs are listed above; other branches must be classified by merged/closed PR ancestry, unique commits, workflow references, and evidence value before cleanup.
+At audit time GitHub returned 98 NOOR branches. Main is the Pages source. Eight open PRs are listed above, including #96; duplicate documentation PR #97 was closed as superseded by #96 and its branch remains. Other branches must be classified by merged/closed PR ancestry, unique commits, workflow references, and evidence value before cleanup.
 
 Do not mass-delete branches. Preserve main, open-PR heads, refs referenced by Render/Pages workflows, and evidence/checkpoint branches until their content is represented in canonical docs.
 
