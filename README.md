@@ -8,7 +8,7 @@ A Persian-first, right-to-left demo of a product-led shopping journey for the NO
 - Demo catalog feed: https://mohamad-haghi.github.io/noor-personal-shopper/catalog-feed.json
 - COR operator console: https://cor-noor-test.onrender.com/operator-console
 
-The deployed Pages build uses integrated mode and calls COR for recommendations, comparisons, and purchase/visit handoffs. The live recommendation/session smoke test has passed against the deployed COR service. Comparison and handoff flows still need their own end-to-end smoke tests before they should be described as verified.
+The deployed Pages build uses integrated mode and calls the COR Shopper API at https://digital-sales-core.onrender.com. The 2026-10-30 Pages workflow passed live HTTP smoke checks for demo-session, recommendations, comparison, and demo product-detail handoff; its Chromium/WebKit browser smoke validates the recommendation journey. These checks do not verify real inventory, order creation, payment, or commercial checkout. See the [current integration operations map](docs/COR_INTEGRATION_OPERATIONS_MAP_2026-10-30.md) for exact SHAs, run IDs, and evidence limits.
 
 ## What the demo includes
 
@@ -29,7 +29,7 @@ The deployed Pages build uses integrated mode and calls COR for recommendations,
 
 ## Environment and installation map
 
-Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md). It documents the observed branch/deployment pins, service and database links (including what is still unverified), and the distinct roles of installations 745…, 65c9…, and 70826…. The map lives in COR as the canonical copy; re-check its evidence date against live metadata before acting.
+Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [NOOR ↔ COR Integration Operations Map](docs/COR_INTEGRATION_OPERATIONS_MAP_2026-10-30.md) and the [COR operations map PR #309](https://github.com/Mohamad-haghi/digital-sales-core/pull/309). These maps distinguish the NOOR Pages package pin from the live COR API runtime, identify the staging installation and protected historical baseline, and mark unverified infrastructure links. Re-check live metadata before acting.
 
 ## Architecture
 
