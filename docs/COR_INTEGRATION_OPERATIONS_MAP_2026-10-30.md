@@ -93,14 +93,14 @@ The product data is not yet an approved ranking oracle. Complete the 15-SKU audi
 |---|---|---|
 | #92 | fix/catalog-exact-sku-facts | draft; exact SKU corrections |
 | #90 | docs/use-case-product-evidence-audit | draft; evidence requirements for use-case scoring |
-| #60 | test/live-cor-browser-smoke-workflow | draft; opt-in live browser smoke |
+| #60 | test/live-cor-browser-smoke-workflow | draft; blocked for merge: branch switches public Pages API origin to `cor-noor-test.onrender.com` instead of the verified `digital-sales-core.onrender.com` |
 | #56 | fix/browser-smoke-cor-shape-v11 | closed unmerged; superseded because main already sends `shape` and `frameShapes` |
 | #52 | fix/cor-recommendation-feed-v1-2 | open; canonical catalog attribute export |
-| #51 | diagnose/cor-domain-pack-shape-alias | open; shape-key diagnostic |
+| #51 | diagnose/cor-domain-pack-shape-alias | open; diagnostic; branch's deploy workflow switches API origin to `cor-noor-test.onrender.com`; not valid for current NOOR path until corrected |
 | #6 | docs/prepare-demo-hero-image-upload-v1 | open; demo asset documentation |
 | #96 | docs/cor-integration-operations-map-20261030 | draft; canonical NOOR documentation consolidation; verify exact latest PR-head Build Verification before merge |
 
-An open PR is not a live fix. Check target branch, merge commit, deployed NOOR SHA, COR package pin, and live runtime before closing any issue.
+PR #51 and #60 must not be merged as-is: their branch versions of `deploy-pages.yml` replace the verified NOOR API origin (`digital-sales-core.onrender.com`) with the separate `cor-noor-test.onrender.com` service. The latter is not the current NOOR-facing runtime and its Neon association is unverified. Keep the public Pages origin pinned to `digital-sales-core`; if needed, make `cor-noor-test` a separate isolated diagnostic job. An open PR is not a live fix. Check target branch, merge commit, deployed NOOR SHA, COR package pin, and live runtime before closing any issue.
 
 ## 7. NOOR branch inventory and cleanup
 
