@@ -5,11 +5,11 @@ For cross-repository work, the canonical deployment/branch/installation map is m
 - [COR ↔ NOOR Branch and PR Hygiene Register](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_BRANCH_AND_PR_REGISTER_2026-10-30.md)
 
 Current NOOR source facts:
-- NOOR Pages source: \`main\`; the latest audited source commit is \`d58ba221122b9124460cd17c267ead53abaaac2c\`.
-- The Pages workflow pins COR dependency \`d306c5efee32707362ac2ee449ef85f95cd876a5\` in both build and deploy jobs.
-- The public API origin embedded in the integrated build is \`https://digital-sales-core.onrender.com\`.
+- NOOR Pages source: `main`; the latest audited source commit is `d58ba221122b9124460cd17c267ead53abaaac2c`.
+- The Pages workflow pins COR dependency `d306c5efee32707362ac2ee449ef85f95cd876a5` in both build and deploy jobs.
+- The public API origin embedded in the integrated build is `https://digital-sales-core.onrender.com`.
 - The 15-item catalog, prices and availability are demo-only; there is no live NOOR inventory, order, payment or checkout integration.
-- The latest checked-in evidence is \`docs/evidence/2026-10-30-live-noor-cor-browser-traces.json\`; it contains 13 direct COR scenarios plus separate Chromium and WebKit UI runs. It is bounded scenario evidence, not a general accuracy guarantee.
+- The latest checked-in evidence is `docs/evidence/2026-10-30-live-noor-cor-browser-traces.json`; it contains 13 direct COR scenarios plus separate Chromium and WebKit UI runs. It is bounded scenario evidence, not a general accuracy guarantee.
 
 Do not use old connection incidents or dated checkpoints as the current topology without checking the canonical COR map and exact commit pins.
 
