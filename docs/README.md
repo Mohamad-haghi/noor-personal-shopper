@@ -24,8 +24,8 @@ Use this directory as the entry point for integration, evidence, and operational
 
 ## Cross-repository operations
 
-- [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md)
-- [COR ↔ NOOR Branch and PR Hygiene Register](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_BRANCH_AND_PR_REGISTER_2026-10-30.md)
+- [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/pull/308)
+- [COR ↔ NOOR Branch and PR Hygiene Register](https://github.com/Mohamad-haghi/digital-sales-core/pull/308)
 
 ## Integration
 
