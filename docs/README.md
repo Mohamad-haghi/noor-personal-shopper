@@ -33,8 +33,7 @@ Use this directory as the entry point for integration, evidence, and operational
 
 ## Documentation rules
 
-- Distinguish automated CI checks, direct HTTP endpoint checks, and browser end-to-end tests.
-- Record the tested commit SHA and deployment/workflow run when documenting a result.
-- Distinguish CI, direct HTTP API smoke, and real-browser UI tests. A successful recommendation UI smoke does not prove all criteria combinations or catalog truth; comparison/handoff API smoke is not an order/payment/checkout test.
+- Separate automated CI, direct HTTP API smoke, and real-browser UI tests; record exact source/runtime SHAs, installation pins, request IDs and workflow runs.
+- A successful recommendation UI smoke does not prove all criteria combinations or catalog truth; comparison/handoff API smoke is not an order/payment/checkout test.
 - Keep demo-only behavior explicit. Do not describe this demo as connected to live NOOR inventory, accounts, cart, checkout, payment, or orders.
 - Never commit secrets, bearer tokens, authorization headers, or raw credential responses.
