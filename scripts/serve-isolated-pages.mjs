@@ -1,7 +1,6 @@
 import https from "node:https";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 const root = path.resolve("dist");
 const prefix = "/noor-personal-shopper";
