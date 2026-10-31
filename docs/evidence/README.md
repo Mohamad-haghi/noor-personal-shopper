@@ -40,3 +40,14 @@ A screenshot proves only what is visible in that captured state. Pair it with th
 ## Current gap
 
 No application screenshots or screen recording are currently stored in this repository. The 15 images under `public/media/products/` are catalog assets, not product-behavior evidence.
+
+
+## Accepted gate evidence — 2026-10-31
+
+- **Gate 1 — exact deployed COR runtime SHA:** PASS. [COR exact-SHA run 41111579697](https://github.com/Mohamad-haghi/digital-sales-core/actions/runs/41111579697) checked out and asserted `d5737543918c92401ebf5dbff1f0e5c0ef50dc70`; full COR suite and isolated PostgreSQL checks passed.
+- **Gate 2 — candidate NOOR comparison/product handoff UI:** PASS / CLOSED at isolated candidate-build level. [NOOR PR #101](https://github.com/Mohamad-haghi/noor-personal-shopper/pull/101), [workflow run 41189573643](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41189573643), browser artifact ID `13038057840`, SHA-256 `2511edac17e0781ef72fea43ed0049540593023e9eb9fd301bb4fc4d0bdfe0c7`. The artifact records 3 cards, comparison attributes, canonical COR comparison/handoff HTTP 200, `demoOnly=true`, consistent product IDs, visible exact same-origin product route, demo-cart notice and no browser errors. PR #101 remains Draft/unmerged; this does not claim a Pages deployment.
+- **Gate 3 — bounded 15-product catalog audit:** PASS / CLOSED for agreed showcase scope. Exact-SKU evidence is linked from [NOOR PR #96](https://github.com/Mohamad-haghi/noor-personal-shopper/pull/96); unsupported/conflicting facts remain unknown.
+
+## Remaining required visual evidence
+
+The screenshot/video set above remains **OPEN**. Capture only from the real deployed application, after the Pages release is explicitly approved. Pair each screenshot with version pins and supporting test/API evidence. Do not use generated imagery, mockups or catalog photos as application-behavior evidence.
