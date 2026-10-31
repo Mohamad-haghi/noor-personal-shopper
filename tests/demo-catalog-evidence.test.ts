@@ -99,4 +99,14 @@ describe("source-backed demo catalog corrections", () => {
     expect(attributes.sourceNote).toContain("RB6461 2500");
   });
 
+
+  it("withholds Gucci GG0900S 005 mirror and face-fit claims where exact-code sources disagree", () => {
+    const attributes = customAttributes("noor-demo-008-gucci-gg0900s-005");
+    expect(attributes.lensColor).toBe("yellow");
+    expect(attributes.lensFeature).toBeNull();
+    expect(attributes.faceCompatibility).toBeNull();
+    expect(attributes.frameShapes).toEqual(["square"]);
+    expect(attributes.sourceNote).toContain("GG0900S 005");
+  });
+
 });
