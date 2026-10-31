@@ -85,3 +85,33 @@ For each product attribute used by COR, retain:
 - `derivationRuleVersion` only when derived
 
 This audit does not implement that schema or alter any seed values. It creates the evidence baseline for the next approved test/fix round.
+
+
+---
+
+## Follow-up exact-SKU reconciliation — 2026-10-31
+
+This follow-up does not rewrite the historical audit results above. It records a later evidence-backed correction proposal and separates remaining conflicts from resolved facts.
+
+### Correction proposed on isolated PR #92 branch
+
+**Product 13 — Valentino VA1021 3003 / NOOR reference `1000106967`**
+
+- Seed previously declared frame shape `round`.
+- Exact color-code 3003 listing at [eye-shop.eu](https://www.eye-shop.eu/sunglasses.asp?a_availab=2&a_ccode=%25&a_type=3&aprice=3&b_color=%25&b_diameter=%25&b_discount=1&b_lenscolor=%25&b_material=%25&b_model=%25&b_shape=%25&b_special=%25&b_style=%25&mypage=118&price=1-690&rel=next&t_ccode=1) identifies model 1021 / color 3003 / UPC 8056597334907 as **Irregular**, metal, pale gold.
+- [Interoptika exact VA 1021 3003 page](https://interoptika.ru/catalog/va-1021-3003/) independently identifies the same 3003 code and reports a round/geometric shape, metal and gold.
+- These two exact-code sources conflict on shape terminology (Irregular vs round/geometric). A third source [Chris Optics VA1021 3003](https://chrisoptics.com/products/valentino-va1021-3003-eyeglasses-pale-gold-oversized-metal-frame) describes an oversized round or irregular silhouette. **Do not promote either single normalized shape to verified yet.** The earlier proposed code edit to `irregular` is therefore not sufficiently supported for merge and must be treated as provisional pending source taxonomy resolution.
+
+### Additional findings confirmed, but not yet changed
+
+- **Gucci GG0900S 005:** exact-code retailer page reports black-and-gold frame, light-yellow lens with light-silver mirror, square/full-rim acetate. Seed currently stores black only and omits mirrored lens feature. This is a candidate correction, but requires a second exact-SKU source before editing.
+- **OGA 8314O NN030:** exact-code page reports acetate + metal, angular + oval, black, unisex and 54-18-140. Seed's nylon/rectangular scalar fields cannot represent the multi-material/multi-shape source faithfully. Do not collapse these into one value; this depends on the array-valued catalog contract.
+- **Prada PR03YS 2AU6S1:** exact code is corroborated for tortoise/butterfly/brown gradient and plastic frame; another exact-code listing describes acetate front with metal temples. Current seed's `nylon` is not supported as a precise taxonomy, but do not replace it with `acetate` until the frame-vs-temple distinction and canonical multi-material representation are settled.
+- **D&G DG2204 12988G 64:** two exact-code retailer pages agree on light-grey gradient/black lens; frame color is described as pink-gold by one and gold by another. Lens color correction is strongly supported, but keep frame color unresolved pending a primary or additional exact source. Frame shape is not verified.
+- **Ray-Ban RB6461 2500:** current official Ray-Ban RB6461 page found in follow-up is for **2943**, not 2500. It must not be used to change the seed's 2500 variant. The existing 2500 seed remains unresolved.
+- **Valentino VA1021 3003:** exact-code sources agree pale-gold metal but conflict on round vs irregular shape; retain shape as disputed until a source-specific taxonomy decision is recorded.
+- **Dior 30Montaigne EPZ/1I:** search results for other 30Montaigne codes (for example 807/1I) are not evidence for EPZ/1I. Keep EPZ/1I unresolved until exact-code evidence is available.
+
+### Disposition
+
+No live catalog, COR installation, Render service, Neon database, or deployed NOOR Pages data was changed. The candidate edit to Valentino shape is on PR #92's isolated branch only and must not be merged until its shape conflict is resolved. All unresolved facts remain non-authoritative for counselor-option generation and ranking.
