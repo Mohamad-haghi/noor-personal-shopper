@@ -115,3 +115,15 @@ This follow-up does not rewrite the historical audit results above. It records a
 ### Disposition
 
 No live catalog, COR installation, Render service, Neon database, or deployed NOOR Pages data was changed. PR #92's isolated branch now explicitly withholds Valentino shape and face-compatibility values rather than selecting one disputed shape. This is a conservative candidate change, not a final verification. All unresolved facts remain non-authoritative for counselor-option generation and ranking.
+
+
+### Additional exact-code cross-check — Valentino VA1021 3003 (2026-10-31)
+
+A later retrieval found two more round descriptions for the exact VA1021 3003 color:
+- Ottica Scauzillo's exact 3003 product page describes an oversized round metal frame in pale gold.
+- Interoptika's exact 3003 page calls the shape round/geometric.
+- In contrast, eye-shop's exact 3003 page labels it irregular.
+- CoolFrames labels the VA1021 model family irregular, but its structured UPC details are for color 3002; 3003 is only included in the available color list.
+- Selfridges describes the VA1021 model family as round metal, without exposing 3003 in the retrieved excerpt.
+
+**Disposition unchanged:** the seed continues to withhold shape and face compatibility. The extra round descriptions strengthen that interpretation but do not eliminate the exact-variant taxonomy conflict. Do not select round or irregular until a documented normalization rule maps "round/geometric" vs "irregular" into the canonical shape vocabulary, ideally with visual review.
