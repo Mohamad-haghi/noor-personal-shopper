@@ -7,6 +7,10 @@ This directory is the evidence index for the COR/NOOR product demonstration.
 - [2026-10-30 live COR recommendation traces and NOOR browser evidence](./2026-10-30-live-noor-cor-browser-traces.json) — 13 direct live scenarios plus Chromium and WebKit UI runs, with exact runtime and installation pins.
 - [NOOR recommendation trace test procedure](../COR_RECOMMENDATION_TRACE_TEST.md) — explains the trace marker, required fields, matching procedure and limitations.
 
+## Gate 4 capture procedure
+
+- [Gate 4 Visual Evidence Capture Kit](../GATE_4_VISUAL_EVIDENCE_CAPTURE_KIT_2026-10-31.md) — exact capture matrix, naming, metadata manifest, redaction rules, acceptance criteria and current gap.
+
 ## Required visual evidence — not yet captured
 
 Capture only from the real deployed application. Never substitute mockups, generated images or product photos for screenshots of application behavior.
