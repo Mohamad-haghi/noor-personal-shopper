@@ -49,7 +49,7 @@ async function scoreCatalog(products: CoreProduct[], category: "optical" | "sung
 }
 
 describe("independent COR canonical-engine catalog correction oracle", () => {
-  it("uses the source-verified irregular shape for Valentino VA1021 3003", () => {
+  it("withholds Valentino VA1021 3003 shape while exact-code sources disagree", () => {
     const valentino = DEMO_CATALOG_SEED.products.find((item) => item.identity.id === "noor-demo-013-valentino-va1021-3003");
     expect(valentino).toBeDefined();
     const attributes = valentino!.attributes.customAttributes as Record<string, unknown>;
