@@ -34,7 +34,7 @@ The JSON artifact must be downloaded and inspected. A queued run, a successful g
 - Trigger configuration change: committed on the audit branch.
 - No merge to `main`; no Render, Neon, Clerk, credential, catalog, or active COR installation changes.
 - The GitHub connector available in this session does not expose a list-workflow-runs operation for push events. Its commit-run lookup filters to pull-request events, so it cannot independently verify the push run or retrieve its run ID.
-- Therefore execution and artifact inspection remain **pending independent GitHub Actions evidence**. Gate 2 remains open until the run and JSON artifact are verified.
+- Execution and artifact inspection are now complete for diagnostic runs #781/#782; the comparison passed, but the handoff UI assertion failed for a confirmed destination-origin mismatch. Gate 2 remains OPEN.
 
 ## Cleanup rule
 
@@ -53,3 +53,29 @@ The current audit-branch workflow file has the step correctly structured as:
 
 The corrected workflow is present on the audit branch. A subsequent run must confirm GitHub accepts the YAML and starts the jobs. Gate 2 remains OPEN until the live UI proof job succeeds and its JSON artifact is inspected.
 
+
+
+## Diagnostic result: runs #781 and #782
+
+- Workflow revision: `86638c3bcca96de11404a3313ae1d2a9f55cc43a`.
+- Push run #781: [41188008447](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41188008447).
+- Pull-request run #782: [41188012336](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41188012336).
+- Build job passed; behavioral tests and type-check/build passed.
+- Chromium and Playwright setup passed.
+- Browser proof confirmed three recommendation cards, two selected product IDs, comparison UI table, and matching COR comparison response (HTTP 200, `cor_canonical_engine`, `demoOnly=true`).
+- COR handoff response also succeeded (HTTP 200, `cor_canonical_engine`, `demoOnly=true`). Its destination origin was `https://mohamad-haghi.github.io`, resolving to the NOOR Pages demo product-detail path.
+- The deployed NOOR UI still required `https://www.nooroptic.com` and therefore did not render the approved demo-store link. The demo cart notice remained visible; no browser page errors were recorded.
+- Artifact #13037781249 from run #781 was downloaded and inspected. It records `storeLinkVisible=false`, the returned destination origin, and the UI status. The comparison and handoff API results are distinct and must not be conflated.
+
+## Corrective proposal tracked separately
+
+Draft NOOR PR #101:
+https://github.com/Mohamad-haghi/noor-personal-shopper/pull/101
+
+The proposed UI guard allows only HTTPS, the current NOOR Pages origin, and the exact product-detail path for the selected product. The browser assertion is aligned to that same destination. COR's server-side approved-origin policy remains unchanged. PR #101 is draft and unmerged; no Pages deployment or live configuration change has occurred.
+
+## Current Gate 2 disposition
+
+**PARTIAL — comparison proven; COR handoff API proven; customer-facing handoff link not yet proven.**
+
+Gate 2 stays OPEN until PR #101 is reviewed, explicitly approved and deployed, then a fresh live browser run passes and its artifact is inspected. Do not weaken the origin/path assertions or claim a completed purchase.
