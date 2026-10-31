@@ -44,4 +44,59 @@ describe("source-backed demo catalog corrections", () => {
       expect(attributes.suitability).toBeUndefined();
     }
   });
+
+  it("preserves Prada PR03YS 2AU6S1 material components without collapsing them to one frame material", () => {
+    const attributes = customAttributes("noor-demo-005-prada-pr03ys-2au6s1");
+    expect(attributes.frameMaterial).toBeNull();
+    expect(attributes.frameMaterialComponents).toEqual(["plastic", "metal"]);
+    expect(attributes.templeMaterial).toBe("metal");
+    expect(attributes.lensColor).toBe("brown two-tone");
+    expect(attributes.sourceNote).toContain("PR-03YS-2AU6S1.html");
+  });
+
+  it("records exact DG2204 12988G lens/frame facts and withholds unsupported shape and fit", () => {
+    const attributes = customAttributes("noor-demo-006-dolce-gabbana-dg2204-12988g-64");
+    const product = productById("noor-demo-006-dolce-gabbana-dg2204-12988g-64");
+    expect(attributes.lensColor).toBe("grey");
+    expect(attributes.frameColorDescription).toBe("pink gold");
+    expect(attributes.frameShapes).toEqual([]);
+    expect(attributes.faceCompatibility).toBeNull();
+    expect(attributes.sourceNote).toContain("8053672911039");
+    expect(product.attributes.customAttributes).toMatchObject({ frameMaterial: "metal" });
+  });
+
+  it("withholds disputed Dior EPZ/1I colors while preserving source-supported construction and UV facts", () => {
+    const attributes = customAttributes("noor-demo-007-dior-30montaigne-epz-1i");
+    expect(attributes.frameMaterial).toBeNull();
+    expect(attributes.frameMaterialDescription).toBe("plastic");
+    expect(attributes.frameColor).toBeNull();
+    expect(attributes.lensColor).toBeNull();
+    expect(attributes.lensMaterial).toBe("plastic");
+    expect(attributes.protectionLevel).toBe(3);
+    expect(attributes.faceCompatibility).toBeNull();
+    expect(attributes.sourceNote).toContain("30montaigne-epz-1i");
+  });
+
+  it("does not force OGA 8314O NN030 multi-valued material and shape facts into scalar ranking fields", () => {
+    const attributes = customAttributes("noor-demo-009-oga-8314o-nn030");
+    const product = productById("noor-demo-009-oga-8314o-nn030");
+    expect(product.attributes.customAttributes).toMatchObject({ frameMaterial: null, gender: "unisex", frameShapes: [] });
+    expect(attributes.frameMaterialComponents).toEqual(["acetate", "metal"]);
+    expect(attributes.frameShapesSource).toEqual(["angular", "oval"]);
+    expect(attributes.templeMaterial).toBeNull();
+    expect(attributes.faceCompatibility).toBeNull();
+    expect(attributes.sourceNote).toContain("NN030");
+  });
+
+  it("does not transfer shape/material from other Ray-Ban RB6461 color codes to 2500", () => {
+    const attributes = customAttributes("noor-demo-010-ray-ban-rb6461-2500");
+    const product = productById("noor-demo-010-ray-ban-rb6461-2500");
+    expect(product.attributes.customAttributes).toMatchObject({ frameMaterial: null, frameShapes: [] });
+    expect(attributes.lensWidthMm).toBe(51);
+    expect(attributes.bridgeWidthMm).toBe(19);
+    expect(attributes.templeLengthMm).toBe(145);
+    expect(attributes.faceCompatibility).toBeNull();
+    expect(attributes.sourceNote).toContain("RB6461 2500");
+  });
+
 });
