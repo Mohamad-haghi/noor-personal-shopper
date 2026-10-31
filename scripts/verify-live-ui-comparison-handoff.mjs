@@ -121,10 +121,37 @@ try {
   }, { timeout: 90_000 });
   await page.locator("[data-add-to-cart]").first().click();
   const handoffResponse = await handoffResponsePromise;
-  const handoffBody = await handoffResponse.json();
   const handoffRequest = handoffResponse.request().postDataJSON();
-  await page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).waitFor({ state: "visible", timeout: 30_000 });
+  let handoffBody = null;
+  try { handoffBody = await handoffResponse.json(); } catch { handoffBody = { error: "response_not_json" }; }
+  const handoffErrorCode = typeof handoffBody?.error === "string" ? handoffBody.error : null;
+  const handoffPayload = handoffBody?.result?.handoff;
+  let handoffDestinationOrigin = null;
+  if (typeof handoffPayload?.destination === "string") {
+    try { handoffDestinationOrigin = new URL(handoffPayload.destination).origin; } catch { /* invalid destination recorded below */ }
+  }
+  evidence.steps.productHandoff = {
+    productId: handoffRequest?.productId ?? null,
+    destinationType: handoffRequest?.destinationType ?? null,
+    api: {
+      status: handoffResponse.status(),
+      requestId: handoffBody?.requestId ?? null,
+      source: handoffBody?.result?.source ?? null,
+      demoOnly: handoffBody?.result?.demoOnly === true,
+      handoffReturned: Boolean(handoffPayload),
+      error: handoffErrorCode,
+      destinationOrigin: handoffDestinationOrigin,
+    },
+    demoCartNoticeVisible: await page.getByText("سبد خرید نمایشی آماده است؛ این مرحله خرید یا پرداخت واقعی انجام نمی‌دهد.").isVisible().catch(() => false),
+  };
   const storeLink = page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).first();
+  const linkVisible = await storeLink.isVisible().catch(() => false);
+  evidence.steps.productHandoff.storeLinkVisible = linkVisible;
+  if (!linkVisible) {
+    const actionStatus = await page.locator(".product-action-status").last().innerText().catch(() => "no_status_element");
+    evidence.steps.productHandoff.uiStatus = actionStatus.slice(0, 240);
+    throw new Error(`live_ui_handoff_link_missing_http_${handoffResponse.status()}_${handoffErrorCode ?? "no_api_error"}_${actionStatus.slice(0, 80)}`);
+  }
   const destination = await storeLink.getAttribute("href");
   const parsedDestination = new URL(destination);
   if (!handoffResponse.ok() ||
@@ -132,25 +159,12 @@ try {
       handoffBody?.requestId !== handoffRequest?.requestId ||
       handoffBody?.result?.source !== "cor_canonical_engine" ||
       handoffBody?.result?.demoOnly !== true ||
-      !handoffBody?.result?.handoff ||
+      !handoffPayload ||
       parsedDestination.protocol !== "https:" ||
       parsedDestination.origin !== "https://www.nooroptic.com") {
     throw new Error("live_ui_product_handoff_cor_contract_failed");
   }
-  evidence.steps.productHandoff = {
-    productId: handoffRequest?.productId ?? null,
-    destinationType: handoffRequest?.destinationType ?? null,
-    storeLinkVisible: true,
-    destinationOrigin: parsedDestination.origin,
-    api: {
-      status: handoffResponse.status(),
-      requestId: handoffBody.requestId,
-      source: handoffBody.result.source,
-      demoOnly: handoffBody.result.demoOnly,
-      handoffReturned: true,
-    },
-    demoCartNoticeVisible: await page.getByText("سبد خرید نمایشی آماده است؛ این مرحله خرید یا پرداخت واقعی انجام نمی‌دهد.").isVisible().catch(() => false),
-  };
+  evidence.steps.productHandoff.destinationOrigin = parsedDestination.origin;
 
   if (evidence.errors.length) throw new Error("browser_page_errors_detected");
   evidence.status = "passed";
