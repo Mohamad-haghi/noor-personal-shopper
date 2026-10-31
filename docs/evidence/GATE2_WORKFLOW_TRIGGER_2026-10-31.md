@@ -39,3 +39,17 @@ The JSON artifact must be downloaded and inspected. A queued run, a successful g
 ## Cleanup rule
 
 After successful verification, update this record with the run URL/ID, job result, artifact ID, inspected JSON summary, and final Gate 2 disposition. Then remove this temporary audit-branch push allowance in a follow-up commit or close the audit PR after preserving the evidence in the canonical project records. Do not merge the temporary trigger into `main` unless a separate explicit release decision requires it.
+
+## Follow-up: run #775 YAML validation failure
+
+GitHub Actions run #775 evaluated workflow revision `424d69f` and rejected it before job execution because of invalid YAML indentation at line 55, at the Chromium installation step. This is a workflow syntax/configuration failure, not a failed product test.
+
+The current audit-branch workflow file has the step correctly structured as:
+
+```yaml
+      - name: Install Chromium
+        run: "$RUNNER_TEMP/noor-playwright/node_modules/.bin/playwright" install --with-deps chromium
+```
+
+The corrected workflow is present on the audit branch. A subsequent run must confirm GitHub accepts the YAML and starts the jobs. Gate 2 remains OPEN until the live UI proof job succeeds and its JSON artifact is inspected.
+
