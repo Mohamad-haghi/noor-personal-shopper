@@ -1,0 +1,62 @@
+name: PR 101 Isolated Validation
+
+on:
+  push:
+    branches:
+      - fix/demo-store-handoff-destination-20261031
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-source:
+    name: Tests and production build for PR 101 (no deployment)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR 101 source
+        uses: actions/checkout@v4
+      - name: Checkout pinned COR dependency
+        uses: actions/checkout@v4
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: d306c5efee32707362ac2ee449ef85f95cd876a5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: |
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install --package-lock=false --no-audit --no-fund
+      - name: Run behavioral tests
+        run: npm test
+      - name: Build production bundle
+        env:
+          VITE_NOOR_MODE: integrated
+          VITE_COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+        run: npm run build
+      - name: Verify demo storefront output exists
+        run: |
+          test -s dist/index.html
+          test -s dist/catalog-feed.json
+          node --input-type=module <<'NODE'
+          import { readFile } from "node:fs/promises";
+          const feed = JSON.parse(await readFile("dist/catalog-feed.json", "utf8"));
+          if (feed.demoOnly !== true || feed.catalogSize !== 15 || feed.products?.length !== 15) {
+            throw new Error("isolated_build_demo_catalog_contract_failed");
+          }
+          console.log(JSON.stringify({status:"verified",demoOnly:feed.demoOnly,productCount:feed.products.length}));
+          NODE
+      - name: Upload isolated build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr101-isolated-build
+          path: |
+            dist/
+            !dist/**/*.map
+          if-no-files-found: error
