@@ -49,6 +49,13 @@ async function scoreCatalog(products: CoreProduct[], category: "optical" | "sung
 }
 
 describe("independent COR canonical-engine catalog correction oracle", () => {
+  it("uses the source-verified irregular shape for Valentino VA1021 3003", () => {
+    const valentino = DEMO_CATALOG_SEED.products.find((item) => item.identity.id === "noor-demo-013-valentino-va1021-3003");
+    expect(valentino).toBeDefined();
+    const attributes = valentino!.attributes.customAttributes as Record<string, unknown>;
+    expect(attributes.frameShapes).toEqual(["irregular"]);
+  });
+
   it("quantifies the expected score change from correcting CAZAL frameMaterial nylon -> acetate", async () => {
     const cazalId = "1000127106";
     const before = await scoreCatalog(coreProducts({
