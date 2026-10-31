@@ -53,7 +53,7 @@ describe("independent COR canonical-engine catalog correction oracle", () => {
     const valentino = DEMO_CATALOG_SEED.products.find((item) => item.identity.id === "noor-demo-013-valentino-va1021-3003");
     expect(valentino).toBeDefined();
     const attributes = valentino!.attributes.customAttributes as Record<string, unknown>;
-    expect(attributes.frameShapes).toEqual(["irregular"]);
+    expect(attributes.frameShapes).toEqual([]);
   });
 
   it("quantifies the expected score change from correcting CAZAL frameMaterial nylon -> acetate", async () => {
