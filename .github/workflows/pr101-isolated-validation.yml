@@ -51,6 +51,10 @@ jobs:
           }
           console.log(JSON.stringify({status:"verified",demoOnly:feed.demoOnly,productCount:feed.products.length}));
           NODE
+      - name: Check isolated browser harness syntax
+        run: |
+          node --check scripts/serve-isolated-pages.mjs
+          node --check scripts/verify-live-ui-comparison-handoff.mjs
       - name: Install Chromium for isolated browser proof
         run: npx playwright install --with-deps chromium
       - name: Map the real GitHub Pages host to the isolated runner
