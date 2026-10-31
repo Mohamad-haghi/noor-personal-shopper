@@ -127,3 +127,17 @@ A later retrieval found two more round descriptions for the exact VA1021 3003 co
 - Selfridges describes the VA1021 model family as round metal, without exposing 3003 in the retrieved excerpt.
 
 **Disposition unchanged:** the seed continues to withhold shape and face compatibility. The extra round descriptions strengthen that interpretation but do not eliminate the exact-variant taxonomy conflict. Do not select round or irregular until a documented normalization rule maps "round/geometric" vs "irregular" into the canonical shape vocabulary, ideally with visual review.
+
+
+### Exact-SKU follow-up: additional catalog corrections and withheld fields (2026-10-31)
+
+These findings were applied only to the isolated candidate seed branch for review; they are not merged or deployed.
+
+- **Prada PR03YS 2AU6S1 / reference 1000127057:** exact-SKU sources identify plastic front/material with metal temples, tortoise frame and brown gradient lenses. The scalar `frameMaterial` is now withheld; raw material components are retained separately as `["plastic","metal"]`. Lens material is recorded as plastic. Sources: Lensonlineshop exact SKU page and Jomashop exact SKU / UPC 8056597515863.
+- **D&G DG2204 12988G 64 / reference 1000084476:** Shade Station and OpticsPlanet identify manufacturer code 12988G-64 / UPC 8053672911039, pink-gold metal frame and light-grey gradient-to-black lenses. Candidate seed normalizes frame color to gold while retaining `frameColorDescription: "pink gold"`; lens color is grey and gradient is retained. Shape, face fit, rim type, lens material and prescription capability are not asserted.
+- **Dior 30Montaigne EPZ/1I / reference 1000100480:** Alensa exact model page and eBay UPC 0716736291215 agree on plastic construction, square silhouette, gradient lens, UV400 and category 3; they disagree on frame and lens colors (brown/havana + green versus yellow/red-havana + grey). Candidate seed withholds disputed colors and face fit, retains square (common classification), records plastic lens material and source-described plastic frame material separately.
+- **ÖGA 8314O NN030 / reference 1000058221:** exact NN030 listing reports acetate + metal, angular + oval, black, unisex, 54-18-140. Candidate seed corrects gender to unisex, removes unsupported scalar nylon/rectangular ranking values, retains raw material/shape components in separate evidence fields, and withholds face fit. Array-valued fields must not be used for COR ranking until COR #268 / NOOR #52 contract support is implemented.
+- **Ray-Ban RB6461 2500 / reference 1000109052:** exact 2500 listing confirms optical type, gold finish and 51-19-145 dimensions. It does not confirm frame shape or material. Candidate seed withholds the previously asserted round/metal/nylon material and face-fit values; other RB6461 color codes are not transferred.
+- **Gucci GG0900S 005 / reference 1000104615:** two exact-code listings agree yellow lens and black base frame but differ on gold accents and silver mirror; acetate versus generic plastic wording also differs. Candidate seed retains square and yellow, but withholds mirror feature and face fit and records the discrepancy.
+
+Regression assertions were added for each candidate disposition. These changes remain pending current-head CI. They do not authorize a merge or Pages deployment.
