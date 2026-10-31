@@ -100,7 +100,7 @@ This follow-up does not rewrite the historical audit results above. It records a
 - Seed previously declared frame shape `round`.
 - Exact color-code 3003 listing at [eye-shop.eu](https://www.eye-shop.eu/sunglasses.asp?a_availab=2&a_ccode=%25&a_type=3&aprice=3&b_color=%25&b_diameter=%25&b_discount=1&b_lenscolor=%25&b_material=%25&b_model=%25&b_shape=%25&b_special=%25&b_style=%25&mypage=118&price=1-690&rel=next&t_ccode=1) identifies model 1021 / color 3003 / UPC 8056597334907 as **Irregular**, metal, pale gold.
 - [Interoptika exact VA 1021 3003 page](https://interoptika.ru/catalog/va-1021-3003/) independently identifies the same 3003 code and reports a round/geometric shape, metal and gold.
-- These two exact-code sources conflict on shape terminology (Irregular vs round/geometric). A third source [Chris Optics VA1021 3003](https://chrisoptics.com/products/valentino-va1021-3003-eyeglasses-pale-gold-oversized-metal-frame) describes an oversized round or irregular silhouette. **Do not promote either single normalized shape to verified yet.** The earlier proposed code edit to `irregular` is therefore not sufficiently supported for merge and must be treated as provisional pending source taxonomy resolution.
+- These two exact-code sources conflict on shape terminology (Irregular vs round/geometric). A third source [Chris Optics VA1021 3003](https://chrisoptics.com/products/valentino-va1021-3003-eyeglasses-pale-gold-oversized-metal-frame) describes an oversized round or irregular silhouette. **Do not promote either single normalized shape to verified yet.** The seed must not assert either normalized shape. The isolated correction branch now withholds the shape (`frameShapes: []`) and face compatibility (`null`) until the taxonomy conflict is resolved.
 
 ### Additional findings confirmed, but not yet changed
 
@@ -114,4 +114,4 @@ This follow-up does not rewrite the historical audit results above. It records a
 
 ### Disposition
 
-No live catalog, COR installation, Render service, Neon database, or deployed NOOR Pages data was changed. The candidate edit to Valentino shape is on PR #92's isolated branch only and must not be merged until its shape conflict is resolved. All unresolved facts remain non-authoritative for counselor-option generation and ranking.
+No live catalog, COR installation, Render service, Neon database, or deployed NOOR Pages data was changed. PR #92's isolated branch now explicitly withholds Valentino shape and face-compatibility values rather than selecting one disputed shape. This is a conservative candidate change, not a final verification. All unresolved facts remain non-authoritative for counselor-option generation and ranking.
