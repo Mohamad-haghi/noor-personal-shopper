@@ -18,7 +18,9 @@ const evidence = {
 };
 
 try {
-  const page = await browser.newPage({\n    ignoreHTTPSErrors: process.env.PLAYWRIGHT_IGNORE_HTTPS_ERRORS === "1",\n  });
+  const page = await browser.newPage({
+    ignoreHTTPSErrors: process.env.PLAYWRIGHT_IGNORE_HTTPS_ERRORS === "1",
+  });
   page.on("request", request => {
     try {
       const url = new URL(request.url());
