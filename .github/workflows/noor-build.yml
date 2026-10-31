@@ -2,7 +2,7 @@ name: NOOR Build Verification
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "audit/gate2-live-ui-proof-trigger-20261031"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
