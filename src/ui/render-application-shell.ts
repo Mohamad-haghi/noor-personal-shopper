@@ -368,7 +368,15 @@ async function attachPurchaseActions(
             { source: "noor-personal-shopper", productId, variantId },
           );
           const destination = new URL(handoff.destination);
-          if (destination.protocol === "https:" && destination.origin === "https://www.nooroptic.com") {
+          const expectedDemoProductPath = new URL(
+            `products/${encodeURIComponent(productId)}`,
+            new URL(import.meta.env.BASE_URL, window.location.origin),
+          ).pathname;
+          if (
+            destination.protocol === "https:" &&
+            destination.origin === window.location.origin &&
+            destination.pathname === expectedDemoProductPath
+          ) {
             const storeLink = document.createElement("a");
             storeLink.className = "button button-secondary";
             storeLink.href = destination.href;
