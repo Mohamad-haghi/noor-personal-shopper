@@ -51,6 +51,43 @@ jobs:
           }
           console.log(JSON.stringify({status:"verified",demoOnly:feed.demoOnly,productCount:feed.products.length}));
           NODE
+      - name: Install Chromium for isolated browser proof
+        run: npx playwright install --with-deps chromium
+      - name: Map the real GitHub Pages host to the isolated runner
+        run: |
+          echo "127.0.0.1 mohamad-haghi.github.io" | sudo tee -a /etc/hosts
+          openssl req -x509 -newkey rsa:2048 -nodes -keyout "$RUNNER_TEMP/noor-preview.key" -out "$RUNNER_TEMP/noor-preview.crt" -days 1 -subj "/CN=mohamad-haghi.github.io" -addext "subjectAltName=DNS:mohamad-haghi.github.io"
+          chmod 644 "$RUNNER_TEMP/noor-preview.key" "$RUNNER_TEMP/noor-preview.crt"
+      - name: Start isolated HTTPS Pages-origin preview
+        env:
+          HTTPS_KEY_PATH: ${{ runner.temp }}/noor-preview.key
+          HTTPS_CERT_PATH: ${{ runner.temp }}/noor-preview.crt
+          PORT: "443"
+        run: |
+          sudo --preserve-env=HTTPS_KEY_PATH,HTTPS_CERT_PATH,PORT node scripts/serve-isolated-pages.mjs > "$RUNNER_TEMP/noor-preview.log" 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --silent --insecure --fail https://mohamad-haghi.github.io/noor-personal-shopper/ > /dev/null; then
+              cat "$RUNNER_TEMP/noor-preview.log"
+              exit 0
+            fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/noor-preview.log"
+          exit 1
+      - name: Verify comparison and product handoff in Chromium against exact Pages origin
+        env:
+          PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+          PLAYWRIGHT_IGNORE_HTTPS_ERRORS: "1"
+          EVIDENCE_PATH: artifacts/noor-ui-comparison-handoff.json
+        run: node scripts/verify-live-ui-comparison-handoff.mjs
+      - name: Upload isolated browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr101-isolated-browser-evidence
+          path: artifacts/noor-ui-comparison-handoff.json
+          if-no-files-found: warn
       - name: Upload isolated build artifact
         if: always()
         uses: actions/upload-artifact@v4
