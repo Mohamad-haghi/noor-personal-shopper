@@ -134,3 +134,20 @@ A missing screenshot, unplayable video, unknown version pin, unredacted secret, 
 **Current status: NOT CAPTURED.** Repository product photos and browser-test artifacts are not application screenshots. No image or recording is fabricated by this document.
 
 Next action: after the intended Pages build is approved and deployed, capture the matrix above on a real desktop and mobile browser, attach the recording, fill the manifest from observed metadata, and submit the files for evidence review. Until then, Gate 4 remains open.
+
+
+## 9. Engineering handoff — PR #101 disposition (2026-10-31)
+
+**Decision: KEEP PR #101 OPEN, Draft, and unmerged. Do not close it as completed.**
+
+Why: PR #101 contains the required correction that makes COR's valid NOOR Pages demo product URL visible as a safe same-origin product handoff. Its isolated candidate build has passed Gate 2, but that does not put the fix on the public Pages deployment.
+
+Required sequence for the next engineer:
+1. Leave PR #101 open/Draft. Do not merge, close, rebase, or alter release configuration as part of evidence capture.
+2. Continue the canonical release sequence from COR Issue #266. Obtain explicit release approval before merging PR #101.
+3. After approval and merge, verify the exact merged NOOR SHA and successful GitHub Pages deployment.
+4. Run one focused post-deployment smoke check for the corrected product handoff (same-origin HTTPS product path, correct selected product, demo-only notice, no browser/API errors). Do not repeat the already-passed 124-test suite.
+5. Only after that smoke passes, capture the Gate 4 V07 handoff and remaining real desktop/mobile visuals against the deployed SHA; record actual pins and hashes in the manifest.
+6. If deployment or smoke fails, stop and record the evidence in Issue #266; do not bypass the failure by using the isolated PR preview as live proof.
+
+**Current handoff state:** candidate correction PASS; deployed correction NOT YET PROVEN; Gate 4 visual capture NOT YET COMPLETE. PR #101 is a release dependency, not a second roadmap.
