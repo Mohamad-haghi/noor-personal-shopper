@@ -2,6 +2,7 @@
 
 - [COR + NOOR Product Proof Overview](./PRODUCT_PROOF_OVERVIEW_V1.md) — public-safe description of the product, demonstrated capabilities and explicit limitations.
 - [Product Proof Evidence Index](./evidence/README.md) — registered live traces and required visual evidence.
+- [Gate 4 Visual Evidence Capture Kit](./GATE_4_VISUAL_EVIDENCE_CAPTURE_KIT_2026-10-31.md) — mandatory screenshot/video checklist, manifest template and acceptance rules.
 
 
 
