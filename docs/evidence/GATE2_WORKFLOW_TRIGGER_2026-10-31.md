@@ -12,3 +12,4 @@ Expected evidence from the existing `Live NOOR UI comparison and COR handoff` jo
 A successful build or deploy job alone does not close Gate 2. If the live UI proof job fails or its artifact is missing, Gate 2 remains open and the failure evidence is recorded.
 
 The PR synchronize event is used to request a fresh CI evaluation without changing application behavior.
+ verification.
