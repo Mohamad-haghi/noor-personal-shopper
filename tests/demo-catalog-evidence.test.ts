@@ -107,6 +107,22 @@ describe("source-backed demo catalog corrections", () => {
   });
 
 
+  it("withholds FT5661 001 facts until the NOOR SKU suffix is matched to the manufacturer variant", () => {
+    const attributes = customAttributes("noor-demo-011-tom-ford-ft5661-001");
+    const product = productById("noor-demo-011-tom-ford-ft5661-001");
+    expect(product.attributes.customAttributes).toMatchObject({
+      frameShapes: [],
+      frameMaterial: null,
+      frameColor: null,
+      lensColor: null,
+      lensWidthMm: null,
+      bridgeWidthMm: null,
+      templeLengthMm: null,
+      faceCompatibility: null,
+    });
+    expect(attributes.sourceNote).toContain("omits the suffix");
+  });
+
   it("withholds Gucci GG0900S 005 shape, material, color, mirror and face-fit claims where exact-code sources disagree", () => {
     const attributes = customAttributes("noor-demo-008-gucci-gg0900s-005");
     expect(attributes.lensColor).toBe("yellow");
