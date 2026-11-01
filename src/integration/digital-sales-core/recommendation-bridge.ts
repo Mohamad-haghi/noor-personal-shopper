@@ -79,7 +79,6 @@ function useCaseForPreference(value: string | null | undefined): string | undefi
     "استفاده روزمره": "everyday",
     "کار و جلسات": "work_meetings",
     "رانندگی و فضای باز": "driving_outdoors",
-    "مناسبت و استایل": "occasion",
   };
   return value ? map[value] : undefined;
 }
