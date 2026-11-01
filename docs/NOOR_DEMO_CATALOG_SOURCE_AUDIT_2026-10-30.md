@@ -267,3 +267,10 @@ The NOOR reference `1000053268` maps to UPC `8053672495188`, not the sibling UPC
 ### Exact-head test follow-up — 2026-11-01
 
 Build Verification #862 (https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269899900) exposed two stale assertions on head `a11f8f2a3d612006f7d1ac96361b6a4a860227a1`: an old Ray-Ban source-note assertion still expected the 58-14 sibling, and the generic provenance audit compared OGA's withheld scalar `frameShapes=[]` rather than its retained source array `frameShapesSource=["angular","oval"]`. The assertions were corrected to reflect the exact 5188 variant and preserved multi-value source field. Fix head: `16de6ce53dcda27ef28edc4b1a1601f102f5157d`; exact-head CI pending.
+
+
+### Exact Ray-Ban official UPC source and regression follow-up — 2026-11-01
+
+The RB3025 seed note and ledger now use Ray-Ban's official Germany product page for UPC `8053672495188`, which confirms the 62-14 size, metal frame, Arista gold, grey gradient lenses, category 3N and 140 mm temples: https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188. UPC `8053672495171` is the distinct 58-14 sibling; its dimensions must not be transferred.
+
+Build Verification #862 on pre-test-fix head `a11f8f2a3d612006f7d1ac96361b6a4a860227a1` caught two issues: (1) the all-record evidence/seed consistency test needed to compare OGA's preserved `frameShapesSource` array rather than its intentionally empty scalar-facing `frameShapes`; (2) the RB3025 source-note assertion was stale. The OGA mapping was corrected in commit `16de6ce53dcda27ef28edc4b1a1601f102f5157d`; the run then failed only the RB3025 wording assertion. The assertion is corrected in commit `2a0be1cbb48596dd57336cb7b77d19d1b55bf847`. Exact-head CI for this latest commit remains pending; #862 is not a pass.
