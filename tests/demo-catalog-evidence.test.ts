@@ -17,6 +17,7 @@ describe("source-backed demo catalog corrections", () => {
 
     expect(attributes.lensColor).toBe("grey");
     expect(attributes.templeLengthMm).toBe(135);
+    expect(attributes.lensWidthMm).toBe(58);
     expect(attributes.sourceNote).toContain("rb3025-18171");
     expect(attributes.sourceNote).toContain("Lens width remains from the captured seed");
   });
@@ -82,6 +83,15 @@ describe("source-backed demo catalog corrections", () => {
     expect(attributes.protectionLevel).toBe(3);
     expect(attributes.faceCompatibility).toBeNull();
     expect(attributes.sourceNote).toContain("30montaigne-epz-1i");
+  });
+
+  it("uses exact PR51YV 04Q1O1 gender but withholds conflicting shape and unsupported face fit", () => {
+    const attributes = customAttributes("noor-demo-012-prada-pr51yv-04q1o1");
+    const product = productById("noor-demo-012-prada-pr51yv-04q1o1");
+    expect(attributes.gender).toBe("female");
+    expect(attributes.frameShapes).toEqual([]);
+    expect(attributes.faceCompatibility).toBeNull();
+    expect(product.attributes.customAttributes).toMatchObject({ frameMaterial: "titanium", frameColor: "matte black" });
   });
 
   it("does not force OGA 8314O NN030 multi-valued material and shape facts into scalar ranking fields", () => {
