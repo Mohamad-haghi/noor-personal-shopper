@@ -175,3 +175,8 @@ No PR was merged, no Pages deployment occurred, and no live COR installation, Re
 Build Verification run #823 executed on NOOR code head `e4fde6fed7ce9df8de30091477c31919a2ecde69`. The isolated behavioral-test job failed on one stale assertion in `tests/demo-catalog-evidence.test.ts`: it still expected Gucci GG0900S 005 to retain `["square"]`, while the source-review correction correctly changed the seed to an empty shape list. Result before the fix: 34/35 test files and 139/140 tests passed; type-check/build were skipped after the test failure.
 
 The stale test was corrected to expect the evidence-safe state (empty shape, null scalar material and frame color) and to describe the complete withheld-field policy. Fix commit/current code head: `eedfd74a4bf5de2e82f0f91f13bf71d3fac92828`. No workflow run is currently visible for this new head, so exact-head CI remains pending. Do not treat run #823 as a passing validation or the build step as executed.
+
+
+### Exact-head Build Verification passed — 2026-11-01
+
+NOOR Build Verification [#825](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41268963070) passed on exact code candidate head `eedfd74a4bf5de2e82f0f91f13bf71d3fac92828`: 35/35 test files, 140/140 tests, TypeScript and Vite build. The live UI/COR handoff job was skipped by design. This resolves the stale assertion failure from #823 on the prior head. Independent reviewer acceptance and visual evidence remain open; no merge or deployment is authorized.
