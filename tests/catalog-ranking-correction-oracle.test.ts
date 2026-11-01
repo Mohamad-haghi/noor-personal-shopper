@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DigitalSalesEngine, type DomainPack, type Product as CoreProduct } from "digital-sales-core";
 import { DEMO_CATALOG_SEED } from "../src/providers/demo/demo-catalog-seed";
+import { DEMO_CATALOG_ATTRIBUTE_EVIDENCE, verifiedCatalogScalar } from "../src/providers/demo/demo-catalog-evidence";
 import { toDigitalSalesProduct } from "../src/integration/digital-sales-core/noor-adapter";
 
 const domainPack: DomainPack = {
@@ -23,10 +24,27 @@ function coreProducts(overrides: Record<string, Record<string, unknown>> = {}): 
   return DEMO_CATALOG_SEED.products.map((product) => {
     const variants = DEMO_CATALOG_SEED.variants.filter((variant) => variant.identity.productId.id === product.identity.id);
     const mapped = toDigitalSalesProduct(product, variants);
+    const custom = product.attributes.customAttributes as Record<string, unknown>;
+    const reference = String(custom.noorReference);
+    const evidence = DEMO_CATALOG_ATTRIBUTE_EVIDENCE[reference];
+    const attributes: Record<string, unknown> = { ...mapped.attributes };
+    const gatedFields = [
+      ["frameMaterial", "frameMaterial"],
+      ["frameColor", "frameColor"],
+      ["frameShapes", "frameShapes"],
+      ["faceCompatibility", "faceCompatibility"],
+      ["gender", "gender"],
+      ["uvProtection", "uvProtection"],
+    ] as const;
+    for (const [target, source] of gatedFields) {
+      const value = verifiedCatalogScalar(evidence, source, custom[source]);
+      if (value === null) delete attributes[target];
+      else attributes[target] = value;
+    }
     const override = overrides[product.identity.id];
     return override
-      ? { ...mapped, attributes: { ...mapped.attributes, ...override } }
-      : mapped;
+      ? { ...mapped, attributes: { ...attributes, ...override } }
+      : { ...mapped, attributes };
   });
 }
 
@@ -56,21 +74,30 @@ describe("independent COR canonical-engine catalog correction oracle", () => {
     expect(attributes.frameShapes).toEqual([]);
   });
 
-  it("quantifies the expected score change from correcting CAZAL frameMaterial nylon -> acetate", async () => {
+  it("withholds CAZAL's multi-material construction from scalar COR ranking", async () => {
     const cazalId = "1000127106";
-    const before = await scoreCatalog(coreProducts({
-      "noor-demo-014-cazal-607-001": { frameMaterial: "nylon" },
-    }));
-    const after = await scoreCatalog(coreProducts());
-    const beforeCazal = before.find((item) => item.productId === cazalId);
-    const afterCazal = after.find((item) => item.productId === cazalId);
+    const products = coreProducts();
+    const cazal = products.find((item) => item.id === cazalId);
+    expect(cazal).toBeDefined();
+    expect(cazal!.attributes.frameMaterial).toBeUndefined();
 
-    expect(beforeCazal).toBeDefined();
-    expect(afterCazal).toBeDefined();
-    expect(afterCazal!.score).toBeGreaterThan(beforeCazal!.score);
-    expect(afterCazal!.matchedCriteria).toContain("frame-material");
-    expect(beforeCazal!.unmatchedCriteria).toContain("frame-material");
-    expect(afterCazal!.score - beforeCazal!.score).toBeCloseTo(0.75, 10);
+    const ranked = await scoreCatalog(products);
+    const result = ranked.find((item) => item.productId === cazalId);
+    expect(result).toBeDefined();
+    expect(result!.matchedCriteria).not.toContain("frame-material");
+    expect(result!.unmatchedCriteria).toContain("frame-material");
+  });
+
+  it("withholds disputed and multi-valued attributes from the current scalar ranking contract", () => {
+    const products = coreProducts();
+    const byId = new Map(products.map((item) => [item.id, item]));
+    expect(byId.get("1000058221")?.attributes.frameShapes).toBeUndefined();
+    expect(byId.get("1000058221")?.attributes.frameMaterial).toBeUndefined();
+    expect(byId.get("1000104615")?.attributes.frameMaterial).toBeUndefined();
+    expect(byId.get("1000104615")?.attributes.frameColor).toBeUndefined();
+    expect(byId.get("1000109052")?.attributes.frameShapes).toBeUndefined();
+    expect(byId.get("1000109052")?.attributes.frameMaterial).toBeUndefined();
+    expect(byId.get("1000100480")?.attributes.frameColor).toBeUndefined();
   });
 
   it("proves Ray-Ban lensColor and templeLengthMm are non-ranking fields in Domain Pack 1.2.0", async () => {
