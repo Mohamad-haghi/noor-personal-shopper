@@ -180,3 +180,32 @@ The stale test was corrected to expect the evidence-safe state (empty shape, nul
 ### Exact-head Build Verification passed — 2026-11-01
 
 NOOR Build Verification [#825](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41268963070) passed on exact code candidate head `eedfd74a4bf5de2e82f0f91f13bf71d3fac92828`: 35/35 test files, 140/140 tests, TypeScript and Vite build. The live UI/COR handoff job was skipped by design. This resolves the stale assertion failure from #823 on the prior head. Independent reviewer acceptance and visual evidence remain open; no merge or deployment is authorized.
+
+
+## Second-pass exact-source reconciliation — additional records — 2026-11-01
+
+This supplement records additional source checks against exact model/color codes. It preserves unresolved disagreements instead of selecting a convenient scalar.
+
+### Ray-Ban RB3025 181/71 — NOOR reference `1000053268`
+
+Ray-Ban's official exact-code page identifies `RB3025 181/71 58-14`, metal frame, polished Arista gold, grey gradient lenses, category 3N, and 135 mm temples: https://www.ray-ban.com/usa/sunglasses/RB3025%20MALE%20117-aviator%20classic-gold/8053672495171. It calls the frame shape "Pilot"; NOOR's exact product title/specification uses "Aviator". The candidate ledger retains canonical demo label `aviator` and records the official shape synonym explicitly. The previously withheld feed `lensColor` is now source-verified as canonical `grey`; gradient remains a separate descriptive feature and is not collapsed into color.
+
+### CAZAL 607 001 — NOOR reference `1000127106`
+
+The manufacturer model page lists variant 001 as black and identifies acetate material: https://www.cazal-eyewear.com/products/mod-607-3. An exact-variant retailer lists 607 001 as black, plastic + alloy, square, 56/18 and 140 mm temples, and describes the construction as black acetate plus gold metal: https://www.cazal-shop.jp/c/legends/607. The seed no longer asserts scalar `frameMaterial`, `frameColor`, or `templeMaterial`; it retains component arrays for acetate/metal and black/gold. These arrays are not flattened into the current scalar COR mapping.
+
+### Dolce & Gabbana DG2204 12988G 64 — NOOR reference `1000084476`
+
+Exact UPC 8053672911039 sources Shade Station and OpticsPlanet identify a pink-gold metal frame and light-grey gradient-to-black lenses. Lentekontakti's exact model page instead describes a gold frame, grey lens, plastic lens material and UV400: https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g. The evidence ledger now preserves the gold vs pink-gold conflict without a scalar frame color; the seed stores the competing descriptions rather than selecting gold. Grey lens color and UV400 remain source-verified; lens material is recorded as plastic from the Lentekontakti listing. Shape, fit and rim type remain unknown.
+
+### Prada PR03YS 2AU6S1
+
+Lensonlineshop's exact SKU page lists Havana/tortoise color, brown gradient lenses, plastic front / metal temples, and women's category: https://www.lensonlineshop.de/Prada-PR-03YS-2AU6S1.html. Debenhams independently identifies the same exact code and MPN `M8056597515863`, describing acetate front with metal temples: https://www.debenhams.com/product/prada-fashion-tortoise-brown-gradient-pr03ys_p-4577cc8e-a058-4f33-a854-3aee5fd44338. Seed keeps material components and does not force a scalar frame material. The exact source pages support a women's classification; retain the seed's existing female value.
+
+### Tom Ford FT5661 001
+
+The Tom Ford catalogue PDF distinguishes `FT5661-B` and `FT5661-B-N`; for `FT5661-B-N`, color 001 is shiny black / gunmetal temple / blue-block lens and the listed size includes 54-18-145: https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf. This is model-family evidence, not sufficient to equate every retailer's `FT5661 001` with the exact NOOR variant. Keep exact-SKU uncertainty explicit until the NOOR reference is matched to the `-B-N` suffix and size.
+
+### Candidate implementation disposition
+
+On NOOR PR #92, current candidate seed changes now withhold CAZAL's composite frame facts and D&G's disputed frame color; verified D&G lens/UV facts are recorded, and Ray-Ban's exact official source supports grey lens color. Prada mixed construction remains componentized. New regression assertions cover these changes. Current candidate code head: `4cab726ab66d5e0abd7e9bbcdc7e4baf80575e6e`. Exact-head CI is not yet visible; previous Build Verification #825 is for the prior head and must not be reused. PR remains Draft/unmerged.
