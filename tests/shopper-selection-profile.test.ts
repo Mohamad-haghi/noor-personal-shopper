@@ -33,13 +33,17 @@ describe("ShopperFeature structured SelectionProfile", () => {
       "خلبانی", "مستطیلی", "مربعی", "پروانه‌ای",
     ]);
     expect(sunglassesSteps.find((step) => step.id === "frame-material")?.options).not.toContain("تیتانیوم");
+    expect(sunglassesSteps.find((step) => step.id === "face-shape")?.options).toContain("مثلثی");
+    expect(sunglassesSteps.find((step) => step.id === "use-case")?.options).toEqual(["استفاده روزمره", "کار و جلسات", "رانندگی و فضای باز"]);
 
     await feature.setAnswer("productType", "عینک طبی");
     const opticalSteps = feature.getSteps();
     expect(opticalSteps.find((step) => step.id === "style")?.options).toEqual([
-      "گرد", "مستطیلی", "مربعی", "ویفِرر",
+      "مستطیلی", "مربعی", "ویفِرر",
     ]);
     expect(opticalSteps.find((step) => step.id === "frame-material")?.options).toContain("تیتانیوم");
+    expect(opticalSteps.find((step) => step.id === "frame-material")?.options).not.toContain("نایلونی");
+    expect(opticalSteps.find((step) => step.id === "face-shape")?.options).not.toContain("مثلثی");
     expect(opticalSteps.find((step) => step.id === "frame-color")?.options).not.toContain("هاوانا قهوه‌ای");
   });
 
