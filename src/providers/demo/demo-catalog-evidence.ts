@@ -30,6 +30,7 @@ const noor = "NOOR Optic";
 const external = "Exact-SKU retailer/manufacturer sources";
 const d = "2026-10-30";
 const f = "2026-10-31";
+const g = "2026-11-01";
 
 const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalogEvidence>> = {
   "1000053268": {
@@ -92,7 +93,7 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
   "1000100480": {
     sku: "30MONTAIGNE EPZ/1I", noorReference: "1000100480",
     fields: {
-      frameShapes: { status: "verified", value: ["square"], normalizedValue: ["square"], sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f, note: "Both exact-code sources support square; broader family descriptions are not substituted." },
+      frameShapes: { status: "verified", value: ["square", "oval"], normalizedValue: ["square", "oval"], sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f, note: "Alensa lists square and oval; eBay lists square. Preserve the multi-value source taxonomy; do not flatten to scalar square." },
       frameMaterial: { status: "verified", value: "plastic", normalizedValue: "plastic", sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f },
       frameColor: { status: "conflict", sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f, note: "Brown/havana vs yellow/red-havana conflict; value withheld." },
       lensColor: { status: "conflict", sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f, note: "Green vs grey conflict; value withheld." },
@@ -102,7 +103,7 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
   "1000104615": {
     sku: "GG0900S 005", noorReference: "1000104615",
     fields: {
-      frameShapes: { status: "verified", value: ["square"], normalizedValue: ["square"], sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f },
+      frameShapes: { status: "conflict", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html", "https://www.jomashop.com/gucci-yellow-shield-mens-sunglasses-gg0900s-005-60.html"], sourceLabel: external, capturedAt: g, note: "Exact color code 005 is listed as square by GlassesNow and wrap/shield by Jomashop; shape withheld pending taxonomy reconciliation." },
       frameMaterial: { status: "conflict", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f, note: "Acetate vs generic plastic wording; retain as unresolved taxonomy." },
       frameColor: { status: "conflict", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f, note: "Black base is common; gold accent presence differs." },
       lensColor: { status: "verified", value: "yellow", normalizedValue: "yellow", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f },
@@ -169,12 +170,12 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
   "1000044519": {
     sku: "PO3011 095", noorReference: "1000044519",
     fields: {
-      frameMaterial: { status: "verified", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://www.nooroptic.com/fa/164-142"], sourceLabel: noor, capturedAt: d },
-      gender: { status: "verified", value: "unisex", normalizedValue: "unisex", sourceUrls: ["https://www.nooroptic.com/fa/164-142"], sourceLabel: noor, capturedAt: d },
-      lensColor: { status: "verified", value: "clear", normalizedValue: "clear", sourceUrls: ["https://www.nooroptic.com/fa/164-142"], sourceLabel: noor, capturedAt: d },
-      frameShapes: { status: "unknown", sourceUrls: [], sourceLabel: "Exact detail page not retrieved", capturedAt: null },
-      frameColor: { status: "unknown", sourceUrls: [], sourceLabel: "Exact detail page not retrieved", capturedAt: null },
-      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+      frameMaterial: { status: "verified", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      gender: { status: "verified", value: "unisex", normalizedValue: "unisex", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      lensColor: { status: "verified", value: "clear", normalizedValue: "clear", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      frameShapes: { status: "verified", value: ["rectangular", "square", "wayfarer"], normalizedValue: ["rectangular", "square", "wayfarer"], sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g, note: "Exact detail page lists three shapes; retain the array and withhold from current scalar COR feed." },
+      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      faceCompatibility: { status: "verified", value: ["round", "oval", "heart", "rectangle"], normalizedValue: ["round", "oval", "heart", "rectangle"], sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g, note: "Exact detail page provides a multi-value suitability list; retain the array and withhold from current scalar COR feed." }
     }
   }
 };
