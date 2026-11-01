@@ -8,7 +8,7 @@ A Persian-first, right-to-left demo of a product-led shopping journey for the NO
 - Demo catalog feed: https://mohamad-haghi.github.io/noor-personal-shopper/catalog-feed.json
 - COR operator console: https://cor-noor-test.onrender.com/operator-console
 
-The deployed Pages build uses integrated mode and calls COR for recommendations, comparisons, and purchase/visit handoffs. The live recommendation/session smoke test has passed against the deployed COR service. Comparison and handoff flows still need their own end-to-end smoke tests before they should be described as verified.
+The deployed Pages build uses integrated mode and calls COR for demo-only recommendations, comparisons, and product-level handoffs. The controlled live Pages workflow has passed Chromium and WebKit checks for session, recommendation, mandatory-condition zero results, compare and handoff API scenarios. The saved-choice and demo purchase/handoff journey was previously owner-tested. See [current release evidence](docs/RELEASE_EVIDENCE_2026-11-01.md) for exact SHAs, runs and limits.
 
 ## What the demo includes
 
