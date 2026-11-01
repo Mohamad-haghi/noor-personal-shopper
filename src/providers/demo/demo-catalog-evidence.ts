@@ -31,7 +31,7 @@ const external = "Exact-SKU retailer/manufacturer sources";
 const d = "2026-10-30";
 const f = "2026-10-31";
 
-export const DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalogEvidence>> = {
+const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalogEvidence>> = {
   "1000053268": {
     sku: "RB3025 181/71", noorReference: "1000053268",
     fields: {
@@ -178,6 +178,38 @@ export const DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCat
     }
   }
 };
+
+
+/** Every COR recommendation attribute receives an explicit evidence disposition. */
+const REQUIRED_RECOMMENDATION_FIELDS = [
+  "frameShapes",
+  "frameMaterial",
+  "frameColor",
+  "faceCompatibility",
+  "gender",
+  "uvProtection",
+] as const;
+
+export const DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalogEvidence>> =
+  Object.fromEntries(
+    Object.entries(RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE).map(([reference, record]) => [
+      reference,
+      {
+        ...record,
+        fields: Object.fromEntries(
+          REQUIRED_RECOMMENDATION_FIELDS.map((field) => [
+            field,
+            record.fields[field] ?? {
+              status: "unknown" as const,
+              sourceUrls: [],
+              sourceLabel: "Not established in the catalog audit",
+              capturedAt: null,
+            },
+          ]),
+        ),
+      },
+    ]),
+  );
 
 
 /**
