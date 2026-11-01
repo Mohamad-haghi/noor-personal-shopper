@@ -191,15 +191,23 @@ export function verifiedCatalogScalar(
   field: string,
   rawValue: unknown,
 ): string | number | boolean | null {
-  if (!evidence || evidence.fields[field]?.status !== "verified") return null;
-  if (Array.isArray(rawValue)) {
-    if (rawValue.length !== 1) return null;
-    const [only] = rawValue;
-    return typeof only === "string" || typeof only === "number" || typeof only === "boolean"
-      ? only
-      : null;
+  const fieldEvidence = evidence?.fields[field];
+  if (!fieldEvidence || fieldEvidence.status !== "verified") return null;
+
+  let candidate = rawValue;
+  if (Array.isArray(candidate)) {
+    if (candidate.length !== 1) return null;
+    [candidate] = candidate;
   }
-  return typeof rawValue === "string" || typeof rawValue === "number" || typeof rawValue === "boolean"
-    ? rawValue
-    : null;
+  if (typeof candidate !== "string" && typeof candidate !== "number" && typeof candidate !== "boolean") {
+    return null;
+  }
+
+  let expected = fieldEvidence.normalizedValue ?? fieldEvidence.value;
+  if (Array.isArray(expected)) {
+    if (expected.length !== 1) return null;
+    [expected] = expected;
+  }
+  if (expected !== undefined && expected !== null && expected !== candidate) return null;
+  return candidate;
 }
