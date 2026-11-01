@@ -17,7 +17,9 @@ describe("source-backed demo catalog corrections", () => {
 
     expect(attributes.lensColor).toBe("grey");
     expect(attributes.templeLengthMm).toBe(135);
-    expect(attributes.lensWidthMm).toBe(58);
+    expect(attributes.lensWidthMm).toBe(62);
+    expect(attributes.sourceNote).toContain("8053672495188");
+    expect(attributes.sourceNote).toContain("8053672495171 is the separate 58-14 variant");
     expect(attributes.sourceNote).toContain("rb3025-18171");
     expect(attributes.sourceNote).toContain("Exact official size code is 58-14");
   });
