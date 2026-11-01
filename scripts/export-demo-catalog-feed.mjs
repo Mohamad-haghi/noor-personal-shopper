@@ -52,7 +52,7 @@ const products = seed.products.map((product) => {
     faceCompatibility: verifiedScalar(evidence, "faceCompatibility", custom.faceCompatibility),
     lensColor: verifiedScalar(evidence, "lensColor", custom.lensColor),
     uvProtection: verifiedScalar(evidence, "uvProtection", custom.uvProtection),
-    lensWidthMm: typeof custom.lensWidthMm === "number" ? custom.lensWidthMm : null,
+    lensWidthMm: verifiedScalar(evidence, "lensWidthMm", custom.lensWidthMm),
     image,
     images: image ? [image] : [],
     price: null,
