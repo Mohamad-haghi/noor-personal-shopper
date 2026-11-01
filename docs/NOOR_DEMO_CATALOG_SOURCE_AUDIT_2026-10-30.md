@@ -209,3 +209,12 @@ The Tom Ford catalogue PDF distinguishes `FT5661-B` and `FT5661-B-N`; for `FT566
 ### Candidate implementation disposition
 
 On NOOR PR #92, current candidate seed changes now withhold CAZAL's composite frame facts and D&G's disputed frame color; verified D&G lens/UV facts are recorded, and Ray-Ban's exact official source supports grey lens color. Prada mixed construction remains componentized. New regression assertions cover these changes. Current candidate code head: `4cab726ab66d5e0abd7e9bbcdc7e4baf80575e6e`. Exact-head CI is not yet visible; previous Build Verification #825 is for the prior head and must not be reused. PR remains Draft/unmerged.
+
+
+### Provenance projection defect found during CI review — 2026-11-01
+
+Build Verification #833 (https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269364356) failed because the exported `DEMO_CATALOG_ATTRIBUTE_EVIDENCE` projection rebuilt each record using only the six required ranking fields. That unintentionally discarded supplemental, explicitly recorded fields such as `lensColor` and `lensMaterial`; the new exact Ray-Ban lens-color test correctly exposed this.
+
+The projection now spreads all original `record.fields` first, then fills any missing required ranking fields with explicit `unknown` records. This preserves supplemental provenance while retaining mandatory coverage for every ranking attribute. A regression assertion now checks that RB3025 lensColor and DG2204 lensMaterial evidence survive the projection. The stale #833 failure is not treated as a pass; exact-head CI for the correction is pending.
+
+Current code candidate head: `a48579175aac7400e6532aedd6a578873c5cb455`.
