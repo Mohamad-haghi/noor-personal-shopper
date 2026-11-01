@@ -12,6 +12,11 @@ on:
         required: false
         default: false
         type: boolean
+      run_recommendation_trace:
+        description: "Run the real NOOR-to-COR recommendation trace proof"
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   build:
@@ -43,6 +48,41 @@ jobs:
 
       - name: Type-check and build
         run: npm run build
+
+  live-cor-recommendation-trace:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_recommendation_trace)
+    name: Live NOOR to COR recommendation trace
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout NOOR
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install isolated Playwright dependency
+        run: |
+          npm install --prefix "$RUNNER_TEMP/noor-playwright" playwright@1.56.1 --no-audit --no-fund
+          ln -s "$RUNNER_TEMP/noor-playwright/node_modules" node_modules
+      - name: Install Chromium
+        run: "$RUNNER_TEMP/noor-playwright/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Exercise real NOOR recommendation UI with COR trace opt-in
+        env:
+          PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+          NOOR_BROWSER_ENGINE: chromium
+        run: |
+          set -o pipefail
+          mkdir -p artifacts
+          node scripts/verify-browser-cor-shopper.mjs | tee artifacts/noor-cor-recommendation-trace.json
+      - name: Upload trace proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: noor-cor-recommendation-trace
+          path: artifacts/noor-cor-recommendation-trace.json
+          if-no-files-found: warn
 
   live-ui-comparison-handoff:
     if: github.event_name == 'workflow_dispatch' && inputs.run_live_ui
