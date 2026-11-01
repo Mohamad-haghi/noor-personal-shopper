@@ -100,6 +100,7 @@ describe("independent COR canonical-engine catalog correction oracle", () => {
     expect(byId.get("1000100480")?.attributes.frameColor).toBeUndefined();
     expect(byId.get("1000100480")?.attributes.frameShapes).toBeUndefined();
     expect(byId.get("1000104615")?.attributes.frameShapes).toBeUndefined();
+    expect(byId.get("1000104615")?.attributes.frameShapes).toBeUndefined();
     expect(byId.get("1000044519")?.attributes.frameShapes).toBeUndefined();
     expect(byId.get("1000044519")?.attributes.faceCompatibility).toBeUndefined();
   });
