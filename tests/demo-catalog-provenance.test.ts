@@ -72,6 +72,8 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(rayBan, "lensColor", "grey")).toBe("grey");
     expect(verifiedCatalogScalar(rayBan, "lensWidthMm", 62)).toBe(62);
+    expect(verifiedCatalogScalar(rayBan, "bridgeWidthMm", 14)).toBe(14);
+    expect(verifiedCatalogScalar(rayBan, "templeLengthMm", 140)).toBe(140);
     expect(verifiedCatalogScalar(rayBan, "faceCompatibility", ["round", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(persol, "frameMaterial", "acetate")).toBe("acetate");
     expect(verifiedCatalogScalar(persol, "lensColor", "green")).toBe("green");
