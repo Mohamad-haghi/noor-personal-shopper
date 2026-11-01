@@ -246,14 +246,12 @@ export function verifiedCatalogScalar(
   };
 
   const candidate = toScalar(rawValue);
-  if (candidate === null) return null;
+  if (candidate === null || fieldEvidence.value === undefined) return null;
 
   // The raw seed value must match the captured source value. Only then may
   // the verified canonical normalized value be sent to the scalar feed.
-  if (fieldEvidence.value !== undefined) {
-    const sourceValue = toScalar(fieldEvidence.value);
-    if (sourceValue === null || sourceValue !== candidate) return null;
-  }
+  const sourceValue = toScalar(fieldEvidence.value);
+  if (sourceValue === null || sourceValue !== candidate) return null;
 
   if (fieldEvidence.normalizedValue !== undefined && fieldEvidence.normalizedValue !== null) {
     return toScalar(fieldEvidence.normalizedValue);
