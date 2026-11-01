@@ -633,11 +633,15 @@ jobs:
           # the real-browser checks could run. If a missing library is reported,
           # install only that package in a targeted follow-up.
           npx playwright install chromium webkit
+      - name: Prepare live browser evidence directory
+        run: mkdir -p artifacts
       - name: Verify live COR Shopper in a real Chromium browser
         env:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
           COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
-        run: node scripts/verify-browser-cor-shopper.mjs
+        run: |
+          set -o pipefail
+          node scripts/verify-browser-cor-shopper.mjs | tee artifacts/noor-cor-chromium.jsonl
 
       - name: Install WebKit system dependencies
         timeout-minutes: 20
@@ -652,4 +656,14 @@ jobs:
           PAGES_URL: ${{ steps.deployment.outputs.page_url }}
           COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
           NOOR_BROWSER_ENGINE: webkit
-        run: node scripts/verify-browser-cor-shopper.mjs
+        run: |
+          set -o pipefail
+          node scripts/verify-browser-cor-shopper.mjs | tee artifacts/noor-cor-webkit.jsonl
+      - name: Upload live NOOR/COR browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: noor-cor-live-browser-proof
+          path: artifacts/*.jsonl
+          if-no-files-found: warn
+          retention-days: 14
