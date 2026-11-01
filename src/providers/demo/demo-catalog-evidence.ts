@@ -268,3 +268,42 @@ export function verifiedCatalogScalar(
   }
   return candidate;
 }
+
+
+/**
+ * Return an exact-source-verified attribute without flattening a supported
+ * multi-valued fact. Arrays are limited to non-empty primitive values; the
+ * raw seed value must exactly match the captured source value.
+ */
+export function verifiedCatalogValue(
+  evidence: ProductCatalogEvidence | null | undefined,
+  field: string,
+  rawValue: unknown,
+): string | number | boolean | Array<string | number | boolean> | null {
+  const fieldEvidence = evidence?.fields[field];
+  if (!fieldEvidence || fieldEvidence.status !== "verified" || fieldEvidence.value === undefined) return null;
+
+  const isPrimitive = (value: unknown): value is string | number | boolean =>
+    typeof value === "string" || typeof value === "boolean" ||
+    (typeof value === "number" && Number.isFinite(value));
+  const normalize = (value: unknown): Array<string | number | boolean> | null => {
+    if (!Array.isArray(value) || value.length === 0 || value.length > 50 || !value.every(isPrimitive)) return null;
+    return value;
+  };
+  const same = (left: unknown, right: unknown): boolean => JSON.stringify(left) === JSON.stringify(right);
+
+  if (Array.isArray(rawValue)) {
+    const source = normalize(fieldEvidence.value);
+    const candidate = normalize(rawValue);
+    if (!source || !candidate || !same(source, candidate)) return null;
+    if (fieldEvidence.normalizedValue === undefined || fieldEvidence.normalizedValue === null) return candidate;
+    const normalized = normalize(fieldEvidence.normalizedValue);
+    return normalized ?? null;
+  }
+
+  if (!isPrimitive(rawValue) || !same(fieldEvidence.value, rawValue)) return null;
+  const normalized = fieldEvidence.normalizedValue;
+  return normalized === undefined || normalized === null
+    ? rawValue
+    : isPrimitive(normalized) ? normalized : null;
+}
