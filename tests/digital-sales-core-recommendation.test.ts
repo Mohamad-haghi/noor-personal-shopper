@@ -111,6 +111,34 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(sentPreferences.gender).toBe("female");
   });
 
+  it("maps white frame color and preserves use-case as non-scoring COR context", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    let sentIntent: { useCase?: string; preferences: Record<string, unknown> } | undefined;
+    const remoteClient = {
+      recommend: async (payload: unknown) => {
+        const request = payload as { requestId: string; intent: { useCase?: string; preferences: Record<string, unknown> } };
+        sentIntent = request.intent;
+        return {
+          contractVersion: "1.0.0",
+          requestId: request.requestId,
+          result: { source: "cor_canonical_engine", demoOnly: true, recommendations: [] },
+        };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClient);
+
+    await bridge.generateRecommendations({ id: "white-and-use-case" }, {
+      occasion: "رانندگی و فضای باز", season: null, requestSource: "shopper_request",
+      journey: {
+        productType: "عینک آفتابی", useCase: "رانندگی و فضای باز",
+        style: null, faceShape: null, frameColor: "سفید",
+      },
+    });
+
+    expect(sentIntent?.preferences.frameColor).toBe("white");
+    expect(sentIntent?.useCase).toBe("driving_outdoors");
+  });
+
   it("omits optional COR criteria when the shopper selects no preference", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     let sentPreferences: Record<string, unknown> = {};
