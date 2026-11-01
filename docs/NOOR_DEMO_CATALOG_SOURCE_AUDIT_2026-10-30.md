@@ -228,3 +228,8 @@ NOOR Build Verification [#836](https://github.com/Mohamad-haghi/noor-personal-sh
 ### CI follow-up for exact RB3025 size correction — 2026-11-01
 
 Build Verification #845 (https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269578922) failed one stale test assertion: the seed source note no longer says the width was retained from the old seed; it now records the official 58-14 size code and clarifies that 50.1 mm is lens height. The code change was correct; only the old wording assertion was stale. Updated the test to expect the corrected note. Fix commit: `f5791bfb46da70b0bdc050708ec43faa9512ec56`. Exact-head CI is pending.
+
+
+### Persol PO0649 95/31 — exact manufacturer source resolves material conflict — 2026-11-01
+
+Persol's official exact-variant page for `0PO0649-95/31` explicitly identifies a black acetate frame, green crystal lenses, model code PO0649 and 54 mm lens width: https://www.persol.com/en-us/products/0po0649-95_31. This resolves the generic "nylon" marketing wording on the NOOR product page in favor of the manufacturer's structured specification. The candidate evidence ledger now marks frame material verified as acetate, and source-verifies green lens color and 54 mm width. The existing face-fit list remains a separate product-level assertion and is not derived from the style or material evidence.
