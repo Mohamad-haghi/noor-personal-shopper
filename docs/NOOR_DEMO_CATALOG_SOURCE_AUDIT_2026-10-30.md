@@ -141,3 +141,30 @@ These findings were applied only to the isolated candidate seed branch for revie
 - **Gucci GG0900S 005 / reference 1000104615:** two exact-code listings agree yellow lens and black base frame but differ on gold accents and silver mirror; acetate versus generic plastic wording also differs. Candidate seed retains square and yellow, but withholds mirror feature and face fit and records the discrepancy.
 
 Regression assertions were added for each candidate disposition. These changes remain pending current-head CI. They do not authorize a merge or Pages deployment.
+
+
+---
+
+## Independent source cross-check — 2026-11-01
+
+This section records a second-pass retrieval against exact product pages after the original 2026-10-30 audit. It supplements the historical audit above; it does not silently rewrite the original findings.
+
+### Confirmed evidence refinements
+
+- **Persol PO3011 095 / NOOR reference `1000044519`:** the exact detail page is now retrievable at https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html. It explicitly identifies reference 1000044519 and confirms optical type, male + female (normalized as unisex), rectangular + square + wayfarer shapes, acetate frame and temples, black frame, clear lenses, and face suitability for round, oval, heart and rectangle. The candidate evidence ledger now records these exact facts with capture date 2026-11-01. Shape and face suitability are multi-valued and are withheld from the current scalar COR feed until the array contract is supported.
+- **Dior 30Montaigne EPZ/1I / reference `1000100480`:** the exact Alensa page lists square **and oval** shapes; eBay lists square. The candidate seed and ledger now preserve `["square","oval"]` rather than flattening the evidence to square. The scalar feed gate therefore withholds shape. Frame/lens color conflicts remain unresolved.
+- **Gucci GG0900S 005 / reference `1000104615`:** a third exact-code listing (Jomashop, model GG0900S 005) describes wrap/shield, while GlassesNow describes square. The evidence ledger now marks shape as conflict and adds the Jomashop URL. The candidate seed no longer asserts a shape, scalar frame material or scalar frame color for this SKU. Yellow lens remains supported; mirror and face fit remain withheld.
+
+### Reconfirmed dispositions
+
+- **Persol PO0649 95/31:** exact NOOR detail page has a marketing description using “nylon” but its structured specification says acetate. Keep the source conflict explicit; do not silently select a scalar material.
+- **Ray-Ban RB3025 181/71:** exact NOOR page confirms aviator, metal, gold, UV400 and the listed face-shape suitability.
+- **Valentino VA1021 3003:** Interoptika exact 3003 page says round/geometric, while eye-shop exact 3003 says irregular. Keep shape withheld.
+- **OGA 8314O NN030 and CAZAL 607 001:** exact sources support multi-material constructions; retain arrays and do not flatten them to scalar material.
+- **Prada PR51YV 04Q1O1:** exact Eyerim page confirms rectangular, titanium and matte black, but classifies the model as women's; the candidate seed's unisex claim remains a conflict and is withheld.
+
+### Candidate implementation / validation status
+
+NOOR PR #92 contains these corrections on its isolated branch only. Current branch head: `e4fde6fed7ce9df8de30091477c31919a2ecde69`. The latest Build Verification known to pass is run #819 on the previous head `3016d5831b9bb960055634659a81780d7cc31c61`; it is **not** proof for the new source-review commits. No workflow run is currently visible for the new head. The connected GitHub Actions interface in this session does not expose workflow dispatch, so exact-head CI remains pending.
+
+No PR was merged, no Pages deployment occurred, and no live COR installation, Render, Neon or Clerk state was changed. Stage 1 remains open until exact-head CI and independent reviewer acceptance.
