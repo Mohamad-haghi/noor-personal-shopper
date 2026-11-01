@@ -48,9 +48,11 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
   "1000087540": {
     sku: "PO0649 95/31", noorReference: "1000087540",
     fields: {
-      frameShapes: { status: "verified", value: ["aviator"], normalizedValue: ["aviator"], sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html"], sourceLabel: noor, capturedAt: d },
-      frameMaterial: { status: "conflict", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html", "https://myluxottica-im.luxottica.com/Catalogue/PO_R3_2021_WW_324055.pdf"], sourceLabel: noor + " / Luxottica catalogue", capturedAt: d, note: "NOOR marketing text/category listing says nylon; structured product specification says acetate. Keep conflict visible." },
-      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html"], sourceLabel: noor, capturedAt: d },
+      frameShapes: { status: "verified", value: ["aviator"], normalizedValue: ["aviator"], sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html", "https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: noor + " / Persol official", capturedAt: g },
+      frameMaterial: { status: "verified", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html", "https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: noor + " / Persol official", capturedAt: g, note: "The exact Persol 95/31 official product page explicitly identifies acetate; this resolves the generic nylon marketing wording on the NOOR page." },
+      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html", "https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: noor + " / Persol official", capturedAt: g },
+      lensColor: { status: "verified", value: "green", normalizedValue: "green", sourceUrls: ["https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: "Persol official", capturedAt: g },
+      lensWidthMm: { status: "verified", value: 54, sourceUrls: ["https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: "Persol official", capturedAt: g },
       faceCompatibility: { status: "verified", value: ["oval", "heart", "round", "triangle", "rectangle"], normalizedValue: ["oval", "heart", "round", "triangle", "rectangle"], sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html"], sourceLabel: noor, capturedAt: d }
     }
   },
