@@ -16,6 +16,9 @@ describe("NOOR demo catalog field-level provenance", () => {
       expect(evidence.noorReference).toBe(reference);
       expect(evidence.sku).toBe(product.externalIds.sku);
       expect(custom.catalogEvidence).toEqual(evidence);
+      for (const requiredField of ["frameShapes", "frameMaterial", "frameColor", "faceCompatibility", "gender", "uvProtection"]) {
+        expect(evidence.fields[requiredField], `${reference}.${requiredField} needs an explicit evidence status`).toBeDefined();
+      }
 
       for (const [field, item] of Object.entries(evidence.fields)) {
         expect(["verified", "unknown", "conflict", "derived"]).toContain(item.status);
