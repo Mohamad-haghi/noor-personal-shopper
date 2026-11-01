@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEMO_CATALOG_SEED } from "../src/providers/demo/demo-catalog-seed";
-import { DEMO_CATALOG_ATTRIBUTE_EVIDENCE } from "../src/providers/demo/demo-catalog-evidence";
+import { DEMO_CATALOG_ATTRIBUTE_EVIDENCE, verifiedCatalogScalar } from "../src/providers/demo/demo-catalog-evidence";
 
 describe("NOOR demo catalog field-level provenance", () => {
   it("covers all 15 exact demo references and attaches the same evidence to each seed product", () => {
@@ -33,6 +33,22 @@ describe("NOOR demo catalog field-level provenance", () => {
         }
       }
     }
+  });
+
+  it("exports only verified scalar facts supported by the current feed contract", () => {
+    const rayBan = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000053268"];
+    const persol = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000087540"];
+    const cazal = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000127106"];
+    const rb6461 = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000109052"];
+    const oga = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000058221"];
+
+    expect(verifiedCatalogScalar(rayBan, "frameShapes", ["aviator"])).toBe("aviator");
+    expect(verifiedCatalogScalar(rayBan, "frameMaterial", "metal")).toBe("metal");
+    expect(verifiedCatalogScalar(rayBan, "faceCompatibility", ["round", "oval"])).toBeNull();
+    expect(verifiedCatalogScalar(persol, "frameMaterial", "acetate")).toBeNull();
+    expect(verifiedCatalogScalar(cazal, "frameMaterial", ["acetate", "metal"])).toBeNull();
+    expect(verifiedCatalogScalar(rb6461, "frameMaterial", "nylon")).toBeNull();
+    expect(verifiedCatalogScalar(oga, "frameShapes", ["angular", "oval"])).toBeNull();
   });
 
   it("does not label the known conflict and unknown cases as verified", () => {
