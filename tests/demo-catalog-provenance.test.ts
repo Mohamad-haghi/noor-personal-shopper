@@ -62,6 +62,7 @@ describe("NOOR demo catalog field-level provenance", () => {
         const seedField =
           field === "frameMaterial" && Array.isArray(item.value) ? "frameMaterialComponents" :
           field === "frameColor" && Array.isArray(item.value) ? "frameColorComponents" :
+          field === "frameShapes" && Array.isArray(item.value) && Array.isArray(custom?.frameShapesSource) ? "frameShapesSource" :
           field;
         expect(custom?.[seedField], `${reference}.${field} must match its captured source value`).toEqual(item.value);
       }
