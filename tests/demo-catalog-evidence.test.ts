@@ -20,7 +20,7 @@ describe("source-backed demo catalog corrections", () => {
     expect(attributes.bridgeWidthMm).toBe(14);
     expect(attributes.templeLengthMm).toBe(140);
     expect(attributes.sourceNote).toContain("8053672495188");
-    expect(attributes.sourceNote).toContain("8053672495171 is the separate 58-14 variant");
+    expect(attributes.sourceNote).toContain("8053672495171 is the separate 58-14 sibling");
     expect(attributes.sourceNote).toContain("rb3025-18171");
     expect(attributes.sourceNote).toContain("UPC 8053672495171 is the separate 58-14 sibling");
   });
