@@ -283,3 +283,17 @@ NOOR Build Verification [#870](https://github.com/Mohamad-haghi/noor-personal-sh
 This validates the exact UPC 62-14-140 correction, Dior verified plastic scalar, OGA multi-value source-array alignment, and all-record verified-evidence-to-seed consistency test. Run #862 failed on the preceding head due stale assertions and is superseded for automated validation by #870.
 
 **Stage 1 implementation/automated validation: PASS on exact head. Stage 1 acceptance remains OPEN** pending independent reviewer acceptance of the 15-SKU source ledger and source/seed/feed/oracle alignment. The candidate remains Draft/unmerged.
+
+
+### Exact-head feed verification added to build — 2026-11-01
+
+Candidate head `f753139ce257e3cea7437ac21d93381a0c807857` adds `scripts/verify-demo-catalog-feed.mjs` to the production build sequence immediately after feed export. The verifier checks:
+- exact 15-product catalog size and unique product IDs;
+- `demoOnly=true`, `price=null`, and synthetic `available_demo` availability;
+- per-product NOOR reference alignment;
+- each public COR scalar field equals the evidence-gated projection;
+- internal `catalogEvidence` is not leaked into the public feed.
+
+Build Verification [#872](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41270047381) passed on this exact head: 35/35 test files, 144/144 tests, TypeScript/Vite build, including feed export + verification. The isolated live UI/COR handoff job was skipped by design.
+
+This closes the automated candidate feed-integrity check, not the independent reviewer gate. PR #92 remains Draft/unmerged.
