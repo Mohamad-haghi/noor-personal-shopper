@@ -71,11 +71,13 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(missingCapturedValue, "frameMaterial", "metal")).toBeNull();
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(rayBan, "lensColor", "grey")).toBe("grey");
+    expect(verifiedCatalogScalar(rayBan, "lensWidthMm", 58)).toBe(58);
     expect(verifiedCatalogScalar(rayBan, "faceCompatibility", ["round", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(persol, "frameMaterial", "acetate")).toBeNull();
     expect(verifiedCatalogScalar(cazal, "frameMaterial", ["acetate", "metal"])).toBeNull();
     expect(verifiedCatalogScalar(cazal, "frameMaterial", "acetate")).toBeNull();
-    expect(verifiedCatalogScalar(cazal, "frameColor", "gold + black")).toBeNull();
+    expect(verifiedCatalogScalar(cazal, "frameColor", null)).toBeNull();
+    expect(verifiedCatalogScalar(cazal, "lensWidthMm", 56)).toBe(56);
     expect(verifiedCatalogScalar(rb6461, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(oga, "frameShapes", ["angular", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(prada, "frameColor", "matte black")).toBe("black");
@@ -89,6 +91,10 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(dolceGabbana, "frameColor", null)).toBeNull();
     expect(verifiedCatalogScalar(dolceGabbana, "lensColor", "grey")).toBe("grey");
     expect(verifiedCatalogScalar(dolceGabbana, "uvProtection", "UV400")).toBe("UV400");
+    expect(verifiedCatalogScalar(dolceGabbana, "lensWidthMm", 64)).toBe(64);
+    expect(verifiedCatalogScalar(prada, "lensWidthMm", 52)).toBe(52);
+    expect(verifiedCatalogScalar(persolOptical, "lensWidthMm", 54)).toBe(54);
+    expect(verifiedCatalogScalar(tomFordOptical, "lensWidthMm", 54)).toBeNull();
     expect(verifiedCatalogScalar(tomFordOptical, "frameShapes", ["square"])).toBeNull();
     expect(verifiedCatalogScalar(tomFordOptical, "frameMaterial", "acetate")).toBeNull();
     expect(verifiedCatalogScalar(tomFordOptical, "frameColor", "black")).toBeNull();
@@ -99,5 +105,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000106967"].fields.frameShapes.status).toBe("conflict");
     expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000109052"].fields.frameMaterial.status).toBe("unknown");
     expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000100480"].fields.frameColor.status).toBe("conflict");
+    expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000112234"].fields.frameShapes.status).toBe("conflict");
+    expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000112234"].fields.gender.status).toBe("verified");
   });
 });
