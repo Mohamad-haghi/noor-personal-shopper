@@ -136,9 +136,11 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
   "1000104076": {
     sku: "FT5661 001", noorReference: "1000104076",
     fields: {
-      frameShapes: { status: "verified", value: ["square"], normalizedValue: ["square"], sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://visionsource-mountaineyecare.com/wp-content/uploads/sites/405/2020/04/Catalog_FT_USD.pdf"], sourceLabel: external, capturedAt: d },
-      frameMaterial: { status: "verified", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://visionsource-mountaineyecare.com/wp-content/uploads/sites/405/2020/04/Catalog_FT_USD.pdf"], sourceLabel: external, capturedAt: d },
-      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control"], sourceLabel: external, capturedAt: d },
+      frameShapes: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "The sources identify FT5661-B 001 and FT5661-B-N 001 respectively, while the NOOR record only says FT5661 001. Exact suffix/variant identity is not established; do not promote shape." },
+      frameMaterial: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "Acetate is reported for nearby FT5661-B family variants, but exact NOOR suffix is not matched to the manufacturer catalogue variant." },
+      frameColor: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "Black/001 appears on related suffix variants; exact NOOR variant identity is not confirmed." },
+      lensColor: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "Blue-block lenses are shown for FT5661-B-N 001; exact NOOR suffix and lens specification are not confirmed." },
+      lensWidthMm: { status: "unknown", sourceUrls: ["https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "54 mm is listed for the FT5661-B-N variant, but exact suffix identity is not established." },
       faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
     }
   },
