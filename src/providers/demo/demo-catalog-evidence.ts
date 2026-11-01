@@ -84,8 +84,10 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
     sku: "DG2204 12988G 64", noorReference: "1000084476",
     fields: {
       frameMaterial: { status: "verified", value: "metal", normalizedValue: "metal", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html"], sourceLabel: external, capturedAt: f },
-      frameColor: { status: "conflict", value: "gold", normalizedValue: "gold", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html"], sourceLabel: external, capturedAt: f, note: "Descriptions vary between pink-gold and gold; canonical gold retained with detail noted." },
-      lensColor: { status: "verified", value: "grey", normalizedValue: "grey", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html"], sourceLabel: external, capturedAt: f },
+      frameColor: { status: "conflict", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html", "https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g, note: "Exact-code Shade Station and OpticsPlanet listings say pink gold; Lentekontakti says gold. No scalar canonical frame color is asserted." },
+      lensColor: { status: "verified", value: "grey", normalizedValue: "grey", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html", "https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g },
+      lensMaterial: { status: "verified", value: "plastic", normalizedValue: "plastic", sourceUrls: ["https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g },
+      uvProtection: { status: "verified", value: "UV400", normalizedValue: "UV400", sourceUrls: ["https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g },
       frameShapes: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null },
       faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
     }
@@ -162,8 +164,8 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
     sku: "607 001", noorReference: "1000127106",
     fields: {
       frameShapes: { status: "verified", value: ["square"], normalizedValue: ["square"], sourceUrls: ["https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL official", capturedAt: f },
-      frameMaterial: { status: "verified", value: ["acetate", "metal"], normalizedValue: ["acetate", "metal"], sourceUrls: ["https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL official", capturedAt: f, note: "Exact 607 001 material is a combination; scalar acetate seed is not the complete construction." },
-      frameColor: { status: "verified", value: ["black", "gold"], normalizedValue: ["black", "gold"], sourceUrls: ["https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL official", capturedAt: f },
+      frameMaterial: { status: "verified", value: ["acetate", "metal"], normalizedValue: ["acetate", "metal"], sourceUrls: ["https://www.cazal-eyewear.com/products/mod-607-3", "https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL manufacturer / exact-variant retailer", capturedAt: g, note: "Variant 001 is listed as black and acetate by CAZAL; the exact-variant retailer describes the construction as black acetate plus gold metal. Preserve the mixed construction; do not export scalar acetate." },
+      frameColor: { status: "verified", value: ["black", "gold"], normalizedValue: ["black", "gold"], sourceUrls: ["https://www.cazal-eyewear.com/products/mod-607-3", "https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL manufacturer / exact-variant retailer", capturedAt: g, note: "Variant 001 is black; the exact-variant retailer describes black acetate with gold metal. Keep as a multi-component color description." },
       faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
     }
   },
