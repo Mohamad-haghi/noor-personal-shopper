@@ -55,6 +55,8 @@ describe("NOOR demo catalog field-level provenance", () => {
     const gucci = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000104615"];
     const persolOptical = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000044519"];
     const dolceGabbana = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000084476"];
+    expect(rayBan.fields.lensColor?.status).toBe("verified");
+    expect(dolceGabbana.fields.lensMaterial?.status).toBe("verified");
 
     expect(verifiedCatalogScalar(rayBan, "frameShapes", ["aviator"])).toBe("aviator");
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "metal")).toBe("metal");
