@@ -1,3 +1,16 @@
+# CURRENT VERIFICATION ADDENDUM — 2026-11-01
+
+The dated [NOOR release evidence](./RELEASE_EVIDENCE_2026-11-01.md) supersedes older verification statements below.
+
+- Current NOOR Pages commit: `9122a6445be9878ddfef5126453efbc765200668`; deployment workflow [#41313300976](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41313300976).
+- Current COR Render runtime: `bd7a215dbd9154f9638687636167e4d980309e32`; staging installation 708, config v2, Mapping 1.2.0, Domain Pack 1.2.0.
+- Controlled live browser workflow passed Chromium and WebKit. Recommendation order and normalized displayed scores matched COR traces. Live scenarios included demo session, recommendations, hard-constraint zero results, compare and handoff API paths.
+- NOOR PR #106 merged the sunglasses titanium counselor option and its explicit no-catalog-fit warning.
+- This remains demo-only; no live NOOR inventory or commerce system is connected. No real checkout/payment/order occurs.
+- Historical paragraphs below are retained for incident history and must not be read as the current verification status.
+
+---
+
 # NOOR → COR Shopper Demo Integration V1
 
 Status: integrated demo deployed; live recommendation/session path observed working. Comparison and handoff still require separate end-to-end verification.
