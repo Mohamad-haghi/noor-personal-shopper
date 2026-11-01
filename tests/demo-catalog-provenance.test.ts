@@ -44,6 +44,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     const cazal = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000127106"];
     const rb6461 = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000109052"];
     const oga = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000058221"];
+    const prada = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000112234"];
 
     expect(verifiedCatalogScalar(rayBan, "frameShapes", ["aviator"])).toBe("aviator");
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "metal")).toBe("metal");
@@ -55,6 +56,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(cazal, "frameColor", "gold + black")).toBeNull();
     expect(verifiedCatalogScalar(rb6461, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(oga, "frameShapes", ["angular", "oval"])).toBeNull();
+    expect(verifiedCatalogScalar(prada, "frameColor", "matte black")).toBe("black");
   });
 
   it("does not label the known conflict and unknown cases as verified", () => {
