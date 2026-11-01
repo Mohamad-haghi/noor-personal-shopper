@@ -49,6 +49,14 @@ describe("source-backed demo catalog corrections", () => {
     }
   });
 
+  it("resolves PO0649 95/31 frame material from Persol's exact official product page", () => {
+    const attributes = customAttributes("noor-demo-002-persol-po0649-95-31");
+    expect(attributes.frameMaterial).toBe("acetate");
+    expect(attributes.lensColor).toBe("green");
+    expect(attributes.lensWidthMm).toBe(54);
+    expect(attributes.sourceNote).toContain("Persol official exact 95/31 product page confirms acetate");
+  });
+
   it("preserves Prada PR03YS 2AU6S1 material components without collapsing them to one frame material", () => {
     const attributes = customAttributes("noor-demo-005-prada-pr03ys-2au6s1");
     expect(attributes.frameMaterial).toBeNull();
