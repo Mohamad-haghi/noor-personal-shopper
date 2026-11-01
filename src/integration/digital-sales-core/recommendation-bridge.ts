@@ -77,7 +77,7 @@ function frameColorForPreference(value: string | null | undefined): string | und
 function useCaseForPreference(value: string | null | undefined): string | undefined {
   const map: Record<string, string> = {
     "استفاده روزمره": "everyday",
-    "کار و جلسات": "work",
+    "کار و جلسات": "work_meetings",
     "رانندگی و فضای باز": "driving_outdoors",
     "مناسبت و استایل": "occasion",
   };
