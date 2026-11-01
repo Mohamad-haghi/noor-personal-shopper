@@ -39,9 +39,9 @@ assert.equal(feedById.size, 15, "feed product IDs must be unique");
 
 const fieldMap = [
   ["gender", "gender", verifiedScalar],
-  ["frame", "frameMaterial", verifiedScalar],
-  ["frameColor", "frameColor", verifiedScalar],
-  ["shape", "frameShapes", verifiedValue],
+  ["frame", "frameMaterial", verifiedValue, "frameMaterialComponents"],
+  ["frameColor", "frameColor", verifiedValue, "frameColorComponents"],
+  ["shape", "frameShapes", verifiedValue, "frameShapesSource"],
   ["faceCompatibility", "faceCompatibility", verifiedValue],
   ["lensColor", "lensColor", verifiedScalar],
   ["uvProtection", "uvProtection", verifiedScalar],
@@ -63,8 +63,11 @@ for (const seedProduct of seed.products) {
   assert.equal(feedProduct.availabilitySource, "demo");
   assert.equal("catalogEvidence" in feedProduct, false, "internal provenance ledger must not leak into the public feed");
 
-  for (const [feedField, evidenceField, project] of fieldMap) {
-    const expected = project(evidence, evidenceField, custom[evidenceField]);
+  for (const [feedField, evidenceField, project, aliasField] of fieldMap) {
+    const rawValue = aliasField
+      ? (custom[aliasField] ?? custom[evidenceField])
+      : custom[evidenceField];
+    const expected = project(evidence, evidenceField, rawValue);
     assert.deepEqual(
       feedProduct[feedField],
       expected,
@@ -73,4 +76,14 @@ for (const seedProduct of seed.products) {
   }
 }
 
-console.log("Verified 15-product demo feed: evidence-gated fields, unique IDs, no real prices, synthetic demo availability.");
+// Pin exact, source-audited composite records so future changes cannot silently
+// flatten or drop their arrays from the public feed.
+const byReference = new Map(feed.products.map((product) => [product.noorReference, product]));
+assert.deepEqual(byReference.get("1000058221")?.shape, ["angular", "oval"]);
+assert.deepEqual(byReference.get("1000058221")?.frame, ["acetate", "metal"]);
+assert.deepEqual(byReference.get("1000127106")?.frame, ["acetate", "metal"]);
+assert.deepEqual(byReference.get("1000127106")?.frameColor, ["black", "gold"]);
+assert.equal(byReference.get("1000127057")?.frame, null, "conflicting Prada PR03YS construction must remain withheld");
+assert.equal(byReference.get("1000127057")?.frameColor, "havana brown");
+
+console.log("Verified 15-product demo feed: evidence-gated scalar/array fields, unique IDs, no real prices, synthetic demo availability.");
