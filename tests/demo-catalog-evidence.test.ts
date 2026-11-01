@@ -25,12 +25,15 @@ describe("source-backed demo catalog corrections", () => {
     const attributes = customAttributes("noor-demo-014-cazal-607-001");
     const product = productById("noor-demo-014-cazal-607-001");
 
-    expect(product.attributes.customAttributes).toMatchObject({ frameMaterial: "acetate" });
+    expect(product.attributes.customAttributes).toMatchObject({ frameMaterial: null, frameColor: null, templeMaterial: null });
+    expect(attributes.frameMaterialComponents).toEqual(["acetate", "metal"]);
+    expect(attributes.frameColorComponents).toEqual(["black", "gold"]);
     expect(attributes.lensWidthMm).toBe(56);
     expect(attributes.bridgeWidthMm).toBe(18);
     expect(attributes.templeLengthMm).toBe(140);
     expect(attributes.faceCompatibility).toBeNull();
-    expect(attributes.sourceNote).toContain("cazal-eyewear.com/products/mod-607");
+    expect(attributes.sourceNote).toContain("cazal-eyewear.com/products/mod-607-3");
+    expect(attributes.sourceNote).toContain("cazal-shop.jp/c/legends/607");
     expect(attributes.sourceNote).toContain("temple material remain unresolved");
   });
 
@@ -58,7 +61,11 @@ describe("source-backed demo catalog corrections", () => {
     const attributes = customAttributes("noor-demo-006-dolce-gabbana-dg2204-12988g-64");
     const product = productById("noor-demo-006-dolce-gabbana-dg2204-12988g-64");
     expect(attributes.lensColor).toBe("grey");
-    expect(attributes.frameColorDescription).toBe("pink gold");
+    expect(attributes.frameColor).toBeNull();
+    expect(attributes.frameColorDescription).toBeNull();
+    expect(attributes.frameColorDescriptions).toEqual(["pink gold", "gold"]);
+    expect(attributes.lensMaterial).toBe("plastic");
+    expect(attributes.uvProtection).toBe("UV400");
     expect(attributes.frameShapes).toEqual([]);
     expect(attributes.faceCompatibility).toBeNull();
     expect(attributes.sourceNote).toContain("8053672911039");
