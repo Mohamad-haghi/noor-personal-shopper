@@ -147,15 +147,24 @@ export class ShopperFeature {
       : productType === "عینک طبی"
         ? ["گرد", "مستطیلی", "مربعی", "ویفِرر"]
         : ["خلبانی", "مستطیلی", "گرد", "مربعی", "پروانه‌ای", "ویفِرر"];
+    // Titanium is intentionally selectable for sunglasses even though the current
+    // 8-item demo sunglasses catalog has no verified titanium frame. This lets the
+    // shopper express a true hard requirement and COR safely return no match.
     const materialOptions = productType === "عینک آفتابی"
-      ? ["فلزی", "نایلونی", "استات", "فرقی ندارد"]
+      ? ["فلزی", "نایلونی", "استات", "تیتانیوم", "فرقی ندارد"]
       : ["فلزی", "نایلونی", "استات", "تیتانیوم", "فرقی ندارد"];
     const colorOptions = productType === "عینک طبی"
       ? ["طلایی", "مشکی", "فرقی ندارد"]
       : ["طلایی", "هاوانا قهوه‌ای", "مشکی", "سفید", "فرقی ندارد"];
     return STEPS.map((step) => {
       if (step.id === "style") return { ...step, options: styleOptions };
-      if (step.id === "frame-material") return { ...step, options: materialOptions };
+      if (step.id === "frame-material") return {
+        ...step,
+        options: materialOptions,
+        description: productType === "عینک آفتابی"
+          ? "تیتانیوم هم قابل انتخاب است؛ اما در کاتالوگ فعلی Demo عینک آفتابی محصولی با فریم تیتانیومی ثبت نشده. اگر این شرط را اجباری کنید، انتظار می‌رود COR هیچ محصولی پیشنهاد نکند."
+          : step.description,
+      };
       if (step.id === "frame-color") return { ...step, options: colorOptions };
       return step;
     });

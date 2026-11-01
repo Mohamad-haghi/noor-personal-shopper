@@ -32,7 +32,9 @@ describe("ShopperFeature structured SelectionProfile", () => {
     expect(sunglassesSteps.find((step) => step.id === "style")?.options).toEqual([
       "خلبانی", "مستطیلی", "مربعی", "پروانه‌ای",
     ]);
-    expect(sunglassesSteps.find((step) => step.id === "frame-material")?.options).not.toContain("تیتانیوم");
+    const sunglassesMaterialStep = sunglassesSteps.find((step) => step.id === "frame-material");
+    expect(sunglassesMaterialStep?.options).toContain("تیتانیوم");
+    expect(sunglassesMaterialStep?.description).toContain("محصولی با فریم تیتانیومی ثبت نشده");
 
     await feature.setAnswer("productType", "عینک طبی");
     const opticalSteps = feature.getSteps();
@@ -41,6 +43,19 @@ describe("ShopperFeature structured SelectionProfile", () => {
     ]);
     expect(opticalSteps.find((step) => step.id === "frame-material")?.options).toContain("تیتانیوم");
     expect(opticalSteps.find((step) => step.id === "frame-color")?.options).not.toContain("هاوانا قهوه‌ای");
+  });
+
+  it("sends mandatory titanium from the sunglasses counselor as a hard COR criterion", async () => {
+    const service = new SelectionProfileService(new DemoSelectionProfileProvider());
+    const feature = new ShopperFeature(service, null);
+    await feature.setAnswer("productType", "عینک آفتابی");
+    await feature.setAnswer("frameMaterial", "تیتانیوم");
+    await feature.setCriterionMandatory("frameMaterial", true);
+
+    const profile = await service.getProfile({ id: "demo-selection-profile" });
+    expect(profile?.criteria.frameMaterial).toBe("تیتانیوم");
+    expect(profile?.criteria.mandatoryCriteria).toContain("frameMaterial");
+    expect(feature.getFlowState().journey.mandatoryCriteria).toContain("frameMaterial");
   });
 
   it("restores structured criteria from an existing SelectionProfile", async () => {
