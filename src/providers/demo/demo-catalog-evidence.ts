@@ -147,10 +147,10 @@ const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalo
   "1000112234": {
     sku: "PR51YV 04Q1O1", noorReference: "1000112234",
     fields: {
-      frameShapes: { status: "verified", value: ["rectangular"], normalizedValue: ["rectangular"], sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/"], sourceLabel: external, capturedAt: d },
-      frameMaterial: { status: "verified", value: "titanium", normalizedValue: "titanium", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/"], sourceLabel: external, capturedAt: d },
-      frameColor: { status: "verified", value: "matte black", normalizedValue: "black", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/"], sourceLabel: external, capturedAt: d },
-      gender: { status: "conflict", value: "unisex", normalizedValue: "unisex", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/"], sourceLabel: external, capturedAt: d, note: "Seed says unisex; exact retailer classifies as women's." },
+      frameShapes: { status: "conflict", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g, note: "Exact color code 04Q1O1 is listed as rectangular by Eyerim and square by Mia Burton and EyeOns. No single canonical shape is asserted." },
+      frameMaterial: { status: "verified", value: "titanium", normalizedValue: "titanium", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g, note: "Exact color code sources consistently identify titanium; some describe metal/titanium components." },
+      frameColor: { status: "verified", value: "matte black", normalizedValue: "black", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g },
+      gender: { status: "verified", value: "female", normalizedValue: "female", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g, note: "Exact color code 04Q1O1 is consistently categorized as women's." },
       faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
     }
   },
