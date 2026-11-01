@@ -223,3 +223,8 @@ Current code candidate head: `a48579175aac7400e6532aedd6a578873c5cb455`.
 ### Exact-head validation for evidence-map preservation — 2026-11-01
 
 NOOR Build Verification [#836](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269439640) passed on candidate head `a48579175aac7400e6532aedd6a578873c5cb455`: 35/35 test files, 140/140 tests, TypeScript and Vite build. The live UI/COR handoff job was skipped by design. This confirms the supplemental evidence-field preservation fix; it does not validate subsequent FT5661 / PR51YV / lens-width changes now being developed.
+
+
+### CI follow-up for exact RB3025 size correction — 2026-11-01
+
+Build Verification #845 (https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269578922) failed one stale test assertion: the seed source note no longer says the width was retained from the old seed; it now records the official 58-14 size code and clarifies that 50.1 mm is lens height. The code change was correct; only the old wording assertion was stale. Updated the test to expect the corrected note. Fix commit: `f5791bfb46da70b0bdc050708ec43faa9512ec56`. Exact-head CI is pending.
