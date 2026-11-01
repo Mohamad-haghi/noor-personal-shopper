@@ -44,6 +44,30 @@ describe("NOOR demo catalog field-level provenance", () => {
     }
   });
 
+  it("keeps every verified source value aligned with the exact seed field", () => {
+    const seedByReference = new Map(
+      DEMO_CATALOG_SEED.products.map((product) => {
+        const custom = product.attributes.customAttributes as Record<string, unknown>;
+        return [String(custom.noorReference), custom] as const;
+      }),
+    );
+
+    for (const [reference, evidence] of Object.entries(DEMO_CATALOG_ATTRIBUTE_EVIDENCE)) {
+      const custom = seedByReference.get(reference);
+      expect(custom, `missing seed for evidence reference ${reference}`).toBeDefined();
+
+      for (const [field, item] of Object.entries(evidence.fields)) {
+        if (item.status !== "verified" || item.value === undefined) continue;
+
+        const seedField =
+          field === "frameMaterial" && Array.isArray(item.value) ? "frameMaterialComponents" :
+          field === "frameColor" && Array.isArray(item.value) ? "frameColorComponents" :
+          field;
+        expect(custom?.[seedField], `${reference}.${field} must match its captured source value`).toEqual(item.value);
+      }
+    }
+  });
+
   it("exports only verified scalar facts supported by the current feed contract", () => {
     const rayBan = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000053268"];
     const persol = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000087540"];
