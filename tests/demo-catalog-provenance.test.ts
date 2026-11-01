@@ -71,7 +71,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(missingCapturedValue, "frameMaterial", "metal")).toBeNull();
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(rayBan, "lensColor", "grey")).toBe("grey");
-    expect(verifiedCatalogScalar(rayBan, "lensWidthMm", 58)).toBe(58);
+    expect(verifiedCatalogScalar(rayBan, "lensWidthMm", 62)).toBe(62);
     expect(verifiedCatalogScalar(rayBan, "faceCompatibility", ["round", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(persol, "frameMaterial", "acetate")).toBe("acetate");
     expect(verifiedCatalogScalar(persol, "lensColor", "green")).toBe("green");
@@ -85,6 +85,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(prada, "frameColor", "matte black")).toBe("black");
     expect(verifiedCatalogScalar(dior, "frameShapes", ["square"])).toBeNull();
     expect(verifiedCatalogScalar(dior, "frameShapes", ["square", "oval"])).toBeNull();
+    expect(verifiedCatalogScalar(dior, "frameMaterial", "plastic")).toBe("plastic");
     expect(verifiedCatalogScalar(gucci, "frameShapes", ["square"])).toBeNull();
     expect(verifiedCatalogScalar(persolOptical, "frameMaterial", "acetate")).toBe("acetate");
     expect(verifiedCatalogScalar(persolOptical, "frameColor", "black")).toBe("black");
