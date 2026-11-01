@@ -55,6 +55,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     const gucci = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000104615"];
     const persolOptical = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000044519"];
     const dolceGabbana = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000084476"];
+    const tomFordOptical = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000104076"];
     expect(rayBan.fields.lensColor?.status).toBe("verified");
     expect(dolceGabbana.fields.lensMaterial?.status).toBe("verified");
 
@@ -80,6 +81,9 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(dolceGabbana, "frameColor", null)).toBeNull();
     expect(verifiedCatalogScalar(dolceGabbana, "lensColor", "grey")).toBe("grey");
     expect(verifiedCatalogScalar(dolceGabbana, "uvProtection", "UV400")).toBe("UV400");
+    expect(verifiedCatalogScalar(tomFordOptical, "frameShapes", ["square"])).toBeNull();
+    expect(verifiedCatalogScalar(tomFordOptical, "frameMaterial", "acetate")).toBeNull();
+    expect(verifiedCatalogScalar(tomFordOptical, "frameColor", "black")).toBeNull();
   });
 
   it("does not label the known conflict and unknown cases as verified", () => {
