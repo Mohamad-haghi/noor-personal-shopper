@@ -168,3 +168,10 @@ This section records a second-pass retrieval against exact product pages after t
 NOOR PR #92 contains these corrections on its isolated branch only. Current branch head: `e4fde6fed7ce9df8de30091477c31919a2ecde69`. The latest Build Verification known to pass is run #819 on the previous head `3016d5831b9bb960055634659a81780d7cc31c61`; it is **not** proof for the new source-review commits. No workflow run is currently visible for the new head. The connected GitHub Actions interface in this session does not expose workflow dispatch, so exact-head CI remains pending.
 
 No PR was merged, no Pages deployment occurred, and no live COR installation, Render, Neon or Clerk state was changed. Stage 1 remains open until exact-head CI and independent reviewer acceptance.
+
+
+### CI follow-up after the source-review correction — 2026-11-01
+
+Build Verification run #823 executed on NOOR code head `e4fde6fed7ce9df8de30091477c31919a2ecde69`. The isolated behavioral-test job failed on one stale assertion in `tests/demo-catalog-evidence.test.ts`: it still expected Gucci GG0900S 005 to retain `["square"]`, while the source-review correction correctly changed the seed to an empty shape list. Result before the fix: 34/35 test files and 139/140 tests passed; type-check/build were skipped after the test failure.
+
+The stale test was corrected to expect the evidence-safe state (empty shape, null scalar material and frame color) and to describe the complete withheld-field policy. Fix commit/current code head: `eedfd74a4bf5de2e82f0f91f13bf71d3fac92828`. No workflow run is currently visible for this new head, so exact-head CI remains pending. Do not treat run #823 as a passing validation or the build step as executed.
