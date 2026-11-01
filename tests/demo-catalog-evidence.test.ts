@@ -18,6 +18,8 @@ describe("source-backed demo catalog corrections", () => {
     expect(attributes.lensColor).toBe("grey");
     expect(attributes.templeLengthMm).toBe(135);
     expect(attributes.lensWidthMm).toBe(62);
+    expect(attributes.bridgeWidthMm).toBe(14);
+    expect(attributes.templeLengthMm).toBe(140);
     expect(attributes.sourceNote).toContain("8053672495188");
     expect(attributes.sourceNote).toContain("8053672495171 is the separate 58-14 variant");
     expect(attributes.sourceNote).toContain("rb3025-18171");
