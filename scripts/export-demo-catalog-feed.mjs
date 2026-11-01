@@ -12,11 +12,13 @@ const vite = await createServer({
 });
 let seed;
 let verifiedScalar;
+let verifiedValue;
 try {
   const loaded = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-seed.ts");
   const evidenceModule = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-evidence.ts");
   seed = loaded.DEMO_CATALOG_SEED;
   verifiedScalar = evidenceModule.verifiedCatalogScalar;
+  verifiedValue = evidenceModule.verifiedCatalogValue;
 } finally {
   await vite.close();
 }
@@ -43,13 +45,13 @@ const products = seed.products.map((product) => {
     description: product.description ?? null,
     model: typeof custom.model === "string" ? custom.model : null,
     noorReference: typeof custom.noorReference === "string" ? custom.noorReference : null,
-    // Only source-verified scalar values are sent to the current COR scalar mapper.
-    // Multi-valued verified facts are withheld until NOOR #52 + COR #268 land together.
+    // Only exact-source-verified values are exported. Multi-valued shape/face facts
+    // remain arrays and are consumed by the paired COR array-capable Mapping v1.2 path.
     gender: verifiedScalar(evidence, "gender", custom.gender),
     frame: verifiedScalar(evidence, "frameMaterial", custom.frameMaterial),
     frameColor: verifiedScalar(evidence, "frameColor", custom.frameColor),
-    shape: verifiedScalar(evidence, "frameShapes", custom.frameShapes),
-    faceCompatibility: verifiedScalar(evidence, "faceCompatibility", custom.faceCompatibility),
+    shape: verifiedValue(evidence, "frameShapes", custom.frameShapes),
+    faceCompatibility: verifiedValue(evidence, "faceCompatibility", custom.faceCompatibility),
     lensColor: verifiedScalar(evidence, "lensColor", custom.lensColor),
     uvProtection: verifiedScalar(evidence, "uvProtection", custom.uvProtection),
     lensWidthMm: verifiedScalar(evidence, "lensWidthMm", custom.lensWidthMm),
