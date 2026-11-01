@@ -178,3 +178,28 @@ export const DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCat
     }
   }
 };
+
+
+/**
+ * Return a value only when its exact-SKU field evidence is verified and the
+ * current scalar feed contract can represent it without information loss.
+ * Multi-valued facts remain withheld until the array-valued feed contract is
+ * implemented end-to-end (NOOR #52 + COR #268).
+ */
+export function verifiedCatalogScalar(
+  evidence: ProductCatalogEvidence | null | undefined,
+  field: string,
+  rawValue: unknown,
+): string | number | boolean | null {
+  if (!evidence || evidence.fields[field]?.status !== "verified") return null;
+  if (Array.isArray(rawValue)) {
+    if (rawValue.length !== 1) return null;
+    const [only] = rawValue;
+    return typeof only === "string" || typeof only === "number" || typeof only === "boolean"
+      ? only
+      : null;
+  }
+  return typeof rawValue === "string" || typeof rawValue === "number" || typeof rawValue === "boolean"
+    ? rawValue
+    : null;
+}
