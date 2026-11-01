@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEMO_CATALOG_SEED } from "../src/providers/demo/demo-catalog-seed";
-import { DEMO_CATALOG_ATTRIBUTE_EVIDENCE, verifiedCatalogScalar } from "../src/providers/demo/demo-catalog-evidence";
+import { DEMO_CATALOG_ATTRIBUTE_EVIDENCE, verifiedCatalogScalar, verifiedCatalogValue } from "../src/providers/demo/demo-catalog-evidence";
 
 describe("NOOR demo catalog field-level provenance", () => {
   it("covers all 15 exact demo references and attaches the same evidence to each seed product", () => {
@@ -100,6 +100,9 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(rayBan, "bridgeWidthMm", 14)).toBe(14);
     expect(verifiedCatalogScalar(rayBan, "templeLengthMm", 140)).toBe(140);
     expect(verifiedCatalogScalar(rayBan, "faceCompatibility", ["round", "oval"])).toBeNull();
+    expect(verifiedCatalogValue(rayBan, "faceCompatibility", ["round", "oval"])).toEqual(["round", "oval"]);
+    expect(verifiedCatalogValue(rayBan, "frameShapes", ["aviator"])).toEqual(["aviator"]);
+    expect(verifiedCatalogValue(rayBan, "frameShapes", ["wayfarer"])).toBeNull();
     expect(verifiedCatalogScalar(persol, "frameMaterial", "acetate")).toBe("acetate");
     expect(verifiedCatalogScalar(persol, "lensColor", "green")).toBe("green");
     expect(verifiedCatalogScalar(persol, "lensWidthMm", 54)).toBe(54);
@@ -109,15 +112,18 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(cazal, "lensWidthMm", 56)).toBe(56);
     expect(verifiedCatalogScalar(rb6461, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(oga, "frameShapes", ["angular", "oval"])).toBeNull();
+    expect(verifiedCatalogValue(oga, "frameShapes", ["angular", "oval"])).toEqual(["angular", "oval"]);
     expect(verifiedCatalogScalar(prada, "frameColor", "matte black")).toBe("black");
     expect(verifiedCatalogScalar(dior, "frameShapes", ["square"])).toBeNull();
     expect(verifiedCatalogScalar(dior, "frameShapes", ["square", "oval"])).toBeNull();
+    expect(verifiedCatalogValue(dior, "frameShapes", ["square", "oval"])).toEqual(["square", "oval"]);
     expect(verifiedCatalogScalar(dior, "frameMaterial", "plastic")).toBe("plastic");
     expect(verifiedCatalogScalar(gucci, "frameShapes", ["square"])).toBeNull();
     expect(verifiedCatalogScalar(persolOptical, "frameMaterial", "acetate")).toBe("acetate");
     expect(verifiedCatalogScalar(persolOptical, "frameColor", "black")).toBe("black");
     expect(verifiedCatalogScalar(persolOptical, "frameShapes", ["rectangular", "square", "wayfarer"])).toBeNull();
     expect(verifiedCatalogScalar(persolOptical, "faceCompatibility", ["round", "oval", "heart", "rectangle"])).toBeNull();
+    expect(verifiedCatalogValue(persolOptical, "faceCompatibility", ["round", "oval", "heart", "rectangle"])).toEqual(["round", "oval", "heart", "rectangle"]);
     expect(verifiedCatalogScalar(dolceGabbana, "frameColor", null)).toBeNull();
     expect(verifiedCatalogScalar(dolceGabbana, "lensColor", "grey")).toBe("grey");
     expect(verifiedCatalogScalar(dolceGabbana, "uvProtection", "UV400")).toBe("UV400");
