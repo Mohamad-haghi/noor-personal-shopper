@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: ["main"]
   workflow_dispatch:
+    inputs:
+      run_live_ui:
+        description: "Run the live NOOR/COR browser proof"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -37,3 +43,36 @@ jobs:
 
       - name: Type-check and build
         run: npm run build
+
+  live-ui-comparison-handoff:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_live_ui
+    name: Live NOOR UI comparison and COR handoff
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout NOOR browser proof
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install isolated Playwright dependency
+        run: |
+          npm install --prefix "$RUNNER_TEMP/noor-playwright" playwright@1.56.1 --no-audit --no-fund
+          ln -s "$RUNNER_TEMP/noor-playwright/node_modules" node_modules
+      - name: Install Chromium
+        run: |
+          "$RUNNER_TEMP/noor-playwright/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Exercise live deployed NOOR comparison and product handoff UI
+        env:
+          PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+          EVIDENCE_PATH: artifacts/noor-ui-comparison-handoff.json
+        run: node scripts/verify-live-ui-comparison-handoff.mjs
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: noor-live-ui-comparison-handoff
+          path: artifacts/noor-ui-comparison-handoff.json
+          if-no-files-found: warn
