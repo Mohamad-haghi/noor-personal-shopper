@@ -1,0 +1,309 @@
+/**
+ * Field-level source ledger for the 15-item NOOR demo catalog.
+ *
+ * Status is deliberately conservative: "verified" means the cited exact-SKU
+ * source supports this field; "conflict" means sources disagree; "unknown"
+ * means the audit did not establish the field. A product-level source note
+ * must never be interpreted as proof for every attribute on that product.
+ *
+ * Dates are audit capture dates, not claims about source publication dates.
+ */
+export type CatalogEvidenceStatus = "verified" | "unknown" | "conflict" | "derived";
+
+export interface CatalogAttributeEvidence {
+  readonly status: CatalogEvidenceStatus;
+  readonly value?: string | number | boolean | readonly string[] | null;
+  readonly normalizedValue?: string | readonly string[] | null;
+  readonly sourceUrls: readonly string[];
+  readonly sourceLabel: string;
+  readonly capturedAt: string | null;
+  readonly note?: string;
+}
+
+export interface ProductCatalogEvidence {
+  readonly sku: string;
+  readonly noorReference: string;
+  readonly fields: Readonly<Record<string, CatalogAttributeEvidence>>;
+}
+
+const noor = "NOOR Optic";
+const external = "Exact-SKU retailer/manufacturer sources";
+const d = "2026-10-30";
+const f = "2026-10-31";
+const g = "2026-11-01";
+
+const RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalogEvidence>> = {
+  "1000053268": {
+    sku: "RB3025 181/71", noorReference: "1000053268",
+    fields: {
+      frameShapes: { status: "verified", value: ["aviator"], normalizedValue: ["aviator"], sourceUrls: ["https://www.nooroptic.com/fa/ray-ban/28191-ray-ban-rb3025-18171-8053672495188.html", "https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188"], sourceLabel: noor + " / Ray-Ban official", capturedAt: g, note: "NOOR identifies the exact model as Aviator; Ray-Ban's exact RB3025 181/71 page calls the frame shape Pilot. The canonical demo label remains aviator." },
+      frameMaterial: { status: "verified", value: "metal", normalizedValue: "metal", sourceUrls: ["https://www.nooroptic.com/fa/ray-ban/28191-ray-ban-rb3025-18171-8053672495188.html", "https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188"], sourceLabel: noor + " / Ray-Ban official", capturedAt: g },
+      frameColor: { status: "verified", value: "gold", normalizedValue: "gold", sourceUrls: ["https://www.nooroptic.com/fa/ray-ban/28191-ray-ban-rb3025-18171-8053672495188.html", "https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188"], sourceLabel: noor + " / Ray-Ban official", capturedAt: g },
+      lensColor: { status: "verified", value: "grey", normalizedValue: "grey", sourceUrls: ["https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188"], sourceLabel: "Ray-Ban official", capturedAt: g, note: "Exact code 181/71 lists grey gradient lenses; the feed exports canonical grey and retains gradient in seed details." },
+      lensWidthMm: { status: "verified", value: 62, sourceUrls: ["https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188", "https://www.timepiece.com/ray-ban-rb3025-181-71-62.html", "https://isolani.com/de/occhiali-da-sole/8053672495188-ray-ban-aviator-large-metal-rb3025-181-71-62.html"], sourceLabel: "Ray-Ban official / exact UPC 8053672495188 retailers", capturedAt: g, note: "NOOR reference 1000053268 maps to UPC 8053672495188; official exact page identifies size 62-14. UPC 8053672495171 is the separate 58-14 variant." },
+      bridgeWidthMm: { status: "verified", value: 14, sourceUrls: ["https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188", "https://www.timepiece.com/ray-ban-rb3025-181-71-62.html"], sourceLabel: "Ray-Ban official / exact UPC 8053672495188 retailer", capturedAt: g },
+      templeLengthMm: { status: "verified", value: 140, sourceUrls: ["https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188", "https://www.timepiece.com/ray-ban-rb3025-181-71-62.html"], sourceLabel: "Ray-Ban official / exact UPC 8053672495188 retailer", capturedAt: g },
+      gender: { status: "verified", value: "unisex", normalizedValue: "unisex", sourceUrls: ["https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188"], sourceLabel: "Ray-Ban official", capturedAt: g },
+      faceCompatibility: { status: "verified", value: ["round", "oval", "heart", "rectangle"], normalizedValue: ["round", "oval", "heart", "rectangle"], sourceUrls: ["https://www.nooroptic.com/fa/ray-ban/28191-ray-ban-rb3025-18171-8053672495188.html"], sourceLabel: noor, capturedAt: d },
+      uvProtection: { status: "verified", value: "UV400", normalizedValue: "UV400", sourceUrls: ["https://www.nooroptic.com/fa/ray-ban/28191-ray-ban-rb3025-18171-8053672495188.html"], sourceLabel: noor, capturedAt: d }
+    }
+  },
+  "1000087540": {
+    sku: "PO0649 95/31", noorReference: "1000087540",
+    fields: {
+      frameShapes: { status: "verified", value: ["aviator"], normalizedValue: ["aviator"], sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html", "https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: noor + " / Persol official", capturedAt: g },
+      frameMaterial: { status: "verified", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html", "https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: noor + " / Persol official", capturedAt: g, note: "The exact Persol 95/31 official product page explicitly identifies acetate; this resolves the generic nylon marketing wording on the NOOR page." },
+      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html", "https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: noor + " / Persol official", capturedAt: g },
+      lensColor: { status: "verified", value: "green", normalizedValue: "green", sourceUrls: ["https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: "Persol official", capturedAt: g },
+      lensWidthMm: { status: "verified", value: 54, sourceUrls: ["https://www.persol.com/en-us/products/0po0649-95_31"], sourceLabel: "Persol official", capturedAt: g },
+      faceCompatibility: { status: "verified", value: ["oval", "heart", "round", "triangle", "rectangle"], normalizedValue: ["oval", "heart", "round", "triangle", "rectangle"], sourceUrls: ["https://www.nooroptic.com/fa/142/61980-persol-po0649-9531.html"], sourceLabel: noor, capturedAt: d }
+    }
+  },
+  "1000088890": {
+    sku: "OO9318 02 34", noorReference: "1000088890",
+    fields: {
+      frameShapes: { status: "conflict", sourceUrls: ["https://designerframesoutlet.com/oakley-sunglasses-oo9318?c=122283", "https://www.oakley.com/en-de/product/W0OO9318"], sourceLabel: external, capturedAt: d, note: "Exact -02 retailer calls it rectangular; Oakley family page describes shield. Do not transfer -07 facts." },
+      frameMaterial: { status: "unknown", sourceUrls: ["https://www.oakley.com/en-de/product/W0OO9318"], sourceLabel: "Oakley family page", capturedAt: d, note: "O Matter is reported at family level for another color code; exact -02 taxonomy is unresolved." },
+      frameColor: { status: "verified", value: "white", normalizedValue: "white", sourceUrls: ["https://designerframesoutlet.com/oakley-sunglasses-oo9318?c=122283"], sourceLabel: external, capturedAt: d },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000103998": {
+    sku: "FT0778 01A 60", noorReference: "1000103998",
+    fields: {
+      frameShapes: { status: "verified", value: ["aviator"], normalizedValue: ["aviator"], sourceUrls: ["https://www.nooroptic.com/fa/tom-ford/78600-tom-ford-ft0778-01a-60.html"], sourceLabel: noor, capturedAt: d },
+      frameMaterial: { status: "verified", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://www.nooroptic.com/fa/tom-ford/78600-tom-ford-ft0778-01a-60.html"], sourceLabel: noor, capturedAt: d },
+      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://www.nooroptic.com/fa/tom-ford/78600-tom-ford-ft0778-01a-60.html"], sourceLabel: noor, capturedAt: d },
+      faceCompatibility: { status: "verified", value: ["round", "oval", "heart", "rectangle", "triangle"], normalizedValue: ["round", "oval", "heart", "rectangle", "triangle"], sourceUrls: ["https://www.nooroptic.com/fa/tom-ford/78600-tom-ford-ft0778-01a-60.html"], sourceLabel: noor, capturedAt: d },
+      uvProtection: { status: "verified", value: "UV400", normalizedValue: "UV400", sourceUrls: ["https://www.nooroptic.com/fa/tom-ford/78600-tom-ford-ft0778-01a-60.html"], sourceLabel: noor, capturedAt: d }
+    }
+  },
+  "1000127057": {
+    sku: "PR03YS 2AU6S1", noorReference: "1000127057",
+    fields: {
+      frameShapes: { status: "verified", value: ["butterfly"], normalizedValue: ["butterfly"], sourceUrls: ["https://www.lensonlineshop.de/Prada-PR-03YS-2AU6S1.html", "https://www.jomashop.com/prada-brown-gradient-butterfly-ladies-sunglasses-pr-03ys-2au6s1-53.html"], sourceLabel: external, capturedAt: f },
+      frameMaterial: { status: "conflict", value: ["plastic", "metal"], normalizedValue: ["plastic", "metal"], sourceUrls: ["https://www.lensonlineshop.de/Prada-PR-03YS-2AU6S1.html", "https://www.jomashop.com/prada-brown-gradient-butterfly-ladies-sunglasses-pr-03ys-2au6s1-53.html"], sourceLabel: external, capturedAt: f, note: "Plastic front and metal temples; scalar frameMaterial is intentionally withheld." },
+      frameColor: { status: "verified", value: "havana brown", normalizedValue: "havana brown", sourceUrls: ["https://www.lensonlineshop.de/Prada-PR-03YS-2AU6S1.html"], sourceLabel: external, capturedAt: f },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000084476": {
+    sku: "DG2204 12988G 64", noorReference: "1000084476",
+    fields: {
+      frameMaterial: { status: "verified", value: "metal", normalizedValue: "metal", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html"], sourceLabel: external, capturedAt: f },
+      frameColor: { status: "conflict", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html", "https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g, note: "Exact-code Shade Station and OpticsPlanet listings say pink gold; Lentekontakti says gold. No scalar canonical frame color is asserted." },
+      lensColor: { status: "verified", value: "grey", normalizedValue: "grey", sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64", "https://www.opticsplanet.com/dolce-gabbana-dg2204-sunglasses.html", "https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g },
+      lensWidthMm: { status: "verified", value: 64, sourceUrls: ["https://www.shadestation.co.uk/designer-sunglasses/Dolce---Gabbana/DG2204/DG2204-12988G-64"], sourceLabel: external, capturedAt: g },
+      lensMaterial: { status: "verified", value: "plastic", normalizedValue: "plastic", sourceUrls: ["https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g },
+      uvProtection: { status: "verified", value: "UV400", normalizedValue: "UV400", sourceUrls: ["https://www.lentekontakti.com/dolce-gabbana-dg2204-12988g"], sourceLabel: external, capturedAt: g },
+      frameShapes: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000100480": {
+    sku: "30MONTAIGNE EPZ/1I", noorReference: "1000100480",
+    fields: {
+      frameShapes: { status: "verified", value: ["square", "oval"], normalizedValue: ["square", "oval"], sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f, note: "Alensa lists square and oval; eBay lists square. Preserve the multi-value source taxonomy; do not flatten to scalar square." },
+      frameMaterial: { status: "verified", value: "plastic", normalizedValue: "plastic", sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f },
+      frameColor: { status: "conflict", sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f, note: "Brown/havana vs yellow/red-havana conflict; value withheld." },
+      lensColor: { status: "conflict", sourceUrls: ["https://www.alensa.hu/christian-dior-30montaigne-epz-1i", "https://www.ebay.com/p/19038022081"], sourceLabel: external, capturedAt: f, note: "Green vs grey conflict; value withheld." },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000104615": {
+    sku: "GG0900S 005", noorReference: "1000104615",
+    fields: {
+      frameShapes: { status: "conflict", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html", "https://www.jomashop.com/gucci-yellow-shield-mens-sunglasses-gg0900s-005-60.html"], sourceLabel: external, capturedAt: g, note: "Exact color code 005 is listed as square by GlassesNow and wrap/shield by Jomashop; shape withheld pending taxonomy reconciliation." },
+      frameMaterial: { status: "conflict", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f, note: "Acetate vs generic plastic wording; retain as unresolved taxonomy." },
+      frameColor: { status: "conflict", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f, note: "Black base is common; gold accent presence differs." },
+      lensColor: { status: "verified", value: "yellow", normalizedValue: "yellow", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f },
+      lensFeature: { status: "conflict", sourceUrls: ["https://www.glassesnow.co.uk/products/gucci-gg0900s-005", "https://www.visio-net.com/sunglasses/gucci-gg0900s-005.html"], sourceLabel: external, capturedAt: f, note: "Mirror/silver coating differs; not asserted." },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000058221": {
+    sku: "8314O NN030", noorReference: "1000058221",
+    fields: {
+      frameShapes: { status: "verified", value: ["angular", "oval"], normalizedValue: ["angular", "oval"], sourceUrls: ["https://top-brille.de/shop/oega-by-marius-morel-oega-8314o-nn030-brille-frame-lunettes-oga-2/"], sourceLabel: external, capturedAt: f, note: "Array retained; scalar COR shape is withheld until array contract support." },
+      frameMaterial: { status: "verified", value: ["acetate", "metal"], normalizedValue: ["acetate", "metal"], sourceUrls: ["https://top-brille.de/shop/oega-by-marius-morel-oega-8314o-nn030-brille-frame-lunettes-oga-2/"], sourceLabel: external, capturedAt: f, note: "Array retained; scalar COR material is withheld until array contract support." },
+      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://top-brille.de/shop/oega-by-marius-morel-oega-8314o-nn030-brille-frame-lunettes-oga-2/"], sourceLabel: external, capturedAt: f },
+      gender: { status: "verified", value: "unisex", normalizedValue: "unisex", sourceUrls: ["https://top-brille.de/shop/oega-by-marius-morel-oega-8314o-nn030-brille-frame-lunettes-oga-2/"], sourceLabel: external, capturedAt: f },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000109052": {
+    sku: "RB6461 2500", noorReference: "1000109052",
+    fields: {
+      frameShapes: { status: "conflict", sourceUrls: ["https://www.lojasrenner.com.br/p/oculos-de-grau-ray-ban-6461-2500-51/-/A-7010701524327-br.lr"], sourceLabel: external, capturedAt: d, note: "Exact listing prose says round; structured shape says square. Seed withholds shape." },
+      frameMaterial: { status: "unknown", sourceUrls: ["https://www.lojasrenner.com.br/p/oculos-de-grau-ray-ban-6461-2500-51/-/A-7010701524327-br.lr"], sourceLabel: external, capturedAt: d, note: "Exact source does not settle frame/temple material." },
+      frameColor: { status: "verified", value: "gold", normalizedValue: "gold", sourceUrls: ["https://www.lojasrenner.com.br/p/oculos-de-grau-ray-ban-6461-2500-51/-/A-7010701524327-br.lr"], sourceLabel: external, capturedAt: d },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000104076": {
+    sku: "FT5661 001", noorReference: "1000104076",
+    fields: {
+      frameShapes: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "The sources identify FT5661-B 001 and FT5661-B-N 001 respectively, while the NOOR record only says FT5661 001. Exact suffix/variant identity is not established; do not promote shape." },
+      frameMaterial: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "Acetate is reported for nearby FT5661-B family variants, but exact NOOR suffix is not matched to the manufacturer catalogue variant." },
+      frameColor: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "Black/001 appears on related suffix variants; exact NOOR variant identity is not confirmed." },
+      lensColor: { status: "unknown", sourceUrls: ["https://pretavoir.co.uk/products/tom-ford-tf5661-b-001-blue-control", "https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "Blue-block lenses are shown for FT5661-B-N 001; exact NOOR suffix and lens specification are not confirmed." },
+      lensWidthMm: { status: "unknown", sourceUrls: ["https://drmah.ca/wp-content/uploads/2020/05/Tom-Ford.pdf"], sourceLabel: external, capturedAt: g, note: "54 mm is listed for the FT5661-B-N variant, but exact suffix identity is not established." },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000112234": {
+    sku: "PR51YV 04Q1O1", noorReference: "1000112234",
+    fields: {
+      frameShapes: { status: "conflict", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g, note: "Exact color code 04Q1O1 is listed as rectangular by Eyerim and square by Mia Burton and EyeOns. No single canonical shape is asserted." },
+      frameMaterial: { status: "verified", value: "titanium", normalizedValue: "titanium", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g, note: "Exact color code sources consistently identify titanium; some describe metal/titanium components." },
+      frameColor: { status: "verified", value: "matte black", normalizedValue: "black", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g },
+      gender: { status: "verified", value: "female", normalizedValue: "female", sourceUrls: ["https://eyerim.si/prada-pr51yv-04q1o1/", "https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g, note: "Exact color code 04Q1O1 is consistently categorized as women's." },
+      lensWidthMm: { status: "verified", value: 52, sourceUrls: ["https://miaburton.com/en/eyeglasses/prada/pr-51yv-04q1o1", "https://www.eyeons.com/products/prada-pr-51yv"], sourceLabel: external, capturedAt: g },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000106967": {
+    sku: "VA1021 3003", noorReference: "1000106967",
+    fields: {
+      frameShapes: { status: "conflict", sourceUrls: ["https://www.eye-shop.eu/sunglasses.asp?a_availab=2&a_ccode=%25&a_type=3&aprice=3&b_color=%25&b_diameter=%25&b_discount=1&b_lenscolor=%25&b_material=%25&b_model=%25&b_shape=%25&b_special=%25&b_style=%25&mypage=118&price=1-690&rel=next&t_ccode=1", "https://interoptika.ru/catalog/va-1021-3003/", "https://chrisoptics.com/products/valentino-va1021-3003-eyeglasses-pale-gold-oversized-metal-frame"], sourceLabel: external, capturedAt: f, note: "Exact 3003 sources differ: irregular vs round/geometric. Canonical shape and face fit withheld." },
+      frameMaterial: { status: "verified", value: "metal", normalizedValue: "metal", sourceUrls: ["https://interoptika.ru/catalog/va-1021-3003/"], sourceLabel: external, capturedAt: f },
+      frameColor: { status: "verified", value: "gold", normalizedValue: "gold", sourceUrls: ["https://interoptika.ru/catalog/va-1021-3003/"], sourceLabel: external, capturedAt: f },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000127106": {
+    sku: "607 001", noorReference: "1000127106",
+    fields: {
+      frameShapes: { status: "verified", value: ["square"], normalizedValue: ["square"], sourceUrls: ["https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL official", capturedAt: f },
+      frameMaterial: { status: "verified", value: ["acetate", "metal"], normalizedValue: ["acetate", "metal"], sourceUrls: ["https://www.cazal-eyewear.com/products/mod-607-3", "https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL manufacturer / exact-variant retailer", capturedAt: g, note: "Variant 001 is listed as black and acetate by CAZAL; the exact-variant retailer describes the construction as black acetate plus gold metal. Preserve the mixed construction; do not export scalar acetate." },
+      frameColor: { status: "verified", value: ["black", "gold"], normalizedValue: ["black", "gold"], sourceUrls: ["https://www.cazal-eyewear.com/products/mod-607-3", "https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "CAZAL manufacturer / exact-variant retailer", capturedAt: g, note: "Variant 001 is black; the exact-variant retailer describes black acetate with gold metal. Keep as a multi-component color description." },
+      lensWidthMm: { status: "verified", value: 56, sourceUrls: ["https://www.cazal-shop.jp/c/legends/607"], sourceLabel: "Exact-variant retailer", capturedAt: g },
+      faceCompatibility: { status: "unknown", sourceUrls: [], sourceLabel: "Not established", capturedAt: null }
+    }
+  },
+  "1000044519": {
+    sku: "PO3011 095", noorReference: "1000044519",
+    fields: {
+      frameMaterial: { status: "verified", value: "acetate", normalizedValue: "acetate", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      gender: { status: "verified", value: "unisex", normalizedValue: "unisex", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      lensColor: { status: "verified", value: "clear", normalizedValue: "clear", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      frameShapes: { status: "verified", value: ["rectangular", "square", "wayfarer"], normalizedValue: ["rectangular", "square", "wayfarer"], sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g, note: "Exact detail page lists three shapes; retain the array and withhold from current scalar COR feed." },
+      frameColor: { status: "verified", value: "black", normalizedValue: "black", sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g },
+      faceCompatibility: { status: "verified", value: ["round", "oval", "heart", "rectangle"], normalizedValue: ["round", "oval", "heart", "rectangle"], sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g, note: "Exact detail page provides a multi-value suitability list; retain the array and withhold from current scalar COR feed." },
+      lensWidthMm: { status: "verified", value: 54, sourceUrls: ["https://www.nooroptic.com/fa/142/19456-persol-po3011-095.html"], sourceLabel: noor, capturedAt: g }
+    }
+  }
+};
+
+
+/** Every COR recommendation attribute receives an explicit evidence disposition. */
+const REQUIRED_RECOMMENDATION_FIELDS = [
+  "frameShapes",
+  "frameMaterial",
+  "frameColor",
+  "faceCompatibility",
+  "gender",
+  "uvProtection",
+] as const;
+
+export const DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCatalogEvidence>> =
+  Object.fromEntries(
+    Object.entries(RAW_DEMO_CATALOG_ATTRIBUTE_EVIDENCE).map(([reference, record]) => [
+      reference,
+      {
+        ...record,
+        fields: {
+          ...record.fields,
+          ...Object.fromEntries(
+            REQUIRED_RECOMMENDATION_FIELDS.map((field) => [
+              field,
+              record.fields[field] ?? {
+                status: "unknown" as const,
+                sourceUrls: [],
+                sourceLabel: "Not established in the catalog audit",
+                capturedAt: null,
+              },
+            ]),
+          ),
+        },
+      },
+    ]),
+  );
+
+
+/**
+ * Return a value only when its exact-SKU field evidence is verified and the
+ * current scalar feed contract can represent it without information loss.
+ * Multi-valued facts remain withheld until the array-valued feed contract is
+ * implemented end-to-end (NOOR #52 + COR #268).
+ */
+export function verifiedCatalogScalar(
+  evidence: ProductCatalogEvidence | null | undefined,
+  field: string,
+  rawValue: unknown,
+): string | number | boolean | null {
+  const fieldEvidence = evidence?.fields[field];
+  if (!fieldEvidence || fieldEvidence.status !== "verified") return null;
+
+  const toScalar = (value: unknown): string | number | boolean | null => {
+    if (Array.isArray(value)) {
+      if (value.length !== 1) return null;
+      [value] = value;
+    }
+    return typeof value === "string" || typeof value === "number" || typeof value === "boolean"
+      ? value
+      : null;
+  };
+
+  const candidate = toScalar(rawValue);
+  if (candidate === null || fieldEvidence.value === undefined) return null;
+
+  // The raw seed value must match the captured source value. Only then may
+  // the verified canonical normalized value be sent to the scalar feed.
+  const sourceValue = toScalar(fieldEvidence.value);
+  if (sourceValue === null || sourceValue !== candidate) return null;
+
+  if (fieldEvidence.normalizedValue !== undefined && fieldEvidence.normalizedValue !== null) {
+    return toScalar(fieldEvidence.normalizedValue);
+  }
+  return candidate;
+}
+
+
+/**
+ * Return an exact-source-verified attribute without flattening a supported
+ * multi-valued fact. Arrays are limited to non-empty primitive values; the
+ * raw seed value must exactly match the captured source value.
+ */
+export function verifiedCatalogValue(
+  evidence: ProductCatalogEvidence | null | undefined,
+  field: string,
+  rawValue: unknown,
+): string | number | boolean | Array<string | number | boolean> | null {
+  const fieldEvidence = evidence?.fields[field];
+  if (!fieldEvidence || fieldEvidence.status !== "verified" || fieldEvidence.value === undefined) return null;
+
+  const isPrimitive = (value: unknown): value is string | number | boolean =>
+    typeof value === "string" || typeof value === "boolean" ||
+    (typeof value === "number" && Number.isFinite(value));
+  const normalize = (value: unknown): Array<string | number | boolean> | null => {
+    if (!Array.isArray(value) || value.length === 0 || value.length > 50 || !value.every(isPrimitive)) return null;
+    return value;
+  };
+  const same = (left: unknown, right: unknown): boolean => JSON.stringify(left) === JSON.stringify(right);
+
+  if (Array.isArray(rawValue)) {
+    const source = normalize(fieldEvidence.value);
+    const candidate = normalize(rawValue);
+    if (!source || !candidate || !same(source, candidate)) return null;
+    if (fieldEvidence.normalizedValue === undefined || fieldEvidence.normalizedValue === null) return candidate;
+    const normalized = normalize(fieldEvidence.normalizedValue);
+    return normalized ?? null;
+  }
+
+  if (!isPrimitive(rawValue) || !same(fieldEvidence.value, rawValue)) return null;
+  const normalized = fieldEvidence.normalizedValue;
+  return normalized === undefined || normalized === null
+    ? rawValue
+    : isPrimitive(normalized) ? normalized : null;
+}
