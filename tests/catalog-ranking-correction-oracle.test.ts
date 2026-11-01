@@ -98,6 +98,10 @@ describe("independent COR canonical-engine catalog correction oracle", () => {
     expect(byId.get("1000109052")?.attributes.frameShapes).toBeUndefined();
     expect(byId.get("1000109052")?.attributes.frameMaterial).toBeUndefined();
     expect(byId.get("1000100480")?.attributes.frameColor).toBeUndefined();
+    expect(byId.get("1000100480")?.attributes.frameShapes).toBeUndefined();
+    expect(byId.get("1000104615")?.attributes.frameShapes).toBeUndefined();
+    expect(byId.get("1000044519")?.attributes.frameShapes).toBeUndefined();
+    expect(byId.get("1000044519")?.attributes.faceCompatibility).toBeUndefined();
   });
 
   it("proves Ray-Ban lensColor and templeLengthMm are non-ranking fields in Domain Pack 1.2.0", async () => {
