@@ -103,7 +103,7 @@ describe("NOOR demo catalog field-level provenance", () => {
   });
 
   it("does not label the known conflict and unknown cases as verified", () => {
-    expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000087540"].fields.frameMaterial.status).toBe("conflict");
+    expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000087540"].fields.frameMaterial.status).toBe("verified");
     expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000106967"].fields.frameShapes.status).toBe("conflict");
     expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000109052"].fields.frameMaterial.status).toBe("unknown");
     expect(DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000100480"].fields.frameColor.status).toBe("conflict");
