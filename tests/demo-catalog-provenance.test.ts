@@ -26,10 +26,10 @@ describe("NOOR demo catalog field-level provenance", () => {
         if (item.status === "unknown") {
           // A URL/date may document an inspection that did not settle the field.
           if (item.sourceUrls.length === 0) expect(item.capturedAt).toBeNull();
-          else expect(item.capturedAt).toMatch(/^2026-10-(30|31)$/);
+          else expect(item.capturedAt).toMatch(/^(2026-10-(30|31)|2026-11-01)$/);
         } else {
           expect(item.sourceUrls.length, `${reference}.${field} needs source URLs`).toBeGreaterThan(0);
-          expect(item.capturedAt, `${reference}.${field} needs an audit capture date`).toMatch(/^2026-10-(30|31)$/);
+          expect(item.capturedAt, `${reference}.${field} needs an audit capture date`).toMatch(/^(2026-10-(30|31)|2026-11-01)$/);
         }
         if (item.status === "derived") {
           expect(item.note).toMatch(/rule/i);
@@ -45,6 +45,9 @@ describe("NOOR demo catalog field-level provenance", () => {
     const rb6461 = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000109052"];
     const oga = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000058221"];
     const prada = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000112234"];
+    const dior = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000100480"];
+    const gucci = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000104615"];
+    const persolOptical = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000044519"];
 
     expect(verifiedCatalogScalar(rayBan, "frameShapes", ["aviator"])).toBe("aviator");
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "metal")).toBe("metal");
@@ -57,6 +60,12 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(rb6461, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(oga, "frameShapes", ["angular", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(prada, "frameColor", "matte black")).toBe("black");
+    expect(verifiedCatalogScalar(dior, "frameShapes", ["square"])).toBeNull();
+    expect(verifiedCatalogScalar(gucci, "frameShapes", ["square"])).toBeNull();
+    expect(verifiedCatalogScalar(persolOptical, "frameMaterial", "acetate")).toBe("acetate");
+    expect(verifiedCatalogScalar(persolOptical, "frameColor", "black")).toBe("black");
+    expect(verifiedCatalogScalar(persolOptical, "frameShapes", ["rectangular", "square", "wayfarer"])).toBeNull();
+    expect(verifiedCatalogScalar(persolOptical, "faceCompatibility", ["round", "oval", "heart", "rectangle"])).toBeNull();
   });
 
   it("does not label the known conflict and unknown cases as verified", () => {
