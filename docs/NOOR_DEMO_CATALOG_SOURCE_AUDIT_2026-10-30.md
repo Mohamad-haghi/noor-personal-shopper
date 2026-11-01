@@ -258,3 +258,12 @@ Build Verification [#857](https://github.com/Mohamad-haghi/noor-personal-shopper
 - Dior test still expected `frameMaterial: null` after the source-verified `plastic` scalar was restored.
 
 Updated the assertions to 140 mm and `plastic`, respectively, in code commit `97d6d41ca397254bfc745f0439f92e6ca3079ba6`. Run #857 is a failure on the previous test head and is not a pass. Exact-head CI for `97d6d41ca397254bfc745f0439f92e6ca3079ba6` is pending.
+
+
+### Ray-Ban RB3025 exact UPC disambiguation — 2026-11-01
+
+The NOOR reference `1000053268` maps to UPC `8053672495188`, not the sibling UPC `8053672495171`. Ray-Ban's official exact page for UPC 8053672495188 identifies RB3025 181/71 size 62-14, metal frame, Arista gold, grey gradient lenses, category 3N and 140 mm temples: https://www.ray-ban.com/germany/sonnenbrillen/RB3025%20UNISEX%20aviator%20havana%20collection-arista%20gold/8053672495188. The 5171 sibling is the separate 58-14 / 135 mm variant and must not be used for this NOOR record. The candidate seed's 62-14-140 values are correct; the provenance ledger now ties them to the exact 5188 variant. A new all-verified-fields test checks source values against seed values and preserves multi-valued source shape in `frameShapesSource` where the scalar seed shape is intentionally withheld.
+
+### Exact-head test follow-up — 2026-11-01
+
+Build Verification #862 (https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269899900) exposed two stale assertions on head `a11f8f2a3d612006f7d1ac96361b6a4a860227a1`: an old Ray-Ban source-note assertion still expected the 58-14 sibling, and the generic provenance audit compared OGA's withheld scalar `frameShapes=[]` rather than its retained source array `frameShapesSource=["angular","oval"]`. The assertions were corrected to reflect the exact 5188 variant and preserved multi-value source field. Fix head: `16de6ce53dcda27ef28edc4b1a1601f102f5157d`; exact-head CI pending.
