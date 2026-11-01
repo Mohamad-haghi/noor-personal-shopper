@@ -11,11 +11,12 @@ const vite = await createServer({
   appType: "custom"
 });
 let seed;
+let verifiedScalar;
 try {
   const loaded = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-seed.ts");
   const evidenceModule = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-evidence.ts");
   seed = loaded.DEMO_CATALOG_SEED;
-  globalThis.__noorVerifiedCatalogScalar = evidenceModule.verifiedCatalogScalar;
+  verifiedScalar = evidenceModule.verifiedCatalogScalar;
 } finally {
   await vite.close();
 }
@@ -33,8 +34,7 @@ const products = seed.products.map((product) => {
   const custom = product.attributes?.customAttributes ?? {};
   const image = product.media?.primaryImage?.url ?? null;
   const evidence = custom.catalogEvidence ?? null;
-  const verifiedScalar = globalThis.__noorVerifiedCatalogScalar;
-  return {
+    return {
     id,
     sku: product.externalIds?.sku ?? id,
     name: product.name,
