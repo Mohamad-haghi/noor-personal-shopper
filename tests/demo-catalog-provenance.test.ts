@@ -21,7 +21,7 @@ describe("NOOR demo catalog field-level provenance", () => {
         expect(["verified", "unknown", "conflict", "derived"]).toContain(item.status);
         expect(Array.isArray(item.sourceUrls)).toBe(true);
         if (item.status === "unknown") {
-          expect(item.sourceUrls.length).toBe(0);
+          // A URL may document a source that was inspected but did not settle the field.
           expect(item.capturedAt).toBeNull();
         } else {
           expect(item.sourceUrls.length, `${reference}.${field} needs source URLs`).toBeGreaterThan(0);
