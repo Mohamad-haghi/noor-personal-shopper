@@ -15,12 +15,14 @@ const vite = await createServer({
 let seed;
 let evidenceByReference;
 let verifiedScalar;
+let verifiedValue;
 try {
   const seedModule = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-seed.ts");
   const evidenceModule = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-evidence.ts");
   seed = seedModule.DEMO_CATALOG_SEED;
   evidenceByReference = evidenceModule.DEMO_CATALOG_ATTRIBUTE_EVIDENCE;
   verifiedScalar = evidenceModule.verifiedCatalogScalar;
+  verifiedValue = evidenceModule.verifiedCatalogValue;
 } finally {
   await vite.close();
 }
@@ -36,14 +38,14 @@ const feedById = new Map(feed.products.map((product) => [product.id, product]));
 assert.equal(feedById.size, 15, "feed product IDs must be unique");
 
 const fieldMap = [
-  ["gender", "gender"],
-  ["frame", "frameMaterial"],
-  ["frameColor", "frameColor"],
-  ["shape", "frameShapes"],
-  ["faceCompatibility", "faceCompatibility"],
-  ["lensColor", "lensColor"],
-  ["uvProtection", "uvProtection"],
-  ["lensWidthMm", "lensWidthMm"]
+  ["gender", "gender", verifiedScalar],
+  ["frame", "frameMaterial", verifiedScalar],
+  ["frameColor", "frameColor", verifiedScalar],
+  ["shape", "frameShapes", verifiedValue],
+  ["faceCompatibility", "faceCompatibility", verifiedValue],
+  ["lensColor", "lensColor", verifiedScalar],
+  ["uvProtection", "uvProtection", verifiedScalar],
+  ["lensWidthMm", "lensWidthMm", verifiedScalar]
 ];
 
 for (const seedProduct of seed.products) {
@@ -61,8 +63,8 @@ for (const seedProduct of seed.products) {
   assert.equal(feedProduct.availabilitySource, "demo");
   assert.equal("catalogEvidence" in feedProduct, false, "internal provenance ledger must not leak into the public feed");
 
-  for (const [feedField, evidenceField] of fieldMap) {
-    const expected = verifiedScalar(evidence, evidenceField, custom[evidenceField]);
+  for (const [feedField, evidenceField, project] of fieldMap) {
+    const expected = project(evidence, evidenceField, custom[evidenceField]);
     assert.deepEqual(
       feedProduct[feedField],
       expected,
