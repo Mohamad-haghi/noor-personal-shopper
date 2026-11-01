@@ -54,6 +54,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     const dior = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000100480"];
     const gucci = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000104615"];
     const persolOptical = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000044519"];
+    const dolceGabbana = DEMO_CATALOG_ATTRIBUTE_EVIDENCE["1000084476"];
 
     expect(verifiedCatalogScalar(rayBan, "frameShapes", ["aviator"])).toBe("aviator");
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "metal")).toBe("metal");
@@ -73,6 +74,9 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(persolOptical, "frameColor", "black")).toBe("black");
     expect(verifiedCatalogScalar(persolOptical, "frameShapes", ["rectangular", "square", "wayfarer"])).toBeNull();
     expect(verifiedCatalogScalar(persolOptical, "faceCompatibility", ["round", "oval", "heart", "rectangle"])).toBeNull();
+    expect(verifiedCatalogScalar(dolceGabbana, "frameColor", null)).toBeNull();
+    expect(verifiedCatalogScalar(dolceGabbana, "lensColor", "grey")).toBe("grey");
+    expect(verifiedCatalogScalar(dolceGabbana, "uvProtection", "UV400")).toBe("UV400");
   });
 
   it("does not label the known conflict and unknown cases as verified", () => {
