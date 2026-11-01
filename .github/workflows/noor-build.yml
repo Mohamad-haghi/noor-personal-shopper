@@ -26,7 +26,7 @@ jobs:
           repository: Mohamad-haghi/digital-sales-core
           path: digital-sales-core
           token: ${{ secrets.CORE_REPO_TOKEN }}
-          ref: d306c5efee32707362ac2ee449ef85f95cd876a5
+          ref: d9092ae064764667028239831679cca5f9f87d77
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,6 +43,26 @@ jobs:
 
       - name: Type-check and build
         run: npm run build
+
+      - name: Generate exact 15-product demo feed
+        run: node scripts/export-demo-catalog-feed.mjs
+
+      - name: Verify evidence-gated demo feed
+        run: node scripts/verify-demo-catalog-feed.mjs
+
+      - name: Install COR test dependencies
+        working-directory: digital-sales-core
+        run: npm install --no-audit --no-fund
+
+      - name: Build pinned COR branch
+        working-directory: digital-sales-core
+        run: npm run build
+
+      - name: Run COR Mapping v1.2 against the generated NOOR feed
+        working-directory: digital-sales-core
+        env:
+          NOOR_CATALOG_FEED_PATH: ../public/catalog-feed.json
+        run: node --test tests/shopper-noor-generated-feed-integration.test.mjs
 
   live-ui-comparison-handoff:
     if: github.event_name == 'workflow_dispatch' && inputs.run_live_ui
