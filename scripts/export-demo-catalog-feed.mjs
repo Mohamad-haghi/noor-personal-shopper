@@ -34,7 +34,7 @@ const products = seed.products.map((product) => {
   const custom = product.attributes?.customAttributes ?? {};
   const image = product.media?.primaryImage?.url ?? null;
   const evidence = custom.catalogEvidence ?? null;
-    return {
+  return {
     id,
     sku: product.externalIds?.sku ?? id,
     name: product.name,
