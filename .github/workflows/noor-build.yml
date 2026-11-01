@@ -26,7 +26,7 @@ jobs:
           repository: Mohamad-haghi/digital-sales-core
           path: digital-sales-core
           token: ${{ secrets.CORE_REPO_TOKEN }}
-          ref: 88d687f5155cddf7da9717a75e150aaac5bf8064
+          ref: 354b10eee7d61136b729a5dd116f13876270d2e8
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
