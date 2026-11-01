@@ -16,7 +16,7 @@ describe("source-backed demo catalog corrections", () => {
     const attributes = customAttributes("noor-demo-001-ray-ban-rb3025-181-71");
 
     expect(attributes.lensColor).toBe("grey");
-    expect(attributes.templeLengthMm).toBe(135);
+    expect(attributes.templeLengthMm).toBe(140);
     expect(attributes.lensWidthMm).toBe(62);
     expect(attributes.bridgeWidthMm).toBe(14);
     expect(attributes.templeLengthMm).toBe(140);
@@ -87,7 +87,7 @@ describe("source-backed demo catalog corrections", () => {
 
   it("withholds disputed Dior EPZ/1I colors while preserving source-supported construction and UV facts", () => {
     const attributes = customAttributes("noor-demo-007-dior-30montaigne-epz-1i");
-    expect(attributes.frameMaterial).toBeNull();
+    expect(attributes.frameMaterial).toBe("plastic");
     expect(attributes.frameMaterialDescription).toBe("plastic");
     expect(attributes.frameColor).toBeNull();
     expect(attributes.lensColor).toBeNull();
