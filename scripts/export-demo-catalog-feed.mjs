@@ -45,12 +45,12 @@ const products = seed.products.map((product) => {
     description: product.description ?? null,
     model: typeof custom.model === "string" ? custom.model : null,
     noorReference: typeof custom.noorReference === "string" ? custom.noorReference : null,
-    // Only exact-source-verified values are exported. Multi-valued shape/face facts
-    // remain arrays and are consumed by the paired COR array-capable Mapping v1.2 path.
+    // Preserve exact-source-verified arrays as typed values; never join them into strings.
     gender: verifiedScalar(evidence, "gender", custom.gender),
-    frame: verifiedScalar(evidence, "frameMaterial", custom.frameMaterial),
-    frameColor: verifiedScalar(evidence, "frameColor", custom.frameColor),
-    shape: verifiedValue(evidence, "frameShapes", custom.frameShapes),
+    frame: verifiedValue(evidence, "frameMaterial", custom.frameMaterialComponents ?? custom.frameMaterial),
+    frameColor: verifiedValue(evidence, "frameColor", custom.frameColorComponents ?? custom.frameColor),
+    // OGA stores its multi-value source taxonomy under frameShapesSource.
+    shape: verifiedValue(evidence, "frameShapes", custom.frameShapesSource ?? custom.frameShapes),
     faceCompatibility: verifiedValue(evidence, "faceCompatibility", custom.faceCompatibility),
     lensColor: verifiedScalar(evidence, "lensColor", custom.lensColor),
     uvProtection: verifiedScalar(evidence, "uvProtection", custom.uvProtection),
