@@ -19,7 +19,7 @@ describe("source-backed demo catalog corrections", () => {
     expect(attributes.templeLengthMm).toBe(135);
     expect(attributes.lensWidthMm).toBe(58);
     expect(attributes.sourceNote).toContain("rb3025-18171");
-    expect(attributes.sourceNote).toContain("Lens width remains from the captured seed");
+    expect(attributes.sourceNote).toContain("Exact official size code is 58-14");
   });
 
   it("keeps CAZAL 607 variant 001 frame material source-backed without inventing unresolved facts", () => {
