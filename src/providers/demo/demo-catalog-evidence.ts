@@ -200,17 +200,20 @@ export const DEMO_CATALOG_ATTRIBUTE_EVIDENCE: Readonly<Record<string, ProductCat
       reference,
       {
         ...record,
-        fields: Object.fromEntries(
-          REQUIRED_RECOMMENDATION_FIELDS.map((field) => [
-            field,
-            record.fields[field] ?? {
-              status: "unknown" as const,
-              sourceUrls: [],
-              sourceLabel: "Not established in the catalog audit",
-              capturedAt: null,
-            },
-          ]),
-        ),
+        fields: {
+          ...record.fields,
+          ...Object.fromEntries(
+            REQUIRED_RECOMMENDATION_FIELDS.map((field) => [
+              field,
+              record.fields[field] ?? {
+                status: "unknown" as const,
+                sourceUrls: [],
+                sourceLabel: "Not established in the catalog audit",
+                capturedAt: null,
+              },
+            ]),
+          ),
+        },
       },
     ]),
   );
