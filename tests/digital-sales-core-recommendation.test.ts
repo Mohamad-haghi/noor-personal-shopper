@@ -111,6 +111,44 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(sentPreferences.gender).toBe("female");
   });
 
+  it("maps each supported Persian use case to a stable COR intent value", async () => {
+    const catalogService = new CatalogService(new DemoCatalogProvider());
+    let sentUseCase: string | undefined;
+    const remoteClient = {
+      recommend: async (payload: unknown) => {
+        const request = payload as { requestId: string; intent: { useCase?: string } };
+        sentUseCase = request.intent.useCase;
+        return {
+          contractVersion: "1.0.0",
+          requestId: request.requestId,
+          result: { source: "cor_canonical_engine", demoOnly: true, recommendations: [] },
+        };
+      },
+    } as unknown as import("../src/integration/cor-shopper-remote-client").CorShopperRemoteClient;
+    const bridge = new NoorDigitalSalesRecommendationBridge(catalogService, remoteClient);
+    const cases = [
+      ["استفاده روزمره", "everyday"],
+      ["کار و جلسات", "work_meetings"],
+      ["رانندگی و فضای باز", "driving_outdoors"],
+      ["مناسبت و استایل", "occasion_style"],
+    ] as const;
+
+    for (const [label, expected] of cases) {
+      await bridge.generateRecommendations({ id: "use-case-mapping" }, {
+        occasion: null,
+        season: null,
+        requestSource: "shopper_request",
+        journey: {
+          productType: "عینک آفتابی",
+          useCase: label,
+          style: null,
+          faceShape: null,
+        },
+      });
+      expect(sentUseCase).toBe(expected);
+    }
+  });
+
   it("omits optional COR criteria when the shopper selects no preference", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
     let sentPreferences: Record<string, unknown> = {};

@@ -59,6 +59,17 @@ function categoryFor(productType: string | null): string | undefined {
   return undefined;
 }
 
+/** Convert NOOR's Persian use-case labels to stable, non-localized COR intent values. */
+function useCaseForPreference(value: string | null | undefined): string | undefined {
+  const map: Record<string, string> = {
+    "استفاده روزمره": "everyday",
+    "کار و جلسات": "work_meetings",
+    "رانندگی و فضای باز": "driving_outdoors",
+    "مناسبت و استایل": "occasion_style",
+  };
+  return value ? map[value] : undefined;
+}
+
 function shapeForPreference(value: string | null): string | undefined {
   const map: Record<string, string> = { "خلبانی": "aviator", "مستطیلی": "rectangular", "گرد": "round", "مربعی": "square", "پروانه‌ای": "butterfly", "ویفِرر": "wayfarer" };
   return value ? map[value] : undefined;
@@ -178,6 +189,7 @@ function toIntent(
   const frameColor = frameColorForPreference(journey?.frameColor);
   const gender = genderForPreference(journey?.gender);
   const category = categoryFor(journey?.productType ?? null);
+  const useCase = useCaseForPreference(journey?.useCase ?? context.occasion);
   const mandatory = new Set(journey?.mandatoryCriteria ?? []);
   const constraints: Record<string, string | number | boolean> = {};
   if (mandatory.has("frameShape") && frameShape) { constraints.shape = frameShape; constraints.frameShapes = frameShape; }
@@ -188,7 +200,7 @@ function toIntent(
     id: `noor-intent-${shopperId.id}`,
     sessionId: `noor-session-${shopperId.id}`,
     ...(category ? { category } : {}),
-    ...(context.occasion ? { useCase: context.occasion } : {}),
+    ...(useCase ? { useCase } : {}),
     preferences: {
       // Keep the legacy key understood by the currently active COR Domain Pack 1.1.0.
       // Newer packs consume frameShapes; sending both preserves forward compatibility.
@@ -252,9 +264,9 @@ export class NoorDigitalSalesRecommendationBridge {
         sessionId: intent.sessionId,
         intent: {
           ...(intent.category ? { category: intent.category } : {}),
-          // NOOR's journey labels are Persian presentation copy, not canonical
-          // COR useCase identifiers. Omit until an explicit mapping is defined;
-          // sending UI labels can yield an unranked/empty decision result.
+          // Send only explicitly mapped, stable use-case identifiers. The active
+          // Domain Pack does not score useCase; it remains auditable intent context.
+          ...(intent.useCase ? { useCase: intent.useCase } : {}),
           preferences: intent.preferences,
           constraints: intent.constraints,
           priorities: intent.priorities,
