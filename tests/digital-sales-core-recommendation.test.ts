@@ -111,12 +111,12 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
     expect(sentPreferences.gender).toBe("female");
   });
 
-  it("maps white frame color and preserves use-case as non-scoring COR context", async () => {
+  it("maps counselor colors and the documented use-case vocabulary to non-scoring COR context", async () => {
     const catalogService = new CatalogService(new DemoCatalogProvider());
-    let sentIntent: { useCase?: string; preferences: Record<string, unknown> } | undefined;
+    let sentIntent: { useCase?: string; preferences: Record<string, unknown>; constraints: Record<string, unknown> } | undefined;
     const remoteClient = {
       recommend: async (payload: unknown) => {
-        const request = payload as { requestId: string; intent: { useCase?: string; preferences: Record<string, unknown> } };
+        const request = payload as { requestId: string; intent: { useCase?: string; preferences: Record<string, unknown>; constraints: Record<string, unknown> } };
         sentIntent = request.intent;
         return {
           contractVersion: "1.0.0",
@@ -134,9 +134,31 @@ describe("NOOR Digital Sales Core recommendation bridge", () => {
         style: null, faceShape: null, frameColor: "سفید",
       },
     });
-
     expect(sentIntent?.preferences.frameColor).toBe("white");
     expect(sentIntent?.useCase).toBe("driving_outdoors");
+    expect(sentIntent?.preferences).not.toHaveProperty("useCase");
+    expect(sentIntent?.constraints).toEqual({});
+
+    const useCases = [
+      ["استفاده روزمره", "everyday"],
+      ["کار و جلسات", "work_meetings"],
+      ["رانندگی و فضای باز", "driving_outdoors"],
+    ] as const;
+    for (const [label, canonical] of useCases) {
+      await bridge.generateRecommendations({ id: `use-case-${canonical}` }, {
+        occasion: null, season: null, requestSource: "shopper_request",
+        journey: { productType: "عینک طبی", useCase: label, style: null, faceShape: null },
+      });
+      expect(sentIntent?.useCase).toBe(canonical);
+      expect(sentIntent?.preferences).not.toHaveProperty("useCase");
+      expect(sentIntent?.constraints).toEqual({});
+    }
+
+    await bridge.generateRecommendations({ id: "unsupported-use-case" }, {
+      occasion: null, season: null, requestSource: "shopper_request",
+      journey: { productType: "عینک طبی", useCase: "مناسبت و استایل", style: null, faceShape: null },
+    });
+    expect(sentIntent?.useCase).toBeUndefined();
   });
 
   it("omits optional COR criteria when the shopper selects no preference", async () => {
