@@ -249,3 +249,12 @@ The seed and ledger are corrected to lens width 62 mm, bridge 14 mm, temple leng
 The exact Alensa and eBay pages already cited in this audit agree on plastic construction. The seed had retained `frameMaterial: null` while keeping only a descriptive note, which unnecessarily withheld a supported scalar. The candidate now sets the seed's scalar frame material to `plastic`, consistent with the ledger's verified value. Shape remains multi-valued (square + oval) and therefore withheld from the current scalar COR feed; frame/lens color conflicts remain unresolved.
 
 Candidate code changes: branch `fix/catalog-exact-sku-facts`; latest commit sequence begins `17fc3a1`, `7956087`, `fddc291`, `7035c3e`, `f16fb44`, `70a7664`, `6dc4ff9`. Exact-head CI has not yet been observed for final head `6dc4ff9ad61d3575807522be61afc2cdc335114c`; prior Build #847 does not validate these later changes.
+
+
+### CI result and stale assertion correction after exact-UPC update — 2026-11-01
+
+Build Verification [#857](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269814803) ran on the pre-test-fix candidate and failed two stale assertions only:
+- RB3025 test still expected 135 mm temple length after the exact UPC `8053672495188` correction to size 62-14-140.
+- Dior test still expected `frameMaterial: null` after the source-verified `plastic` scalar was restored.
+
+Updated the assertions to 140 mm and `plastic`, respectively, in code commit `97d6d41ca397254bfc745f0439f92e6ca3079ba6`. Run #857 is a failure on the previous test head and is not a pass. Exact-head CI for `97d6d41ca397254bfc745f0439f92e6ca3079ba6` is pending.
