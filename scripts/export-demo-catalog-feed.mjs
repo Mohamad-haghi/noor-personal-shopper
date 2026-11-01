@@ -13,7 +13,9 @@ const vite = await createServer({
 let seed;
 try {
   const loaded = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-seed.ts");
+  const evidenceModule = await vite.ssrLoadModule("/src/providers/demo/demo-catalog-evidence.ts");
   seed = loaded.DEMO_CATALOG_SEED;
+  globalThis.__noorVerifiedCatalogScalar = evidenceModule.verifiedCatalogScalar;
 } finally {
   await vite.close();
 }
@@ -30,6 +32,8 @@ const products = seed.products.map((product) => {
   ids.add(id);
   const custom = product.attributes?.customAttributes ?? {};
   const image = product.media?.primaryImage?.url ?? null;
+  const evidence = custom.catalogEvidence ?? null;
+  const verifiedScalar = globalThis.__noorVerifiedCatalogScalar;
   return {
     id,
     sku: product.externalIds?.sku ?? id,
@@ -39,14 +43,15 @@ const products = seed.products.map((product) => {
     description: product.description ?? null,
     model: typeof custom.model === "string" ? custom.model : null,
     noorReference: typeof custom.noorReference === "string" ? custom.noorReference : null,
-    gender: typeof custom.gender === "string" ? custom.gender : null,
-    frame: typeof custom.frameMaterial === "string" ? custom.frameMaterial : null,
-    frameColor: typeof custom.frameColor === "string" ? custom.frameColor : null,
-    shape: Array.isArray(custom.frameShapes) ? custom.frameShapes.join(", ") : null,
-    // COR mapping v1.2.0 accepts scalar attributes; serialize the source list consistently with `shape`.
-    faceCompatibility: Array.isArray(custom.faceCompatibility) ? custom.faceCompatibility.join(", ") : null,
-    lensColor: typeof custom.lensColor === "string" ? custom.lensColor : null,
-    uvProtection: typeof custom.uvProtection === "string" ? custom.uvProtection : null,
+    // Only source-verified scalar values are sent to the current COR scalar mapper.
+    // Multi-valued verified facts are withheld until NOOR #52 + COR #268 land together.
+    gender: verifiedScalar(evidence, "gender", custom.gender),
+    frame: verifiedScalar(evidence, "frameMaterial", custom.frameMaterial),
+    frameColor: verifiedScalar(evidence, "frameColor", custom.frameColor),
+    shape: verifiedScalar(evidence, "frameShapes", custom.frameShapes),
+    faceCompatibility: verifiedScalar(evidence, "faceCompatibility", custom.faceCompatibility),
+    lensColor: verifiedScalar(evidence, "lensColor", custom.lensColor),
+    uvProtection: verifiedScalar(evidence, "uvProtection", custom.uvProtection),
     lensWidthMm: typeof custom.lensWidthMm === "number" ? custom.lensWidthMm : null,
     image,
     images: image ? [image] : [],
