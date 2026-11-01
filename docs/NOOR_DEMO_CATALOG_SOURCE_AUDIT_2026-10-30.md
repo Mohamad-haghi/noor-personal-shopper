@@ -218,3 +218,8 @@ Build Verification #833 (https://github.com/Mohamad-haghi/noor-personal-shopper/
 The projection now spreads all original `record.fields` first, then fills any missing required ranking fields with explicit `unknown` records. This preserves supplemental provenance while retaining mandatory coverage for every ranking attribute. A regression assertion now checks that RB3025 lensColor and DG2204 lensMaterial evidence survive the projection. The stale #833 failure is not treated as a pass; exact-head CI for the correction is pending.
 
 Current code candidate head: `a48579175aac7400e6532aedd6a578873c5cb455`.
+
+
+### Exact-head validation for evidence-map preservation — 2026-11-01
+
+NOOR Build Verification [#836](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41269439640) passed on candidate head `a48579175aac7400e6532aedd6a578873c5cb455`: 35/35 test files, 140/140 tests, TypeScript and Vite build. The live UI/COR handoff job was skipped by design. This confirms the supplemental evidence-field preservation fix; it does not validate subsequent FT5661 / PR51YV / lens-width changes now being developed.
