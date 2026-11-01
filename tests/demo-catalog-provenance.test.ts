@@ -5,6 +5,12 @@ import { DEMO_CATALOG_ATTRIBUTE_EVIDENCE, verifiedCatalogScalar } from "../src/p
 describe("NOOR demo catalog field-level provenance", () => {
   it("covers all 15 exact demo references and attaches the same evidence to each seed product", () => {
     expect(DEMO_CATALOG_SEED.products).toHaveLength(15);
+    const diorSeed = DEMO_CATALOG_SEED.products.find((item) => item.identity.id === "noor-demo-007-dior-30montaigne-epz-1i");
+    const gucciSeed = DEMO_CATALOG_SEED.products.find((item) => item.identity.id === "noor-demo-008-gucci-gg0900s-005");
+    expect((diorSeed!.attributes.customAttributes as Record<string, unknown>).frameShapes).toEqual(["square", "oval"]);
+    expect((gucciSeed!.attributes.customAttributes as Record<string, unknown>).frameShapes).toEqual([]);
+    expect((gucciSeed!.attributes.customAttributes as Record<string, unknown>).frameMaterial).toBeNull();
+    expect((gucciSeed!.attributes.customAttributes as Record<string, unknown>).frameColor).toBeNull();
     expect(Object.keys(DEMO_CATALOG_ATTRIBUTE_EVIDENCE)).toHaveLength(15);
 
     for (const product of DEMO_CATALOG_SEED.products) {
@@ -61,6 +67,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(oga, "frameShapes", ["angular", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(prada, "frameColor", "matte black")).toBe("black");
     expect(verifiedCatalogScalar(dior, "frameShapes", ["square"])).toBeNull();
+    expect(verifiedCatalogScalar(dior, "frameShapes", ["square", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(gucci, "frameShapes", ["square"])).toBeNull();
     expect(verifiedCatalogScalar(persolOptical, "frameMaterial", "acetate")).toBe("acetate");
     expect(verifiedCatalogScalar(persolOptical, "frameColor", "black")).toBe("black");
