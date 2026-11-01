@@ -100,7 +100,7 @@ describe("NOOR demo catalog field-level provenance", () => {
     expect(verifiedCatalogScalar(rayBan, "bridgeWidthMm", 14)).toBe(14);
     expect(verifiedCatalogScalar(rayBan, "templeLengthMm", 140)).toBe(140);
     expect(verifiedCatalogScalar(rayBan, "faceCompatibility", ["round", "oval"])).toBeNull();
-    expect(verifiedCatalogValue(rayBan, "faceCompatibility", ["round", "oval"])).toEqual(["round", "oval"]);
+    expect(verifiedCatalogValue(rayBan, "faceCompatibility", ["round", "oval", "heart", "rectangle"])).toEqual(["round", "oval"]);
     expect(verifiedCatalogValue(rayBan, "frameShapes", ["aviator"])).toEqual(["aviator"]);
     expect(verifiedCatalogValue(rayBan, "frameShapes", ["wayfarer"])).toBeNull();
     expect(verifiedCatalogScalar(persol, "frameMaterial", "acetate")).toBe("acetate");
