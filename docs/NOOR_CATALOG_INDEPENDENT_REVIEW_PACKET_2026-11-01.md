@@ -74,3 +74,8 @@ The reviewer should leave a formal GitHub PR review on [NOOR PR #92](https://git
 ## Release boundaries
 
 Do not merge PR #92 or PR #96, deploy GitHub Pages, mutate the live COR installation, change Render/Neon/Clerk, or start visual release testing solely because this packet exists. Approval is an evidence review only; release/deployment authorization remains separate.
+
+
+## Latest exact dependency-parity validation
+
+Build Verification #875 passed on candidate commit `2bef438e4a352f03872b1b82fd1dab87cb1e060a`, using the exact COR dependency `d306c5efee32707362ac2ee449ef85f95cd876a5` used by Pages deployment and package.json: 35/35 test files, 144/144 tests, TypeScript/Vite build, and generated-feed verifier. The live browser/COR handoff job was skipped. This is CI/build proof only; an independent reviewer must still record a formal PR review.
