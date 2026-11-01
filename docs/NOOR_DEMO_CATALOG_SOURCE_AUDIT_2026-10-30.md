@@ -233,3 +233,19 @@ Build Verification #845 (https://github.com/Mohamad-haghi/noor-personal-shopper/
 ### Persol PO0649 95/31 — exact manufacturer source resolves material conflict — 2026-11-01
 
 Persol's official exact-variant page for `0PO0649-95/31` explicitly identifies a black acetate frame, green crystal lenses, model code PO0649 and 54 mm lens width: https://www.persol.com/en-us/products/0po0649-95_31. This resolves the generic "nylon" marketing wording on the NOOR product page in favor of the manufacturer's structured specification. The candidate evidence ledger now marks frame material verified as acetate, and source-verifies green lens color and 54 mm width. The existing face-fit list remains a separate product-level assertion and is not derived from the style or material evidence.
+
+
+### Superseding exact-UPC correction — Ray-Ban RB3025 181/71 — 2026-11-01
+
+A follow-up UPC-level check found that the previous 58 mm correction used the wrong size variant. NOOR reference `1000053268` maps to UPC/EAN `8053672495188`, which exact-UPC listings identify as the **62-14-140** variant. UPC `8053672495171` is the separate **58-14-135** variant. Evidence:
+- Exact UPC listing: https://www.timepiece.com/ray-ban-rb3025-181-71-62.html
+- Exact UPC listing: https://isolani.com/de/occhiali-da-sole/8053672495188-ray-ban-aviator-large-metal-rb3025-181-71-62.html
+- Cross-check showing both UPCs with distinct size options: https://www.edel-optics.de/AVIATOR-LARGE-METAL-%28RB3025-181-71%29-von-Ray-Ban.html
+
+The seed and ledger are corrected to lens width 62 mm, bridge 14 mm, temple length 140 mm; tests now assert the exact UPC mapping. Earlier references in this audit that treated 58-14-135 as the NOOR reference size are superseded and must not be used.
+
+### Dior 30Montaigne EPZ/1I — verified scalar material restored
+
+The exact Alensa and eBay pages already cited in this audit agree on plastic construction. The seed had retained `frameMaterial: null` while keeping only a descriptive note, which unnecessarily withheld a supported scalar. The candidate now sets the seed's scalar frame material to `plastic`, consistent with the ledger's verified value. Shape remains multi-valued (square + oval) and therefore withheld from the current scalar COR feed; frame/lens color conflicts remain unresolved.
+
+Candidate code changes: branch `fix/catalog-exact-sku-facts`; latest commit sequence begins `17fc3a1`, `7956087`, `fddc291`, `7035c3e`, `f16fb44`, `70a7664`, `6dc4ff9`. Exact-head CI has not yet been observed for final head `6dc4ff9ad61d3575807522be61afc2cdc335114c`; prior Build #847 does not validate these later changes.
