@@ -226,20 +226,28 @@ export function verifiedCatalogScalar(
   const fieldEvidence = evidence?.fields[field];
   if (!fieldEvidence || fieldEvidence.status !== "verified") return null;
 
-  let candidate = rawValue;
-  if (Array.isArray(candidate)) {
-    if (candidate.length !== 1) return null;
-    [candidate] = candidate;
-  }
-  if (typeof candidate !== "string" && typeof candidate !== "number" && typeof candidate !== "boolean") {
-    return null;
+  const toScalar = (value: unknown): string | number | boolean | null => {
+    if (Array.isArray(value)) {
+      if (value.length !== 1) return null;
+      [value] = value;
+    }
+    return typeof value === "string" || typeof value === "number" || typeof value === "boolean"
+      ? value
+      : null;
+  };
+
+  const candidate = toScalar(rawValue);
+  if (candidate === null) return null;
+
+  // The raw seed value must match the captured source value. Only then may
+  // the verified canonical normalized value be sent to the scalar feed.
+  if (fieldEvidence.value !== undefined) {
+    const sourceValue = toScalar(fieldEvidence.value);
+    if (sourceValue === null || sourceValue !== candidate) return null;
   }
 
-  let expected = fieldEvidence.normalizedValue ?? fieldEvidence.value;
-  if (Array.isArray(expected)) {
-    if (expected.length !== 1) return null;
-    [expected] = expected;
+  if (fieldEvidence.normalizedValue !== undefined && fieldEvidence.normalizedValue !== null) {
+    return toScalar(fieldEvidence.normalizedValue);
   }
-  if (expected !== undefined && expected !== null && expected !== candidate) return null;
   return candidate;
 }
