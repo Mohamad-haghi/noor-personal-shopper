@@ -26,7 +26,7 @@ jobs:
           repository: Mohamad-haghi/digital-sales-core
           path: digital-sales-core
           token: ${{ secrets.CORE_REPO_TOKEN }}
-          ref: e3b6945250cb11efd572f984c084f09143d49c44
+          ref: b21add59f595a4f147d3f62a90d8620886aa2214
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -74,8 +74,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - name: Install isolated Playwright dependency
         run: |
           npm install --prefix "$RUNNER_TEMP/noor-playwright" playwright@1.56.1 --no-audit --no-fund
