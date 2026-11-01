@@ -44,9 +44,12 @@ describe("NOOR demo catalog field-level provenance", () => {
 
     expect(verifiedCatalogScalar(rayBan, "frameShapes", ["aviator"])).toBe("aviator");
     expect(verifiedCatalogScalar(rayBan, "frameMaterial", "metal")).toBe("metal");
+    expect(verifiedCatalogScalar(rayBan, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(rayBan, "faceCompatibility", ["round", "oval"])).toBeNull();
     expect(verifiedCatalogScalar(persol, "frameMaterial", "acetate")).toBeNull();
     expect(verifiedCatalogScalar(cazal, "frameMaterial", ["acetate", "metal"])).toBeNull();
+    expect(verifiedCatalogScalar(cazal, "frameMaterial", "acetate")).toBeNull();
+    expect(verifiedCatalogScalar(cazal, "frameColor", "gold + black")).toBeNull();
     expect(verifiedCatalogScalar(rb6461, "frameMaterial", "nylon")).toBeNull();
     expect(verifiedCatalogScalar(oga, "frameShapes", ["angular", "oval"])).toBeNull();
   });
