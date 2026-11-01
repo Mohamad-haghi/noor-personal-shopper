@@ -34,7 +34,7 @@ describe("source-backed demo catalog corrections", () => {
     expect(attributes.faceCompatibility).toBeNull();
     expect(attributes.sourceNote).toContain("cazal-eyewear.com/products/mod-607-3");
     expect(attributes.sourceNote).toContain("cazal-shop.jp/c/legends/607");
-    expect(attributes.sourceNote).toContain("temple material remain unresolved");
+    expect(attributes.sourceNote).toContain("temple material are withheld");
   });
 
   it("does not introduce use-case suitability from these catalog fact corrections", () => {
