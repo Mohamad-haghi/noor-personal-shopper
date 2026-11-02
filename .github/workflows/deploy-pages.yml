@@ -408,24 +408,42 @@ jobs:
             });
             const body = await response.json().catch(() => ({}));
             const recommendations = body.result?.recommendations;
-            const expected = feed.products
+            const rankedCatalog = feed.products
               .map((product, index) => ({ product, index }))
               .filter(({ product }) => product.type === scenario.category && product.availability === true)
               .map(({ product, index }) => ({ productId: product.id, score: expectedScoreFromCatalog(product, scenario), index }))
-              .sort((a, b) => b.score - a.score || a.index - b.index)
-              .slice(0, 3);
+              .sort((a, b) => b.score - a.score || a.index - b.index);
+            const expected = rankedCatalog.slice(0, 3);
             const expectedScores = expected.map(item => item.score);
             const expectedIds = expected.map(item => item.productId);
             const actualScores = Array.isArray(recommendations)
               ? recommendations.map(item => item?.score ?? null) : null;
             const actualIds = Array.isArray(recommendations)
               ? recommendations.map(item => item?.productId ?? null) : null;
-            const scoreMismatch = !Array.isArray(actualScores) ||
-              actualScores.length !== expectedScores.length ||
-              actualScores.some((score, index) =>
-                typeof score !== "number" || Math.abs(score - expectedScores[index]) > 1e-9
-              );
-            const rankingMismatch = JSON.stringify(actualIds) !== JSON.stringify(expectedIds);
+            const expectedById = new Map(rankedCatalog.map(item => [item.productId, item]));
+            const expectedCutoffScore = expected.at(-1)?.score ?? Number.NEGATIVE_INFINITY;
+            const scoreMismatch = !Array.isArray(actualScores) || !Array.isArray(actualIds) ||
+              actualScores.length !== actualIds.length ||
+              actualScores.some((score, index) => {
+                const expectedItem = expectedById.get(actualIds[index]);
+                return typeof score !== "number" || !expectedItem ||
+                  Math.abs(score - expectedItem.score) > 1e-9;
+              });
+            // Different deterministic tie-breakers are acceptable only among equal scores.
+            // Products above the top-N cutoff must all appear; actual scores must remain descending.
+            const actualIdSet = new Set(actualIds ?? []);
+            const missingHigherScoredProduct = rankedCatalog.some(item =>
+              item.score > expectedCutoffScore && !actualIdSet.has(item.productId)
+            );
+            const actualScoreOrderInvalid = Array.isArray(actualScores) && actualScores.some((score, index) =>
+              index > 0 && typeof score === "number" && typeof actualScores[index - 1] === "number" &&
+              score > actualScores[index - 1] + 1e-9
+            );
+            const rankingMismatch = !Array.isArray(actualIds) ||
+              actualIds.length !== expected.length ||
+              actualIdSet.size !== actualIds.length ||
+              actualIds.some(id => !expectedById.has(id) || expectedById.get(id).score < expectedCutoffScore) ||
+              missingHigherScoredProduct || actualScoreOrderInvalid;
             const categoryLeak = Array.isArray(recommendations) && recommendations.some(item => {
               const product = feed.products.find(candidate => candidate.id === item?.productId);
               return !product || product.type !== scenario.category;
