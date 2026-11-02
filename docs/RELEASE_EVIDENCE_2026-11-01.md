@@ -1,5 +1,5 @@
 # NOOR Demo — Engineering Status and Release Evidence
-**Snapshot:** 2026-11-02 (corrected after exact-SKU feed audit)  
+**Snapshot:** 2026-11-02 (post-deployment acceptance complete)  
 **Purpose:** current handoff for engineers maintaining the demo. GitHub history remains the detailed audit trail.
 
 ## Product boundary
@@ -34,7 +34,7 @@ NOOR is a Persian-first demo/reference storefront for the COR Shopper decision e
 - Merged commit `9122a6445be9878ddfef5126453efbc765200668`.
 - Titanium remains selectable as a sunglasses material; counselor can communicate that the current demo catalog has no verified sunglasses titanium item. If mandatory, zero results are expected. **Keep this choice; do not remove it to fit current inventory.**
 - Build Verification [#41313127496](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41313127496): 32/32 test files; 126/126 tests; TS/Vite build passed.
-- Latest Pages deployment [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285): live COR API scenarios and Chromium smoke passed; WebKit pending.
+- Latest Pages deployment [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285): deploy, HTTPS feed verification, live COR API acceptance, Chromium and WebKit all passed.
 
 ## Corrected verification status
 
@@ -45,19 +45,19 @@ NOOR is a Persian-first demo/reference storefront for the COR Shopper decision e
 | Exact-SKU evidence ledger and typed feed | **MERGED + DEPLOYED** in PR #108; exact-head CI 35/35 files, 146/146 tests; Pages run #41458169285 feed, API and Chromium checks passed |
 | COR-backed live recommendation/session | RUNTIME-VERIFIED for recorded scenarios |
 | Top-three score/order and UI percentages | RUNTIME-VERIFIED for recorded Chromium/WebKit scenarios |
-| COR no-results for mandatory criteria with no match | RUNTIME-VERIFIED for recorded mandatory sunglasses+titanium scenario |
+| COR no-results for mandatory criteria with no match | API RUNTIME-VERIFIED (HTTP 200 / zero results); Persian NOOR empty-state renderer assertion PASS in #111 CI; no incompatible fallback |
 | Counselor options restricted to current catalog | **NOT REQUIRED / OUT OF SCOPE** |
 | Compare and product-level handoff API scenarios | Exercised in controlled live workflow |
 | Demo save/compare/purchase-handoff journey | Previously owner-tested; do not repeat without new evidence |
 | Production NOOR commerce integration | NOT IMPLEMENTED / OUT OF SCOPE |
 
-## Exact-SKU catalog/feed audit — current blocker
+## Exact-SKU catalog/feed audit — resolved and deployed
 
 PR #108 replaced the old feed projection with an evidence-gated exporter. The field-level ledger stays in build-time/test code and is not imported by the browser seed or shipped in the client bundle. The public feed preserves typed arrays and withholds unknown/conflicting values. The Pages HTTPS feed check and live COR scenarios now exercise the deployed feed.
 
-The live trace schema 1.2.0 captures complete candidate snapshots, but the snapshot values originate in the older deployed feed. Complete capture must not be confused with verified source accuracy.
+The deployed Pages feed now uses the evidence-gated exporter. The current Pages run verifies the public 15-product feed and exercises it through the live COR Mapping 1.2 API scenarios. Unknown/conflicting facts are withheld; typed multi-value facts remain arrays. Trace completeness and source provenance are tracked separately.
 
-NOOR PR #108 is **merged**. Exact-head CI [#41456324962](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41456324962) passed: 35/35 files, 146/146 tests, feed verifier and Mapping v1.2 integration. The Pages deployment [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285) passed deployment, HTTPS feed verification, 10 controlled COR scenarios, hard no-match, comparisons/handoffs, Chromium and WebKit browser smoke.
+NOOR PR #108 is **merged**. Exact-head CI [#41456324962](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41456324962) passed: 35/35 files, 146/146 tests, feed verifier and Mapping v1.2 integration. The Pages deployment [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285) passed deployment, HTTPS feed verification, 10 controlled COR scenarios, hard no-match, comparisons/handoffs, and Chromium + WebKit browser smoke. The follow-up test-only PRs #109/#110 corrected the oracle for typed arrays and equal-score tie ordering; PR #111 adds an explicit test for the Persian mandatory no-match UI copy (35/35 test files and build/feed/Mapping integration pass in run [#41460023173](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41460023173)).
 
 Examples that must remain conservative:
 - Gucci GG0900S 005: disputed/unknown shape, material, color and face-fit facts must not be asserted.
@@ -72,14 +72,15 @@ Examples that must remain conservative:
 
 This instruction does not permit inaccurate request serialization: the intent selected in the counselor must not be silently changed when sent to COR. Do not redesign or restrict choices as a workaround.
 
-## Next execution order
+## Final engineering acceptance and handoff
 
-1. NOOR #108 is merged/deployed. Preserve the evidence ledger in build-time exporter/tests only, not in the browser catalog seed/bundle.
-2. Align paired integration validation with the deployed-compatible COR Mapping/runtime baseline `bd7a215dbd9154f9638687636167e4d980309e32`; document any necessary candidate source pin separately.
-3. Exact-head CI passed on `eb1654c0`: 35/35 files, 146/146 tests; 15-product feed verifier and Mapping v1.2 integration pass. Audit the 15 evidence dispositions, typed arrays and withheld unknown/conflicts.
-4. After CI/review, deploy the feed-only NOOR change and perform one focused browser/trace smoke against installation 708: source facts received by COR, score recomputation, visible order/score correlation, and correct no-results behavior for a hard constraint with no match.
-5. Do not rerun save/compare/handoff/purchase flows or broad ranking suites without new contradictory evidence.
-6. Engineering feed/API/browser acceptance is complete for this demo scope. Update exact evidence board and hand off for owner-led NOOR demo styling. Do not repeat completed save/compare/handoff/purchase flows.
+1. NOOR #108 is merged and deployed. Evidence provenance remains build-time/test-only; typed arrays are preserved and unknown/conflicting facts are withheld.
+2. Live Pages run [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285) passed: deployment, public 15-product HTTPS feed, 10 controlled COR scoring/ranking scenarios, hard no-match (HTTP 200 / zero recommendations), comparison/handoff APIs, and actual NOOR UI in Chromium + WebKit. Both browsers showed three cards with displayed scores/order matching the COR response; no console errors, warnings or failed requests.
+3. PRs #109/#110 corrected the independent live-score oracle for typed arrays and equal-score ties. PR #111 adds a renderer test for the Persian mandatory no-match message and no-substitute behavior; CI [#41460023173](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41460023173) passed (35/35 test files, build, evidence-gated feed and COR Mapping v1.2 integration).
+4. The live no-match API outcome and the UI renderer are verified separately: COR returned HTTP 200 with zero recommendations for hard round+titanium; NOOR's renderer shows “محصول منطبق با شرط‌های اجباری پیدا نشد”, identifies mandatory criteria, offers a return-to-counselor action, and does not show a substitute. The current Chromium/WebKit browser smoke did not itself drive the no-match screen.
+5. Counselor options remain broad by explicit owner decision. Do not implement catalog-driven filtering, do not revive PR #103, and do not alter user intent to force a catalog match.
+6. Keep previously owner-tested save/compare/handoff/demo-purchase flows closed; do not repeat them without contradictory evidence.
+7. Engineering feed/API/browser acceptance is complete for the bounded demo scope. Next step: owner-led NOOR demo styling/presentation.
 
 ## Cross-repository COR security/reliability proof — 2026-11-02
 
