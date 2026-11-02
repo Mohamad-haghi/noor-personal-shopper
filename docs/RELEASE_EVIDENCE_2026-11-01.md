@@ -57,7 +57,7 @@ PR #108 replaced the old feed projection with an evidence-gated exporter. The fi
 
 The live trace schema 1.2.0 captures complete candidate snapshots, but the snapshot values originate in the older deployed feed. Complete capture must not be confused with verified source accuracy.
 
-NOOR PR #108 is **merged**. Exact-head CI [#41456324962](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41456324962) passed: 35/35 files, 146/146 tests, feed verifier and Mapping v1.2 integration. The Pages deployment [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285) passed deployment, HTTPS feed verification, live COR API scenarios and Chromium browser smoke; WebKit remains pending.
+NOOR PR #108 is **merged**. Exact-head CI [#41456324962](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41456324962) passed: 35/35 files, 146/146 tests, feed verifier and Mapping v1.2 integration. The Pages deployment [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285) passed deployment, HTTPS feed verification, 10 controlled COR scenarios, hard no-match, comparisons/handoffs, Chromium and WebKit browser smoke.
 
 Examples that must remain conservative:
 - Gucci GG0900S 005: disputed/unknown shape, material, color and face-fit facts must not be asserted.
@@ -79,7 +79,7 @@ This instruction does not permit inaccurate request serialization: the intent se
 3. Exact-head CI passed on `eb1654c0`: 35/35 files, 146/146 tests; 15-product feed verifier and Mapping v1.2 integration pass. Audit the 15 evidence dispositions, typed arrays and withheld unknown/conflicts.
 4. After CI/review, deploy the feed-only NOOR change and perform one focused browser/trace smoke against installation 708: source facts received by COR, score recomputation, visible order/score correlation, and correct no-results behavior for a hard constraint with no match.
 5. Do not rerun save/compare/handoff/purchase flows or broad ranking suites without new contradictory evidence.
-6. Finish the WebKit check in Pages run #41458169285, update the exact evidence board, then hand off for owner-led NOOR demo styling. Do not repeat completed save/compare/handoff/purchase flows.
+6. Engineering feed/API/browser acceptance is complete for this demo scope. Update exact evidence board and hand off for owner-led NOOR demo styling. Do not repeat completed save/compare/handoff/purchase flows.
 
 ## Cross-repository COR security/reliability proof — 2026-11-02
 
@@ -101,4 +101,5 @@ This is not a production security certification.
 6. Any code change must record exact source SHA, CI run, deployment run and runtime pin.
 7. Do not implement counselor-option/catalog alignment. Keep all intended user choices available and let COR return no-results when appropriate.
 8. Test-only follow-ups #109 and #110 are merged; they make the live ranking oracle understand typed arrays and tolerate different ordering only among equal-score products. No COR runtime or scoring change.
+9. Latest Pages workflow [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285) completed successfully. Chromium request ID: `noor-test-1793628304778-fi97ipv5`; WebKit request ID: `noor-test-1793628348770-l7z17j1x`; both showed 3 cards, no console errors/warnings/failed requests, and matched COR API responses. Browser artifact: `noor-cor-live-browser-proof`.
 8. Read the COR environment map before changing COR branch/service/database/Clerk/install wiring.
