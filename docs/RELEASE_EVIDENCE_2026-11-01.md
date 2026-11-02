@@ -14,13 +14,13 @@ NOOR is a Persian-first demo/reference storefront for the COR Shopper decision e
 
 ## Current deployed pins
 
-- NOOR Pages source/main commit: `7d98b8b5753aa06969e61c711e53d21a2a355109`.
+- Latest NOOR Pages deployed source commit: `b4a03ac383435296562d96f94db4a901f4b82e86` (PR #111); the earlier #41458169285 deployment used `7d98b8b5753aa06969e61c711e53d21a2a355109`. Current documentation-only main commit is tracked separately.
 - COR Render commit: `bd7a215dbd9154f9638687636167e4d980309e32`.
 - COR staging installation: `70826f81-a11d-455b-9c33-de7e02303512`, config v2.
 - Mapping `noor-eyewear-catalog` v1.2.0; Domain Pack `noor-eyewear-demo` v1.2.0.
 - Live demo: https://mohamad-haghi.github.io/noor-personal-shopper/
 - Feed: https://mohamad-haghi.github.io/noor-personal-shopper/catalog-feed.json
-- Earlier Pages workflow: [#41313300976](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41313300976). Latest deployment and acceptance: [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285).
+- Earlier Pages workflow: [#41313300976](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41313300976). Latest deployment and acceptance: [#41460220608](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41460220608); prior full live COR acceptance: [#41458169285](https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/41458169285).
 
 ## Merged work and evidence
 
