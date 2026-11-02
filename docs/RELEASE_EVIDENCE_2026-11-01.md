@@ -55,6 +55,16 @@ NOOR is a Persian-first demo/reference storefront for the COR Shopper decision e
 | Production NOOR commerce integration | NOT IMPLEMENTED / OUT OF SCOPE |
 | Production security/privacy/commercial image-rights review | OPEN before commercial production use |
 
+## Cross-repository COR security/reliability proof — 2026-11-02
+
+The integrated NOOR demo's COR API Stage 6 live security/reliability checks are now **PASS / CLOSED** within the isolated demo/staging test boundary. Evidence includes PostgreSQL-backed credential revocation and expiry denial, fail-closed HTTP 503 during isolated database outage, restored HTTP 200, standard startup restoration, and deletion/verification of the disposable Render service and Neon child branch.
+
+- COR current status and stage board: [COR + NOOR current engineering status](https://github.com/Mohamad-haghi/digital-sales-core/blob/docs/cor-noor-current-status-2026-11-01/docs/COR_NOOR_CURRENT_STATUS_AND_EVIDENCE_2026-11-01.md)
+- Detailed run IDs, outcomes and cleanup proof: [Gate 6 evidence](https://github.com/Mohamad-haghi/digital-sales-core/blob/docs/cor-noor-current-status-2026-11-01/docs/evidence/2026-11-02-gate-6-live-verification-and-cleanup.md)
+- Test/evidence implementation remains Draft and unmerged: [COR PR #318](https://github.com/Mohamad-haghi/digital-sales-core/pull/318).
+
+This does not change NOOR's release boundary: it remains a 15-product demo storefront, not a real NOOR commerce integration or production security certification.
+
 ## Operating rules
 
 1. Keep the demo independent from real NOOR commerce systems.
