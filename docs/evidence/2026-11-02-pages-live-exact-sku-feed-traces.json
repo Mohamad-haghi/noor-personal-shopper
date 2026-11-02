@@ -22,7 +22,6 @@
     "traceCount": 13,
     "allSchema12": true,
     "allCandidateFactsComplete": true,
-    "allScoresRecomputed": true,
     "totalCandidateSnapshots": 102,
     "hardNoMatch": {
       "requestId": "noor-test-pages-hard-no-match-round-titanium",
@@ -34,7 +33,9 @@
       "recommendationCount": 0,
       "source": "cor_canonical_engine",
       "demoOnly": true
-    }
+    },
+    "eligibleCandidateScoresRecomputed": true,
+    "ineligibleCandidatesNotScored": true
   },
   "browserEvidence": {
     "artifactName": "noor-cor-live-browser-proof",
