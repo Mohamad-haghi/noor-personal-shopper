@@ -21,7 +21,8 @@ describe("NOOR demo catalog field-level provenance", () => {
       expect(evidence, `missing evidence record for ${reference}`).toBeDefined();
       expect(evidence.noorReference).toBe(reference);
       expect(evidence.sku).toBe(product.externalIds.sku);
-      expect(custom.catalogEvidence).toEqual(evidence);
+      // Keep the field-level evidence ledger out of the browser catalog seed/bundle.
+      expect(custom.catalogEvidence).toBeUndefined();
       for (const requiredField of ["frameShapes", "frameMaterial", "frameColor", "faceCompatibility", "gender", "uvProtection"]) {
         expect(evidence.fields[requiredField], `${reference}.${requiredField} needs an explicit evidence status`).toBeDefined();
       }
