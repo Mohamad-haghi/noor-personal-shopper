@@ -354,17 +354,24 @@ jobs:
             { requestId: "noor-test-pages-gender-female", category: "sunglasses", gender: "female" },
             { requestId: "noor-test-pages-all-preferences", category: "sunglasses", shape: "butterfly", faceCompatibility: "heart", frameMaterial: "nylon", frameColor: "havana brown", gender: "female" }
           ];
-          function listIncludes(value, expected) {
-            return typeof value === "string" &&
-              value.split(",").map(item => item.trim().toLowerCase()).includes(expected.toLowerCase());
+          // Public feed facts may be either a scalar or a typed multi-value array.
+          // The oracle must score both representations without flattening arrays.
+          function valueIncludes(value, expected) {
+            if (Array.isArray(value)) {
+              return value.some(item => typeof item === "string" && item.trim().toLowerCase() === expected.toLowerCase());
+            }
+            if (typeof value === "string") {
+              return value.split(",").map(item => item.trim().toLowerCase()).includes(expected.toLowerCase());
+            }
+            return false;
           }
           function expectedScoreFromCatalog(product, scenario) {
             const active = [];
-            if (scenario.frameMaterial !== undefined) active.push({ weight: 3, matched: product.frame?.trim().toLowerCase() === scenario.frameMaterial.toLowerCase() });
-            if (scenario.frameColor !== undefined) active.push({ weight: 3, matched: product.frameColor?.trim().toLowerCase() === scenario.frameColor.toLowerCase() });
-            if (scenario.shape !== undefined) active.push({ weight: 4, matched: listIncludes(product.shape, scenario.shape) });
-            if (scenario.faceCompatibility !== undefined) active.push({ weight: 3, matched: listIncludes(product.faceCompatibility, scenario.faceCompatibility) });
-            if (scenario.gender !== undefined) active.push({ weight: 2, matched: product.gender?.trim().toLowerCase() === scenario.gender.toLowerCase() });
+            if (scenario.frameMaterial !== undefined) active.push({ weight: 3, matched: valueIncludes(product.frame, scenario.frameMaterial) });
+            if (scenario.frameColor !== undefined) active.push({ weight: 3, matched: valueIncludes(product.frameColor, scenario.frameColor) });
+            if (scenario.shape !== undefined) active.push({ weight: 4, matched: valueIncludes(product.shape, scenario.shape) });
+            if (scenario.faceCompatibility !== undefined) active.push({ weight: 3, matched: valueIncludes(product.faceCompatibility, scenario.faceCompatibility) });
+            if (scenario.gender !== undefined) active.push({ weight: 2, matched: valueIncludes(product.gender, scenario.gender) });
             const denominator = 1 + active.reduce((sum, criterion) => sum + criterion.weight, 0);
             const numerator = 1 + active.reduce((sum, criterion) => sum + (criterion.matched ? criterion.weight : 0), 0);
             return numerator / denominator;
