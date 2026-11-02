@@ -1,3 +1,10 @@
+> **PRODUCT PROOF DOSSIER — COR + NOOR**  
+> This repository presents the public-safe evidence for the working COR + NOOR demonstration. Start with the [Product Proof Overview](docs/PRODUCT_PROOF_OVERVIEW_V1.md) and [Evidence Index](docs/evidence/README.md). This is a demo/reference product, not a live NOOR commerce integration or commercial-production claim.
+
+
+
+---
+
 # NOOR Personal Shopper Demo
 
 A Persian-first, right-to-left demo of a product-led shopping journey for the NOOR reference case. This is a **demo/reference implementation** connected to the independently deployed COR Shopper API for demo-only decisioning. It is not a production storefront or a live NOOR systems integration.
@@ -6,9 +13,8 @@ A Persian-first, right-to-left demo of a product-led shopping journey for the NO
 
 - Website: https://mohamad-haghi.github.io/noor-personal-shopper/
 - Demo catalog feed: https://mohamad-haghi.github.io/noor-personal-shopper/catalog-feed.json
-- COR operator console: https://cor-noor-test.onrender.com/operator-console
 
-The deployed Pages build uses integrated mode and calls COR for recommendations, comparisons, and purchase/visit handoffs. The live recommendation/session smoke test has passed against the deployed COR service. Comparison and handoff flows still need their own end-to-end smoke tests before they should be described as verified.
+The deployed Pages build uses integrated mode and calls the COR Shopper API at https://digital-sales-core.onrender.com. The 2026-10-30 Pages workflow passed live HTTP smoke checks for demo-session, recommendations, comparison, and demo product-detail handoff; its Chromium/WebKit browser smoke validates the recommendation journey. These checks do not verify real inventory, order creation, payment, or commercial checkout. See the [current COR integration evidence and operations map](docs/COR_INTEGRATION_OPERATIONS_MAP_2026-10-30.md) for exact SHAs, run IDs, and evidence limits.
 
 ## What the demo includes
 
@@ -27,9 +33,11 @@ The deployed Pages build uses integrated mode and calls COR for recommendations,
 - Product image provenance and commercial-use rights still require confirmation before customer-facing commercial use.
 - Never put a COR secret or static API key in a Vite environment variable. The browser obtains a short-lived, demo-only bearer credential from COR at runtime.
 
-## Environment and installation map
+## Product proof and internal operations
 
-Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md). It documents the observed branch/deployment pins, service and database links (including what is still unverified), and the distinct roles of installations 745…, 65c9…, and 70826…. The map lives in COR as the canonical copy; re-check its evidence date against live metadata before acting.
+- Public-safe capability claims and current proof status: [Product Proof Overview](docs/PRODUCT_PROOF_OVERVIEW_V1.md).
+- Registered live traces and required screenshots/recording: [Evidence Index](docs/evidence/README.md).
+- Detailed COR service, branch, database and installation topology is maintained in the private COR repository for authorized engineers; it is intentionally not linked as a public operations document here.
 
 ## Architecture
 
@@ -56,10 +64,11 @@ Copy `.env.example` to `.env` if you need to set the mode explicitly. Do not add
 
 ## Readiness status
 
-The integrated recommendation bridge omits Persian presentation-only use-case labels from COR requests until an explicit canonical mapping exists; this avoids unranked or empty decision results. The current deployment has passed the build, catalog-feed contract check, demo-session credential check, and live COR recommendation API smoke test. This confirms the core recommendation connection for the demo only; it does not establish production readiness. Before presenting the full journey as verified, separately test comparison, handoff destination safety, and the customer-facing UI. Before commercial production use, replace demo data and demo credentials with an approved tenant/source configuration and complete security, privacy, image-rights, monitoring, and operational reviews.
+The integrated recommendation bridge omits Persian presentation-only use-case labels from COR requests until an explicit canonical mapping exists; useCase is context-only and does not affect the current score. The 2026-10-30 Pages workflow has passed live HTTP smoke checks for demo-session, recommendations, a hard-constraint no-match control, comparison, and demo product-detail handoff. Its Chromium/WebKit browser smoke validates the recommendation UI journey and displayed score/order against the COR response. This is evidence for the tested demo path only, not general recommendation accuracy or production readiness. The catalog facts still require exact-SKU source verification. No real inventory, order creation, payment, or commercial checkout is connected. Before commercial production use, replace demo data and demo credentials with an approved tenant/source configuration and complete security, privacy, image-rights, monitoring, and operational reviews.
 
 ## Engineering documentation
 
 - [Documentation index](docs/README.md)
 - [COR connection incident and verification runbook](docs/COR_CONNECTION_INCIDENT_AND_RUNBOOK.md) — original browser failure, fix history, diagnostic codes, and the checklist for future installations.
 - [COR Shopper integration guide](docs/COR_SHOPPER_DEMO_INTEGRATION_V1.md)
+- [15-product demo catalog source audit](docs/NOOR_DEMO_CATALOG_SOURCE_AUDIT_2026-10-30.md) — exact-SKU comparison, source conflicts, and unverified attributes.
