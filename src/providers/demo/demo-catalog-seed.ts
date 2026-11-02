@@ -1,7 +1,5 @@
 import type { DemoCatalogSeed } from "./demo-catalog-provider";
 import type { Product, ProductVariant } from "../../domain";
-import { DEMO_CATALOG_ATTRIBUTE_EVIDENCE } from "./demo-catalog-evidence";
-
 const demoAvailability = {
   source: "demo" as const,
   isAvailable: true,
@@ -54,7 +52,6 @@ function product(
       customAttributes: {
         model,
         noorReference: reference,
-        catalogEvidence: DEMO_CATALOG_ATTRIBUTE_EVIDENCE[reference] ?? null,
         gender,
         frameShapes: shape,
         frameMaterial,
