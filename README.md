@@ -8,7 +8,7 @@ A Persian-first, right-to-left demo of a product-led shopping journey for the NO
 - Demo catalog feed: https://mohamad-haghi.github.io/noor-personal-shopper/catalog-feed.json
 - COR operator console: https://cor-noor-test.onrender.com/operator-console
 
-The deployed Pages build uses integrated mode and calls COR for demo-only recommendations, comparisons, and product-level handoffs. The controlled live Pages workflow has passed Chromium and WebKit checks for session, recommendation, mandatory-condition zero results, compare and handoff API scenarios. The saved-choice and demo purchase/handoff journey was previously owner-tested. See [current release evidence](docs/RELEASE_EVIDENCE_2026-11-01.md) for exact SHAs, runs and limits.
+The deployed Pages build uses integrated mode for demo-only recommendations, comparisons and product-level handoffs. Controlled live Pages evidence includes Chromium and WebKit checks for the recorded session, recommendation, mandatory-condition zero-results, compare and handoff API scenarios. The saved-choice and demo purchase/handoff journey was previously owner-tested; do not repeat without new evidence. See [current release evidence](docs/RELEASE_EVIDENCE_2026-11-01.md).
 
 ## What the demo includes
 
@@ -23,19 +23,18 @@ The deployed Pages build uses integrated mode and calls COR for demo-only recomm
 - Catalog, product imagery, availability and commerce behavior are demo/reference data. The feed explicitly marks itself `demoOnly: true`; synthetic availability must not be interpreted as live inventory.
 - No live NOOR product, inventory, account, cart, checkout, payment or order system is connected.
 - No real purchase or payment is performed. Purchase/visit actions are demo handoffs only.
-- Do not connect real customer data or change a live customer site without explicit approval and a verified secure COR runtime.
-- Product image provenance and commercial-use rights still require confirmation before customer-facing commercial use.
+- Product image provenance and commercial-use rights still require confirmation before commercial customer-facing use.
 - Never put a COR secret or static API key in a Vite environment variable. The browser obtains a short-lived, demo-only bearer credential from COR at runtime.
 
 ## Environment and installation map
 
-Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md). It documents the observed branch/deployment pins, service and database links (including what is still unverified), and the distinct roles of installations 745…, 65c9…, and 70826…. The map lives in COR as the canonical copy; re-check its evidence date against live metadata before acting.
+Before changing the COR dependency, a Render service, a Neon database, or a COR installation, read the [COR ↔ NOOR Environment, Branch, and Installation Map](https://github.com/Mohamad-haghi/digital-sales-core/blob/main/docs/COR_NOOR_ENVIRONMENT_TOPOLOGY_V1.md). It documents observed branch/deployment pins, service and database links (including what remains unverified), and the distinct roles of installations 745…, 65c9…, and 70826…. Re-check its evidence date against live metadata before acting.
 
 ## Architecture
 
 - The app uses the pinned `digital-sales-core` package for canonical domain contracts and bridge logic.
-- In integrated mode, the recommendation, comparison and handoff bridges call the independently deployed COR Shopper API. The browser must fail safely if COR or a required decision provider is unavailable; it must not silently replace a failed remote decision with locally generated demo recommendations.
-- The browser uses the local demo catalog to render product details; COR's recommendation response is resolved back to the matching demo product.
+- In integrated mode, recommendation, comparison and handoff bridges call the independently deployed COR Shopper API. The browser must fail safely if COR or a required decision provider is unavailable; it must not silently replace a failed remote decision with locally generated demo recommendations.
+- The browser uses the local demo catalog to render product details; COR recommendation responses are resolved back to matching demo products.
 - `VITE_NOOR_MODE=integrated` requires `VITE_COR_SHOPPER_BASE_URL` to be a valid HTTPS service origin. `VITE_NOOR_MODE=demo` is the explicit offline/demo composition.
 
 ## Run locally
@@ -54,12 +53,22 @@ npm run build
 
 Copy `.env.example` to `.env` if you need to set the mode explicitly. Do not add secrets to `.env` variables prefixed with `VITE_`, because those values are exposed in the browser bundle.
 
-## Readiness status
+## Current readiness
 
-The integrated recommendation bridge omits Persian presentation-only use-case labels from COR requests until an explicit canonical mapping exists; this avoids unranked or empty decision results. The current deployment has passed the build, catalog-feed contract check, demo-session credential check, and live COR recommendation API smoke test. This confirms the core recommendation connection for the demo only; it does not establish production readiness. Before presenting the full journey as verified, separately test comparison, handoff destination safety, and the customer-facing UI. Before commercial production use, replace demo data and demo credentials with an approved tenant/source configuration and complete security, privacy, image-rights, monitoring, and operational reviews.
+The bounded demo engineering acceptance is recorded in [Release Evidence](docs/RELEASE_EVIDENCE_2026-11-01.md): the evidence-gated 15-product feed, recorded live COR recommendation/ranking/no-match scenarios, comparison/handoff API scenarios, and Chromium/WebKit checks passed for the specified cases. This is not production readiness or a security certification.
+
+Important decision rules:
+- COR match percentages are normalized match scores, not probabilities.
+- The counselor must preserve the user's selected intent; do not filter choices to fit the current 15 products.
+- If mandatory conditions have no eligible product, show the no-results state and do not substitute an incompatible product.
+- Unknown/conflicting product facts must remain unknown.
 
 ## Engineering documentation
 
-- [Documentation index](docs/README.md)
-- [COR connection incident and verification runbook](docs/COR_CONNECTION_INCIDENT_AND_RUNBOOK.md) — original browser failure, fix history, diagnostic codes, and the checklist for future installations.
-- [COR Shopper integration guide](docs/COR_SHOPPER_DEMO_INTEGRATION_V1.md)
+Start with the [current project brief](docs/NOOR_CURRENT_PROJECT_BRIEF.md) and [documentation index](docs/README.md).
+
+- [Hero Design Specification V1](docs/HERO_DESIGN_SPEC_V1.md) — approved visual direction and Lovable execution boundary.
+- [Current COR Shopper integration guide](docs/COR_SHOPPER_DEMO_INTEGRATION_V1.md) — current demo integration and security boundaries.
+- [Release evidence](docs/RELEASE_EVIDENCE_2026-11-01.md) — exact deployed SHAs, workflow runs, test evidence and limitations.
+- [COR connection incident and runbook](docs/COR_CONNECTION_INCIDENT_AND_RUNBOOK.md) — historical browser failure and repeatable diagnostic procedure.
+- [Documentation archive](docs/archive/README.md) — superseded documents and their replacements.
