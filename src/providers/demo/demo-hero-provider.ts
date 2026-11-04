@@ -5,10 +5,10 @@ const heroMediaSource = `${import.meta.env.BASE_URL}media/products/ray-ban-rb302
 
 const DEMO_HERO: HeroContent = {
   identity: { id: "noor-demo-home" },
-  title: "عینکی که برای شما انتخاب می‌شود",
-  subtitle: "مشاور انتخاب عینک نور",
+  title: "عینکی که با شناخت شما انتخاب می‌شود.",
+  subtitle: "THE INTELLIGENT EYEWEAR STUDIO",
   description:
-    "با چند انتخاب کوتاه، سلیقه و نیاز خود را مشخص کنید و مسیر انتخاب عینک مناسب را شروع کنید.",
+    "سلیقه و نیازتان را در یک گفت‌وگوی کوتاه بیان کنید؛ NOOR گزینه‌ها را با معیارهای روشن بررسی می‌کند و دلیل هر پیشنهاد را نشان می‌دهد.",
   media: {
     type: "image",
     source: heroMediaSource,
