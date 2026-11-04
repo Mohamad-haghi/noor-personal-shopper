@@ -52,7 +52,7 @@ function productCard(product: Product, variant: ProductVariant | null, offer: Co
       <p class="product-card-description">${escapeHtml(product.description ?? "توضیحات تکمیلی این فریم هنوز در کاتالوگ ثبت نشده است.")}</p>
       ${facts.length ? `<ul class="product-fact-chips" aria-label="ویژگی‌های ثبت‌شده">${facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>` : `<p class="product-facts-pending">مشخصات تکمیلی این مدل هنوز تأیید نشده است.</p>`}
       <div class="product-card-meta"><span>شناسهٔ مدل</span><strong>${escapeHtml(product.externalIds.sku ?? product.identity.id)}</strong></div>
-      <div class="product-demo-price">${offer ? `<strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong>` : `<strong>قیمت ثبت نشده</strong>`}<small>قیمت نمایشی دمو؛ نه قیمت فروشگاه نور</small></div>
+      <div class="product-demo-price">${offer ? `<strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong>` : `<strong>قیمت ثبت نشده</strong>`}<small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small></div>
       <div class="product-card-actions">
         <a class="button button-secondary" href="${detailHref}" data-app-link>مشاهدهٔ جزئیات</a>
         ${variantAction}
