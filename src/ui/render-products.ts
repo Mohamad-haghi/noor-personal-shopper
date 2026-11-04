@@ -1,11 +1,21 @@
 import type { CommerceOffer, Product, ProductVariant } from "../domain";
 
 function escapeHtml(value: string): string {
-  return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
 function custom(product: Product, key: string): unknown {
   return product.attributes.customAttributes[key];
+}
+
+function displayValue(value: unknown): string | null {
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  if (Array.isArray(value)) {
+    const values = value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+    return values.length ? values.join(" · ") : null;
+  }
+  return null;
 }
 
 function productImage(product: Product): string {
@@ -19,24 +29,34 @@ function categoryLabel(product: Product): string {
   return product.attributes.category === "sunglasses" ? "عینک آفتابی" : "عینک طبی";
 }
 
+function knownFacts(product: Product): string[] {
+  return [
+    displayValue(custom(product, "frameShapes")),
+    displayValue(custom(product, "frameMaterial")) ?? displayValue(custom(product, "frameMaterialComponents")),
+    displayValue(custom(product, "frameColor")) ?? displayValue(custom(product, "frameColorComponents")),
+  ].filter((value): value is string => Boolean(value));
+}
+
 function productCard(product: Product, variant: ProductVariant | null, offer: CommerceOffer | null): string {
+  const detailHref = `/products/${encodeURIComponent(product.identity.id)}`;
+  const facts = knownFacts(product);
   const variantAction = variant
-    ? `<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button>`
-    : `<span class="product-unavailable">در Demo قابل خرید نیست</span>`;
+    ? `<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب در دمو</button>`
+    : `<span class="product-unavailable">گزینهٔ نمایشی برای انتخاب ثبت نشده</span>`;
 
   return `<article class="product-card">
-    <a class="product-card-media" href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>${productImage(product)}</a>
+    <a class="product-card-media" href="${detailHref}" data-app-link aria-label="مشاهدهٔ جزئیات ${escapeHtml(product.name)}">${productImage(product)}</a>
     <div class="product-card-body">
-      <p class="eyebrow">${escapeHtml(categoryLabel(product))}</p>
-      <h2><a href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>${escapeHtml(product.name)}</a></h2>
-      <p>${escapeHtml(product.description ?? "جزئیات این فریم در کاتالوگ Demo ثبت شده است.")}</p>
-      <div class="product-card-meta"><span>شناسه: ${escapeHtml(product.externalIds.sku ?? product.identity.id)}</span></div>
-      ${offer ? `<p class="product-demo-price"><strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong><small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small></p>` : `<p class="product-demo-price"><small>قیمت نمایشی برای این گزینه در دسترس نیست.</small></p>`}
-      <p class="product-demo-stock">موجودی فرضی دمو — موجودی واقعی نور نیست</p>
+      <div class="product-card-heading"><p class="eyebrow">${escapeHtml(categoryLabel(product))}</p><span class="product-demo-tag">DEMO</span></div>
+      <h2><a href="${detailHref}" data-app-link>${escapeHtml(product.name)}</a></h2>
+      <p class="product-card-description">${escapeHtml(product.description ?? "توضیحات تکمیلی این فریم هنوز در کاتالوگ ثبت نشده است.")}</p>
+      ${facts.length ? `<ul class="product-fact-chips" aria-label="ویژگی‌های ثبت‌شده">${facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>` : `<p class="product-facts-pending">مشخصات تکمیلی این مدل هنوز تأیید نشده است.</p>`}
+      <div class="product-card-meta"><span>شناسهٔ مدل</span><strong>${escapeHtml(product.externalIds.sku ?? product.identity.id)}</strong></div>
+      <div class="product-demo-price">${offer ? `<strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong>` : `<strong>قیمت ثبت نشده</strong>`}<small>قیمت نمایشی دمو؛ نه قیمت فروشگاه نور</small></div>
       <div class="product-card-actions">
-        <a class="button button-secondary" href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>جزئیات</a>
+        <a class="button button-secondary" href="${detailHref}" data-app-link>مشاهدهٔ جزئیات</a>
         ${variantAction}
-        ${variant ? `<button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به علاقه‌مندی‌ها</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button>` : ""}
+        ${variant ? `<button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">ذخیرهٔ علاقه‌مندی</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">مقایسه</button>` : ""}
       </div>
     </div>
   </article>`;
@@ -56,14 +76,22 @@ export function renderProducts(
 
   routeView.innerHTML = `<main class="products-page" id="main-content" aria-labelledby="products-title">
     <section class="products-intro">
-      <p class="eyebrow">NOOR PERSONAL SHOPPER · CATALOG</p>
-      <h1 id="products-title">کاتالوگ فریم‌ها</h1>
-      <p>محصولات این صفحه از کاتالوگ نمونه می‌آیند. این ۱۵ محصول برای نمایش مسیر انتخاب آماده شده‌اند؛ این صفحه به سامانه زنده نور متصل نیست.</p>
-      <aside class="demo-truth-notice" role="note"><strong>اطلاع مهم درباره دمو</strong><span>تمام قیمت‌ها نمایشی و فرضی هستند و قیمت واقعی نور نیستند. موجودی همه محصولات نیز فرضی و فقط برای نمایش عملکرد دمو فعال است؛ موجودی واقعی نور را نشان نمی‌دهد.</span></aside>
-      <div class="catalog-shopper-cta"><a class="button button-primary" href="/shopper" data-app-link>برای انتخاب بهتر از دستیار خرید کمک بگیر</a></div>
+      <p class="eyebrow">NOOR PERSONAL SHOPPER · CURATED EDIT</p>
+      <h1 id="products-title">فریم‌ها را با دقت بیشتری بشناسید.</h1>
+      <p>مدل‌ها را مرور کنید، مشخصات ثبت‌شده را ببینید و گزینه‌های موردعلاقه‌تان را کنار هم قرار دهید.</p>
+      <aside class="demo-truth-notice" role="note"><strong>نسخهٔ نمایشی</strong><span>این کاتالوگ شامل ۱۵ مدل نمونه است. قیمت‌ها و گزینه‌های انتخاب، صرفاً برای نمایش عملکرد دمو هستند و موجودی یا قیمت واقعی فروشگاه نور را نشان نمی‌دهند. مشخصات تأییدنشده عمداً خالی می‌مانند.</span></aside>
+      <div class="catalog-shopper-cta"><a class="button button-primary" href="/shopper" data-app-link>برای انتخاب شخصی‌تر با دستیار نور گفت‌وگو کنید</a></div>
+      <div class="catalog-count" aria-live="polite"><strong>${products.length.toLocaleString("fa-IR")}</strong><span>مدل در کاتالوگ نمایشی</span></div>
     </section>
-    <section class="product-grid" aria-label="فهرست محصولات">${cards}</section>
+    <section class="product-grid" aria-label="فهرست محصولات">${cards || '<p class="catalog-empty">در حال حاضر مدلی برای نمایش ثبت نشده است.</p>'}</section>
   </main>`;
+}
+
+function specRow(label: string, value: unknown): string {
+  const rendered = displayValue(value);
+  return rendered
+    ? `<div class="product-spec-row"><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(rendered)}</dd></div>`
+    : "";
 }
 
 export function renderProductDetail(
@@ -78,49 +106,59 @@ export function renderProductDetail(
   }
 
   const availableVariants = variants.filter((variant) => variant.availability.isAvailable && variant.availability.source === "demo");
-  const offerByVariant = new Map(offers.map((offer) => [offer.variantId.id, offer]));
-  const shapes = Array.isArray(custom(product, "frameShapes")) ? (custom(product, "frameShapes") as string[]).join(" · ") : "—";
-  const material = String(custom(product, "frameMaterial") ?? "—");
-  const size = [custom(product,"lensWidthMm"),custom(product,"bridgeWidthMm"),custom(product,"templeLengthMm")].every((v) => typeof v === "number")
-    ? [custom(product,"lensWidthMm"),custom(product,"bridgeWidthMm"),custom(product,"templeLengthMm")].join(" / ")
-    : "—";
+  const offerByVariant = new Map(offers.filter((offer) => offer.pricing.source === "demo" && offer.availability.source === "demo").map((offer) => [offer.variantId.id, offer]));
+  const dimensions = [custom(product, "lensWidthMm"), custom(product, "bridgeWidthMm"), custom(product, "templeLengthMm")];
+  const sizeValue = dimensions.every((value) => typeof value === "number" && Number.isFinite(value))
+    ? dimensions.map((value) => String(value)).join(" / ") + " میلی‌متر"
+    : null;
 
   const variantRows = availableVariants.length
     ? availableVariants.map((variant) => {
         const offer = offerByVariant.get(variant.identity.id);
-        const price = offer && offer.pricing.source === "demo" && offer.availability.source === "demo" ? `<span class="product-price">${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</span><small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small>` : "<span>قیمت واقعی در این دمو در دسترس نیست</span>";
+        const price = offer
+          ? `<span class="product-price">${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</span><small>قیمت نمایشی دمو</small>`
+          : "<span>قیمت نمایشی ثبت نشده</span>";
         return `<article class="product-variant-row">
-          <div><strong>${escapeHtml(variant.name)}</strong><p>${escapeHtml([variant.attributes.color,variant.attributes.size,variant.attributes.material].filter(Boolean).join(" · ") || "تنوع Demo")}</p></div>
-          <div class="product-variant-purchase">${price}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button><button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به علاقه‌مندی‌ها</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button></div>
+          <div class="product-variant-info"><strong>${escapeHtml(variant.name)}</strong><p>${escapeHtml([variant.attributes.color, variant.attributes.size, variant.attributes.material].filter(Boolean).join(" · ") || "تنوع نمایشی")}</p></div>
+          <div class="product-variant-purchase">${price}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب در دمو</button><button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">ذخیرهٔ علاقه‌مندی</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button></div>
         </article>`;
       }).join("")
-    : `<p class="product-unavailable">در حال حاضر هیچ تنوع قابل خریدی برای این محصول ثبت نشده است.</p>`;
+    : `<p class="product-unavailable">برای این مدل، گزینهٔ انتخاب نمایشی ثبت نشده است.</p>`;
 
-  const gallery = product.media.gallery.length
-    ? product.media.gallery.map((image) => `<img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.altText ?? product.name)}" loading="lazy">`).join("")
-    : productImage(product);
+  const images = product.media.gallery.length ? product.media.gallery : product.media.primaryImage ? [product.media.primaryImage] : [];
+  const gallery = images.length
+    ? images.map((image, index) => `<figure class="product-gallery-item"><img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.altText ?? product.name)}" loading="${index === 0 ? "eager" : "lazy"}">${images.length > 1 ? `<figcaption>تصویر ${(index + 1).toLocaleString("fa-IR")}</figcaption>` : ""}</figure>`).join("")
+    : `<div class="product-media-placeholder product-detail-placeholder" role="img" aria-label="تصویر این محصول در کاتالوگ ثبت نشده">NOOR</div>`;
+
+  const specs = [
+    specRow("فرم فریم", custom(product, "frameShapes")),
+    specRow("جنس فریم", custom(product, "frameMaterial") ?? custom(product, "frameMaterialComponents")),
+    specRow("رنگ فریم", custom(product, "frameColor") ?? custom(product, "frameColorComponents")),
+    specRow("رنگ عدسی", custom(product, "lensColor")),
+    specRow("ابعاد عدسی / پل / دسته", sizeValue),
+    specRow("گروه محصول", custom(product, "gender")),
+    specRow("شناسهٔ دقیق مدل", product.externalIds.sku ?? product.identity.id),
+  ].filter(Boolean).join("");
 
   routeView.innerHTML = `<main class="product-detail-page" id="main-content" aria-labelledby="product-title">
     <a class="product-back" href="/products" data-app-link>← بازگشت به کاتالوگ</a>
     <section class="product-detail-hero">
-      <div class="product-detail-media">${gallery}</div>
+      <div class="product-detail-media" aria-label="تصاویر محصول">${gallery}</div>
       <div class="product-detail-copy">
-        <p class="eyebrow">${escapeHtml(categoryLabel(product))}</p>
+        <p class="eyebrow">${escapeHtml(categoryLabel(product))} · NOOR EDIT</p>
         <h1 id="product-title">${escapeHtml(product.name)}</h1>
-        <p class="product-detail-description">${escapeHtml(product.description ?? "جزئیات این فریم در کاتالوگ Demo ثبت شده است.")}</p>
-        <dl class="product-specs">
-          <div><dt>فرم</dt><dd>${escapeHtml(shapes)}</dd></div>
-          <div><dt>جنس</dt><dd>${escapeHtml(material)}</dd></div>
-          <div><dt>ابعاد</dt><dd>${escapeHtml(size)}</dd></div>
-          <div><dt>شناسه محصول</dt><dd>${escapeHtml(product.externalIds.sku ?? product.identity.id)}</dd></div>
-        </dl>
+        <p class="product-detail-description">${escapeHtml(product.description ?? "توضیحات تکمیلی این فریم هنوز در کاتالوگ ثبت نشده است.")}</p>
+        <div class="product-detail-truth"><span class="product-demo-tag">DEMO</span><span>معرفی نمایشی؛ بدون فروش یا موجودی زنده</span></div>
+        <section class="product-spec-panel" aria-labelledby="product-spec-title"><div class="product-section-heading"><p class="eyebrow">PRODUCT DETAILS</p><h2 id="product-spec-title">مشخصات ثبت‌شده</h2></div>
+          ${specs ? `<dl class="product-specs">${specs}</dl>` : '<p class="product-facts-pending">هنوز مشخصات تأییدشده‌ای برای نمایش ثبت نشده است.</p>'}
+          <p class="product-data-note">فقط اطلاعات موجود در کاتالوگ نمایش داده شده‌اند؛ موارد نامشخص عمداً حدس زده نشده‌اند.</p>
+        </section>
       </div>
     </section>
     <section class="product-variants" aria-labelledby="variants-title">
-      <p class="eyebrow">PURCHASE OPTIONS</p>
-      <h2 id="variants-title">انتخاب نسخه و ادامه خرید</h2>
-      <aside class="demo-truth-notice" role="note"><strong>اطلاع مهم درباره دمو</strong><span>قیمت نمایشی دمو — قیمت واقعی نور نیست. موجودی فرضی دمو — موجودی واقعی نور نیست. این اطلاعات فقط برای نمایش عملکرد انتخاب و مقایسه ساخته شده‌اند.</span></aside>
-      <div class="product-shopper-cta"><a class="button button-secondary" href="/shopper" data-app-link>برای انتخاب یا مقایسه از دستیار کمک بگیر</a></div>
+      <div class="product-section-heading"><p class="eyebrow">DEMO OPTIONS</p><h2 id="variants-title">گزینه‌های نمایشی</h2><p>این بخش برای نمایش جریان انتخاب، علاقه‌مندی و مقایسه در دمو ساخته شده است.</p></div>
+      <aside class="demo-truth-notice" role="note"><strong>شفافیت دمو</strong><span>قیمت و دسترس‌پذیری این گزینه‌ها واقعی نیستند و به سامانه فروش یا موجودی زنده نور متصل نیستند.</span></aside>
+      <div class="product-shopper-cta"><a class="button button-secondary" href="/shopper" data-app-link>برای بررسی تناسب انتخاب با نیازتان از دستیار کمک بگیرید</a></div>
       <div class="product-variant-list">${variantRows}</div>
     </section>
   </main>`;
