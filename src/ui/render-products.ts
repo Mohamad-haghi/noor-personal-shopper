@@ -52,7 +52,7 @@ function productCard(product: Product, variant: ProductVariant | null, offer: Co
       <p class="product-card-description">${escapeHtml(product.description ?? "توضیحات تکمیلی این فریم هنوز در کاتالوگ ثبت نشده است.")}</p>
       ${facts.length ? `<ul class="product-fact-chips" aria-label="ویژگی‌های ثبت‌شده">${facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>` : `<p class="product-facts-pending">مشخصات تکمیلی این مدل هنوز تأیید نشده است.</p>`}
       <div class="product-card-meta"><span>شناسهٔ مدل</span><strong>${escapeHtml(product.externalIds.sku ?? product.identity.id)}</strong></div>
-      <div class="product-demo-price">${offer ? `<strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong>` : `<strong>قیمت ثبت نشده</strong>`}<small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small></div>
+      <div class="product-demo-price">${offer ? `<strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong>` : `<strong>قیمت ثبت نشده</strong>`}<small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small><small>موجودی فرضی دمو — موجودی واقعی نور نیست</small></div>
       <div class="product-card-actions">
         <a class="button button-secondary" href="${detailHref}" data-app-link>مشاهدهٔ جزئیات</a>
         ${variantAction}
@@ -157,7 +157,7 @@ export function renderProductDetail(
     </section>
     <section class="product-variants" aria-labelledby="variants-title">
       <div class="product-section-heading"><p class="eyebrow">DEMO OPTIONS</p><h2 id="variants-title">گزینه‌های نمایشی</h2><p>این بخش برای نمایش جریان انتخاب، علاقه‌مندی و مقایسه در دمو ساخته شده است.</p></div>
-      <aside class="demo-truth-notice" role="note"><strong>شفافیت دمو</strong><span>قیمت و دسترس‌پذیری این گزینه‌ها واقعی نیستند و به سامانه فروش یا موجودی زنده نور متصل نیستند.</span></aside>
+      <aside class="demo-truth-notice" role="note"><strong>شفافیت دمو</strong><span>قیمت نمایشی دمو — قیمت واقعی نور نیست. موجودی فرضی دمو — موجودی واقعی نور نیست. این گزینه‌ها به سامانه فروش زنده متصل نیستند.</span></aside>
       <div class="product-shopper-cta"><a class="button button-secondary" href="/shopper" data-app-link>برای بررسی تناسب انتخاب با نیازتان از دستیار کمک بگیرید</a></div>
       <div class="product-variant-list">${variantRows}</div>
     </section>
