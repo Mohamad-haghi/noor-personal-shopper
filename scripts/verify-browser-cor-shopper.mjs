@@ -304,6 +304,60 @@ try {
       throw new Error("noor_real_ui_score_mismatch_at:" + index);
     }
   }
+
+  // Capture real responsive evidence for the published catalog and product detail.
+  // Keep this separate from the COR journey above so the same browser session
+  // verifies both the recommendation flow and the public-facing product pages.
+  const responsiveEvidence = [];
+  for (const viewport of [
+    { name: "desktop", width: 1440, height: 1000 },
+    { name: "mobile", width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto(new URL("/products", pagesUrl).toString(), {
+      waitUntil: "domcontentloaded",
+      timeout: 60_000,
+    });
+    await page.locator(".product-card").first().waitFor({ timeout: 30_000 });
+    const catalog = await page.evaluate(() => ({
+      title: document.querySelector("#products-title")?.textContent?.trim() ?? null,
+      cardCount: document.querySelectorAll(".product-card").length,
+      viewportWidth: window.innerWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
+    }));
+    await page.screenshot({
+      path: `artifacts/noor-catalog-${viewport.name}.png`,
+      fullPage: true,
+    });
+    if (!catalog.title || catalog.cardCount !== 15 || catalog.horizontalOverflow) {
+      throw new Error("noor_catalog_responsive_check_failed:" + viewport.name + ":" + JSON.stringify(catalog));
+    }
+
+    await page.locator(".product-card h2 a").first().click();
+    await page.locator(".product-detail-page").waitFor({ timeout: 30_000 });
+    const detail = await page.evaluate(() => ({
+      title: document.querySelector("#product-title")?.textContent?.trim() ?? null,
+      imageCount: document.querySelectorAll(".product-gallery-item img").length,
+      specPanelVisible: Boolean(document.querySelector(".product-spec-panel")),
+      viewportWidth: window.innerWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
+    }));
+    await page.screenshot({
+      path: `artifacts/noor-product-detail-${viewport.name}.png`,
+      fullPage: true,
+    });
+    if (!detail.title || !detail.specPanelVisible || detail.horizontalOverflow) {
+      throw new Error("noor_product_detail_responsive_check_failed:" + viewport.name + ":" + JSON.stringify(detail));
+    }
+    responsiveEvidence.push({ viewport: viewport.name, catalog, detail });
+  }
+  console.log(JSON.stringify({
+    diagnostic: "noor_catalog_product_detail_responsive",
+    browserEngine,
+    responsiveEvidence,
+  }));
 } finally {
   await browser.close();
 }
