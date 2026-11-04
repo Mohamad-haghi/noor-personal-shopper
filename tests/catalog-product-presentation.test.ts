@@ -41,7 +41,7 @@ describe("catalog and product detail presentation", () => {
     expect(root.innerHTML).toContain("acetate");
     expect(root.innerHTML).toContain("قیمت‌های نمایشی");
     expect(root.innerHTML).toContain("مشاهدهٔ جزئیات");
-    expect(root.innerHTML).not.toContain("موجودی فرضی دمو");
+    expect(root.innerHTML).toContain("موجودی فرضی دمو — موجودی واقعی نور نیست");
   });
 
   it("renders only known detail facts and omits unresolved values instead of guessing", () => {
