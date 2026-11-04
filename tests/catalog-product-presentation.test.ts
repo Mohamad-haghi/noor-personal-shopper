@@ -90,7 +90,7 @@ describe("catalog and product detail presentation", () => {
     } as unknown as CommerceOffer;
 
     renderProducts(root, [product], new Map([["frame-1", [variant]]]), [offer]);
-    expect(root.innerHTML).toContain("قیمت نمایشی دمو؛ نه قیمت فروشگاه نور");
+    expect(root.innerHTML).toContain("قیمت نمایشی دمو — قیمت واقعی نور نیست");
     expect(root.innerHTML).not.toContain(">100 ریال<");
   });
 });
