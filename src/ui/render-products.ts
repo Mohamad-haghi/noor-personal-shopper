@@ -79,7 +79,7 @@ export function renderProducts(
       <p class="eyebrow">NOOR PERSONAL SHOPPER · CURATED EDIT</p>
       <h1 id="products-title">فریم‌ها را با دقت بیشتری بشناسید.</h1>
       <p>مدل‌ها را مرور کنید، مشخصات ثبت‌شده را ببینید و گزینه‌های موردعلاقه‌تان را کنار هم قرار دهید.</p>
-      <aside class="demo-truth-notice" role="note"><strong>نسخهٔ نمایشی</strong><span>این کاتالوگ شامل ۱۵ مدل نمونه است. قیمت‌ها و گزینه‌های انتخاب، صرفاً برای نمایش عملکرد دمو هستند و موجودی یا قیمت واقعی فروشگاه نور را نشان نمی‌دهند. مشخصات تأییدنشده عمداً خالی می‌مانند.</span></aside>
+      <aside class="demo-truth-notice" role="note"><strong>نسخهٔ نمایشی</strong><span>این کاتالوگ شامل ۱۵ مدل نمونه است. قیمت‌های نمایشی و گزینه‌های انتخاب، صرفاً برای نمایش عملکرد دمو هستند و موجودی یا قیمت واقعی فروشگاه نور را نشان نمی‌دهند. مشخصات تأییدنشده عمداً خالی می‌مانند.</span></aside>
       <div class="catalog-shopper-cta"><a class="button button-primary" href="/shopper" data-app-link>برای انتخاب شخصی‌تر با دستیار نور گفت‌وگو کنید</a></div>
       <div class="catalog-count" aria-live="polite"><strong>${products.length.toLocaleString("fa-IR")}</strong><span>مدل در کاتالوگ نمایشی</span></div>
     </section>
@@ -143,7 +143,7 @@ export function renderProductDetail(
   routeView.innerHTML = `<main class="product-detail-page" id="main-content" aria-labelledby="product-title">
     <a class="product-back" href="/products" data-app-link>← بازگشت به کاتالوگ</a>
     <section class="product-detail-hero">
-      <div class="product-detail-media" aria-label="تصاویر محصول">${gallery}</div>
+      <div class="product-detail-media" aria-label="تصویر محصول">${gallery}</div>
       <div class="product-detail-copy">
         <p class="eyebrow">${escapeHtml(categoryLabel(product))} · NOOR EDIT</p>
         <h1 id="product-title">${escapeHtml(product.name)}</h1>
