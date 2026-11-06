@@ -1,7 +1,7 @@
 import type { HeroProvider } from "../interfaces/hero-provider";
 import type { HeroContent, HeroContentId } from "../../domain";
 
-const heroMediaSource = `${import.meta.env.BASE_URL}media/products/ray-ban-rb3025-181-71/primary.jpeg`;
+const heroMediaSource = `${import.meta.env.BASE_URL}media/hero/hero-1024-q65.webp`;
 
 const DEMO_HERO: HeroContent = {
   identity: { id: "noor-demo-home" },
