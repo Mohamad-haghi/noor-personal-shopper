@@ -833,3 +833,9 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .app-shell-lab .product-grid { grid-template-columns: 1fr; }
   .lab-curated-grid { grid-template-columns: 1fr; }
 }
+
+.app-shell-lab .lab-mandatory-edit-links { display: flex; flex-wrap: wrap; gap: .65rem; }
+@media (max-width: 520px) {
+  .app-shell-lab .lab-profile-row { align-items: flex-start; }
+  .app-shell-lab .lab-mandatory-edit-links { flex-direction: column; align-items: flex-end; gap: .35rem; }
+}
