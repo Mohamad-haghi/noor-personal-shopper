@@ -213,6 +213,12 @@ export class ShopperFeature {
     }
   }
 
+  goToStep(index: number): void {
+    if (!Number.isInteger(index)) return;
+    this.stepIndex = Math.max(1, Math.min(index, STEPS.length - 2));
+    this.completed = false;
+  }
+
   async restart(): Promise<void> {
     this.journey = { ...INITIAL_JOURNEY };
     this.stepIndex = 0;
