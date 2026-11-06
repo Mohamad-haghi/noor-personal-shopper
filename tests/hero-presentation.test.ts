@@ -17,6 +17,11 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(root.innerHTML).toContain('href="/shopper"');
     expect(root.innerHTML).toContain('href="/catalog"');
     expect(root.innerHTML).toContain('data-app-link');
+    expect(root.innerHTML).toContain('class="lab-home"');
+    expect(root.innerHTML).toContain("سه گام تا انتخابی سنجیده");
+    expect(root.innerHTML).toContain("گزیدهٔ مجموعه");
+    expect(root.innerHTML).toContain("هوشمندی‌ای که دلیلش را می‌گوید.");
+    expect(root.innerHTML).toContain('href="/how-it-works"');
     expect(root.innerHTML).toContain("عینکی که با شناخت شما انتخاب می‌شود.");
     expect(root.innerHTML).toContain("سلیقه و نیازتان را در یک گفت‌وگوی کوتاه بیان کنید");
     expect(root.innerHTML).not.toContain("Ray-Ban RB3025 181/71");
