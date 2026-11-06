@@ -50,7 +50,11 @@ export function renderSelectionProfile(routeView: HTMLElement, feature: ShopperF
           <strong>${mandatory.length ? escapeHtml(mandatory.join("، ")) : "هیچ‌کدام"}</strong>
           <small>فقط معیارهایی که در مسیر مشاوره به‌عنوان اجباری مشخص کرده‌اید.</small>
         </div>
-        <a class="lab-edit-link" href="/shopper?step=3" data-app-link>ویرایش</a>
+        <div class="lab-mandatory-edit-links" aria-label="ویرایش معیارهای اجباری">
+          <a class="lab-edit-link" href="/shopper?step=3" data-app-link>فرم</a>
+          <a class="lab-edit-link" href="/shopper?step=5" data-app-link>جنس</a>
+          <a class="lab-edit-link" href="/shopper?step=6" data-app-link>رنگ</a>
+        </div>
       </div>
     </section>
     <p class="lab-profile-note" role="note">این صفحه فقط خلاصهٔ انتخاب‌هاست. با ادامه، پیشنهادها از مسیر اصلی NOOR و موتور تصمیم COR درخواست می‌شوند؛ نتیجهٔ محلی آزمایشگاه در این مسیر استفاده نمی‌شود.</p>
