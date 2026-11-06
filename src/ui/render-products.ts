@@ -65,7 +65,7 @@ export function renderProducts(
   variantsByProduct: ReadonlyMap<string, readonly ProductVariant[]>,
   offers: readonly CommerceOffer[],
 ): void {
-  const offersByVariant = new Map(offers.filter((offer) => offer.pricing.source === "demo" && offer.availability.source === "demo").map((offer) => [offer.variantId.id, offer]));
+  void offers;
   const cards = products.map((product) => {
     const variant = variantsByProduct.get(product.identity.id)?.find((item) => item.availability.isAvailable && item.availability.source === "demo") ?? null;
     return productCard(product, variant);
