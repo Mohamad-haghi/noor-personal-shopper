@@ -2,14 +2,16 @@ import type { ShopperFeature, ShopperStep } from "../features/shopper/shopper-fe
 import { withBasePath } from "../app/routing/create-router";
 
 function escapeHtml(value: string): string {
-  return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
 function renderProgress(steps: readonly ShopperStep[], currentIndex: number): string {
-  return steps.filter((step) => step.id !== "complete").map((step,index) => {
-    const state = index < currentIndex ? "complete" : index === currentIndex ? "current" : "upcoming";
-    return `<li class="shopper-progress-item shopper-progress-${state}"><span aria-hidden="true">${index + 1}</span><span>${escapeHtml(step.title)}</span></li>`;
-  }).join("");
+  const questions = steps.filter((step) => step.id !== "intro" && step.id !== "complete");
+  const activeQuestion = currentIndex <= 0 ? -1 : Math.min(currentIndex - 1, questions.length - 1);
+  return questions.map((_, index) =>
+    `<span class="lab-shopper-progress-segment${index <= activeQuestion ? " is-active" : ""}"></span>`
+  ).join("");
 }
 
 export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): void {
@@ -17,11 +19,15 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
   const steps = feature.getSteps();
   const flow = feature.getFlowState();
   const currentIndex = steps.findIndex((item) => item.id === step.id);
+  const questionSteps = steps.filter((item) => item.id !== "intro" && item.id !== "complete");
+  const questionIndex = currentIndex <= 0 ? 0 : Math.min(currentIndex, questionSteps.length);
+  const isIntro = step.id === "intro";
+  const isComplete = step.id === "complete";
 
   const options = step.options
-    ? `<div class="shopper-options" role="group" aria-label="${escapeHtml(step.title)}">${step.options.map((option) => {
+    ? `<div class="shopper-options lab-shopper-options" role="group" aria-label="${escapeHtml(step.title)}">${step.options.map((option) => {
         const selected = step.field ? flow.journey[step.field] === option : false;
-        return `<button class="shopper-option${selected ? " is-selected" : ""}" type="button" data-shopper-option="${escapeHtml(option)}" aria-pressed="${selected}">${escapeHtml(option)}</button>`;
+        return `<button class="shopper-option${selected ? " is-selected" : ""}" type="button" data-shopper-option="${escapeHtml(option)}" aria-pressed="${selected}"><span>${escapeHtml(option)}</span>${selected ? '<span class="lab-shopper-check" aria-hidden="true">✓</span>' : ""}</button>`;
       }).join("")}</div>`
     : "";
 
@@ -35,11 +41,10 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
   const canMarkMandatory = Boolean(mandatoryCriterion && selectedValue &&
     selectedValue !== "فرقی ندارد" && selectedValue !== "مطمئن نیستم");
   const mandatoryControl = canMarkMandatory && mandatoryCriterion
-    ? `<label class="shopper-mandatory-control"><input type="checkbox" data-shopper-mandatory="${mandatoryCriterion}" ${(flow.journey.mandatoryCriteria ?? []).includes(mandatoryCriterion) ? "checked" : ""}><span>این معیار برای من اجباری است</span><small>اگر هیچ محصولی با این شرط پیدا نشود، پیشنهاد نامنطبق نمایش داده نمی‌شود.</small></label>`
+    ? `<label class="shopper-mandatory-control lab-shopper-mandatory"><input type="checkbox" data-shopper-mandatory="${mandatoryCriterion}" ${(flow.journey.mandatoryCriteria ?? []).includes(mandatoryCriterion) ? "checked" : ""}><span><strong>این معیار برای من اجباری است</strong><small>اگر هیچ محصولی با این شرط پیدا نشود، COR پیشنهاد منطبق نمایش نمی‌دهد.</small></span></label>`
     : "";
-  const isComplete = step.id === "complete";
-  const continueLabel = isComplete ? "مشاهده پروفایل انتخاب" : step.id === "intro" ? "شروع مشاوره" : "ادامه";
-  const summary = isComplete ? `<div class="shopper-summary">
+
+  const summary = isComplete ? `<div class="shopper-summary lab-shopper-summary">
     <div><span>نوع عینک</span><strong>${escapeHtml(flow.journey.productType ?? "—")}</strong></div>
     <div><span>کاربرد</span><strong>${escapeHtml(flow.journey.useCase ?? "—")}</strong></div>
     <div><span>فرم فریم ترجیحی</span><strong>${escapeHtml(flow.journey.style ?? "—")}</strong></div>
@@ -49,28 +54,38 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
     <div><span>گروه محصول</span><strong>${escapeHtml(flow.journey.gender ?? "فرقی ندارد")}</strong></div>
     <div><span>شرط‌های اجباری</span><strong>${(flow.journey.mandatoryCriteria ?? []).length ? escapeHtml((flow.journey.mandatoryCriteria ?? []).join("، ")) : "هیچ‌کدام"}</strong></div>
   </div>
-  <p class="shopper-profile-note" aria-live="polite">پروفایل انتخاب شما به‌صورت ساختاریافته در لایهٔ Profile نگه‌داری شده و برای اتصال آینده به حساب و سیستم نور آماده است.</p>` : "";
+  <p class="shopper-profile-note" aria-live="polite">پروفایل انتخاب شما در لایهٔ ساختاریافتهٔ NOOR نگه‌داری می‌شود و برای مرحلهٔ پیشنهادها آماده است.</p>` : "";
 
-  routeView.innerHTML = `<main class="shopper" id="main-content" aria-labelledby="shopper-title">
-    <div class="shopper-layout">
-      <aside class="shopper-sidebar" aria-label="مراحل مشاوره">
-        <p class="eyebrow">NOOR PERSONAL SHOPPER</p>
-        <p class="shopper-sidebar-title">مشاور انتخاب عینک</p>
-        <ol class="shopper-progress">${renderProgress(steps,currentIndex)}</ol>
-      </aside>
-      <section class="shopper-panel">
-        <div class="shopper-header"><span class="shopper-step">مرحله ${Math.min(currentIndex + 1, steps.length - 1)} از ${steps.length - 1}</span><span class="shopper-private-note">انتخاب‌ها در پروفایل انتخاب ساختاریافتهٔ این تجربه نگه‌داری می‌شوند.</span></div>
-        <div class="shopper-content">
-          <p class="eyebrow">راهنمای انتخاب</p>
-          <h1 id="shopper-title">${escapeHtml(step.title)}</h1>
+  const progressLabel = isIntro
+    ? "آمادهٔ شروع"
+    : isComplete
+      ? `${questionSteps.length.toLocaleString("fa-IR")} پرسش تکمیل شد`
+      : `پرسش ${questionIndex.toLocaleString("fa-IR")} از ${questionSteps.length.toLocaleString("fa-IR")}`;
+  const continueLabel = isComplete ? "مشاهده پروفایل انتخاب" : isIntro ? "شروع مشاوره" : "ادامه";
+
+  routeView.innerHTML = `<main class="shopper lab-shopper" id="main-content" aria-labelledby="shopper-title">
+    <div class="shopper-layout lab-shopper-layout">
+      <div class="lab-shopper-top">
+        <span class="eyebrow" dir="ltr">PERSONAL SHOPPER</span>
+        <span class="lab-shopper-count" aria-live="polite">${progressLabel}</span>
+      </div>
+      <div class="lab-shopper-progress" role="progressbar" aria-label="پیشرفت مشاوره" aria-valuemin="0" aria-valuemax="${questionSteps.length}" aria-valuenow="${isIntro ? 0 : isComplete ? questionSteps.length : questionIndex}">
+        ${renderProgress(steps, currentIndex)}
+      </div>
+      <section class="shopper-panel lab-shopper-panel">
+        <div class="shopper-content lab-shopper-content">
+          <div class="lab-shopper-title-row"><span dir="ltr">NOOR</span><h1 id="shopper-title">${escapeHtml(step.title)}</h1></div>
           <p class="shopper-description">${escapeHtml(step.description)}</p>
-          ${summary}${options}${mandatoryControl}
+          ${isIntro ? '<p class="lab-shopper-intro-note">پاسخ‌ها در طول همین جلسه قابل ویرایش هستند.</p>' : ""}
+          ${summary}
+          ${options}
+          ${mandatoryControl}
         </div>
-        <div class="shopper-actions">
-          ${currentIndex > 0 ? '<button class="button button-secondary" type="button" data-shopper-back>بازگشت</button>' : '<a class="button button-secondary" href="/" data-app-link>خروج</a>'}
+        <div class="shopper-actions lab-shopper-actions">
+          ${currentIndex > 0 ? '<button class="button button-secondary" type="button" data-shopper-back>قبلی</button>' : '<a class="button button-secondary" href="/" data-app-link>خروج</a>'}
           <button class="button button-primary" type="button" data-shopper-next ${feature.canContinue() ? "" : "disabled"}>${continueLabel}</button>
         </div>
-        <p class="shopper-recovery" aria-live="polite">هر زمان بخواهید می‌توانید به مرحله قبل برگردید و انتخابتان را تغییر دهید.</p>
+        <p class="shopper-recovery lab-shopper-recovery" aria-live="polite">هر زمان بخواهید می‌توانید به مرحلهٔ قبل برگردید و انتخابتان را تغییر دهید.</p>
       </section>
     </div>
   </main>`;
@@ -106,7 +121,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
 
   routeView.querySelector<HTMLButtonElement>("[data-shopper-next]")?.addEventListener("click", () => {
     if (!feature.canContinue()) return;
-    if (step.id === "complete") {
+    if (isComplete) {
       window.history.pushState(null, "", withBasePath("/profile", import.meta.env.BASE_URL));
       window.dispatchEvent(new PopStateEvent("popstate"));
       return;
