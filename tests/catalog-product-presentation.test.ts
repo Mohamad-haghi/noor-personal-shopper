@@ -42,6 +42,11 @@ describe("catalog and product detail presentation", () => {
     expect(root.innerHTML).toContain("قیمت‌های نمایشی");
     expect(root.innerHTML).toContain("مشاهدهٔ جزئیات");
     expect(root.innerHTML).toContain("موجودی فرضی دمو — موجودی واقعی نور نیست");
+    expect(root.innerHTML).toContain("product-card-media");
+    expect(root.innerHTML).toContain("product-card-facts");
+    expect(root.innerHTML).toContain("data-compare-product");
+    expect(root.innerHTML).not.toContain("product-card-meta");
+    expect(root.innerHTML).not.toContain("product-demo-price");
   });
 
   it("renders only known detail facts and omits unresolved values instead of guessing", () => {
