@@ -412,3 +412,93 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
 @media(max-width:850px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product-detail-hero{grid-template-columns:1fr}.product-detail-media{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.product-gallery-item{min-height:260px}.product-gallery-item img{min-height:240px}}
 @media(max-width:560px){.products-page,.product-detail-page{padding:36px 14px 64px}.product-grid{grid-template-columns:1fr;gap:16px}.product-card-media{aspect-ratio:5/3}.product-card-actions{grid-template-columns:1fr 1fr}.product-detail-media{grid-template-columns:1fr}.product-gallery-item{min-height:250px}.product-gallery-item img{min-height:230px}.product-spec-panel{padding:16px}.product-variant-row{align-items:stretch;flex-direction:column;gap:16px}.product-variant-purchase{display:grid;grid-template-columns:1fr 1fr}.product-variant-purchase .button{width:100%}.product-variant-purchase .product-price,.product-variant-purchase small{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){.product-card{transition:none}.product-card:hover{transform:none}}
+
+
+/* Approved Lab visual polish — presentation only; NOOR markup and behavior stay intact. */
+:root {
+  --surface: oklch(0.985 0.004 85);
+  --surface-soft: oklch(0.955 0.008 82);
+  --line: oklch(0.87 0.012 78);
+}
+.app-shell { padding-top: clamp(.75rem, 2vw, 1.5rem); }
+.app-header { min-height: 4.25rem; }
+.primary-nav { border-block-color: var(--line); }
+.primary-nav a, .mobile-nav a { border-radius: .25rem; transition: color 160ms ease, background 160ms ease; }
+.button { border-radius: .25rem; min-height: 2.9rem; }
+.button-primary { background: var(--ink); border-color: var(--ink); }
+.button-primary:hover { background: var(--accent); border-color: var(--accent); }
+.button-secondary { background: transparent; border-color: var(--line); }
+.button-secondary:hover { background: var(--surface-soft); border-color: var(--accent); }
+.products-intro { max-width: 820px; }
+.product-card { border-radius: .5rem; box-shadow: 0 5px 20px rgba(36,35,33,.035); }
+.product-card:hover { box-shadow: 0 12px 28px rgba(36,35,33,.07); }
+.product-card-media {
+  aspect-ratio: 5 / 4;
+  background: #fff !important;
+  padding: 0;
+}
+.product-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 0 !important;
+  background: #fff;
+}
+.product-gallery-item,
+.product-gallery-item img,
+.product-detail-media,
+.product-detail-media img {
+  background: #fff !important;
+}
+.product-gallery-item { border-radius: .5rem; }
+.product-gallery-item img { padding: 0 !important; object-fit: contain; }
+.product-detail-media { gap: 12px; }
+.product-spec-panel,
+.product-variant-row,
+.d5-choice-card,
+.d5-empty,
+.d5-compare-wrap,
+.d5-checkout-section,
+.d5-checkout-summary,
+.d7-cart-item,
+.d7-cart-summary,
+.d8-branch-card,
+.d8-confirmation,
+.recommendation-card,
+.manager-stat,
+.manager-panel {
+  border-radius: .5rem;
+  border-color: var(--line);
+  box-shadow: 0 5px 20px rgba(36,35,33,.025);
+}
+.d5-choice-card, .d5-empty, .d5-compare-wrap,
+.d5-checkout-section, .d5-checkout-summary,
+.d7-cart-item, .d7-cart-summary,
+.d8-branch-card, .d8-confirmation,
+.manager-stat, .manager-panel { background: var(--surface); }
+.d5-choice-grid, .d5-account-grid, .recommendation-grid { gap: 20px; }
+.d5-intro, .recommendations-hero, .d8-intro { max-width: 820px; }
+.d5-intro h1, .recommendations-hero h1, .d8-intro h1 { letter-spacing: -.025em; }
+.d5-choice-card h2, .recommendation-card h2 { color: var(--ink); }
+.d5-compare-wrap { overflow-x: auto; }
+.d5-compare-table th, .d5-compare-table td,
+.comparison-table-wrap th, .comparison-table-wrap td { border-color: var(--line); }
+.d5-form input, .d5-form select, .d5-form textarea,
+.d7-checkout-section input:not([type="radio"]),
+.d8-form input, .d8-form select, .d8-form textarea {
+  border-color: var(--line);
+  border-radius: .25rem;
+  background: #fff;
+}
+.d5-form input:focus, .d5-form select:focus, .d5-form textarea:focus,
+.d7-checkout-section input:focus, .d8-form input:focus,
+.d8-form select:focus, .d8-form textarea:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-color: var(--accent);
+}
+.demo-truth-notice { border-radius: .35rem; background: var(--surface-soft); border-color: var(--line); }
+.product-demo-tag { border-radius: .25rem; }
+@media (max-width: 720px) {
+  .app-shell { width: min(100% - 1.25rem, var(--max-width)); }
+  .product-card-media { aspect-ratio: 5 / 3; }
+}
