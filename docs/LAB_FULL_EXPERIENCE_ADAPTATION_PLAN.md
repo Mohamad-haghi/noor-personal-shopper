@@ -1,72 +1,68 @@
-# Lab Full-Experience Adaptation Plan
+# Lab Experience Adaptation — NOOR-native implementation
 
 **Date:** 2026-11-06  
 **Target branch:** `feat/lab-full-experience-adaptation`  
-**Status:** Route inventory and architecture comparison started; implementation not yet verified.  
-**Approval:** Owner explicitly requested the full Lab presentation experience in NOOR while retaining NOOR's original end-to-end flows.
+**Implementation status:** First implementation pass committed; automated verification pending.  
+**Approval:** User approved implementing the Lab visual experience through the selection-profile summary, with the original NOOR/COR flow beginning at the profile CTA.
 
-## Goal
+## User-approved experience boundary
 
-When a visitor opens NOOR, the visible site should reproduce the complete Lab presentation experience (not only the palette and Hero), while every operational action continues through NOOR's existing application services, providers, router, catalog, COR bridges, and demo commerce/handoff flow.
+The Lab presentation applies only to these routes:
 
-This is an adaptation, not a repository merge. Lab is the presentation reference; NOOR main is the sole source of truth for behavior and data.
+1. `/` — full landing page and its informational sections.
+2. `/how-it-works` — NOOR-native explanation page.
+3. `/catalog` (alias to NOOR `/products`) — collection presentation and filters.
+4. `/product/:id` (alias to NOOR `/products/:id`) — product detail presentation.
+5. `/shopper` — guided selection questions, using NOOR ShopperFeature.
+6. `/profile` — review/editable summary of NOOR's SelectionProfile.
 
-## Pinned source baseline
+The explicit handoff is the **`مشاهده پیشنهادها`** link on `/profile`, targeting `/recommendations`.
 
-- Lab `main`: `5de89905c7fb7483e648637472bfd781aedde65f`
-- NOOR `main` before this branch: `cb639820e43727b18cb8a4a848f24939f5aba41a`
-- Previous visual-only PR #116 is already merged at `cb639820e43727b18cb8a4a848f24939f5aba41a`; it changed six files and did not transfer the full Lab page/route experience.
-- Lab Hero asset `public/hero-1024-q65.webp` and NOOR Hero asset `public/media/hero/hero-1024-q65.webp` have the same Git blob SHA `c2326ad35541ad3d363dae2d93c6cc47a9a17338`. They are byte-identical; the currently observed old Hero is not explained by a different source asset. Investigate deployment/cache and composition before replacing artwork.
+From `/recommendations` onward, the original NOOR route renderers, services, COR recommendation bridge, no-match/unavailable states, ChoicesService, comparison bridge, cart/checkout/payment/confirmation and purchase-handoff behavior remain in control. The Lab presentation shell is removed on those downstream routes.
 
-## Architecture boundary
+## Source-of-truth and protected boundaries
 
-- Lab uses React + TanStack Router + a local mock catalog/store.
-- NOOR uses its own TypeScript router, imperative renderers, feature/service/provider layers, and COR recommendation/comparison/purchase-handoff bridges.
-- Do not import Lab's `src/lib/catalog.ts`, `src/lib/store.tsx`, route tree, mock recommendation engine, mock checkout state, or React/TanStack runtime.
-- Rebuild Lab's visual hierarchy in NOOR-native renderers/CSS and bind displayed product/recommendation content to NOOR services and COR outputs.
+- Lab visual reference: `Mohamad-haghi/noor-intelligent-eyewear-studio`, branch `main`, baseline `5de89905c7fb7483e648637472bfd781aedde65f`.
+- NOOR source of truth: this repository, with this branch based on the already-merged visual baseline `cb639820e43727b18cb8a4a848f24939f5aba41a`.
+- The previous PR #116 only delivered the earlier visual baseline; it did not deliver the complete route experience.
+- Do not import or execute Lab's React/TanStack route tree, `src/lib/store.tsx`, `src/lib/catalog.ts`, local mock checkout, or local `recommend()`.
+- All product identities, product images, product facts, shopper answers, selection profile, COR requests and downstream flows remain NOOR-owned.
+- No COR repository, Render, Neon, Clerk, environment, credentials, service, deployment, database or Pages changes are in scope.
+- No merge or Pages publication is authorized by this implementation request.
 
-## Page and route correspondence
+## First implementation pass
 
-| Lab page | NOOR route/target | Adaptation boundary |
-|---|---|---|
-| `/` full landing page | `/` | Rebuild all Lab landing sections (Hero, three-step explanation, curated product presentation, COR decision-intelligence explanation/flow diagram, final CTA) using NOOR Hero content, NOOR catalog products, and truthful COR-connected claims. Do not use Lab mock products or local ranking. |
-| `/how-it-works` | New informational page only if needed; otherwise home sections | Visual/informational content may be adapted. Claims must accurately describe current NOOR/COR integration; no invented capabilities. |
-| `/catalog` | `/products` | Reuse NOOR catalog service, 15-product feed, product IDs, filters/facts and existing product actions. |
-| `/product/$id` | `/products/:id` | Keep NOOR product identity, attributes, images, variants, save/compare and selection actions. |
-| `/shopper` | `/shopper` | Keep NOOR ShopperFeature, question schema, mandatory criteria, persistence and navigation. Transfer only layout/visual language. |
-| `/profile` | NOOR selection-profile state and relevant existing route(s) | Lab's local answer model is not portable. Preserve NOOR's selection-profile service and edit/review semantics; add a route only if NOOR's existing route map lacks an equivalent and the full flow requires it. |
-| `/recommendations` | `/recommendations` | COR remains authoritative for recommendations, reasons, scores, no-match and unavailable states. Never use Lab's local `recommend()`. |
-| `/saved` | `/choices` | Keep NOOR ChoicesService/provider and recommendation-to-choice identity. |
-| `/compare` | `/compare` | Keep NOOR comparison service and COR comparison bridge; do not use Lab's local compare state. |
-| `/checkout` (Lab visit handoff mock) | NOOR `/visit` for visit intent; NOOR `/cart` → `/checkout` → `/payment` → `/confirmation/:id` remains intact | Do not replace NOOR checkout with Lab's fictional visit page. Preserve the complete NOOR demo commerce flow and purchase-handoff contract. |
-| `/manager` | `/manager` | Keep NOOR's truthful demo manager view and data sources; adapt visual presentation only. |
+### New NOOR-native views
+- `src/ui/render-selection-profile.ts`: reads the existing ShopperFeature journey; presents the profile summary; provides edit links back into the NOOR questionnaire; sends the primary CTA to `/recommendations`.
+- `src/ui/render-how-it-works.ts`: adds the Lab-style informational route without using Lab data or local ranking.
 
-NOOR-only routes that have no Lab equivalent and must remain reachable and functional: `/search`, `/account`, `/cart`, `/checkout`, `/payment`, `/confirmation/:id`, `/branches`, and `/visit`.
+### Existing NOOR files adapted
+- `src/app/routing/routes.ts`: adds `/profile`, `/how-it-works`, and Lab-compatible aliases `/catalog` and `/product/:id`.
+- `src/ui/render-application-shell.ts`: scopes the Lab header/navigation/footer to the pre-handoff routes; retains the original shell on downstream routes; dispatches aliases to existing NOOR catalog/detail renderers; routes profile CTA into the existing recommendation route.
+- `src/features/shopper/shopper-feature.ts`: adds a bounded step-navigation method so profile rows can reopen a NOOR question for editing.
+- `src/ui/render-shopper.ts`: changes the completed journey's next action to the profile page and preserves GitHub Pages base-path handling.
+- `src/ui/render-hero.ts`: composes the full Lab landing hierarchy around NOOR's existing Hero content and NOOR catalog products. The COR explanation avoids claims about local Lab recommendations.
+- `src/ui/render-products.ts`: adds collection filters and keeps all cards bound to NOOR products and existing product actions.
+- `src/styles.css`: adds a scoped Lab presentation layer for the pre-handoff routes, including white product-image surfaces and responsive layouts.
+- `tests/lab-profile-handoff.test.ts`: covers route aliases, profile content, COR handoff, explanatory page and edit-step navigation.
+- `tests/hero-presentation.test.ts`: now asserts the additional landing sections.
 
-## Non-negotiable invariants
+## Important existing limitation
 
-1. NOOR route resolution, app-link navigation and browser history behavior remain intact.
-2. NOOR catalog feed, 15 product identities, product facts and image URLs remain canonical.
-3. Shopper questions, mandatory criteria, selection profile persistence and edit flow remain canonical.
-4. COR request/response contracts, ranking, reasons, normalized match score, trace marker, no-match and unavailable states remain unchanged.
-5. Save/choices, compare, cart, checkout, payment, confirmation, branch and visit flows remain NOOR-owned.
-6. Demo disclaimers remain accurate; no real inventory, pricing, orders, payment or store booking claims.
-7. No COR repository, Render, Neon, Clerk, environment, credentials, deployment or database changes.
-8. No merge or Pages publication without separate owner approval.
+The current `DemoSelectionProfileProvider` is an in-memory provider. Navigation between NOOR routes in the same SPA session retains the profile, but a full page reload starts a fresh demo profile. This pass intentionally preserves that existing NOOR behavior rather than importing Lab storage or silently changing persistence. Durable cross-reload profile storage is a separate product decision.
 
-## Implementation sequence
+## Verification still required
 
-1. Finish route-level visual inventory and inspect current NOOR landing/navigation structure.
-2. Implement the complete Lab-style landing page in NOOR-native code, with NOOR data and destinations.
-3. Adapt shared header/footer/navigation and page-level visual language.
-4. Adapt catalog/detail/shopper/profile/recommendations/choices/compare/manager and the relevant visit handoff presentation one route at a time.
-5. Verify NOOR-only cart/checkout/payment/confirmation/account/branch/search routes remain operational and visually coherent.
-6. Run targeted tests, type-check, production build, existing behavioral/evidence gates and the relevant COR integration checks.
-7. Provide a preview for owner visual review on desktop and mobile. Do not merge or publish before approval.
+The branch's `NOOR Build Verification` workflow does not run on pushes to this feature branch; it runs on pull requests targeting `main`. A **draft PR only** may be opened to trigger tests, type-check, production build, demo-feed evidence checks and the pinned COR build. The PR must remain unmerged.
 
-## Known verification limits at start
+Acceptance checks:
+- Landing page matches the Lab hierarchy on desktop and mobile.
+- Product imagery remains on a clean white surface and is not visually dominated by a cream card.
+- `/catalog` and `/product/:id` aliases work with the GitHub Pages base path and browser back/forward.
+- Shopper answers remain NOOR SelectionProfile data; edit links reopen the correct NOOR step.
+- `/profile` primary CTA navigates to the exact NOOR `/recommendations` route.
+- Downstream recommendations, COR trace/request IDs, no-match/unavailable, save, compare, and commerce paths are not replaced by Lab code.
+- Existing behavior tests, TypeScript, production build and evidence gates pass.
+- Owner performs final desktop/mobile visual review before any merge or Pages publish.
 
-- The previous PR #116 CI success does not prove every Lab page has been reproduced.
-- The previously reported browser assertion timeout at `.product-card` remains separately unresolved until reproduced or closed with exact evidence.
-- Repository asset SHA equality proves the Hero files are identical, but does not prove which deployed Pages build or cached asset a browser currently displays.
-- No browser visual review or live end-to-end retest is claimed by this plan.
+No live browser verification, COR retest, merge or deployment is claimed by this implementation pass.
