@@ -1,12 +1,14 @@
 # NOOR Documentation Index
 
-**Last reconciled:** 2026-11-03  
+**Last reconciled:** 2026-11-06  
 This is the entry point for current product direction, engineering rules, integration, release evidence and historical records. Start with the [current project brief](./NOOR_CURRENT_PROJECT_BRIEF.md), then consult the specific document for the work you intend to do.
 
 ## Current product and design
 
 - [Current Project Brief](./NOOR_CURRENT_PROJECT_BRIEF.md) — product boundary, source-of-truth hierarchy, current delivery status, operating rules and next phase.
 - [Hero Design Specification V1](./HERO_DESIGN_SPEC_V1.md) — approved home Hero design and strict Lovable implementation scope.
+
+- [Lab Visual Assembly Review (2026-11-06)](./NOOR_LAB_VISUAL_ASSEMBLY_REVIEW_2026-11-06.md) — reviewed source pins, exact NOOR-native transfer map, excluded Lab logic/data, browser blocker and sequential acceptance gates.
 
 ## Integration and operations
 
