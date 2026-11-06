@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { DemoHeroProvider } from "../src/providers/demo/demo-hero-provider";
 import { renderHero } from "../src/ui/render-hero";
+import type { Product } from "../src/domain";
 
 describe("approved Lab hero presentation in the NOOR application", () => {
   it("uses the local approved hero artwork while preserving NOOR content and route-aware actions", async () => {
@@ -25,6 +26,28 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(root.innerHTML).toContain("عینکی که با شناخت شما انتخاب می‌شود.");
     expect(root.innerHTML).toContain("سلیقه و نیازتان را در یک گفت‌وگوی کوتاه بیان کنید");
     expect(root.innerHTML).not.toContain("Ray-Ban RB3025 181/71");
+  });
+
+
+  it("uses the same three curated homepage models as the Lab instead of the first feed entries", async () => {
+    const hero = await new DemoHeroProvider().getHeroContent();
+    const ids = ["prada-pr51yv-04q1o1", "ray-ban-rb3025-181-71", "oakley-oo9318-02-34", "persol-po0649-95-31"];
+    const products = ids.map((id) => ({
+      identity: { id },
+      name: id,
+      media: { primaryImage: { url: `/${id}.jpg`, altText: id } },
+    })) as unknown as Product[];
+    const root = { innerHTML: "" } as HTMLElement;
+
+    renderHero(root, hero!, "/shopper", products);
+
+    const persol = root.innerHTML.indexOf("persol-po0649-95-31.jpg");
+    const oakley = root.innerHTML.indexOf("oakley-oo9318-02-34.jpg");
+    const prada = root.innerHTML.indexOf("prada-pr51yv-04q1o1.jpg");
+    expect(persol).toBeGreaterThan(-1);
+    expect(oakley).toBeGreaterThan(persol);
+    expect(prada).toBeGreaterThan(oakley);
+    expect(root.innerHTML).not.toContain("ray-ban-rb3025-181-71.jpg");
   });
 
   it("keeps responsive, reduced-motion and uncropped image rules in the dedicated Hero stylesheet", () => {
