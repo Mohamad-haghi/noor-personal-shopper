@@ -58,7 +58,13 @@ function renderNavigation(match: RouteMatch | null): string {
     .map((route) => {
       const current = isNavigationRouteCurrent(route.path, match);
       const currentAttribute = current ? ' aria-current="page"' : "";
-      return `<li><a href="${route.path}" data-app-link${currentAttribute}>${route.navigationLabel}</a></li>`;
+      const labLabels: Record<string, string> = {
+        "/catalog": "مجموعه",
+        "/shopper": "مشاوره انتخاب",
+        "/how-it-works": "NOOR چگونه کار می‌کند",
+      };
+      const label = isLabExperienceRoute(match) ? labLabels[route.path] : route.navigationLabel;
+      return `<li><a href="${route.path}" data-app-link${currentAttribute}>${label}</a></li>`;
     })
     .join("");
 }
