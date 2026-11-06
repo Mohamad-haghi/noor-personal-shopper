@@ -50,7 +50,7 @@ function isLabExperienceRoute(match: RouteMatch | null): boolean {
 }
 
 function renderNavigation(match: RouteMatch | null): string {
-  const labPaths = new Set(["/catalog", "/shopper", "/how-it-works"]);
+  const labPaths = new Set(["/catalog", "/shopper", "/how-it-works", "/choices", "/compare"]);
   const routes = isLabExperienceRoute(match)
     ? APP_ROUTES.filter((route) => labPaths.has(route.path))
     : APP_ROUTES.filter((route) => route.navigationLabel !== null);
@@ -62,6 +62,8 @@ function renderNavigation(match: RouteMatch | null): string {
         "/catalog": "مجموعه",
         "/shopper": "مشاوره انتخاب",
         "/how-it-works": "NOOR چگونه کار می‌کند",
+        "/choices": "انتخاب‌ها",
+        "/compare": "مقایسه",
       };
       const label = isLabExperienceRoute(match) ? labLabels[route.path] : route.navigationLabel;
       return `<li><a href="${route.path}" data-app-link${currentAttribute}>${label}</a></li>`;
@@ -743,20 +745,21 @@ export async function renderApplicationShell(
   root.innerHTML = `
     <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
     <div class="app-shell${isLabExperienceRoute(match) ? " app-shell-lab" : ""}">
-      <header class="app-header">
+      <header class="app-header${isLabExperienceRoute(match) ? " app-header-lab" : ""}">
         ${isLabExperienceRoute(match)
           ? `<a class="app-brand app-brand-lab" href="/" data-app-link aria-label="NOOR Eyewear Studio"><span class="app-brand-name">NOOR</span><span class="app-brand-tagline" dir="ltr">Eyewear Studio</span></a>`
           : `<a class="app-brand" href="/" data-app-link aria-label="نور، صفحهٔ اصلی"><span class="app-brand-mark" aria-hidden="true">ن</span><span class="app-brand-name">نور</span></a>`}
+        ${isLabExperienceRoute(match) ? `<nav class="lab-header-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>` : ""}
         <div class="app-header-meta">
-          <a class="button button-primary header-shopper-cta" href="/shopper" data-app-link>${isLabExperienceRoute(match) ? "مشاوره انتخاب" : "دستیار خرید شخصی"}</a>
-          <span class="app-mode">${isLabExperienceRoute(match) ? "The Intelligent Eyewear Studio" : "دموی مستقل"}</span>
+          ${isLabExperienceRoute(match) ? "" : `<a class="button button-primary header-shopper-cta" href="/shopper" data-app-link>دستیار خرید شخصی</a>`}
+          ${isLabExperienceRoute(match) ? "" : `<span class="app-mode">دموی مستقل</span>`}
           <details class="mobile-nav">
-            <summary>منو</summary>
+            <summary aria-label="باز کردن منو">منو</summary>
             <nav aria-label="ناوبری موبایل"><ul>${navigation}</ul></nav>
           </details>
         </div>
       </header>
-      <nav class="primary-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>
+      ${isLabExperienceRoute(match) ? "" : `<nav class="primary-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>`}
       <div id="route-view" class="route-view" aria-live="polite"></div>
       <footer class="app-footer">
         ${isLabExperienceRoute(match)
