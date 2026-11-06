@@ -32,6 +32,8 @@ import { renderVisit } from "./render-visit";
 import { renderProducts, renderProductDetail } from "./render-products";
 import { renderSearch } from "./render-search";
 import { renderManagerOverview } from "./render-manager-overview";
+import { renderSelectionProfile } from "./render-selection-profile";
+import { renderHowItWorks } from "./render-how-it-works";
 import type { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
 import type { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
 
@@ -41,8 +43,18 @@ function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | nu
     (navigationPath !== "/" && match.route.path.startsWith(`${navigationPath}/`));
 }
 
+function isLabExperienceRoute(match: RouteMatch | null): boolean {
+  return Boolean(match && [
+    "/", "/how-it-works", "/catalog", "/product/:id", "/products", "/products/:id", "/shopper", "/profile",
+  ].includes(match.route.path));
+}
+
 function renderNavigation(match: RouteMatch | null): string {
-  return APP_ROUTES.filter((route) => route.navigationLabel !== null)
+  const labPaths = new Set(["/catalog", "/shopper", "/how-it-works"]);
+  const routes = isLabExperienceRoute(match)
+    ? APP_ROUTES.filter((route) => labPaths.has(route.path))
+    : APP_ROUTES.filter((route) => route.navigationLabel !== null);
+  return routes
     .map((route) => {
       const current = isNavigationRouteCurrent(route.path, match);
       const currentAttribute = current ? ' aria-current="page"' : "";
@@ -724,15 +736,14 @@ export async function renderApplicationShell(
   const navigation = renderNavigation(match);
   root.innerHTML = `
     <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
-    <div class="app-shell">
+    <div class="app-shell${isLabExperienceRoute(match) ? " app-shell-lab" : ""}">
       <header class="app-header">
-        <a class="app-brand" href="/" data-app-link aria-label="نور، صفحهٔ اصلی">
-          <span class="app-brand-mark" aria-hidden="true">ن</span>
-          <span class="app-brand-name">نور</span>
-        </a>
+        ${isLabExperienceRoute(match)
+          ? `<a class="app-brand app-brand-lab" href="/" data-app-link aria-label="NOOR Eyewear Studio"><span class="app-brand-name">NOOR</span><span class="app-brand-tagline" dir="ltr">Eyewear Studio</span></a>`
+          : `<a class="app-brand" href="/" data-app-link aria-label="نور، صفحهٔ اصلی"><span class="app-brand-mark" aria-hidden="true">ن</span><span class="app-brand-name">نور</span></a>`}
         <div class="app-header-meta">
-          <a class="button button-primary header-shopper-cta" href="/shopper" data-app-link>دستیار خرید شخصی</a>
-          <span class="app-mode">دموی مستقل</span>
+          <a class="button button-primary header-shopper-cta" href="/shopper" data-app-link>${isLabExperienceRoute(match) ? "مشاوره انتخاب" : "دستیار خرید شخصی"}</a>
+          <span class="app-mode">${isLabExperienceRoute(match) ? "The Intelligent Eyewear Studio" : "دموی مستقل"}</span>
           <details class="mobile-nav">
             <summary>منو</summary>
             <nav aria-label="ناوبری موبایل"><ul>${navigation}</ul></nav>
@@ -742,8 +753,9 @@ export async function renderApplicationShell(
       <nav class="primary-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>
       <div id="route-view" class="route-view" aria-live="polite"></div>
       <footer class="app-footer">
-        <span>NOOR Personal Shopper</span>
-        <span>دموی مستقل · بدون اتصال به سامانه‌های واقعی نور</span>
+        ${isLabExperienceRoute(match)
+          ? `<span class="app-footer-brand">NOOR</span><span>نمونهٔ نمایشی مستقل · بدون فروش، موجودی یا پرداخت واقعی</span>`
+          : `<span>NOOR Personal Shopper</span><span>دموی مستقل · بدون اتصال به سامانه‌های واقعی نور</span>`}
       </footer>
     </div>
   `;
@@ -765,11 +777,17 @@ export async function renderApplicationShell(
     renderManagerOverview(routeView, { products, variants, offers });
   } else if (match?.route.path === "/search") {
     await renderSearchRoute(routeView, searchService, catalogService);
-  } else if (match?.route.path === "/products") {
+  } else if (match?.route.path === "/products" || match?.route.path === "/catalog") {
     await renderProductsRoute(routeView, catalogService, commerceService);
-  } else if (match?.route.path === "/products/:id") {
+  } else if (match?.route.path === "/products/:id" || match?.route.path === "/product/:id") {
     await renderProductDetailRoute(routeView, catalogService, commerceService, match.params.id ?? null);
+  } else if (match?.route.path === "/how-it-works") {
+    renderHowItWorks(routeView);
+  } else if (match?.route.path === "/profile") {
+    renderSelectionProfile(routeView, shopperFeature);
   } else if (match?.route.path === "/shopper") {
+    const requestedStep = Number(new URLSearchParams(window.location.search).get("step"));
+    if (Number.isInteger(requestedStep) && requestedStep > 0) shopperFeature.goToStep(requestedStep);
     renderShopper(routeView, shopperFeature);
   } else if (match?.route.path === "/recommendations") {
     await renderRecommendationRoute(routeView, shopperFeature, recommendationsService, choicesService);
