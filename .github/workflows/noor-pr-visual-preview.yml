@@ -30,11 +30,18 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Allow HTTPS access to the public COR dependency
-        run: git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+      - name: Checkout pinned Digital Sales Core
+        uses: actions/checkout@v4
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: bd7a215dbd9154f9638687636167e4d980309e32
 
       - name: Install dependencies
-        run: npm install --package-lock=false --no-audit --no-fund
+        run: |
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install --package-lock=false --no-audit --no-fund
 
       - name: Build NOOR
         run: npm run build
