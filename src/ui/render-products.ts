@@ -78,8 +78,8 @@ export function renderProducts(
     <section class="products-intro">
       <p class="eyebrow" dir="ltr">THE COLLECTION</p>
       <h1 id="products-title">مجموعه</h1>
-      <p>فریم‌ها را مرور کنید و ویژگی‌های ثبت‌شدهٔ هر مدل را بشناسید. فقط اطلاعات تأییدشده نمایش داده می‌شود.</p>
-      <aside class="demo-truth-notice" role="note"><strong>نسخهٔ نمایشی</strong><span>این کاتالوگ شامل ${products.length.toLocaleString("fa-IR")} مدل نمونه است. قیمت و موجودی واقعی فروشگاه نور در این نسخه ارائه نمی‌شود؛ مشخصات تأییدنشده خالی می‌مانند.</span></aside>
+      <p>فریم‌ها را با دقت بیشتری بشناسید؛ ویژگی‌های ثبت‌شدهٔ هر مدل را مرور کنید. فقط اطلاعات تأییدشده نمایش داده می‌شود.</p>
+      <aside class="demo-truth-notice" role="note"><strong>نسخهٔ نمایشی</strong><span>این کاتالوگ شامل ${products.length.toLocaleString("fa-IR")} مدل نمونه است. قیمت‌های نمایشی فقط برای توضیح رفتار دمو هستند و قیمت یا موجودی واقعی فروشگاه نور را نشان نمی‌دهند؛ مشخصات تأییدنشده خالی می‌مانند.</span></aside>
       <div class="catalog-shopper-cta"><a class="button button-primary" href="/shopper" data-app-link>مشاوره انتخاب شخصی</a></div>
       <div class="lab-catalog-filters" role="group" aria-label="فیلتر نوع محصول">
         <button type="button" class="lab-filter-chip" data-catalog-filter="all" aria-pressed="true">همه</button>
