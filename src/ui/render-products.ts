@@ -91,6 +91,8 @@ export function renderProducts(
     <section class="product-grid" aria-label="فهرست محصولات">${cards || '<p class="catalog-empty">در حال حاضر مدلی برای نمایش ثبت نشده است.</p>'}</section>
   </main>`;
 
+  if (typeof routeView.querySelectorAll !== "function") return;
+
   routeView.querySelectorAll<HTMLButtonElement>("[data-catalog-filter]").forEach((button) => {
     button.addEventListener("click", () => {
       const filter = button.dataset.catalogFilter ?? "all";
