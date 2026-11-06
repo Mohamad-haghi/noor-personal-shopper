@@ -770,7 +770,7 @@ export async function renderApplicationShell(
   if (!routeView) throw new Error("Application route view was not created.");
 
   if (match?.route.path === "/") {
-    if (hero) renderHero(routeView, hero, heroDestination);
+    if (hero) renderHero(routeView, hero, heroDestination, await catalogService.listProducts());
     else renderFoundationStatus(routeView, status);
   } else if (match?.route.path === "/manager") {
     const products = await catalogService.listProducts();
