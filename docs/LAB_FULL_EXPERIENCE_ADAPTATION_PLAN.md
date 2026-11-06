@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-06  
 **Target branch:** `feat/lab-full-experience-adaptation`  
-**Implementation status:** First implementation pass committed; automated verification pending.  
+**Implementation status:** First implementation pass committed; automated verification passed on 2026-11-06 (CI run #959).  
 **Approval:** User approved implementing the Lab visual experience through the selection-profile summary, with the original NOOR/COR flow beginning at the profile CTA.
 
 ## User-approved experience boundary
@@ -51,9 +51,26 @@ From `/recommendations` onward, the original NOOR route renderers, services, COR
 
 The current `DemoSelectionProfileProvider` is an in-memory provider. Navigation between NOOR routes in the same SPA session retains the profile, but a full page reload starts a fresh demo profile. This pass intentionally preserves that existing NOOR behavior rather than importing Lab storage or silently changing persistence. Durable cross-reload profile storage is a separate product decision.
 
+## Automated verification completed
+
+Draft PR #117 triggered NOOR Build Verification run #959 on commit `bf2f9255c3ae07ba7058c9bef286909cdd76f72a`.
+
+- Behavioral tests: **155/155 passed** (37 test files).
+- TypeScript type-check: passed.
+- Vite production build and SPA fallback copy: passed.
+- Exact 15-product feed generation and evidence-gated verification: passed.
+- Pinned COR build: passed.
+- COR Mapping v1.2 integration test against the generated NOOR feed: passed.
+- Live browser/COR comparison job: skipped by design; it is only enabled by a separate workflow-dispatch input.
+
+Run: https://github.com/Mohamad-haghi/noor-personal-shopper/actions/runs/42274325380
+
 ## Verification still required
 
-The branch's `NOOR Build Verification` workflow does not run on pushes to this feature branch; it runs on pull requests targeting `main`. A **draft PR only** may be opened to trigger tests, type-check, production build, demo-feed evidence checks and the pinned COR build. The PR must remain unmerged.
+- Owner visual review of the actual browser experience on desktop and mobile.
+- Direct route/reload and browser back/forward checks on the deployed Pages URL after separate approval to publish.
+- The existing live browser/COR end-to-end proof was not rerun; previously closed live checks remain untouched.
+- No merge or Pages publication is authorized by this implementation request.
 
 Acceptance checks:
 - Landing page matches the Lab hierarchy on desktop and mobile.
