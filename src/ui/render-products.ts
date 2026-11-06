@@ -37,7 +37,7 @@ function knownFacts(product: Product): string[] {
   ].filter((value): value is string => Boolean(value));
 }
 
-function productCard(product: Product, variant: ProductVariant | null, offer: CommerceOffer | null): string {
+function productCard(product: Product, variant: ProductVariant | null): string {
   const detailHref = `/products/${encodeURIComponent(product.identity.id)}`;
   const facts = knownFacts(product);
   const variantAction = variant
@@ -47,16 +47,13 @@ function productCard(product: Product, variant: ProductVariant | null, offer: Co
   return `<article class="product-card" data-product-category="${product.attributes.category === "sunglasses" ? "sunglasses" : "optical"}">
     <a class="product-card-media" href="${detailHref}" data-app-link aria-label="مشاهدهٔ جزئیات ${escapeHtml(product.name)}">${productImage(product)}</a>
     <div class="product-card-body">
-      <div class="product-card-heading"><p class="eyebrow">${escapeHtml(categoryLabel(product))}</p><span class="product-demo-tag">DEMO</span></div>
+      <p class="eyebrow">${escapeHtml(categoryLabel(product))}</p>
       <h2><a href="${detailHref}" data-app-link>${escapeHtml(product.name)}</a></h2>
-      <p class="product-card-description">${escapeHtml(product.description ?? "توضیحات تکمیلی این فریم هنوز در کاتالوگ ثبت نشده است.")}</p>
-      ${facts.length ? `<ul class="product-fact-chips" aria-label="ویژگی‌های ثبت‌شده">${facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>` : `<p class="product-facts-pending">مشخصات تکمیلی این مدل هنوز تأیید نشده است.</p>`}
-      <div class="product-card-meta"><span>شناسهٔ مدل</span><strong>${escapeHtml(product.externalIds.sku ?? product.identity.id)}</strong></div>
-      <div class="product-demo-price">${offer ? `<strong>${escapeHtml(offer.pricing.amount.toLocaleString("fa-IR"))} ریال</strong>` : `<strong>قیمت ثبت نشده</strong>`}<small>قیمت نمایشی دمو — قیمت واقعی نور نیست</small><small>موجودی فرضی دمو — موجودی واقعی نور نیست</small></div>
+      ${facts.length ? `<p class="product-card-facts">${facts.map(escapeHtml).join(" · ")}</p>` : `<p class="product-facts-pending">مشخصات تأییدشدهٔ بیشتری ثبت نشده است.</p>`}
       <div class="product-card-actions">
-        <a class="button button-secondary" href="${detailHref}" data-app-link>مشاهدهٔ جزئیات</a>
+        <a class="product-card-details" href="${detailHref}" data-app-link>مشاهدهٔ جزئیات</a>
+        ${variant ? `<button class="product-card-quiet-action" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">ذخیره</button><button class="product-card-quiet-action" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">مقایسه</button>` : ""}
         ${variantAction}
-        ${variant ? `<button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">ذخیرهٔ علاقه‌مندی</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">مقایسه</button>` : ""}
       </div>
     </div>
   </article>`;
@@ -71,7 +68,7 @@ export function renderProducts(
   const offersByVariant = new Map(offers.filter((offer) => offer.pricing.source === "demo" && offer.availability.source === "demo").map((offer) => [offer.variantId.id, offer]));
   const cards = products.map((product) => {
     const variant = variantsByProduct.get(product.identity.id)?.find((item) => item.availability.isAvailable && item.availability.source === "demo") ?? null;
-    return productCard(product, variant, variant ? offersByVariant.get(variant.identity.id) ?? null : null);
+    return productCard(product, variant);
   }).join("");
 
   routeView.innerHTML = `<main class="products-page lab-catalog-page" id="main-content" aria-labelledby="products-title">
