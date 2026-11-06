@@ -218,7 +218,7 @@ try {
   const traceEntryUrl = new URL(pagesUrl);
   traceEntryUrl.searchParams.set("corTrace", "1");
   await page.goto(traceEntryUrl.toString(), { waitUntil: "domcontentloaded", timeout: 60_000 });
-  await page.getByRole("link", { name: "دستیار خرید" }).first().click();
+  await page.getByRole("link", { name: "مشاوره انتخاب" }).first().click();
   await page.getByRole("button", { name: "شروع مشاوره" }).click();
 
   // Complete every step in the current journey. Previously this loop stopped
@@ -237,7 +237,8 @@ try {
     await page.getByRole("button", { name: "ادامه", exact: true }).click();
   }
 
-  await page.getByRole("button", { name: "مشاهده مسیر پیشنهادها", exact: true }).click();
+  await page.getByRole("button", { name: "مشاهده پروفایل انتخاب", exact: true }).click();
+  await page.getByRole("link", { name: "مشاهده پیشنهادها", exact: true }).click();
   await page.waitForFunction(
     () => Boolean(document.querySelector("#recommendations-title") ||
                   document.querySelector("#recommendations-unavailable-title")),
