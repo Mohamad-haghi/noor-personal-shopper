@@ -1,0 +1,116 @@
+name: NOOR PR Visual Preview (artifact only)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: noor-pr-visual-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-preview:
+    name: Build isolated desktop and mobile preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --package-lock=false --no-audit --no-fund
+
+      - name: Build NOOR
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/noor-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/noor-personal-shopper/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/noor-preview.log
+          exit 1
+
+      - name: Capture desktop and mobile routes
+        run: |
+          mkdir -p artifacts/noor-pr-preview
+          node --input-type=module <<'NODE'
+          import { chromium, devices } from 'playwright';
+
+          const base = 'http://127.0.0.1:4173/noor-personal-shopper/';
+          const routes = [
+            { name: 'home', path: '' },
+            { name: 'catalog', path: 'catalog' },
+            { name: 'shopper', path: 'shopper' },
+            { name: 'how-it-works', path: 'how-it-works' },
+          ];
+          const browser = await chromium.launch({ headless: true });
+          const failures = [];
+
+          for (const viewport of [
+            { name: 'desktop', options: { viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 } },
+            { name: 'mobile', options: devices['iPhone 13'] },
+          ]) {
+            const context = await browser.newContext(viewport.options);
+            const page = await context.newPage();
+            page.on('pageerror', error => failures.push(`${viewport.name}: page error: ${error.message}`));
+            page.on('console', message => {
+              if (message.type() === 'error') failures.push(`${viewport.name}: console error: ${message.text()}`);
+            });
+
+            for (const route of routes) {
+              const response = await page.goto(base + route.path, { waitUntil: 'networkidle', timeout: 45000 });
+              if (!response || !response.ok()) {
+                failures.push(`${viewport.name}/${route.name}: HTTP ${response?.status() ?? 'no response'}`);
+                continue;
+              }
+              await page.screenshot({
+                path: `artifacts/noor-pr-preview/${viewport.name}-${route.name}.png`,
+                fullPage: true,
+              });
+              const bodyText = (await page.locator('body').innerText()).trim();
+              if (bodyText.length < 40) failures.push(`${viewport.name}/${route.name}: page content appears empty`);
+              console.log(`Captured ${viewport.name}/${route.name} (${bodyText.length} text characters)`);
+            }
+            await context.close();
+          }
+
+          await browser.close();
+          await import('node:fs/promises').then(fs => fs.writeFile(
+            'artifacts/noor-pr-preview/visual-check.json',
+            JSON.stringify({ base, routes, failures }, null, 2),
+          ));
+          if (failures.length) {
+            console.error(failures.join('\n'));
+            process.exitCode = 1;
+          }
+          NODE
+
+      - name: Upload preview screenshots and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: noor-pr-${{ github.event.pull_request.number || 'manual' }}-desktop-mobile-preview
+          path: artifacts/noor-pr-preview/
+          if-no-files-found: warn
+          retention-days: 7
