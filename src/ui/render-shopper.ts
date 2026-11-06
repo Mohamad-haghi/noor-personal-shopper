@@ -1,4 +1,5 @@
 import type { ShopperFeature, ShopperStep } from "../features/shopper/shopper-feature";
+import { withBasePath } from "../app/routing/create-router";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -37,7 +38,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
     ? `<label class="shopper-mandatory-control"><input type="checkbox" data-shopper-mandatory="${mandatoryCriterion}" ${(flow.journey.mandatoryCriteria ?? []).includes(mandatoryCriterion) ? "checked" : ""}><span>این معیار برای من اجباری است</span><small>اگر هیچ محصولی با این شرط پیدا نشود، پیشنهاد نامنطبق نمایش داده نمی‌شود.</small></label>`
     : "";
   const isComplete = step.id === "complete";
-  const continueLabel = isComplete ? "مشاهده مسیر پیشنهادها" : step.id === "intro" ? "شروع مشاوره" : "ادامه";
+  const continueLabel = isComplete ? "مشاهده پروفایل انتخاب" : step.id === "intro" ? "شروع مشاوره" : "ادامه";
   const summary = isComplete ? `<div class="shopper-summary">
     <div><span>نوع عینک</span><strong>${escapeHtml(flow.journey.productType ?? "—")}</strong></div>
     <div><span>کاربرد</span><strong>${escapeHtml(flow.journey.useCase ?? "—")}</strong></div>
@@ -106,7 +107,7 @@ export function renderShopper(routeView: HTMLElement, feature: ShopperFeature): 
   routeView.querySelector<HTMLButtonElement>("[data-shopper-next]")?.addEventListener("click", () => {
     if (!feature.canContinue()) return;
     if (step.id === "complete") {
-      window.history.pushState(null, "", "/recommendations");
+      window.history.pushState(null, "", withBasePath("/profile", import.meta.env.BASE_URL));
       window.dispatchEvent(new PopStateEvent("popstate"));
       return;
     }
