@@ -1,0 +1,103 @@
+name: PR 101 Isolated Validation
+
+on:
+  push:
+    branches:
+      - fix/demo-store-handoff-destination-20261031
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-source:
+    name: Tests and production build for PR 101 (no deployment)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR 101 source
+        uses: actions/checkout@v4
+      - name: Checkout pinned COR dependency
+        uses: actions/checkout@v4
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: d306c5efee32707362ac2ee449ef85f95cd876a5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: |
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install --package-lock=false --no-audit --no-fund
+      - name: Run behavioral tests
+        run: npm test
+      - name: Build production bundle
+        env:
+          VITE_NOOR_MODE: integrated
+          VITE_COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+        run: npm run build
+      - name: Verify demo storefront output exists
+        run: |
+          test -s dist/index.html
+          test -s dist/catalog-feed.json
+          node --input-type=module <<'NODE'
+          import { readFile } from "node:fs/promises";
+          const feed = JSON.parse(await readFile("dist/catalog-feed.json", "utf8"));
+          if (feed.demoOnly !== true || feed.catalogSize !== 15 || feed.products?.length !== 15) {
+            throw new Error("isolated_build_demo_catalog_contract_failed");
+          }
+          console.log(JSON.stringify({status:"verified",demoOnly:feed.demoOnly,productCount:feed.products.length}));
+          NODE
+      - name: Check isolated browser harness syntax
+        run: |
+          node --check scripts/serve-isolated-pages.mjs
+          node --check scripts/verify-live-ui-comparison-handoff.mjs
+      - name: Install Chromium for isolated browser proof
+        run: npx playwright install --with-deps chromium
+      - name: Map the real GitHub Pages host to the isolated runner
+        run: |
+          echo "127.0.0.1 mohamad-haghi.github.io" | sudo tee -a /etc/hosts
+          openssl req -x509 -newkey rsa:2048 -nodes -keyout "$RUNNER_TEMP/noor-preview.key" -out "$RUNNER_TEMP/noor-preview.crt" -days 1 -subj "/CN=mohamad-haghi.github.io" -addext "subjectAltName=DNS:mohamad-haghi.github.io"
+          chmod 644 "$RUNNER_TEMP/noor-preview.key" "$RUNNER_TEMP/noor-preview.crt"
+      - name: Start isolated HTTPS Pages-origin preview
+        env:
+          HTTPS_KEY_PATH: ${{ runner.temp }}/noor-preview.key
+          HTTPS_CERT_PATH: ${{ runner.temp }}/noor-preview.crt
+          PORT: "443"
+        run: |
+          sudo --preserve-env=HTTPS_KEY_PATH,HTTPS_CERT_PATH,PORT node scripts/serve-isolated-pages.mjs > "$RUNNER_TEMP/noor-preview.log" 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --silent --insecure --fail https://mohamad-haghi.github.io/noor-personal-shopper/ > /dev/null; then
+              cat "$RUNNER_TEMP/noor-preview.log"
+              exit 0
+            fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/noor-preview.log"
+          exit 1
+      - name: Verify comparison and product handoff in Chromium against exact Pages origin
+        env:
+          PAGES_URL: https://mohamad-haghi.github.io/noor-personal-shopper/
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+          PLAYWRIGHT_IGNORE_HTTPS_ERRORS: "1"
+          EVIDENCE_PATH: artifacts/noor-ui-comparison-handoff.json
+        run: node scripts/verify-live-ui-comparison-handoff.mjs
+      - name: Upload isolated browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr101-isolated-browser-evidence
+          path: artifacts/noor-ui-comparison-handoff.json
+          if-no-files-found: warn
+      - name: Upload isolated build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr101-isolated-build
+          path: |
+            dist/
+            !dist/**/*.map
+          if-no-files-found: error
