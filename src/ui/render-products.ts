@@ -44,7 +44,7 @@ function productCard(product: Product, variant: ProductVariant | null, offer: Co
     ? `<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب در دمو</button>`
     : `<span class="product-unavailable">گزینهٔ نمایشی برای انتخاب ثبت نشده</span>`;
 
-  return `<article class="product-card">
+  return `<article class="product-card" data-product-category="${product.attributes.category === "sunglasses" ? "sunglasses" : "optical"}">
     <a class="product-card-media" href="${detailHref}" data-app-link aria-label="مشاهدهٔ جزئیات ${escapeHtml(product.name)}">${productImage(product)}</a>
     <div class="product-card-body">
       <div class="product-card-heading"><p class="eyebrow">${escapeHtml(categoryLabel(product))}</p><span class="product-demo-tag">DEMO</span></div>
@@ -74,17 +74,37 @@ export function renderProducts(
     return productCard(product, variant, variant ? offersByVariant.get(variant.identity.id) ?? null : null);
   }).join("");
 
-  routeView.innerHTML = `<main class="products-page" id="main-content" aria-labelledby="products-title">
+  routeView.innerHTML = `<main class="products-page lab-catalog-page" id="main-content" aria-labelledby="products-title">
     <section class="products-intro">
-      <p class="eyebrow">NOOR PERSONAL SHOPPER · CURATED EDIT</p>
-      <h1 id="products-title">فریم‌ها را با دقت بیشتری بشناسید.</h1>
-      <p>مدل‌ها را مرور کنید، مشخصات ثبت‌شده را ببینید و گزینه‌های موردعلاقه‌تان را کنار هم قرار دهید.</p>
-      <aside class="demo-truth-notice" role="note"><strong>نسخهٔ نمایشی</strong><span>این کاتالوگ شامل ۱۵ مدل نمونه است. قیمت‌های نمایشی و گزینه‌های انتخاب، صرفاً برای نمایش عملکرد دمو هستند و موجودی یا قیمت واقعی فروشگاه نور را نشان نمی‌دهند. مشخصات تأییدنشده عمداً خالی می‌مانند.</span></aside>
-      <div class="catalog-shopper-cta"><a class="button button-primary" href="/shopper" data-app-link>برای انتخاب شخصی‌تر با دستیار نور گفت‌وگو کنید</a></div>
-      <div class="catalog-count" aria-live="polite"><strong>${products.length.toLocaleString("fa-IR")}</strong><span>مدل در کاتالوگ نمایشی</span></div>
+      <p class="eyebrow" dir="ltr">THE COLLECTION</p>
+      <h1 id="products-title">مجموعه</h1>
+      <p>فریم‌ها را مرور کنید و ویژگی‌های ثبت‌شدهٔ هر مدل را بشناسید. فقط اطلاعات تأییدشده نمایش داده می‌شود.</p>
+      <aside class="demo-truth-notice" role="note"><strong>نسخهٔ نمایشی</strong><span>این کاتالوگ شامل ${products.length.toLocaleString("fa-IR")} مدل نمونه است. قیمت و موجودی واقعی فروشگاه نور در این نسخه ارائه نمی‌شود؛ مشخصات تأییدنشده خالی می‌مانند.</span></aside>
+      <div class="catalog-shopper-cta"><a class="button button-primary" href="/shopper" data-app-link>مشاوره انتخاب شخصی</a></div>
+      <div class="lab-catalog-filters" role="group" aria-label="فیلتر نوع محصول">
+        <button type="button" class="lab-filter-chip" data-catalog-filter="all" aria-pressed="true">همه</button>
+        <button type="button" class="lab-filter-chip" data-catalog-filter="optical" aria-pressed="false">طبی</button>
+        <button type="button" class="lab-filter-chip" data-catalog-filter="sunglasses" aria-pressed="false">آفتابی</button>
+        <span class="catalog-count" aria-live="polite">${products.length.toLocaleString("fa-IR")} فریم</span>
+      </div>
     </section>
     <section class="product-grid" aria-label="فهرست محصولات">${cards || '<p class="catalog-empty">در حال حاضر مدلی برای نمایش ثبت نشده است.</p>'}</section>
   </main>`;
+
+  routeView.querySelectorAll<HTMLButtonElement>("[data-catalog-filter]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const filter = button.dataset.catalogFilter ?? "all";
+      routeView.querySelectorAll<HTMLElement>("[data-product-category]").forEach((card) => {
+        card.hidden = filter !== "all" && card.dataset.productCategory !== filter;
+      });
+      routeView.querySelectorAll<HTMLButtonElement>("[data-catalog-filter]").forEach((item) => {
+        item.setAttribute("aria-pressed", String(item === button));
+      });
+      const count = routeView.querySelector<HTMLElement>(".catalog-count");
+      const visible = [...routeView.querySelectorAll<HTMLElement>("[data-product-category]")].filter((card) => !card.hidden).length;
+      if (count) count.textContent = `${visible.toLocaleString("fa-IR")} فریم`;
+    });
+  });
 }
 
 function specRow(label: string, value: unknown): string {
