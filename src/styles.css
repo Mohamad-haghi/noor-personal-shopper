@@ -839,3 +839,131 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .app-shell-lab .lab-profile-row { align-items: flex-start; }
   .app-shell-lab .lab-mandatory-edit-links { flex-direction: column; align-items: flex-end; gap: .35rem; }
 }
+
+
+/* Lab fidelity rebuild v2 — sticky header and one-question shopper composition. */
+.app-shell-lab .app-header-lab {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  width: 100%;
+  min-height: 4rem;
+  padding-inline: max(1.25rem, calc((100vw - 72rem) / 2));
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+  backdrop-filter: blur(10px);
+}
+.app-shell-lab .app-header-lab .lab-header-nav { display: flex; align-items: center; margin-inline-start: auto; }
+.app-shell-lab .lab-header-nav ul {
+  display: flex; align-items: center; gap: 1.7rem; margin: 0; padding: 0; list-style: none;
+}
+.app-shell-lab .lab-header-nav a {
+  display: inline-flex; min-height: 4rem; align-items: center; padding: 0;
+  border-bottom: 1px solid transparent; color: var(--muted); background: transparent;
+  font-size: .875rem; text-decoration: none;
+}
+.app-shell-lab .lab-header-nav a:hover,
+.app-shell-lab .lab-header-nav a[aria-current="page"] {
+  border-color: var(--accent); color: var(--ink); background: transparent;
+}
+.app-shell-lab .app-header-lab .app-header-meta { margin-inline-start: 1.5rem; }
+.app-shell-lab .app-header-lab .mobile-nav { display: none; }
+.app-shell-lab > .primary-nav { display: none; }
+
+.app-shell-lab .lab-shopper-layout {
+  display: block; width: min(100%, 48rem); max-width: 48rem; margin-inline: auto;
+}
+.app-shell-lab .shopper.lab-shopper {
+  min-height: 0; padding: 3rem 1.25rem 2rem; background: transparent;
+}
+.app-shell-lab .lab-shopper-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  color: var(--muted); font-size: .85rem;
+}
+.app-shell-lab .lab-shopper-count { white-space: nowrap; }
+.app-shell-lab .lab-shopper-progress { display: flex; gap: .25rem; height: 3px; margin-top: .9rem; }
+.app-shell-lab .lab-shopper-progress-segment { flex: 1; border-radius: 999px; background: var(--line); }
+.app-shell-lab .lab-shopper-progress-segment.is-active { background: var(--ink); }
+.app-shell-lab .lab-shopper-panel {
+  min-height: 0; margin-top: 2.5rem; border: 0; border-radius: 0;
+  background: transparent; box-shadow: none;
+}
+.app-shell-lab .lab-shopper-content { padding: 0; }
+.app-shell-lab .lab-shopper-title-row { display: flex; align-items: flex-start; gap: .85rem; }
+.app-shell-lab .lab-shopper-title-row > span {
+  padding-top: .45rem; color: var(--accent); font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem; letter-spacing: .08em;
+}
+.app-shell-lab .lab-shopper-title-row h1 {
+  font-size: clamp(1.55rem, 3.6vw, 2rem); font-weight: 350; line-height: 1.55;
+}
+.app-shell-lab .lab-shopper-content .shopper-description {
+  margin: .75rem 0 0 2.9rem; color: var(--muted); line-height: 1.9;
+}
+.app-shell-lab .lab-shopper-intro-note {
+  margin: 1.5rem 0 0 2.9rem; color: var(--muted); font-size: .9rem;
+}
+.app-shell-lab .lab-shopper-options {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem; margin-top: 2rem;
+}
+.app-shell-lab .lab-shopper-options .shopper-option {
+  position: relative; display: flex; min-height: 5rem; align-items: center;
+  justify-content: space-between; padding: 1.15rem 1.25rem; border: 1px solid var(--line);
+  border-radius: .3rem; background: transparent; color: var(--ink); text-align: right;
+}
+.app-shell-lab .lab-shopper-options .shopper-option:hover { border-color: var(--accent); }
+.app-shell-lab .lab-shopper-options .shopper-option.is-selected {
+  border-color: var(--ink); background: var(--surface-soft); box-shadow: inset 0 0 0 1px var(--ink);
+}
+.app-shell-lab .lab-shopper-check { color: var(--accent); font-size: 1.1rem; }
+.app-shell-lab .lab-shopper-mandatory {
+  display: flex; align-items: flex-start; gap: .8rem; margin-top: 1.25rem;
+  padding: 1rem 1.1rem; border: 1px solid var(--line); background: var(--surface);
+}
+.app-shell-lab .lab-shopper-mandatory input { margin-top: .35rem; accent-color: var(--ink); }
+.app-shell-lab .lab-shopper-mandatory span { display: grid; gap: .2rem; }
+.app-shell-lab .lab-shopper-mandatory strong { font-size: .9rem; font-weight: 600; }
+.app-shell-lab .lab-shopper-mandatory small { color: var(--muted); line-height: 1.7; }
+.app-shell-lab .lab-shopper-summary {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-top: 1.5rem;
+}
+.app-shell-lab .lab-shopper-summary > div {
+  display: grid; gap: .2rem; padding: .9rem 1rem; border: 1px solid var(--line); background: var(--surface);
+}
+.app-shell-lab .lab-shopper-summary span { color: var(--muted); font-size: .8rem; }
+.app-shell-lab .lab-shopper-summary strong { font-size: .95rem; font-weight: 550; }
+.app-shell-lab .lab-shopper-actions {
+  position: sticky; inset-block-end: 0; z-index: 5; display: flex; justify-content: space-between;
+  gap: .8rem; margin-top: 2.5rem; padding: 1rem 0; border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--background) 96%, transparent); backdrop-filter: blur(8px);
+}
+.app-shell-lab .lab-shopper-actions .button { min-width: 8.5rem; border-radius: .25rem; }
+.app-shell-lab .lab-shopper-recovery { margin: .5rem 0 0; color: var(--muted); font-size: .78rem; text-align: center; }
+
+@media (max-width: 760px) {
+  .app-shell-lab .app-header-lab { width: 100%; min-height: 4.2rem; padding-inline: 1rem; }
+  .app-shell-lab .app-header-lab .lab-header-nav { display: none; }
+  .app-shell-lab .app-header-lab .mobile-nav { display: block; }
+  .app-shell-lab .app-header-lab .mobile-nav summary {
+    display: grid; width: 2.75rem; height: 2.75rem; place-items: center; overflow: hidden;
+    border: 1px solid var(--line); border-radius: .25rem; background: transparent;
+    color: transparent; font-size: 0;
+  }
+  .app-shell-lab .app-header-lab .mobile-nav summary::before {
+    content: "☰"; color: var(--ink); font-size: 1.2rem; line-height: 1;
+  }
+  .app-shell-lab .app-header-lab .mobile-nav nav { inset-inline-end: 0; inset-block-start: calc(100% + .6rem); }
+  .app-shell-lab .shopper.lab-shopper { padding: 2rem .25rem 1.5rem; }
+  .app-shell-lab .lab-shopper-panel { margin-top: 2rem; }
+  .app-shell-lab .lab-shopper-content { padding: 0 .75rem; }
+  .app-shell-lab .lab-shopper-actions { margin-top: 2rem; }
+  .app-shell-lab .lab-shopper-actions .button { min-width: 0; flex: 1; }
+}
+@media (max-width: 480px) {
+  .app-shell-lab .lab-shopper-options,
+  .app-shell-lab .lab-shopper-summary { grid-template-columns: 1fr; }
+  .app-shell-lab .lab-shopper-title-row { gap: .6rem; }
+  .app-shell-lab .lab-shopper-content .shopper-description,
+  .app-shell-lab .lab-shopper-intro-note { margin-inline-start: 0; }
+}
