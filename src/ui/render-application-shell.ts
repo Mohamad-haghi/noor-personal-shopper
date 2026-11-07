@@ -34,6 +34,7 @@ import { renderSearch } from "./render-search";
 import { renderManagerOverview } from "./render-manager-overview";
 import { renderSelectionProfile } from "./render-selection-profile";
 import { renderHowItWorks } from "./render-how-it-works";
+import { productFavoriteControl } from "./product-favorite-control";
 import type { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
 import type { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
 
@@ -324,7 +325,83 @@ async function attachHomeFavoriteActions(
   });
 }
 
-async function attachProductChoiceActions(
+async async function attachProductFavoriteActions(
+  routeView: HTMLElement,
+  catalogService: CatalogService,
+  choicesService: ChoicesService,
+): Promise<void> {
+  const buttons = [...routeView.querySelectorAll<HTMLButtonElement>("[data-product-favorite]")];
+  if (buttons.length === 0) return;
+
+  const variantsByProduct = new Map<string, readonly import("../domain").ProductVariant[]>();
+  const choices = await choicesService.listChoices();
+  for (const button of buttons) {
+    const productId = button.dataset.productFavorite;
+    if (!productId) continue;
+    let variants = variantsByProduct.get(productId);
+    if (!variants) {
+      variants = await catalogService.listVariants({ id: productId, source: "demo" });
+      variantsByProduct.set(productId, variants);
+    }
+    const saved = choices.find((choice) => choice.variantId.productId.id === productId && choice.tags.includes("favorite"));
+    const variant = (saved ? variants.find((item) => item.identity.id === saved.variantId.id) : null)
+      ?? variants.find((item) => item.availability.isAvailable && item.availability.source === "demo")
+      ?? variants[0];
+    if (!variant) {
+      button.hidden = true;
+      continue;
+    }
+    button.dataset.variantId = variant.identity.id;
+    const isSaved = Boolean(saved);
+    button.classList.toggle("is-saved", isSaved);
+    button.setAttribute("aria-pressed", String(isSaved));
+    button.setAttribute("aria-label", isSaved ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها");
+
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (button.disabled) return;
+      button.disabled = true;
+      try {
+        const existingChoices = await choicesService.listChoices();
+        const existing = existingChoices.find((choice) => choice.variantId.id === variant.identity.id);
+        const isCurrentlySaved = Boolean(existing?.tags.includes("favorite"));
+        const now = new Date();
+        if (isCurrentlySaved && existing) {
+          const remainingTags = existing.tags.filter((tag) => tag !== "favorite");
+          if (remainingTags.length) {
+            await choicesService.saveChoice({ ...existing, tags: remainingTags, updatedAt: now });
+          } else {
+            await choicesService.removeChoice(existing.identity);
+          }
+        } else {
+          const choice: SavedChoice = existing
+            ? { ...existing, tags: [...new Set([...existing.tags, "favorite"])], updatedAt: now }
+            : {
+                identity: { id: `demo-choice-${variant.identity.id}` },
+                variantId: variant.identity,
+                status: "saved",
+                notes: null,
+                tags: ["favorite"],
+                createdAt: now,
+                updatedAt: now,
+              };
+          await choicesService.saveChoice(choice);
+        }
+        const nextSaved = !isCurrentlySaved;
+        button.classList.toggle("is-saved", nextSaved);
+        button.setAttribute("aria-pressed", String(nextSaved));
+        button.setAttribute("aria-label", nextSaved ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها");
+        button.disabled = false;
+      } catch {
+        button.disabled = false;
+        button.setAttribute("aria-label", "ذخیره علاقه‌مندی انجام نشد؛ دوباره تلاش کنید");
+      }
+    });
+  }
+}
+
+function attachProductChoiceActions(
   routeView: HTMLElement,
   catalogService: CatalogService,
   choicesService: ChoicesService,
@@ -937,6 +1014,7 @@ export async function renderApplicationShell(
     renderRoutePlaceholder(routeView, match);
   }
 
+  await attachProductFavoriteActions(routeView, catalogService, choicesService);
   await attachProductChoiceActions(routeView, catalogService, choicesService);
   if (match?.route.path !== "/cart" && match?.route.path !== "/confirmation/:id" && match?.route.path !== "/branches" && match?.route.path !== "/visit") {
     await attachPurchaseActions(routeView, commerceService, cartService, digitalSalesPurchaseHandoffBridge);
