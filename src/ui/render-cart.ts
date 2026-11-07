@@ -47,8 +47,7 @@ export function renderCart(routeView: HTMLElement, cart: Cart | null, products: 
       : `<div class="lab-cart-media">${productImage(undefined)}</div>`;
     return `
       <article class="lab-cart-item">
-        ${media}
-        ${product ? productFavoriteControl(product.identity.id) : ""}
+        <div class="lab-cart-media-wrap">${media}${product ? productFavoriteControl(product.identity.id) : ""}</div>
         <div class="lab-cart-item-content">
           <p class="eyebrow">${escapeHtml(item.priceLabel)}</p>
           <h2>${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}</h2>
