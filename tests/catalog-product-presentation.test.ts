@@ -49,6 +49,9 @@ describe("catalog and product detail presentation", () => {
     expect(root.innerHTML).toContain("موجودی فرضی دمو — موجودی واقعی نور نیست");
     expect(root.innerHTML).toContain("product-card-media");
     expect(root.innerHTML).toContain("product-card-facts");
+    expect(root.innerHTML).toContain('data-product-favorite="frame-1"');
+    expect(root.innerHTML).toContain("product-favorite-toggle");
+    expect(root.innerHTML).not.toContain("data-save-product-choice");
     expect(root.innerHTML).toContain('data-compare-product="catalog-variant-1"');
     expect(root.innerHTML).not.toContain("product-card-meta");
     expect(root.innerHTML).not.toContain("product-demo-price");
@@ -65,6 +68,7 @@ describe("catalog and product detail presentation", () => {
     expect(root.innerHTML).not.toContain("جنس فریم</dt>");
     expect(root.innerHTML).toContain("عمداً حدس زده نشده‌اند");
     expect(root.innerHTML).toContain("تصویر محصول");
+    expect(root.innerHTML).toContain('data-product-favorite="frame-1"');
     expect(root.innerHTML).toContain("گزینه‌های نمایشی");
   });
 
@@ -80,7 +84,7 @@ describe("catalog and product detail presentation", () => {
     renderProductDetail(root, makeProduct(), [variant], []);
 
     expect(root.innerHTML).toContain('data-add-to-cart="variant-1"');
-    expect(root.innerHTML).toContain('data-save-product-choice="variant-1"');
+    expect(root.innerHTML).not.toContain('data-save-product-choice="variant-1"');
     expect(root.innerHTML).toContain('data-compare-product="variant-1"');
     expect(root.innerHTML).toContain("قیمت نمایشی ثبت نشده");
   });

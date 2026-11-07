@@ -1,4 +1,5 @@
 import type { Product, SearchResponse } from "../domain";
+import { productFavoriteControl } from "./product-favorite-control";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -19,6 +20,7 @@ function card(product: Product, reason: string): string {
   return `
     <article class="product-card lab-search-product-card">
       <a class="product-card-media lab-search-product-media" href="${href}" data-app-link aria-label="جزئیات ${escapeHtml(product.name)}">${image}</a>
+      ${productFavoriteControl(product.identity.id)}
       <div class="product-card-body">
         <p class="eyebrow">${escapeHtml(categoryLabel(product))}</p>
         <h2><a href="${href}" data-app-link>${escapeHtml(product.name)}</a></h2>

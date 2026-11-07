@@ -2,6 +2,7 @@ import type { Product, Recommendation } from "../domain";
 import { readAppConfig } from "../config/app-config";
 import { CorShopperDemoCredentialProvider } from "../integration/cor-shopper-demo-credential-provider";
 import { getNoorInventoryDestination } from "./noor-inventory-link";
+import { productFavoriteControl } from "./product-favorite-control";
 
 /** COR's canonical decision engine returns normalized scores in the 0..1 range. */
 /** Human-readable labels based on the number of renderable recommendation cards. */
@@ -64,10 +65,13 @@ function card(product: Product, recommendation: Recommendation, index: number): 
   return `
     <li class="lab-recommendation-item">
       <article class="lab-recommendation-card recommendation-card">
+        <div class="lab-recommendation-media-wrap">
         <a class="lab-recommendation-media" href="${productHref}" data-app-link aria-label="مشاهده جزئیات ${escapeHtml(product.name)}">
           ${productImage(product)}
           <span class="lab-recommendation-rank" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
         </a>
+        ${productFavoriteControl(product.identity.id)}
+        </div>
         <div class="lab-recommendation-content recommendation-card-body">
           <div class="lab-recommendation-product-heading">
             <div>
@@ -90,7 +94,6 @@ function card(product: Product, recommendation: Recommendation, index: number): 
           </dl>
           <p class="inventory-link-note">شناسه مرجع نور: ${escapeHtml(inventory?.reference ?? "در دسترس نیست")}</p>
           <div class="lab-recommendation-card-actions">
-            <button class="button button-secondary" type="button" data-save-choice="${escapeHtml(recommendation.variantId.id)}">ذخیره در انتخاب‌های من</button>
             <button class="button button-secondary" type="button" data-compare-product="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button>
             <button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button>
             ${inventoryLink}

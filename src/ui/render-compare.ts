@@ -1,4 +1,5 @@
 import type { Comparison, Product } from "../domain";
+import { productFavoriteControl } from "./product-favorite-control";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -84,6 +85,7 @@ export function renderCompare(
           <span class="lab-compare-product-name">${escapeHtml(product.name)}</span>
           <span class="lab-compare-product-detail">جزئیات ${escapeHtml(product.name)}</span>
         </a>
+        ${productFavoriteControl(product.identity.id)}
       </th>
     `;
   }).join("");

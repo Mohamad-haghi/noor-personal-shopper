@@ -4616,3 +4616,17 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
 .lab-home .lab-step-grid li {
   background: oklch(0.945 0.012 82);
 }
+
+
+/* One consistent image-overlay favorite action across every product surface. */
+.product-card, .lab-recommendation-media-wrap, .lab-choice-card, .lab-compare-product-head, .product-detail-media, .lab-cart-media-wrap { position: relative; }
+.lab-recommendation-media-wrap { min-width: 0; min-height: 100%; }
+.product-favorite-toggle { position: absolute; z-index: 3; inset-block-start: .75rem; inset-inline-end: .75rem; display: grid; width: 2.65rem; height: 2.65rem; place-items: center; padding: 0; border: 1px solid rgba(80,72,62,.18); border-radius: 50%; background: rgba(250,248,243,.94); color: #62584d; cursor: pointer; box-shadow: 0 3px 12px rgba(35,31,27,.09); transition: color 160ms ease, background 160ms ease, transform 160ms ease; }
+.product-favorite-toggle svg { width: 1.2rem; height: 1.2rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.product-favorite-toggle:hover { transform: scale(1.06); }
+.product-favorite-toggle.is-saved { color: #9a514b; background: #fff8f6; }
+.product-favorite-toggle.is-saved svg { fill: currentColor; }
+.product-favorite-toggle:disabled { cursor: wait; opacity: .65; }
+.lab-compare-product-head .product-favorite-toggle { inset-block-start: 1.25rem; inset-inline-end: 1.25rem; }
+.product-detail-media > .product-favorite-toggle, .lab-cart-media-wrap > .product-favorite-toggle { inset-block-start: .6rem; inset-inline-end: .6rem; }
+@media (max-width: 640px) { .product-favorite-toggle { width: 2.45rem; height: 2.45rem; inset-block-start: .55rem; inset-inline-end: .55rem; } }

@@ -1,5 +1,6 @@
 import type { Product, SavedChoice } from "../domain";
 import { getNoorInventoryDestination } from "./noor-inventory-link";
+import { productFavoriteControl } from "./product-favorite-control";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -50,6 +51,7 @@ export function renderChoices(
         <a class="lab-choice-media" href="${productHref}" data-app-link aria-label="مشاهده جزئیات ${escapeHtml(product.name)}">
           ${productImage(product)}
         </a>
+        ${productFavoriteControl(product.identity.id)}
         <div class="lab-choice-content">
           <p class="eyebrow">${escapeHtml(categoryLabel(product))} · انتخاب ذخیره‌شده</p>
           <h2>${escapeHtml(product.name)}</h2>
