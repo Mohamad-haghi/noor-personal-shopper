@@ -99,10 +99,10 @@ export function renderCompare(
     </tr>
   `).join("");
 
-  const actionCells = comparison.items.map((item) => {
-    const productId = item.variantId.productId.id;
-    const product = productByVariant.get(productId);
-    return `<td><button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(item.variantId.id)}" data-product-id="${escapeHtml(productId)}">انتخاب برای خرید</button></td>`;
+  const actionCells = columns.map((product) => {
+    const item = comparison.items.find((candidate) => candidate.variantId.productId.id === product.identity.id);
+    if (!item) return "<td>اطلاعات ثبت نشده</td>";
+    return `<td><button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(item.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button></td>`;
   }).join("");
 
   routeView.innerHTML = `
