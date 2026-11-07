@@ -54,7 +54,7 @@ function productCard(product: Product, variant: ProductVariant | null, favoriteV
       ${facts.length ? `<p class="product-card-facts">${facts.map(escapeHtml).join(" · ")}</p>` : `<p class="product-facts-pending">مشخصات تأییدشدهٔ بیشتری ثبت نشده است.</p>`}
       <div class="product-card-actions">
         <a class="product-card-details" href="${detailHref}" data-app-link>مشاهدهٔ جزئیات</a>
-        ${variant ? `<button class="product-card-quiet-action" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">ذخیره</button><button class="product-card-quiet-action" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">مقایسه</button>` : ""}
+        ${variant ? `<button class="product-card-quiet-action" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">مقایسه</button>` : ""}
         ${variantAction}
       </div>
     </div>
@@ -135,7 +135,7 @@ export function renderProductDetail(
     ? dimensions.map((value) => String(value)).join(" / ") + " میلی‌متر"
     : null;
 
-  const favoriteControl = variants.length ? productFavoriteControl(product.identity.id) : "";
+  const favoriteControl = productFavoriteControl(product.identity.id);
   const variantRows = availableVariants.length
     ? availableVariants.map((variant) => {
         const offer = offerByVariant.get(variant.identity.id);
