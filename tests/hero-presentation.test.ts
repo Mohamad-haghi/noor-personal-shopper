@@ -111,14 +111,17 @@ describe("NOOR homepage header, curated collection and favorite refinements", ()
     expect(css).toContain(".app-shell-header .mobile-nav-toggle span {\n  width: 1.25rem;\n  height: 2px;");
   });
 
-  it("stacks curated product images vertically at full viewport width and matches Lab image scale", () => {
+  it("rebuilds the curated collection with the Lab's three-column desktop grid, responsive image ratio and equal cards", () => {
     const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
-    expect(css).toContain(".lab-home .lab-curated-section .lab-curated-grid {\n  grid-template-columns: minmax(0, 1fr);");
-    expect(css).toContain("width: 100vw;\n  margin-inline: calc(50% - 50vw);");
-    expect(css).toContain(".lab-home .lab-curated-section .lab-curated-image {\n  aspect-ratio: 16 / 9;");
-    expect(css).toContain("object-fit: contain;\n  transform: scale(1.1);");
-    expect(css).toContain("transform: scale(1.15);");
-    expect(css).toContain("transform: scale(1.07);");
+    expect(css).toContain("grid-template-columns: repeat(3, minmax(0, 1fr));");
+    expect(css).toContain("@media (min-width: 640px)");
+    expect(css).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(css).toContain("@media (min-width: 1024px)");
+    expect(css).toContain("aspect-ratio: 4 / 3;");
+    expect(css).toContain("object-fit: contain;\n  transform: none;");
+    expect(css).toContain("transform: scale(1.03);");
+    expect(css).not.toContain("width: 100vw;");
+    expect(css).not.toContain("aspect-ratio: 16 / 9;");
   });
 
   it("renders concise verified product details beneath each curated image", async () => {
