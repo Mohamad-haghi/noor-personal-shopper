@@ -1826,25 +1826,28 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
 }
 
 
-/* Homepage hero — one continuous image-first composition, matching the requested Lab hierarchy.
-   The hero photograph leads; copy and actions follow on the same uninterrupted surface.
-   No separate image card, text card, overlay panel, or split-frame treatment. */
+/* Homepage hero — mirror the Lab's single-surface responsive overlay composition.
+   Keep image and copy in one stage; desktop copy overlays the image and mobile copy anchors
+   to its lower edge. The NOOR content, destinations and downstream sections stay canonical. */
 .lab-home .hero-noor {
+  --h-ivory: var(--surface);
+  --h-bronze: var(--accent);
+  --h-charcoal: var(--ink);
+  --h-stone: var(--muted);
   width: 100%;
   overflow: hidden;
-  background: var(--surface);
-  color: var(--ink);
+  background: var(--h-ivory);
+  color: var(--h-charcoal);
 }
-.lab-home .hero-stage {
-  display: flex;
+.lab-home .hero-noor .hero-stage {
+  position: relative;
+  isolation: isolate;
   width: 100%;
-  flex-direction: column;
   overflow: hidden;
-  background: var(--surface);
+  background: var(--h-ivory);
 }
-.lab-home .hero-image {
+.lab-home .hero-noor .hero-image {
   display: block;
-  order: 0;
   width: 100%;
   height: auto;
   max-width: 100%;
@@ -1853,106 +1856,107 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
   border-radius: 0;
   box-shadow: none;
 }
-.lab-home .hero-content {
-  position: relative;
+.lab-home .hero-noor .hero-content {
+  position: absolute;
+  inset: 0 auto 0 0;
   z-index: 1;
-  order: 1;
   display: flex;
-  width: min(100%, 76rem);
+  width: min(47%, 39rem);
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 0;
-  margin-inline: auto;
-  padding: clamp(1.5rem, 4.5vw, 3.75rem) clamp(1.25rem, 5vw, 4.5rem) clamp(2rem, 5vw, 4.25rem);
+  padding: clamp(1.5rem, 5vw, 5rem);
   text-align: right;
-  background: transparent;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--h-ivory) 96%, transparent) 0%, color-mix(in srgb, var(--h-ivory) 88%, transparent) 68%, transparent 100%);
 }
-.lab-home .hero-eyebrow {
+.lab-home .hero-noor .hero-eyebrow {
   margin: 0;
-  color: var(--accent);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: .72rem;
   letter-spacing: .24em;
+  font-size: .72rem;
+  color: var(--h-bronze);
 }
-.lab-home .hero-accent { color: var(--accent); }
-.lab-home .hero-title {
+.lab-home .hero-noor .hero-title {
   max-width: 22ch;
   margin: .85rem 0 0;
-  color: var(--ink);
+  color: var(--h-charcoal);
   font-size: clamp(2rem, 4.2vw, 3.65rem);
   font-weight: 400;
   line-height: 1.35;
 }
-.lab-home .hero-body {
+.lab-home .hero-noor .hero-accent { color: var(--h-bronze); }
+.lab-home .hero-noor .hero-body {
   max-width: 46rem;
   margin: 1rem 0 0;
-  color: color-mix(in oklab, var(--ink) 78%, var(--muted));
+  color: color-mix(in oklab, var(--h-charcoal) 78%, var(--h-stone));
   font-size: 1rem;
   line-height: 2;
 }
-.lab-home .hero-actions {
+.lab-home .hero-noor .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: .75rem;
   margin-top: 1.5rem;
 }
-.lab-home .hero-cta-primary,
-.lab-home .hero-cta-secondary {
+.lab-home .hero-noor .hero-cta-primary,
+.lab-home .hero-noor .hero-cta-secondary {
   display: inline-flex;
   min-height: 3.25rem;
   align-items: center;
   justify-content: center;
   padding: 0 1.45rem;
-  border-radius: 999px;
+  border: 1px solid transparent;
+  border-radius: .375rem;
   font-size: .92rem;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
   transition: background .2s, color .2s, border-color .2s;
 }
-.lab-home .hero-cta-primary {
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--surface);
+.lab-home .hero-noor .hero-cta-primary {
+  border-color: var(--h-charcoal);
+  background: var(--h-charcoal);
+  color: var(--h-ivory);
 }
-.lab-home .hero-cta-primary:hover { background: #3b3935; }
-.lab-home .hero-cta-secondary {
-  border: 1px solid color-mix(in srgb, var(--muted) 65%, transparent);
-  background: transparent;
-  color: var(--ink);
+.lab-home .hero-noor .hero-cta-primary:hover {
+  background: color-mix(in oklab, var(--h-charcoal) 88%, var(--h-bronze));
 }
-.lab-home .hero-cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
-.lab-home .hero-muted {
+.lab-home .hero-noor .hero-cta-secondary {
+  border-color: color-mix(in srgb, var(--h-stone) 65%, transparent);
+  background: color-mix(in srgb, var(--h-ivory) 35%, transparent);
+  color: var(--h-charcoal);
+}
+.lab-home .hero-noor .hero-cta-secondary:hover {
+  border-color: var(--h-bronze);
+  color: var(--h-bronze);
+}
+.lab-home .hero-noor .hero-muted {
   margin: 1rem 0 0;
-  color: var(--muted);
+  color: var(--h-stone);
   font-size: .75rem;
 }
 .lab-home .hero-noor :is(.hero-cta-primary, .hero-cta-secondary):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--h-bronze);
   outline-offset: 3px;
 }
 @media (max-width: 767px) {
-  .lab-home .hero-content {
+  .lab-home .hero-noor .hero-stage { min-height: 660px; }
+  .lab-home .hero-noor .hero-content {
+    inset: auto 0 0;
     width: 100%;
-    padding: 1.5rem 1.15rem 2rem;
+    padding: 5.5rem 1.25rem 1.5rem;
+    justify-content: flex-end;
+    background: linear-gradient(0deg, color-mix(in srgb, var(--h-ivory) 98%, transparent) 0%, color-mix(in srgb, var(--h-ivory) 92%, transparent) 62%, transparent 100%);
   }
-  .lab-home .hero-title {
-    max-width: 20ch;
-    font-size: clamp(1.9rem, 8vw, 2.5rem);
-  }
-  .lab-home .hero-body { max-width: 38rem; font-size: .95rem; }
-  .lab-home .hero-actions {
-    width: 100%;
-    flex-direction: column;
-    gap: .65rem;
-  }
-  .lab-home .hero-cta-primary,
-  .lab-home .hero-cta-secondary { width: 100%; }
+  .lab-home .hero-noor .hero-content .hero-title { max-width: 18ch; }
+  .lab-home .hero-noor .hero-content .hero-body { max-width: 34rem; }
+  .lab-home .hero-noor .hero-actions { width: 100%; flex-direction: column; gap: .65rem; }
+  .lab-home .hero-noor .hero-cta-primary,
+  .lab-home .hero-noor .hero-cta-secondary { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lab-home .hero-cta-primary,
-  .lab-home .hero-cta-secondary { transition: none; }
+  .lab-home .hero-noor .hero-cta-primary,
+  .lab-home .hero-noor .hero-cta-secondary { transition: none; }
 }
 
 /* Home — guided three-step section: match the Lab's quiet, clipped card grid. */
