@@ -315,7 +315,7 @@ try {
     { name: "mobile", width: 390, height: 844 },
   ]) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await page.goto(new URL("/products", pagesUrl).toString(), {
+    await page.goto(new URL("products", pagesUrl).toString(), {
       waitUntil: "domcontentloaded",
       timeout: 60_000,
     });
