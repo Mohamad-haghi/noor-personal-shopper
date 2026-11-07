@@ -2357,46 +2357,46 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
 }
 
 /* Personal Shopper — final interaction and responsive rhythm pass. */
-.app-shell-lab .lab-shopper-layout { width: min(100%, 48rem); }
-.app-shell-lab .lab-shopper-top { min-height: 1.8rem; }
-.app-shell-lab .lab-shopper-progress { overflow: hidden; }
-.app-shell-lab .lab-shopper-options:has(> .shopper-option:nth-child(5)) {
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-layout { width: min(100%, 48rem); }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-top { min-height: 1.8rem; }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-progress { overflow: hidden; }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-options:has(> .shopper-option:nth-child(5)) {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.app-shell-lab .lab-shopper-options .shopper-option {
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-options .shopper-option {
   min-width: 0;
   min-height: 5.1rem;
   gap: .75rem;
   line-height: 1.75;
   transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
-.app-shell-lab .lab-shopper-options .shopper-option:active { transform: translateY(1px); }
-.app-shell-lab .lab-shopper-options .shopper-option:focus-visible,
-.app-shell-lab .lab-shopper-mandatory input:focus-visible,
-.app-shell-lab .lab-shopper-actions .button:focus-visible {
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-options .shopper-option:active { transform: translateY(1px); }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-options .shopper-option:focus-visible,
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-mandatory input:focus-visible,
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-actions .button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
-.app-shell-lab .lab-shopper-options .shopper-option:disabled {
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-options .shopper-option:disabled {
   cursor: wait;
   opacity: .7;
   transform: none;
 }
-.app-shell-lab .lab-shopper-mandatory { border-radius: .25rem; }
-.app-shell-lab .lab-shopper-summary > div { min-width: 0; border-radius: .2rem; }
-.app-shell-lab .lab-shopper-summary strong { overflow-wrap: anywhere; line-height: 1.8; }
-.app-shell-lab .lab-shopper-actions .button:disabled { cursor: not-allowed; opacity: .45; }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-mandatory { border-radius: .25rem; }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-summary > div { min-width: 0; border-radius: .2rem; }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-summary strong { overflow-wrap: anywhere; line-height: 1.8; }
+:is(.app-shell-lab, .app-shell-header) .lab-shopper-actions .button:disabled { cursor: not-allowed; opacity: .45; }
 @media (max-width: 760px) {
-  .app-shell-lab .lab-shopper-options:has(> .shopper-option:nth-child(5)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :is(.app-shell-lab, .app-shell-header) .lab-shopper-options:has(> .shopper-option:nth-child(5)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 480px) {
-  .app-shell-lab .lab-shopper-options:has(> .shopper-option:nth-child(5)) { grid-template-columns: 1fr; }
-  .app-shell-lab .lab-shopper-options .shopper-option { min-height: 4.5rem; padding: .9rem 1rem; }
-  .app-shell-lab .lab-shopper-count { font-size: .78rem; }
-  .app-shell-lab .lab-shopper-actions { padding-block: .8rem; }
+  :is(.app-shell-lab, .app-shell-header) .lab-shopper-options:has(> .shopper-option:nth-child(5)) { grid-template-columns: 1fr; }
+  :is(.app-shell-lab, .app-shell-header) .lab-shopper-options .shopper-option { min-height: 4.5rem; padding: .9rem 1rem; }
+  :is(.app-shell-lab, .app-shell-header) .lab-shopper-count { font-size: .78rem; }
+  :is(.app-shell-lab, .app-shell-header) .lab-shopper-actions { padding-block: .8rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .app-shell-lab .lab-shopper-options .shopper-option { transition: none; }
+  :is(.app-shell-lab, .app-shell-header) .lab-shopper-options .shopper-option { transition: none; }
 }
 
 /* Selection profile — quiet editorial summary, retaining NOOR-owned values and routes. */
