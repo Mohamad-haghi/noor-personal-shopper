@@ -101,3 +101,27 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
   });
 });
+
+
+describe("NOOR homepage header, curated collection and favorite refinements", () => {
+  it("matches the Lab wordmark and hamburger scale", () => {
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    expect(css).toContain(".app-shell-header .app-brand-lab .app-brand-name {\n  font-size: 1.5rem;\n  line-height: 1;\n  letter-spacing: .3em;");
+    expect(css).toContain(".app-shell-header .mobile-nav-toggle {\n  width: 2.75rem;\n  height: 2.75rem;");
+    expect(css).toContain(".app-shell-header .mobile-nav-toggle span {\n  width: 1.25rem;\n  height: 2px;");
+  });
+
+  it("stacks curated product images vertically at full viewport width", () => {
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    expect(css).toContain(".lab-home .lab-curated-section .lab-curated-grid {\n  grid-template-columns: minmax(0, 1fr);");
+    expect(css).toContain("width: 100vw;\n  margin-inline: calc(50% - 50vw);");
+    expect(css).toContain(".lab-home .lab-curated-section .lab-curated-image {\n  aspect-ratio: 16 / 9;");
+    expect(css).toContain("object-fit: contain;\n  transform: none;");
+  });
+
+  it("shows the favorite as a standalone heart without a circular button surface", () => {
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    expect(css).toContain(".lab-home .lab-curated-favorite {\n  width: 2.75rem;\n  height: 2.75rem;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
+    expect(css).toContain(".lab-home .lab-curated-favorite[aria-pressed=\"true\"] {\n  border-color: transparent;\n  background: transparent;");
+  });
+});
