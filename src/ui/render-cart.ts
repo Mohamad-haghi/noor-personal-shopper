@@ -1,4 +1,5 @@
 import type { Cart, Product } from "../domain";
+import { productFavoriteControl } from "./product-favorite-control";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -47,6 +48,7 @@ export function renderCart(routeView: HTMLElement, cart: Cart | null, products: 
     return `
       <article class="lab-cart-item">
         ${media}
+        ${product ? productFavoriteControl(product.identity.id) : ""}
         <div class="lab-cart-item-content">
           <p class="eyebrow">${escapeHtml(item.priceLabel)}</p>
           <h2>${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}</h2>
