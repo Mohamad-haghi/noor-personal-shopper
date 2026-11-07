@@ -265,6 +265,65 @@ async function renderCompareRoute(
   }
 }
 
+async function attachHomeFavoriteActions(
+  routeView: HTMLElement,
+  catalogService: CatalogService,
+  choicesService: ChoicesService,
+): Promise<void> {
+  routeView.querySelectorAll<HTMLButtonElement>("[data-home-favorite-toggle]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const variantId = button.dataset.variantId;
+      const productId = button.dataset.productId;
+      if (!variantId || !productId || button.disabled) return;
+
+      button.disabled = true;
+      try {
+        const variant = await catalogService.getVariant({
+          id: variantId,
+          productId: { id: productId, source: "demo" },
+        });
+        if (!variant) throw new Error("variant_not_found");
+
+        const existingChoices = await choicesService.listChoices();
+        const existing = existingChoices.find((choice) => choice.variantId.id === variant.identity.id);
+        const isSaved = Boolean(existing?.tags.includes("favorite"));
+        const now = new Date();
+
+        if (isSaved && existing) {
+          const remainingTags = existing.tags.filter((tag) => tag !== "favorite");
+          if (remainingTags.length > 0) {
+            await choicesService.saveChoice({ ...existing, tags: remainingTags, updatedAt: now });
+          } else {
+            await choicesService.removeChoice(existing.identity);
+          }
+        } else {
+          const choice: SavedChoice = existing
+            ? { ...existing, tags: [...new Set([...existing.tags, "favorite"])], updatedAt: now }
+            : {
+                identity: { id: `demo-choice-${variant.identity.id}` },
+                variantId: variant.identity,
+                status: "saved",
+                notes: null,
+                tags: ["favorite"],
+                createdAt: now,
+                updatedAt: now,
+              };
+          await choicesService.saveChoice(choice);
+        }
+
+        const nextSaved = !isSaved;
+        button.setAttribute("aria-pressed", String(nextSaved));
+        button.setAttribute("aria-label", nextSaved ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها");
+        button.classList.toggle("is-saved", nextSaved);
+        button.disabled = false;
+      } catch {
+        button.disabled = false;
+        button.setAttribute("aria-label", "ذخیره علاقه‌مندی انجام نشد؛ دوباره تلاش کنید");
+      }
+    });
+  });
+}
+
 async function attachProductChoiceActions(
   routeView: HTMLElement,
   catalogService: CatalogService,
@@ -808,8 +867,28 @@ export async function renderApplicationShell(
   if (!routeView) throw new Error("Application route view was not created.");
 
   if (match?.route.path === "/") {
-    if (hero) renderHero(routeView, hero, heroDestination, await catalogService.listProducts());
-    else renderFoundationStatus(routeView, status);
+    if (hero) {
+      const products = await catalogService.listProducts();
+      const curatedIds = new Set([
+        "noor-demo-002-persol-po0649-95-31",
+        "noor-demo-003-oakley-oo9318-02-34",
+        "noor-demo-012-prada-pr51yv-04q1o1",
+      ]);
+      const curatedProducts = products.filter((product) => curatedIds.has(product.identity.id));
+      const variantEntries = await Promise.all(curatedProducts.map(async (product) => [
+        product.identity.id,
+        await catalogService.listVariants(product.identity),
+      ] as const));
+      const variantsByProduct = new Map(variantEntries);
+      const savedChoices = await choicesService.listChoices();
+      const favoriteVariantIds = new Set(
+        savedChoices.filter((choice) => choice.tags.includes("favorite")).map((choice) => choice.variantId.id),
+      );
+      renderHero(routeView, hero, heroDestination, products, variantsByProduct, favoriteVariantIds);
+      await attachHomeFavoriteActions(routeView, catalogService, choicesService);
+    } else {
+      renderFoundationStatus(routeView, status);
+    }
   } else if (match?.route.path === "/manager") {
     const products = await catalogService.listProducts();
     const variants = (await Promise.all(products.map((product) => catalogService.listVariants(product.identity)))).flat();
