@@ -324,7 +324,7 @@ async function attachHomeFavoriteActions(
   });
 }
 
-async async function attachProductFavoriteActions(
+async function attachProductFavoriteActions(
   routeView: HTMLElement,
   catalogService: CatalogService,
   choicesService: ChoicesService,
@@ -400,7 +400,7 @@ async async function attachProductFavoriteActions(
   }
 }
 
-function attachProductChoiceActions(
+async function attachProductChoiceActions(
   routeView: HTMLElement,
   catalogService: CatalogService,
   choicesService: ChoicesService,
