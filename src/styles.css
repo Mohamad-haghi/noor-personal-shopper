@@ -2131,3 +2131,110 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
 @media (prefers-reduced-motion: reduce) {
   .app-shell-lab .lab-edit-link { transition: none; }
 }
+
+/* How NOOR works — four-stage editorial flow, matching the Lab's card diagram. */
+.app-shell-header .lab-how-page {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+  padding: clamp(2.8rem, 6vw, 4.5rem) 0 clamp(4rem, 8vw, 6rem);
+}
+.app-shell-header .lab-how-page .lab-page-head {
+  max-width: 48rem;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+.app-shell-header .lab-how-page .lab-page-head h1 {
+  margin: .65rem 0 .85rem;
+  font-size: clamp(2rem, 4.4vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+.app-shell-header .lab-how-page .lab-page-head > p:last-child {
+  max-width: 43rem;
+  margin-inline: auto;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 2;
+}
+.app-shell-header .lab-how-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: .9rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+}
+.app-shell-header .lab-how-steps li {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(1.1rem, 1.7vw, 1.45rem);
+  border: 1px solid var(--line);
+  border-radius: .3rem;
+  background: color-mix(in srgb, var(--surface) 96%, white);
+}
+.app-shell-header .lab-how-steps li > span {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: .9rem;
+}
+.app-shell-header .lab-how-steps li > div { min-width: 0; }
+.app-shell-header .lab-how-steps h2 {
+  margin: 0 0 .55rem;
+  font-size: 1rem;
+  font-weight: 550;
+  line-height: 1.8;
+}
+.app-shell-header .lab-how-steps p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 2;
+  overflow-wrap: anywhere;
+}
+.app-shell-header .lab-how-page .lab-profile-note {
+  max-width: 55rem;
+  margin: 1.5rem auto 0;
+  padding: 1rem 1.2rem;
+  border: 0;
+  border-inline-start: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--surface) 92%, var(--line));
+  font-size: .82rem;
+  line-height: 2;
+}
+.app-shell-header .lab-how-page .lab-profile-actions {
+  justify-content: center;
+  gap: .75rem;
+  margin-top: 1.8rem;
+}
+.app-shell-header .lab-how-page .lab-profile-actions .button {
+  min-width: 13rem;
+  min-height: 2.8rem;
+  border-radius: .25rem;
+}
+.app-shell-header .lab-how-page a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 900px) {
+  .app-shell-header .lab-how-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .app-shell-header .lab-how-page { width: min(100% - 1.5rem, 48rem); }
+  .app-shell-header .lab-how-page .lab-page-head { text-align: start; }
+  .app-shell-header .lab-how-steps { grid-template-columns: 1fr; gap: .7rem; }
+  .app-shell-header .lab-how-steps li { gap: .8rem; padding: 1.1rem; }
+  .app-shell-header .lab-how-page .lab-profile-actions { align-items: stretch; flex-direction: column; }
+  .app-shell-header .lab-how-page .lab-profile-actions .button { width: 100%; }
+}
