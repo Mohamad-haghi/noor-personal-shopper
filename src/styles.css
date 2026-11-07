@@ -2919,3 +2919,97 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .app-shell-header .d5-compare-purchase-grid { grid-template-columns: 1fr; }
   .app-shell-header .d5-compare-product-actions { padding: .85rem; }
 }
+
+/* NOOR account route — quiet form styling; demo authentication flow remains unchanged. */
+.app-shell-header .d5-account-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1rem;
+}
+.app-shell-header .d5-account-grid .d5-choice-card {
+  gap: 1rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+.app-shell-header .d5-account-grid .d5-choice-card h2 {
+  margin: -.2rem 0 .25rem;
+  font-size: 1.45rem;
+}
+.app-shell-header .d5-form {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+.app-shell-header .d5-form > label {
+  display: grid;
+  gap: .45rem;
+  color: var(--ink);
+  font-size: .82rem;
+  line-height: 1.7;
+}
+.app-shell-header .d5-form input {
+  width: 100%;
+  min-height: 3rem;
+  box-sizing: border-box;
+  padding: .7rem .85rem;
+  border: 1px solid var(--line);
+  border-radius: .15rem;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: .9rem;
+  text-align: start;
+}
+.app-shell-header .d5-form input::placeholder { color: var(--muted); }
+.app-shell-header .d5-form input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.app-shell-header .d5-form button[type="submit"] {
+  width: 100%;
+  min-height: 3rem;
+  justify-content: center;
+  margin-top: .25rem;
+  border-radius: .2rem;
+}
+.app-shell-header .d5-form-error {
+  max-width: 52rem;
+  margin: 0 auto 1.25rem;
+  padding: .9rem 1rem;
+  border: 1px solid color-mix(in srgb, #a33 30%, var(--line));
+  border-radius: .2rem;
+  background: color-mix(in srgb, #a33 5%, var(--surface));
+  color: var(--ink);
+  font-size: .86rem;
+  line-height: 1.8;
+}
+.app-shell-header .d5-page > .d5-choice-card {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: clamp(1.4rem, 4vw, 2.5rem);
+}
+.app-shell-header .d5-page > .d5-choice-card h2 {
+  margin: .7rem 0;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.app-shell-header .d5-page > .d5-choice-card > p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.85;
+}
+.app-shell-header .d5-page > .d5-choice-card .d5-actions {
+  justify-content: flex-start;
+  margin-top: 1.4rem;
+}
+@media (max-width: 760px) {
+  .app-shell-header .d5-account-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .app-shell-header .d5-account-grid { gap: .85rem; }
+  .app-shell-header .d5-account-grid .d5-choice-card { padding: 1.15rem; }
+  .app-shell-header .d5-page > .d5-choice-card .d5-actions { flex-direction: column; }
+  .app-shell-header .d5-page > .d5-choice-card .d5-actions .button { width: 100%; }
+}
