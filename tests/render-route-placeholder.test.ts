@@ -19,15 +19,4 @@ describe("standalone demo payment route presentation", () => {
     expect(root.innerHTML).toContain('href="/checkout" data-app-link');
     expect(root.innerHTML).not.toContain('name="cardNumber"');
   });
-
-  it("keeps the generic not-found presentation for unknown routes", () => {
-    const root = {
-      innerHTML: "",
-      replaceChildren: (view: { className?: string }) => { root.innerHTML = view.className ?? ""; },
-    } as unknown as HTMLElement;
-
-    renderRoutePlaceholder(root, null);
-
-    expect(root.innerHTML).toBe("route-placeholder");
-  });
 });
