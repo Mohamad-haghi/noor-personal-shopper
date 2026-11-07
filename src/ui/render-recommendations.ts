@@ -37,8 +37,8 @@ function custom(product: Product, key: string): unknown { return product.attribu
 function productImage(product: Product): string {
   const image = product.media.primaryImage;
   return image
-    ? \`<img src="\${escapeHtml(image.url)}" alt="\${escapeHtml(image.altText ?? product.name)}" loading="lazy">\`
-    : \`<div class="lab-recommendation-image-placeholder" aria-hidden="true">NOOR</div>\`;
+    ? `<img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.altText ?? product.name)}" loading="lazy">`
+    : `<div class="lab-recommendation-image-placeholder" aria-hidden="true">NOOR</div>`;
 }
 
 function card(product: Product, recommendation: Recommendation, index: number): string {
@@ -52,54 +52,54 @@ function card(product: Product, recommendation: Recommendation, index: number): 
     : "—";
   const inventory = getNoorInventoryDestination(product);
   const inventoryLink = inventory
-    ? \`<a class="button button-secondary" href="\${escapeHtml(inventory.url)}" target="_blank" rel="noopener noreferrer">مشاهده در فروشگاه نور</a>\`
+    ? `<a class="button button-secondary" href="${escapeHtml(inventory.url)}" target="_blank" rel="noopener noreferrer">مشاهده در فروشگاه نور</a>`
     : "";
   const score = formatRecommendationScore(recommendation.score.overall);
   const scoreValue = Number.isFinite(recommendation.score.overall)
     ? Math.round(Math.max(0, Math.min(1, recommendation.score.overall)) * 100)
     : 0;
   const explanation = recommendation.reason.explanation?.trim() || "این پیشنهاد بر اساس معیارهای ثبت‌شده در همین مشاوره انتخاب شده است.";
-  const productHref = \`/products/\${encodeURIComponent(product.identity.id)}\`;
+  const productHref = `/products/${encodeURIComponent(product.identity.id)}`;
 
-  return \`
+  return `
     <li class="lab-recommendation-item">
       <article class="lab-recommendation-card">
-        <a class="lab-recommendation-media" href="\${productHref}" data-app-link aria-label="مشاهده جزئیات \${escapeHtml(product.name)}">
-          \${productImage(product)}
-          <span class="lab-recommendation-rank" aria-hidden="true">\${String(index + 1).padStart(2, "0")}</span>
+        <a class="lab-recommendation-media" href="${productHref}" data-app-link aria-label="مشاهده جزئیات ${escapeHtml(product.name)}">
+          ${productImage(product)}
+          <span class="lab-recommendation-rank" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
         </a>
         <div class="lab-recommendation-content">
           <div class="lab-recommendation-product-heading">
             <div>
-              <p class="eyebrow">پیشنهاد \${index + 1}</p>
-              <h2>\${escapeHtml(product.name)}</h2>
+              <p class="eyebrow">پیشنهاد ${index + 1}</p>
+              <h2>${escapeHtml(product.name)}</h2>
             </div>
-            <div class="lab-recommendation-score" aria-label="امتیاز تطابق \${score} از ۱۰۰">
-              <p><strong>\${score}</strong><span>/100</span></p>
+            <div class="lab-recommendation-score" aria-label="امتیاز تطابق ${score} از ۱۰۰">
+              <p><strong>${score}</strong><span>/100</span></p>
               <small>امتیاز تطابق COR</small>
             </div>
           </div>
-          <div class="lab-recommendation-score-track" role="progressbar" aria-label="امتیاز تطابق COR" aria-valuemin="0" aria-valuemax="100" aria-valuenow="\${scoreValue}">
-            <span style="width: \${scoreValue}%"></span>
+          <div class="lab-recommendation-score-track" role="progressbar" aria-label="امتیاز تطابق COR" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${scoreValue}">
+            <span style="width: ${scoreValue}%"></span>
           </div>
-          <p class="lab-recommendation-reason">\${escapeHtml(explanation)}</p>
+          <p class="lab-recommendation-reason">${escapeHtml(explanation)}</p>
           <dl class="lab-recommendation-specs">
-            <div><dt>فرم فریم</dt><dd>\${escapeHtml(shape)}</dd></div>
-            <div><dt>جنس فریم</dt><dd>\${escapeHtml(material)}</dd></div>
-            <div><dt>ابعاد عدسی / پل / دسته</dt><dd>\${escapeHtml(size)}</dd></div>
+            <div><dt>فرم فریم</dt><dd>${escapeHtml(shape)}</dd></div>
+            <div><dt>جنس فریم</dt><dd>${escapeHtml(material)}</dd></div>
+            <div><dt>ابعاد عدسی / پل / دسته</dt><dd>${escapeHtml(size)}</dd></div>
           </dl>
-          <p class="inventory-link-note">شناسه مرجع نور: \${escapeHtml(inventory?.reference ?? "در دسترس نیست")}</p>
+          <p class="inventory-link-note">شناسه مرجع نور: ${escapeHtml(inventory?.reference ?? "در دسترس نیست")}</p>
           <div class="lab-recommendation-card-actions">
-            <button class="button button-secondary" type="button" data-save-choice="\${escapeHtml(recommendation.variantId.id)}">ذخیره در انتخاب‌های من</button>
-            <button class="button button-secondary" type="button" data-compare-product="\${escapeHtml(recommendation.variantId.id)}" data-product-id="\${escapeHtml(product.identity.id)}">افزودن به مقایسه</button>
-            <button class="button button-primary" type="button" data-add-to-cart="\${escapeHtml(recommendation.variantId.id)}" data-product-id="\${escapeHtml(product.identity.id)}">انتخاب برای خرید</button>
-            \${inventoryLink}
-            <a class="button button-secondary" href="\${productHref}" data-app-link>جزئیات محصول</a>
+            <button class="button button-secondary" type="button" data-save-choice="${escapeHtml(recommendation.variantId.id)}">ذخیره در انتخاب‌های من</button>
+            <button class="button button-secondary" type="button" data-compare-product="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button>
+            <button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(recommendation.variantId.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب برای خرید</button>
+            ${inventoryLink}
+            <a class="button button-secondary" href="${productHref}" data-app-link>جزئیات محصول</a>
           </div>
         </div>
       </article>
     </li>
-  \`;
+  `;
 }
 
 export function renderRecommendations(routeView: HTMLElement, recommendations: readonly Recommendation[], products: readonly Product[]): void {
@@ -112,28 +112,28 @@ export function renderRecommendations(routeView: HTMLElement, recommendations: r
   const count = rows.length;
   const cards = rows.map(({ recommendation, product, index }) => card(product, recommendation, index)).join("");
   const emptyState = count === 0
-    ? \`<section class="lab-recommendations-empty" role="status"><h2>پیشنهادی برای نمایش در دسترس نیست.</h2><p>برای دریافت پیشنهادهای معتبر، دوباره به مشاوره برگردید و درخواست را اجرا کنید.</p><a class="button button-primary" href="/shopper" data-app-link>بازگشت به مشاوره</a></section>\`
-    : \`<ol class="lab-recommendations-list" aria-label="پیشنهادهای مرتب‌شده بر اساس امتیاز COR">\${cards}</ol>\`;
+    ? `<section class="lab-recommendations-empty" role="status"><h2>پیشنهادی برای نمایش در دسترس نیست.</h2><p>برای دریافت پیشنهادهای معتبر، دوباره به مشاوره برگردید و درخواست را اجرا کنید.</p><a class="button button-primary" href="/shopper" data-app-link>بازگشت به مشاوره</a></section>`
+    : `<ol class="lab-recommendations-list" aria-label="پیشنهادهای مرتب‌شده بر اساس امتیاز COR">${cards}</ol>`;
 
-  routeView.innerHTML = \`
+  routeView.innerHTML = `
     <main class="lab-recommendations-page" id="main-content" aria-labelledby="recommendations-title">
       <header class="lab-recommendations-head">
         <p class="eyebrow" dir="ltr">NOOR PERSONAL SHOPPER · COR</p>
-        <h1 id="recommendations-title">\${count === 1 ? "پیشنهاد شما" : "پیشنهادهای شما"}</h1>
+        <h1 id="recommendations-title">${count === 1 ? "پیشنهاد شما" : "پیشنهادهای شما"}</h1>
         <p>نتایج این صفحه بر اساس پاسخ‌های همین مشاوره و از میان محصولات Demo در دسترس نمایش داده می‌شوند.</p>
       </header>
       <div class="lab-recommendations-notes">
         <p class="lab-recommendation-note" role="note">امتیاز نمایش‌داده‌شده، امتیاز تطابق نرمال‌شدهٔ موتور تصمیم‌گیری COR است؛ احتمال آماری تناسب یا تضمین تناسب فیزیکی محصول نیست.</p>
         <p class="lab-recommendation-note" role="note">این نسخه نمایشی به موجودی، قیمت، سفارش یا پرداخت واقعی NOOR متصل نیست. اطلاعات نامشخص محصول حدس زده نمی‌شود.</p>
       </div>
-      \${emptyState}
+      ${emptyState}
       <nav class="lab-recommendations-actions" aria-label="ادامه مسیر انتخاب">
         <a class="button button-primary" href="/choices" data-app-link>انتخاب‌های من</a>
         <a class="button button-secondary" href="/compare" data-app-link>مقایسه فریم‌ها</a>
         <a class="button button-secondary" href="/shopper" data-app-link>تغییر معیارهای انتخاب</a>
       </nav>
     </main>
-  \`;
+  `;
 }
 
 /** Human-readable labels for criteria the shopper explicitly marked as mandatory. */
