@@ -111,17 +111,40 @@ describe("NOOR homepage header, curated collection and favorite refinements", ()
     expect(css).toContain(".app-shell-header .mobile-nav-toggle span {\n  width: 1.25rem;\n  height: 2px;");
   });
 
-  it("stacks curated product images vertically at full viewport width", () => {
+  it("stacks curated product images vertically at full viewport width and matches Lab image scale", () => {
     const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
     expect(css).toContain(".lab-home .lab-curated-section .lab-curated-grid {\n  grid-template-columns: minmax(0, 1fr);");
     expect(css).toContain("width: 100vw;\n  margin-inline: calc(50% - 50vw);");
     expect(css).toContain(".lab-home .lab-curated-section .lab-curated-image {\n  aspect-ratio: 16 / 9;");
-    expect(css).toContain("object-fit: contain;\n  transform: none;");
+    expect(css).toContain("object-fit: contain;\n  transform: scale(1.1);");
+    expect(css).toContain("transform: scale(1.15);");
+    expect(css).toContain("transform: scale(1.07);");
   });
 
-  it("shows the favorite as a standalone heart without a circular button surface", () => {
+  it("renders concise verified product details beneath each curated image", async () => {
+    const hero = await new DemoHeroProvider().getHeroContent();
+    const productId = "noor-demo-002-persol-po0649-95-31";
+    const products = [{
+      identity: { id: productId },
+      name: "عینک آفتابی پرسول PO0649 95/31",
+      attributes: { category: "sunglasses", customAttributes: { model: "PO0649 95/31", frameMaterial: "acetate", frameColor: "black" } },
+      media: { primaryImage: { url: "/persol.jpg", altText: "Persol PO0649" } },
+    }] as unknown as Product[];
+    const root = { innerHTML: "" } as HTMLElement;
+
+    renderHero(root, hero!, "/shopper", products);
+
+    expect(root.innerHTML).toContain('class="lab-curated-model" dir="ltr">PO0649 95/31</p>');
+    expect(root.innerHTML).toContain('class="lab-curated-kind">آفتابی</span>');
+    expect(root.innerHTML).toContain('class="lab-curated-specs">آفتابی · استات · مشکی</p>');
+  });
+
+  it("restores the Lab's colored circular favorite control and matching three-step card surface", () => {
     const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
-    expect(css).toContain(".lab-home .lab-curated-favorite {\n  width: 2.75rem;\n  height: 2.75rem;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
-    expect(css).toContain(".lab-home .lab-curated-favorite[aria-pressed=\"true\"] {\n  border-color: transparent;\n  background: transparent;");
+    expect(css).toContain("border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);\n  border-radius: 50%;");
+    expect(css).toContain("background: color-mix(in srgb, var(--background) 92%, transparent);");
+    expect(css).toContain(".lab-home .lab-curated-favorite:hover {\n  border-color: var(--accent);");
+    expect(css).toContain(".lab-home .lab-curated-favorite[aria-pressed=\"true\"] {\n  border-color: var(--accent);");
+    expect(css).toContain(".lab-home .lab-step-grid li {\n  background: oklch(0.945 0.012 82);");
   });
 });
