@@ -55,7 +55,7 @@ export function renderAccount(
         <h1 id="account-title">حساب Personal Shopper</h1>
         <p>برای نگهداری انتخاب‌های همین جلسهٔ نمایشی، حساب مستقل خود را بسازید یا وارد شوید.</p>
       </header>
-      <p class="lab-account-note" role="note">این حساب فقط برای Demo است؛ به حساب سایت اصلی نور متصل نیست و ثبت‌نام آن به معنی ایجاد حساب واقعی فروشگاهی نیست.</p>
+      <p class="lab-account-note" role="note">این حساب فقط متعلق به همین Demo Personal Shopper است و به حساب فعلی سایت نور متصل نیست. ثبت‌نام در این صفحه حساب واقعی فروشگاهی ایجاد نمی‌کند.</p>
       ${error}
       <section class="lab-account-forms" aria-label="ثبت‌نام و ورود">
         <form class="lab-account-form" data-account-register>
