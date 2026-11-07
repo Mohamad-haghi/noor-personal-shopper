@@ -1830,7 +1830,7 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
    Keep image and copy in one stage; desktop copy overlays the image and mobile copy anchors
    to its lower edge. The NOOR content, destinations and downstream sections stay canonical. */
 .lab-home .hero-noor {
-  --h-ivory: var(--surface);
+  --h-ivory: oklch(0.945 0.012 82);
   --h-bronze: var(--accent);
   --h-charcoal: var(--ink);
   --h-stone: var(--muted);
@@ -1877,6 +1877,7 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
   color: var(--h-bronze);
 }
 .lab-home .hero-noor .hero-title {
+  font-family: "Vazirmatn", Tahoma, sans-serif;
   max-width: 22ch;
   margin: .85rem 0 0;
   color: var(--h-charcoal);
