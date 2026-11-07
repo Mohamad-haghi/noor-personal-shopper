@@ -614,9 +614,9 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
   .lab-search-form-row { flex-direction: column; }
   .lab-search-form-row .button { width: 100%; }
   .lab-search-grid { grid-template-columns: 1fr; gap: 1rem; }
-  .lab-search-product-card { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); }
-  .lab-search-product-media { align-self: stretch; aspect-ratio: 1 / 1; border-inline-end: 1px solid var(--line); }
-  .lab-search-product-card .product-card-body { padding: .85rem; }
+  .lab-search-product-card { display: flex; flex-direction: column; }
+  .lab-search-product-media { align-self: auto; aspect-ratio: 4 / 3; border-inline-end: 0; }
+  .lab-search-product-card .product-card-body { padding: 1.15rem; }
   .lab-search-reason { min-height: 0; }
 }
 
