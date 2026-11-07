@@ -68,7 +68,8 @@ describe("Lab-aligned COR recommendations presentation", () => {
     expect(root.innerHTML).toContain('aria-valuenow="63"');
     expect(root.innerHTML).toContain("فرم فریم");
     expect(root.innerHTML).toContain("فرم فریم با سبک انتخابی شما هماهنگ است.");
-    expect(root.innerHTML).toContain('data-save-choice="variant-1"');
+    expect(root.innerHTML).toContain('data-product-favorite="frame-1"');
+    expect(root.innerHTML).not.toContain("data-save-choice");
     expect(root.innerHTML).toContain('data-compare-product="variant-1"');
     expect(root.innerHTML).toContain('data-add-to-cart="variant-1"');
     expect(root.innerHTML).toContain('href="/products/frame-1"');
