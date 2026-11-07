@@ -1,24 +1,84 @@
 import type { Cart, Product } from "../domain";
 
 function escapeHtml(value: string): string {
-  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#039;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
 function formatAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat("fa-IR").format(amount) + " " + (currency === "IRR" ? "ریال" : currency);
 }
 
+function productImage(product: Product | undefined): string {
+  const image = product?.media?.primaryImage;
+  return image
+    ? `<img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.altText ?? product.name)}" loading="lazy">`
+    : `<div class="lab-cart-image-placeholder" aria-hidden="true">NOOR</div>`;
+}
+
 export function renderCart(routeView: HTMLElement, cart: Cart | null, products: readonly Product[]): void {
   if (!cart || cart.items.length === 0) {
-    routeView.innerHTML = `<main class="d7-cart-page" id="main-content"><section class="d7-cart-intro"><p class="eyebrow">DEMO CART</p><h1>سبد خرید</h1><p>هنوز محصولی برای خرید انتخاب نکرده‌اید. قیمت‌های این بخش صرفاً نمایشی و مخصوص Demo هستند.</p></section><section class="d7-cart-empty"><h2>سبد خرید شما خالی است.</h2><a class="button button-primary" href="/recommendations" data-app-link>دیدن پیشنهادهای من</a></section></main>`;
+    routeView.innerHTML = `
+      <main class="lab-cart-page" id="main-content" aria-labelledby="cart-title">
+        <header class="lab-cart-head">
+          <p class="eyebrow" dir="ltr">DEMO CART</p>
+          <h1 id="cart-title">سبد خرید</h1>
+          <p>فریم‌های انتخاب‌شده را اینجا مرور کنید. تمام قیمت‌ها و مبالغ این بخش صرفاً نمایشی هستند.</p>
+        </header>
+        <section class="lab-cart-empty" role="status">
+          <h2>سبد خرید شما خالی است.</h2>
+          <p>برای شروع، پیشنهادهای COR یا مجموعه محصولات نمایشی را مرور کنید.</p>
+          <div class="lab-cart-empty-actions">
+            <a class="button button-primary" href="/recommendations" data-app-link>دیدن پیشنهادهای من</a>
+            <a class="button button-secondary" href="/products" data-app-link>مشاهده مجموعه</a>
+          </div>
+        </section>
+      </main>
+    `;
     return;
   }
 
   const productById = new Map(products.map((product) => [product.identity.id, product]));
   const rows = cart.items.map((item) => {
     const product = productById.get(item.variantId.productId.id);
-    return `<article class="d7-cart-item"><div><p class="eyebrow">${escapeHtml(item.priceLabel)}</p><h2>${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}</h2><p>تعداد: ${item.quantity}</p><p class="d7-cart-price">${formatAmount(item.unitPrice * item.quantity, item.currency)}</p></div><button class="button button-secondary" type="button" data-cart-remove="${escapeHtml(item.id)}">حذف</button></article>`;
+    const href = product ? `/products/${encodeURIComponent(product.identity.id)}` : null;
+    const media = product
+      ? `<a class="lab-cart-media" href="${href}" data-app-link aria-label="جزئیات ${escapeHtml(product.name)}">${productImage(product)}</a>`
+      : `<div class="lab-cart-media">${productImage(undefined)}</div>`;
+    return `
+      <article class="lab-cart-item">
+        ${media}
+        <div class="lab-cart-item-content">
+          <p class="eyebrow">${escapeHtml(item.priceLabel)}</p>
+          <h2>${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}</h2>
+          <p class="lab-cart-quantity">تعداد: ${item.quantity}</p>
+          <p class="lab-cart-price">${formatAmount(item.unitPrice * item.quantity, item.currency)}</p>
+          ${href ? `<a class="lab-cart-detail-link" href="${href}" data-app-link>جزئیات محصول</a>` : ""}
+        </div>
+        <div class="lab-cart-item-actions">
+          <button class="button button-secondary" type="button" data-cart-remove="${escapeHtml(item.id)}">حذف از سبد</button>
+        </div>
+      </article>
+    `;
   }).join("");
 
-  routeView.innerHTML = `<main class="d7-cart-page" id="main-content" aria-labelledby="cart-title"><section class="d7-cart-intro"><p class="eyebrow">DEMO CART</p><h1 id="cart-title">سبد خرید</h1><p>قیمت‌ها در این مرحله «قیمت نمایشی Demo» هستند و به قیمت واقعی فروشگاه نور متصل نیستند.</p></section><section class="d7-cart-list">${rows}</section><section class="d7-cart-summary"><div><span>تعداد اقلام</span><strong>${cart.itemCount}</strong></div><div><span>جمع سبد</span><strong>${formatAmount(cart.subtotal, cart.currency)}</strong></div><p>قیمت‌ها نمایشی هستند و پیش از پرداخت واقعی باید با سامانهٔ فروش نور جایگزین شوند.</p><a class="button button-primary" href="/checkout" data-app-link>ادامهٔ تکمیل سفارش</a></section></main>`;
+  routeView.innerHTML = `
+    <main class="lab-cart-page" id="main-content" aria-labelledby="cart-title">
+      <header class="lab-cart-head">
+        <p class="eyebrow" dir="ltr">DEMO CART</p>
+        <h1 id="cart-title">سبد خرید شما</h1>
+        <p>فریم‌های انتخاب‌شده برای ادامه مسیر نمایشی. هیچ سفارش یا پرداخت واقعی در این مرحله انجام نمی‌شود.</p>
+      </header>
+      <p class="lab-cart-note" role="note">قیمت هر قلم و جمع سبد، مقادیر نمایشی Demo هستند و به قیمت واقعی یا موجودی فروشگاه نور متصل نیستند.</p>
+      <section class="lab-cart-list" aria-label="اقلام انتخاب‌شده">
+        ${rows}
+      </section>
+      <section class="lab-cart-summary" aria-label="خلاصه سبد خرید">
+        <div><span>تعداد اقلام</span><strong>${cart.itemCount}</strong></div>
+        <div><span>جمع نمایشی سبد</span><strong>${formatAmount(cart.subtotal, cart.currency)}</strong></div>
+        <p>این جمع فقط برای نمایش مسیر احتمالی خرید استفاده می‌شود و مبلغ قابل پرداخت نیست.</p>
+        <a class="button button-primary" href="/checkout" data-app-link>ادامهٔ تکمیل سفارش نمایشی</a>
+        <a class="button button-secondary" href="/products" data-app-link>بازگشت به مجموعه</a>
+      </section>
+    </main>
+  `;
 }
