@@ -3013,3 +3013,183 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .app-shell-header .d5-page > .d5-choice-card .d5-actions { flex-direction: column; }
   .app-shell-header .d5-page > .d5-choice-card .d5-actions .button { width: 100%; }
 }
+
+
+/* NOOR manager overview — restrained editorial dashboard; demo-only figures and meaning remain explicit. */
+.app-shell-header .manager-overview {
+  width: min(100% - 3rem, 76rem);
+  max-width: none;
+  margin-inline: auto;
+  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 7vw, 6rem);
+}
+.app-shell-header .manager-overview > .eyebrow {
+  color: var(--accent);
+  letter-spacing: .16em;
+  font-size: .72rem;
+}
+.app-shell-header .manager-overview > h1 {
+  max-width: 50rem;
+  margin: .85rem 0 1rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -.035em;
+}
+.app-shell-header .manager-lead {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: .94rem;
+  line-height: 2;
+}
+.app-shell-header .manager-overview .demo-truth-notice {
+  display: grid;
+  gap: .45rem;
+  margin: 1.8rem 0 2.5rem;
+  padding: 1.15rem 1.35rem;
+  border-inline-start: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.9;
+}
+.app-shell-header .manager-overview .demo-truth-notice strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.app-shell-header .manager-stat-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+}
+.app-shell-header .manager-stat {
+  min-width: 0;
+  gap: .55rem;
+  padding: clamp(1.25rem, 2.5vw, 1.8rem);
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+}
+.app-shell-header .manager-stat span {
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.8;
+}
+.app-shell-header .manager-stat strong {
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.app-shell-header .manager-stat small {
+  color: var(--muted);
+  font-size: .74rem;
+  line-height: 1.7;
+}
+.app-shell-header .manager-panel {
+  margin-block: 1rem;
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: color-mix(in srgb, var(--surface) 94%, white);
+}
+.app-shell-header .manager-panel h2 {
+  margin: 0 0 1.1rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.app-shell-header .manager-panel ul {
+  display: grid;
+  gap: .85rem;
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+.app-shell-header .manager-panel li {
+  margin: 0;
+  padding-inline-start: .25rem;
+  color: var(--muted);
+  font-size: .87rem;
+  line-height: 1.95;
+}
+.app-shell-header .manager-panel li strong {
+  color: var(--ink);
+  font-weight: 550;
+}
+.app-shell-header .manager-status-list { margin: 0; }
+.app-shell-header .manager-status-list div {
+  display: grid;
+  grid-template-columns: minmax(12rem, .8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: 1.5rem;
+  padding: .95rem 0;
+  border-top: 1px solid var(--line);
+}
+.app-shell-header .manager-status-list dt {
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.8;
+}
+.app-shell-header .manager-status-list dd {
+  color: var(--ink);
+  font-size: .84rem;
+  font-weight: 500;
+  line-height: 1.8;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.app-shell-header .manager-footnote {
+  max-width: 52rem;
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.95;
+}
+.app-shell-header .manager-overview > .route-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: 2rem;
+}
+.app-shell-header .manager-overview > .route-actions .button {
+  min-height: 2.9rem;
+  justify-content: center;
+  border-radius: .2rem;
+}
+.app-shell-header .manager-overview a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .app-shell-header .manager-overview {
+    width: min(100% - 2rem, 76rem);
+    padding-block: 2.5rem 4rem;
+  }
+  .app-shell-header .manager-stat-grid { grid-template-columns: 1fr; gap: .75rem; }
+  .app-shell-header .manager-stat { padding: 1.15rem; }
+  .app-shell-header .manager-stat strong { font-size: 2.2rem; }
+  .app-shell-header .manager-status-list div {
+    grid-template-columns: 1fr;
+    gap: .2rem;
+  }
+  .app-shell-header .manager-overview > .route-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .app-shell-header .manager-overview > .route-actions .button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-header .manager-overview *,
+  .app-shell-header .manager-overview *::before,
+  .app-shell-header .manager-overview *::after {
+    scroll-behavior: auto;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
