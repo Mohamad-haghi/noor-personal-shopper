@@ -50,13 +50,22 @@ function isLabExperienceRoute(match: RouteMatch | null): boolean {
 }
 
 function renderNavigation(match: RouteMatch | null): string {
-  // Keep NOOR's existing navigation inventory and destinations unchanged on every route.
-  return APP_ROUTES
-    .filter((route) => route.navigationLabel !== null)
+  // Preserve NOOR's route-specific menu inventory and destinations exactly.
+  const labPaths = new Set(["/catalog", "/shopper", "/how-it-works"]);
+  const routes = isLabExperienceRoute(match)
+    ? APP_ROUTES.filter((route) => labPaths.has(route.path))
+    : APP_ROUTES.filter((route) => route.navigationLabel !== null);
+  const labLabels: Record<string, string> = {
+    "/catalog": "مجموعه",
+    "/shopper": "مشاوره انتخاب",
+    "/how-it-works": "NOOR چگونه کار می‌کند",
+  };
+  return routes
     .map((route) => {
       const current = isNavigationRouteCurrent(route.path, match);
       const currentAttribute = current ? ' aria-current="page"' : "";
-      return `<li><a href="${route.path}" data-app-link${currentAttribute}>${route.navigationLabel}</a></li>`;
+      const label = isLabExperienceRoute(match) ? labLabels[route.path] : route.navigationLabel;
+      return `<li><a href="${route.path}" data-app-link${currentAttribute}>${label}</a></li>`;
     })
     .join("");
 }
