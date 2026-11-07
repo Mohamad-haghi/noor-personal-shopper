@@ -49,10 +49,10 @@ function isLabExperienceRoute(match: RouteMatch | null): boolean {
   ].includes(match.route.path));
 }
 
-function renderNavigation(match: RouteMatch | null): string {
+function renderNavigation(match: RouteMatch | null, includeAllRoutes = false): string {
   // Preserve NOOR's route-specific menu inventory and destinations exactly.
   const labPaths = new Set(["/catalog", "/shopper", "/how-it-works"]);
-  const routes = isLabExperienceRoute(match)
+  const routes = !includeAllRoutes && isLabExperienceRoute(match)
     ? APP_ROUTES.filter((route) => labPaths.has(route.path))
     : APP_ROUTES.filter((route) => route.navigationLabel !== null);
   const labLabels: Record<string, string> = {
@@ -741,6 +741,7 @@ export async function renderApplicationShell(
   visitService: VisitService,
 ): Promise<void> {
   const navigation = renderNavigation(match);
+  const mobileNavigation = renderNavigation(match, true);
   root.innerHTML = `
     <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
     <div class="app-shell app-shell-header">
@@ -748,10 +749,16 @@ export async function renderApplicationShell(
         <a class="app-brand app-brand-lab" href="/" data-app-link aria-label="NOOR Eyewear Studio"><span class="app-brand-name">NOOR</span><span class="app-brand-tagline" dir="ltr">Eyewear Studio</span></a>
         <nav class="lab-header-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>
         <div class="app-header-meta">
-          <details class="mobile-nav">
-            <summary aria-label="باز کردن منو">منو</summary>
-            <nav aria-label="ناوبری موبایل"><ul>${navigation}</ul></nav>
-          </details>
+          <div class="mobile-nav">
+            <button class="mobile-nav-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="mobile-navigation-panel">
+              <span></span><span></span><span></span>
+            </button>
+            <button class="mobile-nav-backdrop" type="button" aria-label="بستن منو" tabindex="-1" hidden></button>
+            <nav id="mobile-navigation-panel" class="mobile-nav-panel" aria-label="ناوبری موبایل" hidden>
+              <button class="mobile-nav-close" type="button" aria-label="بستن منو">×</button>
+              <ul>${mobileNavigation}</ul>
+            </nav>
+          </div>
         </div>
       </header>
       <div id="route-view" class="route-view" aria-live="polite"></div>
@@ -762,6 +769,29 @@ export async function renderApplicationShell(
       </footer>
     </div>
   `;
+
+  const mobileMenu = root.querySelector<HTMLElement>(".mobile-nav");
+  const menuToggle = mobileMenu?.querySelector<HTMLButtonElement>(".mobile-nav-toggle");
+  const menuPanel = mobileMenu?.querySelector<HTMLElement>(".mobile-nav-panel");
+  const menuBackdrop = mobileMenu?.querySelector<HTMLButtonElement>(".mobile-nav-backdrop");
+  const menuClose = mobileMenu?.querySelector<HTMLButtonElement>(".mobile-nav-close");
+  const setMobileMenuOpen = (open: boolean): void => {
+    if (!menuToggle || !menuPanel || !menuBackdrop) return;
+    menuToggle.setAttribute("aria-expanded", String(open));
+    menuToggle.setAttribute("aria-label", open ? "بستن منو" : "باز کردن منو");
+    menuPanel.hidden = !open;
+    menuBackdrop.hidden = !open;
+    document.body.classList.toggle("mobile-menu-open", open);
+    if (open) menuClose?.focus();
+    else menuToggle.focus();
+  };
+  menuToggle?.addEventListener("click", () => setMobileMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true"));
+  menuClose?.addEventListener("click", () => setMobileMenuOpen(false));
+  menuBackdrop?.addEventListener("click", () => setMobileMenuOpen(false));
+  menuPanel?.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => link.addEventListener("click", () => setMobileMenuOpen(false)));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menuToggle?.getAttribute("aria-expanded") === "true") setMobileMenuOpen(false);
+  });
 
   const routeView = root.querySelector<HTMLElement>("#route-view");
   if (!routeView) throw new Error("Application route view was not created.");
