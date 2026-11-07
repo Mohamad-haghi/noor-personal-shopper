@@ -119,8 +119,23 @@
   outline-offset: 3px;
 }
 @media (max-width: 767px) {
-  .hero-noor .hero-stage { display: flex; min-height: 0; flex-direction: column; }
-  .hero-noor .hero-image { order: 2; width: 100%; height: auto; min-height: 0; object-fit: contain; object-position: center; }
+  /* Same single hero-stage as Lab: image leads, copy follows in the same
+     uninterrupted surface rather than being moved into a separate card. */
+  .hero-noor .hero-stage {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    background: var(--hero-ivory);
+  }
+  .hero-noor .hero-image {
+    order: 0;
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    object-fit: contain;
+    object-position: center;
+  }
   .hero-noor .hero-content {
     position: relative;
     order: 1;
