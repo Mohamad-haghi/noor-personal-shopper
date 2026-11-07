@@ -48,6 +48,16 @@ describe("Lab-aligned saved choices presentation", () => {
     expect(root.innerHTML).toContain("فقط در همین جلسهٔ Demo");
   });
 
+  it("escapes product-provided text before inserting it into the page", () => {
+    const root = { innerHTML: "" } as HTMLElement;
+    const product = makeProduct({ name: '<script>alert("x")</script>', description: "A & B" });
+    renderChoices(root, [makeChoice()], [product]);
+
+    expect(root.innerHTML).toContain("&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;");
+    expect(root.innerHTML).toContain("A &amp; B");
+    expect(root.innerHTML).not.toContain("<script>");
+  });
+
   it("uses a neutral white-image placeholder when no primary image exists", () => {
     const root = { innerHTML: "" } as HTMLElement;
     const product = makeProduct({ media: { primaryImage: null, gallery: [], videoUrl: null } });
