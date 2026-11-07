@@ -4408,3 +4408,26 @@ body.mobile-menu-open { overflow: hidden; }
 /* Match the Lab's shared font tokens and browser text rendering across NOOR. */
 :root { font-family: "Vazirmatn", system-ui, sans-serif; }
 body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+
+/* Header wordmark scale — balance NOOR with the mobile control and header height. */
+.app-shell-header .app-brand-lab {
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+}
+.app-shell-header .app-brand-lab .app-brand-name {
+  font-size: 1.7rem;
+  line-height: 1;
+  letter-spacing: .24em;
+  font-weight: 500;
+}
+@media (max-width: 720px) {
+  .app-shell-header .app-brand-lab .app-brand-name {
+    font-size: 1.6rem;
+    letter-spacing: .22em;
+  }
+  .app-shell-header .mobile-nav-toggle span {
+    width: 1.7rem;
+  }
+}
