@@ -68,11 +68,30 @@ jobs:
           import { chromium, devices } from 'playwright';
 
           const base = 'http://127.0.0.1:4173/noor-personal-shopper/';
+          // Capture every registered NOOR route, including legacy aliases and
+          // intentional empty/demo states. Dynamic routes use known-safe IDs.
+          const demoProductId = 'noor-demo-012-prada-pr51yv-04q1o1';
           const routes = [
             { name: 'home', path: '' },
-            { name: 'catalog', path: 'catalog' },
-            { name: 'shopper', path: 'shopper' },
             { name: 'how-it-works', path: 'how-it-works' },
+            { name: 'catalog', path: 'catalog' },
+            { name: 'products-alias', path: 'products' },
+            { name: 'product-detail', path: 'products/' + demoProductId },
+            { name: 'product-legacy-alias', path: 'product/' + demoProductId },
+            { name: 'profile', path: 'profile' },
+            { name: 'search', path: 'search' },
+            { name: 'shopper', path: 'shopper' },
+            { name: 'manager', path: 'manager' },
+            { name: 'recommendations', path: 'recommendations' },
+            { name: 'choices', path: 'choices' },
+            { name: 'compare', path: 'compare' },
+            { name: 'account', path: 'account' },
+            { name: 'cart', path: 'cart' },
+            { name: 'checkout', path: 'checkout' },
+            { name: 'payment-placeholder', path: 'payment' },
+            { name: 'confirmation-empty', path: 'confirmation/noor-pr-preview-check' },
+            { name: 'branches', path: 'branches' },
+            { name: 'visit', path: 'visit' },
           ];
           const browser = await chromium.launch({ headless: true });
           const failures = [];
@@ -89,7 +108,7 @@ jobs:
             });
 
             for (const route of routes) {
-              const response = await page.goto(base + route.path, { waitUntil: 'networkidle', timeout: 45000 });
+              const response = await page.goto(base + route.path, { waitUntil: 'networkidle', timeout: 30000 });
               if (!response || !response.ok()) {
                 failures.push(`${viewport.name}/${route.name}: HTTP ${response?.status() ?? 'no response'}`);
                 continue;
