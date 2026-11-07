@@ -64,7 +64,7 @@ function renderNavigation(match: RouteMatch | null, includeAllRoutes = false): s
     .map((route) => {
       const current = isNavigationRouteCurrent(route.path, match);
       const currentAttribute = current ? ' aria-current="page"' : "";
-      const label = isLabExperienceRoute(match) ? labLabels[route.path] : route.navigationLabel;
+      const label = !includeAllRoutes && isLabExperienceRoute(match) ? labLabels[route.path] : route.navigationLabel;
       return `<li><a href="${route.path}" data-app-link${currentAttribute}>${label}</a></li>`;
     })
     .join("");
