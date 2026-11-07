@@ -41,11 +41,11 @@ export function renderManagerOverview(root: HTMLElement, data: ManagerOverviewDa
     <main class="manager-overview lab-manager-page" id="main-content" aria-labelledby="manager-title">
       <header class="lab-manager-head">
         <p class="eyebrow" dir="ltr">MANAGER · ILLUSTRATIVE</p>
-        <h1 id="manager-title">پوشش شواهد کاتالوگ</h1>
+        <h1 id="manager-title">نمای کلی مدیر</h1>
         <p>نمایی از کامل‌بودن ویژگی‌های ثبت‌شده در کاتالوگ نمایشی NOOR؛ این صفحه داشبورد عملیاتی یا گزارش فروش واقعی نیست.</p>
       </header>
       <aside class="demo-truth-notice lab-manager-note" role="note">
-        <strong>نمای تصویری از داده‌های Demo</strong>
+        <strong>نمای تصویری از داده‌های نمایشی Demo</strong>
         <span>اعداد از کاتالوگ نمایشی شمارش شده‌اند و شامل فروش، موجودی، سفارش یا رفتار واقعی مشتری نیستند.</span>
       </aside>
       <section class="lab-manager-coverage" aria-labelledby="manager-coverage-title">
