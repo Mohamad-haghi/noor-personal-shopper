@@ -1,4 +1,4 @@
-import type { HeroContent, Product } from "../domain";
+import type { HeroContent, Product, ProductVariant } from "../domain";
 
 function escapeHtml(value: string): string {
   return value
@@ -14,6 +14,8 @@ export function renderHero(
   content: HeroContent,
   destination: string | null,
   products: readonly Product[] = [],
+  variantsByProduct: ReadonlyMap<string, readonly ProductVariant[]> = new Map(),
+  savedVariantIds: ReadonlySet<string> = new Set(),
 ): void {
   const primaryCta = content.cta && destination
     ? `<a class="hero-cta-primary" href="${escapeHtml(destination)}" data-app-link>${escapeHtml(content.cta.label)}</a>`
@@ -34,14 +36,23 @@ export function renderHero(
     const imageMarkup = image
       ? `<img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.altText ?? product.name)}" loading="lazy">`
       : `<span class="lab-product-placeholder" aria-hidden="true">NOOR</span>`;
+    const productVariants = variantsByProduct.get(product.identity.id) ?? [];
+    const favoriteVariant = productVariants.find((variant) => variant.availability.isAvailable && variant.availability.source === "demo")
+      ?? productVariants[0];
+    const isSaved = favoriteVariant ? savedVariantIds.has(favoriteVariant.identity.id) : false;
+    const favoriteAction = favoriteVariant
+      ? `<button class="lab-curated-favorite${isSaved ? " is-saved" : ""}" type="button" data-home-favorite-toggle data-variant-id="${escapeHtml(favoriteVariant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}" aria-label="${isSaved ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}" aria-pressed="${String(isSaved)}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button>`
+      : "";
     return `<article class="lab-curated-item">
       <a href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>
         <div class="lab-curated-image">${imageMarkup}</div>
         <h3>${escapeHtml(product.name)}</h3>
         <span>مشاهده جزئیات</span>
       </a>
+      ${favoriteAction}
     </article>`;
   }).join("");
+  const titleMarkup = escapeHtml(content.title).replace("شناخت شما", '<span class="hero-accent">شناخت شما</span>');
 
   root.innerHTML = `
     <main class="lab-home" id="main-content" aria-labelledby="hero-title">
@@ -50,7 +61,7 @@ export function renderHero(
           ${media}
           <div class="hero-content">
             <p class="hero-eyebrow" dir="ltr">${escapeHtml(content.subtitle || "THE INTELLIGENT EYEWEAR STUDIO")}</p>
-            <h1 class="hero-title" id="hero-title">${escapeHtml(content.title)}</h1>
+            <h1 class="hero-title" id="hero-title">${titleMarkup}</h1>
             ${content.description ? `<p class="hero-body">${escapeHtml(content.description)}</p>` : ""}
             <div class="hero-actions">
               ${primaryCta}
