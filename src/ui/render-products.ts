@@ -1,4 +1,5 @@
 import type { CommerceOffer, Product, ProductVariant } from "../domain";
+import { productFavoriteControl } from "./product-favorite-control";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -37,7 +38,7 @@ function knownFacts(product: Product): string[] {
   ].filter((value): value is string => Boolean(value));
 }
 
-function productCard(product: Product, variant: ProductVariant | null): string {
+function productCard(product: Product, variant: ProductVariant | null, favoriteVariant: ProductVariant | null): string {
   const detailHref = `/products/${encodeURIComponent(product.identity.id)}`;
   const facts = knownFacts(product);
   const variantAction = variant
@@ -46,6 +47,7 @@ function productCard(product: Product, variant: ProductVariant | null): string {
 
   return `<article class="product-card" data-product-category="${product.attributes.category === "sunglasses" ? "sunglasses" : "optical"}">
     <a class="product-card-media" href="${detailHref}" data-app-link aria-label="مشاهدهٔ جزئیات ${escapeHtml(product.name)}">${productImage(product)}</a>
+    ${favoriteVariant ? productFavoriteControl(product.identity.id) : ""}
     <div class="product-card-body">
       <p class="eyebrow">${escapeHtml(categoryLabel(product))}</p>
       <h2><a href="${detailHref}" data-app-link>${escapeHtml(product.name)}</a></h2>
@@ -67,8 +69,10 @@ export function renderProducts(
 ): void {
   void offers;
   const cards = products.map((product) => {
-    const variant = variantsByProduct.get(product.identity.id)?.find((item) => item.availability.isAvailable && item.availability.source === "demo") ?? null;
-    return productCard(product, variant);
+    const variants = variantsByProduct.get(product.identity.id) ?? [];
+    const variant = variants.find((item) => item.availability.isAvailable && item.availability.source === "demo") ?? null;
+    const favoriteVariant = variant ?? variants[0] ?? null;
+    return productCard(product, variant, favoriteVariant);
   }).join("");
 
   routeView.innerHTML = `<main class="products-page lab-catalog-page" id="main-content" aria-labelledby="products-title">
@@ -131,6 +135,7 @@ export function renderProductDetail(
     ? dimensions.map((value) => String(value)).join(" / ") + " میلی‌متر"
     : null;
 
+  const favoriteControl = variants.length ? productFavoriteControl(product.identity.id) : "";
   const variantRows = availableVariants.length
     ? availableVariants.map((variant) => {
         const offer = offerByVariant.get(variant.identity.id);
@@ -139,7 +144,7 @@ export function renderProductDetail(
           : "<span>قیمت نمایشی ثبت نشده</span>";
         return `<article class="product-variant-row">
           <div class="product-variant-info"><strong>${escapeHtml(variant.name)}</strong><p>${escapeHtml([variant.attributes.color, variant.attributes.size, variant.attributes.material].filter(Boolean).join(" · ") || "تنوع نمایشی")}</p></div>
-          <div class="product-variant-purchase">${price}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب در دمو</button><button class="button button-secondary" type="button" data-save-product-choice="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">ذخیرهٔ علاقه‌مندی</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button></div>
+          <div class="product-variant-purchase">${price}<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب در دمو</button><button class="button button-secondary" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">افزودن به مقایسه</button></div>
         </article>`;
       }).join("")
     : `<p class="product-unavailable">برای این مدل، گزینهٔ انتخاب نمایشی ثبت نشده است.</p>`;
@@ -162,7 +167,7 @@ export function renderProductDetail(
   routeView.innerHTML = `<main class="product-detail-page" id="main-content" aria-labelledby="product-title">
     <a class="product-back" href="/products" data-app-link>← بازگشت به کاتالوگ</a>
     <section class="product-detail-hero">
-      <div class="product-detail-media" aria-label="تصویر محصول">${gallery}</div>
+      <div class="product-detail-media" aria-label="تصویر محصول">${gallery}${favoriteControl}</div>
       <div class="product-detail-copy">
         <p class="eyebrow">${escapeHtml(categoryLabel(product))} · NOOR EDIT</p>
         <h1 id="product-title">${escapeHtml(product.name)}</h1>
