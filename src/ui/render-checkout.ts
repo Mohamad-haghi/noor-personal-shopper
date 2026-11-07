@@ -137,19 +137,21 @@ export function renderPaymentState(
 ): void {
   if (!payment) {
     routeView.innerHTML = `
-      <main class="d7-checkout-page" id="main-content">
-        <section class="d7-checkout-intro">
-          <p class="eyebrow">DEMO PAYMENT</p>
-          <h1>پرداخت سفارش</h1>
-          <p>این پرداخت کاملاً آزمایشی است. هیچ وجه واقعی جابه‌جا نمی‌شود و درگاه واقعی NOOR در این مرحله متصل نیست.</p>
-        </section>
-        <section class="d7-checkout-summary">
+      <main class="d7-checkout-page lab-payment-page" id="main-content" aria-labelledby="payment-title">
+        <header class="lab-payment-head">
+          <p class="eyebrow" dir="ltr">DEMO PAYMENT</p>
+          <h1 id="payment-title">پرداخت سفارش</h1>
+          <p>این پرداخت کاملاً آزمایشی است. هیچ وجه واقعی جابه‌جا نمی‌شود و درگاه بانکی نور متصل نیست.</p>
+        </header>
+        <p class="lab-payment-note" role="note">این مرحله فقط رفتار احتمالی پرداخت را در Demo نمایش می‌دهد. هیچ اطلاعات کارت بانکی دریافت یا ارسال نمی‌شود.</p>
+        <section class="lab-payment-summary" aria-label="خلاصه پرداخت">
           <div><span>شناسه سفارش</span><strong>${escapeHtml(order.identity.id)}</strong></div>
-          <div><span>مبلغ قابل پرداخت</span><strong>${formatAmount(order.pricing.total, order.pricing.currency)}</strong></div>
+          <div><span>مبلغ نمایشی</span><strong>${formatAmount(order.pricing.total, order.pricing.currency)}</strong></div>
         </section>
-        <label class="d7-demo-toggle"><input type="checkbox" data-simulate-failure> شبیه‌سازی پرداخت ناموفق برای تست Recovery</label>
-        <button class="button button-primary" type="button" data-demo-pay>پرداخت Demo</button>
-      </main>`;
+        <label class="lab-payment-toggle"><input type="checkbox" data-simulate-failure><span>شبیه‌سازی پرداخت ناموفق برای آزمون بازیابی</span></label>
+        <button class="button button-primary lab-payment-submit" type="button" data-demo-pay>پرداخت Demo</button>
+      </main>
+    `;
     routeView.querySelector<HTMLButtonElement>("[data-demo-pay]")?.addEventListener("click", async () => {
       const simulateFailure = routeView.querySelector<HTMLInputElement>("[data-simulate-failure]")?.checked ?? false;
       await onPay(simulateFailure);
@@ -160,24 +162,27 @@ export function renderPaymentState(
   const success = payment.status === "captured" || payment.status === "authorized";
   const orderPersisted = success && order.status === "confirmed";
   routeView.innerHTML = `
-    <main class="d7-checkout-page" id="main-content">
-      <section class="d7-checkout-intro">
-        <p class="eyebrow">${success ? "PAYMENT SUCCESS" : "PAYMENT FAILED"}</p>
-        <h1>${success ? "پرداخت Demo موفق بود" : "پرداخت انجام نشد"}</h1>
+    <main class="d7-checkout-page lab-payment-page" id="main-content" aria-labelledby="payment-title">
+      <header class="lab-payment-head">
+        <p class="eyebrow" dir="ltr">${success ? "PAYMENT SUCCESS" : "PAYMENT FAILED"}</p>
+        <h1 id="payment-title">${success ? "پرداخت Demo موفق بود" : "پرداخت انجام نشد"}</h1>
         <p>${success
-          ? "تراکنش آزمایشی با موفقیت ثبت شد. سفارش در وضعیت نهایی Demo ذخیره شده و مرحلهٔ بعدی نمایش Confirmation و شناسهٔ سفارش است."
-          : "تراکنش آزمایشی ناموفق بود. می‌توانید دوباره تلاش کنید یا به Checkout برگردید."}</p>
-      </section>
-      <section class="d7-checkout-summary">
+          ? "تراکنش آزمایشی با موفقیت ثبت شد. وضعیت سفارش در Demo به‌روزرسانی شده است."
+          : "تراکنش آزمایشی ناموفق بود. می‌توانید دوباره تلاش کنید یا به مرحله تکمیل سفارش برگردید."}</p>
+      </header>
+      <section class="lab-payment-summary" aria-label="نتیجه پرداخت">
         <div><span>شناسه سفارش</span><strong>${escapeHtml(order.identity.id)}</strong></div>
         <div><span>وضعیت پرداخت</span><strong>${success ? "موفق" : "ناموفق"}</strong></div>
         <div><span>وضعیت سفارش</span><strong>${orderPersisted ? "تأیید و ذخیره‌شده در Demo" : "پیش‌نویس Checkout"}</strong></div>
-        <div><span>مبلغ</span><strong>${formatAmount(payment.amount, payment.currency)}</strong></div>
+        <div><span>مبلغ نمایشی</span><strong>${formatAmount(payment.amount, payment.currency)}</strong></div>
         <div><span>شناسه تراکنش Demo</span><strong>${escapeHtml(payment.transaction?.providerTransactionId ?? "—")}</strong></div>
       </section>
-      <p class="d7-demo-note">پرداخت و شناسه تراکنش نمایشی هستند و به هیچ درگاه بانکی واقعی متصل نیستند.</p>
-      ${success ? "" : '<button class="button button-primary" type="button" data-demo-retry>تلاش دوباره</button>'}
-    </main>`;
+      <p class="lab-payment-note" role="note">پرداخت و شناسه تراکنش نمایشی هستند و به هیچ درگاه بانکی واقعی متصل نیستند.</p>
+      ${success
+        ? `<a class="button button-primary lab-payment-submit" href="/choices" data-app-link>بازگشت به انتخاب‌ها</a>`
+        : `<div class="lab-payment-actions"><button class="button button-primary" type="button" data-demo-retry>تلاش دوباره</button><a class="button button-secondary" href="/checkout" data-app-link>بازگشت به تکمیل سفارش</a></div>`}
+    </main>
+  `;
   routeView.querySelector<HTMLButtonElement>("[data-demo-retry]")?.addEventListener("click", async () => {
     await onPay(false);
   });
