@@ -4382,7 +4382,7 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
 }
 .app-shell-header .mobile-nav-backdrop[hidden], .app-shell-header .mobile-nav-panel[hidden] { display: none; }
 .app-shell-header .mobile-nav-panel {
-  position: fixed; z-index: 81; inset-block: 0; inset-inline-end: 0; width: min(22rem, 88vw);
+  position: fixed; z-index: 81; inset-block: 0; right: 0; left: auto; width: min(22rem, 88vw);
   overflow-y: auto; padding: 4.5rem 1.25rem 2rem; border-inline-start: 1px solid var(--line);
   background: var(--surface); box-shadow: -18px 0 48px rgba(25, 24, 22, .12);
 }
@@ -4394,7 +4394,7 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
 }
 .app-shell-header .mobile-nav-panel a:hover, .app-shell-header .mobile-nav-panel a[aria-current="page"] { background: var(--surface-soft); color: var(--accent); }
 .app-shell-header .mobile-nav-close {
-  position: absolute; inset-block-start: .8rem; inset-inline-start: .9rem; display: grid;
+  position: absolute; inset-block-start: .8rem; left: .9rem; display: grid;
   width: 2.7rem; height: 2.7rem; place-items: center; border: 0; background: transparent;
   color: var(--ink); font-family: Arial, sans-serif; font-size: 2rem; font-weight: 300; line-height: 1; cursor: pointer;
 }
@@ -4404,3 +4404,7 @@ body.mobile-menu-open { overflow: hidden; }
   .app-shell-header .mobile-nav { display: block; }
 }
 @media (min-width: 721px) { .app-shell-header .mobile-nav { display: none; } }
+
+/* Match the Lab's shared font tokens and browser text rendering across NOOR. */
+:root { font-family: "Vazirmatn", system-ui, sans-serif; }
+body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
