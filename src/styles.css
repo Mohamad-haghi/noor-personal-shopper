@@ -4344,3 +4344,13 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
     gap: .5rem;
   }
 }
+
+
+/* Shared navigation accessibility — visible keyboard focus on desktop and mobile. */
+.app-shell-header .lab-header-nav a:focus-visible,
+.app-shell-header .mobile-nav summary:focus-visible,
+.app-shell-header .mobile-nav a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: .2rem;
+}
