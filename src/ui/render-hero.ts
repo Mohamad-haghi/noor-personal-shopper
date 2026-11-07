@@ -43,11 +43,32 @@ export function renderHero(
     const favoriteAction = favoriteVariant
       ? `<button class="lab-curated-favorite${isSaved ? " is-saved" : ""}" type="button" data-home-favorite-toggle data-variant-id="${escapeHtml(favoriteVariant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}" aria-label="${isSaved ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}" aria-pressed="${String(isSaved)}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button>`
       : "";
+    const custom = product.attributes?.customAttributes ?? {};
+    const model = typeof custom.model === "string" ? custom.model : "";
+    const categoryLabel = product.attributes?.category === "sunglasses"
+      ? "آفتابی"
+      : product.attributes?.category === "optical" ? "طبی" : "";
+    const materialLabels: Record<string, string> = {
+      metal: "فلز", acetate: "استات", nylon: "نایلون", titanium: "تیتانیوم", plastic: "پلاستیک",
+    };
+    const colorLabels: Record<string, string> = {
+      black: "مشکی", "matte black": "مشکی مات", gold: "طلایی", white: "سفید",
+      grey: "خاکستری", green: "سبز", "havana brown": "هاوانا قهوه‌ای",
+    };
+    const material = typeof custom.frameMaterial === "string" ? materialLabels[custom.frameMaterial] ?? custom.frameMaterial : "";
+    const color = typeof custom.frameColor === "string" ? colorLabels[custom.frameColor] ?? custom.frameColor : "";
+    const summary = [material, color].filter(Boolean).join(" · ");
     return `<article class="lab-curated-item">
       <a href="/products/${encodeURIComponent(product.identity.id)}" data-app-link>
         <div class="lab-curated-image">${imageMarkup}</div>
-        <h3>${escapeHtml(product.name)}</h3>
-        <span>مشاهده جزئیات</span>
+        <div class="lab-curated-details">
+          <div class="lab-curated-title-group">
+            <h3>${escapeHtml(product.name)}</h3>
+            ${model ? `<p class="lab-curated-model" dir="ltr">${escapeHtml(model)}</p>` : ""}
+          </div>
+          ${categoryLabel ? `<span class="lab-curated-kind">${escapeHtml(categoryLabel)}</span>` : ""}
+        </div>
+        ${summary ? `<p class="lab-curated-specs">${escapeHtml(summary)}</p>` : ""}
       </a>
       ${favoriteAction}
     </article>`;

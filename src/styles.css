@@ -997,9 +997,9 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
   width: 2.75rem;
   height: 2.75rem;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  border: 1px solid color-mix(in srgb, oklch(0.84 0.022 76) 75%, transparent);
   border-radius: 50%;
-  background: color-mix(in srgb, var(--background) 92%, transparent);
+  background: color-mix(in srgb, oklch(0.945 0.012 82) 92%, transparent);
   color: var(--ink);
   cursor: pointer;
   transition: color .2s, background .2s, border-color .2s, transform .2s;
@@ -4529,28 +4529,74 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
 }
 .lab-home .lab-curated-section .lab-curated-image img {
   object-fit: contain;
-  transform: none;
+  transform: scale(1.1);
 }
 .lab-home .lab-curated-section .lab-curated-item a:hover .lab-curated-image img,
 .lab-home .lab-curated-section .lab-curated-item a:focus-visible .lab-curated-image img {
-  transform: scale(1.035);
+  transform: scale(1.15);
+}
+@media (max-width: 760px) {
+  .lab-home .lab-curated-section .lab-curated-image img { transform: scale(1.07); }
+}
+.lab-home .lab-curated-section .lab-curated-details {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: 1rem;
+}
+.lab-home .lab-curated-section .lab-curated-title-group { min-width: 0; }
+.lab-home .lab-curated-section .lab-curated-title-group h3 {
+  margin: 0;
+  font-family: var(--editorial-font);
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.lab-home .lab-curated-section .lab-curated-model {
+  margin: .1rem 0 0;
+  color: var(--muted);
+  font-size: .875rem;
+  line-height: 1.7;
+}
+.lab-home .lab-curated-section .lab-curated-kind {
+  flex: 0 0 auto;
+  margin-top: .25rem;
+  color: var(--accent);
+  font-size: .75rem;
+}
+.lab-home .lab-curated-section .lab-curated-specs {
+  margin: .5rem 0 0;
+  color: var(--muted);
+  font-size: .75rem;
+  line-height: 1.8;
 }
 .lab-home .lab-curated-favorite {
   width: 2.75rem;
   height: 2.75rem;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  border: 1px solid color-mix(in srgb, oklch(0.84 0.022 76) 75%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, oklch(0.945 0.012 82) 92%, transparent);
+  color: var(--ink);
+  transition: color .2s, background .2s, border-color .2s, transform .2s;
 }
 .lab-home .lab-curated-favorite:hover {
-  border-color: transparent;
-  background: transparent;
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
 }
 .lab-home .lab-curated-favorite[aria-pressed="true"] {
-  border-color: transparent;
-  background: transparent;
+  border-color: var(--accent);
+  background: var(--surface);
+  color: var(--accent);
 }
+.lab-home .lab-curated-favorite[aria-pressed="true"] svg { fill: currentColor; }
+.lab-home .lab-curated-favorite:disabled { cursor: wait; opacity: .65; }
+.lab-home .lab-curated-favorite:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .lab-home .lab-curated-favorite svg {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+.lab-home .lab-step-grid li {
+  background: oklch(0.945 0.012 82);
 }
