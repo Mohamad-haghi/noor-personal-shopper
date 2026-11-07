@@ -1,7 +1,7 @@
 import type { Account } from "../domain";
 
 function escapeHtml(value: string): string {
-  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#039;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
 export function renderAccount(
@@ -9,24 +9,36 @@ export function renderAccount(
   account: Account | null,
   errorMessage: string | null = null,
 ): void {
+  const error = errorMessage
+    ? `<p class="lab-account-error" role="alert">${escapeHtml(errorMessage)}</p>`
+    : "";
+
   if (account) {
     const name = account.profile.displayName ||
       [account.profile.firstName, account.profile.lastName].filter(Boolean).join(" ") ||
       account.email;
+    const emailStatus = account.verificationStatus.emailVerified ? "تأیید شده" : "تأییدنشده در Demo";
 
     routeView.innerHTML = `
-      <main class="d5-page" id="main-content" aria-labelledby="account-title">
-        <section class="d5-intro">
-          <p class="eyebrow">NOOR SHOPPER ACCOUNT</p>
+      <main class="lab-account-page" id="main-content" aria-labelledby="account-title">
+        <header class="lab-account-head">
+          <p class="eyebrow" dir="ltr">PERSONAL SHOPPER ACCOUNT</p>
           <h1 id="account-title">حساب کاربری من</h1>
-          <p>این حساب فقط متعلق به همین Demo Personal Shopper است و به حساب فعلی سایت نور متصل نیست.</p>
-        </section>
-        <section class="d5-choice-card">
-          <p class="eyebrow">حساب فعال</p>
-          <h2>${escapeHtml(name)}</h2>
-          <p>${escapeHtml(account.email)}</p>
-          <p>وضعیت ایمیل: تأییدنشده در Demo</p>
-          <div class="d5-actions">
+          <p>اطلاعات حساب مستقل Personal Shopper خود را در این نسخهٔ نمایشی مشاهده کنید.</p>
+        </header>
+        ${error}
+        <p class="lab-account-note" role="note">این حساب فقط متعلق به همین Demo Personal Shopper است و به حساب فعلی سایت نور متصل نیست.</p>
+        <section class="lab-account-active" aria-labelledby="account-active-title">
+          <div>
+            <p class="eyebrow">حساب فعال</p>
+            <h2 id="account-active-title">${escapeHtml(name)}</h2>
+            <p class="lab-account-email">${escapeHtml(account.email)}</p>
+            <dl class="lab-account-status">
+              <div><dt>وضعیت ایمیل</dt><dd>${emailStatus}</dd></div>
+              <div><dt>نوع حساب</dt><dd>Demo Personal Shopper</dd></div>
+            </dl>
+          </div>
+          <div class="lab-account-actions">
             <button class="button button-primary" type="button" data-account-logout>خروج از حساب</button>
             <a class="button button-secondary" href="/choices" data-app-link>انتخاب‌های من</a>
           </div>
@@ -37,28 +49,35 @@ export function renderAccount(
   }
 
   routeView.innerHTML = `
-    <main class="d5-page" id="main-content" aria-labelledby="account-title">
-      <section class="d5-intro">
-        <p class="eyebrow">NOOR SHOPPER ACCOUNT</p>
+    <main class="lab-account-page" id="main-content" aria-labelledby="account-title">
+      <header class="lab-account-head">
+        <p class="eyebrow" dir="ltr">PERSONAL SHOPPER ACCOUNT</p>
         <h1 id="account-title">حساب Personal Shopper</h1>
-        <p>برای این Demo، حساب مستقل خود را بسازید یا با حساب همین Demo وارد شوید.</p>
-      </section>
-      ${errorMessage ? `<p class="d5-form-error" role="alert">${escapeHtml(errorMessage)}</p>` : ""}
-      <section class="d5-account-grid">
-        <form class="d5-choice-card d5-form" data-account-register>
+        <p>برای نگهداری انتخاب‌های همین جلسهٔ نمایشی، حساب مستقل خود را بسازید یا وارد شوید.</p>
+      </header>
+      <p class="lab-account-note" role="note">این حساب فقط برای Demo است؛ به حساب سایت اصلی نور متصل نیست و ثبت‌نام آن به معنی ایجاد حساب واقعی فروشگاهی نیست.</p>
+      ${error}
+      <section class="lab-account-forms" aria-label="ثبت‌نام و ورود">
+        <form class="lab-account-form" data-account-register>
           <p class="eyebrow">ثبت‌نام</p>
           <h2>ساخت حساب جدید</h2>
-          <label>نام<input name="firstName" type="text" autocomplete="given-name" required></label>
-          <label>نام خانوادگی<input name="lastName" type="text" autocomplete="family-name" required></label>
-          <label>ایمیل<input name="email" type="email" autocomplete="email" required></label>
-          <label>رمز عبور<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
+          <label for="account-first-name">نام</label>
+          <input id="account-first-name" name="firstName" type="text" autocomplete="given-name" required>
+          <label for="account-last-name">نام خانوادگی</label>
+          <input id="account-last-name" name="lastName" type="text" autocomplete="family-name" required>
+          <label for="account-register-email">ایمیل</label>
+          <input id="account-register-email" name="email" type="email" autocomplete="email" required>
+          <label for="account-register-password">رمز عبور</label>
+          <input id="account-register-password" name="password" type="password" autocomplete="new-password" minlength="6" required>
           <button class="button button-primary" type="submit">ساخت حساب</button>
         </form>
-        <form class="d5-choice-card d5-form" data-account-login>
+        <form class="lab-account-form" data-account-login>
           <p class="eyebrow">ورود</p>
           <h2>ورود به حساب Demo</h2>
-          <label>ایمیل<input name="email" type="email" autocomplete="email" required></label>
-          <label>رمز عبور<input name="password" type="password" autocomplete="current-password" required></label>
+          <label for="account-login-email">ایمیل</label>
+          <input id="account-login-email" name="email" type="email" autocomplete="email" required>
+          <label for="account-login-password">رمز عبور</label>
+          <input id="account-login-password" name="password" type="password" autocomplete="current-password" required>
           <button class="button button-primary" type="submit">ورود</button>
         </form>
       </section>
