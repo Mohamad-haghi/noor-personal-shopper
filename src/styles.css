@@ -3926,3 +3926,122 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
     animation-iteration-count: 1 !important;
   }
 }
+
+
+/* NOOR branch directory — quiet-luxury editorial layout; branch data and visit routing remain unchanged. */
+.app-shell-header .d8-page {
+  width: min(100% - 3rem, 76rem);
+  max-width: none;
+  margin-inline: auto;
+  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 7vw, 6rem);
+}
+.app-shell-header .d8-intro {
+  max-width: 54rem;
+  margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+}
+.app-shell-header .d8-intro > .eyebrow {
+  color: var(--accent);
+  font-size: .72rem;
+  letter-spacing: .16em;
+}
+.app-shell-header .d8-intro h1 {
+  max-width: 48rem;
+  margin: .9rem 0 1.1rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -.035em;
+}
+.app-shell-header .d8-intro p:not(.eyebrow) {
+  max-width: 45rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 2;
+}
+.app-shell-header .d8-branch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1rem;
+}
+.app-shell-header .d8-branch-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(1.25rem, 2.5vw, 1.8rem);
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+  box-shadow: none;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.app-shell-header .d8-branch-card > .eyebrow {
+  margin: 0 0 .45rem;
+  color: var(--accent);
+  font-size: .7rem;
+  letter-spacing: .13em;
+}
+.app-shell-header .d8-branch-card h2 {
+  margin: 0 0 .8rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.45;
+}
+.app-shell-header .d8-branch-card p {
+  margin: .25rem 0;
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.app-shell-header .d8-branch-card .d8-muted {
+  margin-top: .75rem;
+  color: var(--ink);
+  font-size: .8rem;
+  line-height: 1.9;
+}
+.app-shell-header .d8-branch-card .d8-actions {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 1.4rem;
+}
+.app-shell-header .d8-branch-card .button {
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: .2rem;
+}
+.app-shell-header .d8-branch-card a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 980px) {
+  .app-shell-header .d8-branch-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .app-shell-header .d8-page {
+    width: min(100% - 2rem, 76rem);
+    padding-block: 2.5rem 4rem;
+  }
+  .app-shell-header .d8-intro { margin-bottom: 2rem; }
+  .app-shell-header .d8-intro h1 { font-size: clamp(2rem, 9vw, 2.8rem); }
+  .app-shell-header .d8-branch-grid { grid-template-columns: 1fr; gap: .8rem; }
+  .app-shell-header .d8-branch-card { padding: 1.2rem; }
+  .app-shell-header .d8-branch-card .button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-header .d8-branch-card,
+  .app-shell-header .d8-branch-card * {
+    scroll-behavior: auto;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
