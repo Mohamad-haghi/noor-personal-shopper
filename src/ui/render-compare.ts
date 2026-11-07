@@ -82,7 +82,7 @@ export function renderCompare(
         <a class="lab-compare-product-link" href="${href}" data-app-link>
           <span class="lab-compare-media">${productImage(product)}</span>
           <span class="lab-compare-product-name">${escapeHtml(product.name)}</span>
-          <span class="lab-compare-product-detail">مشاهده جزئیات</span>
+          <span class="lab-compare-product-detail">جزئیات ${escapeHtml(product.name)}</span>
         </a>
       </th>
     `;
