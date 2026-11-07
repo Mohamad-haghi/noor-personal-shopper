@@ -1528,3 +1528,60 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
 @media (max-width: 760px) {
   .lab-step-grid { border-radius: .375rem; }
 }
+
+/* Home curated selection — give the real product photography priority over its frame. */
+.lab-curated-section .lab-curated-grid {
+  align-items: start;
+  column-gap: clamp(1rem, 2.4vw, 2rem);
+  row-gap: 2rem;
+}
+.lab-curated-section .lab-curated-item {
+  min-width: 0;
+}
+.lab-curated-section .lab-curated-item a {
+  color: inherit;
+}
+.lab-curated-section .lab-curated-image {
+  aspect-ratio: 4 / 3;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+}
+.lab-curated-section .lab-curated-image img {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  object-fit: contain;
+  transform: scale(1.1);
+  transition: transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.lab-curated-section .lab-curated-item a:hover .lab-curated-image img,
+.lab-curated-section .lab-curated-item a:focus-visible .lab-curated-image img {
+  transform: scale(1.15);
+}
+.lab-curated-section .lab-curated-item h3 {
+  margin: 1rem 0 .35rem;
+  font-size: .98rem;
+  font-weight: 500;
+  line-height: 1.8;
+}
+.lab-curated-section .lab-curated-item a > span {
+  display: inline-block;
+  font-size: .8rem;
+  text-underline-offset: 5px;
+}
+@media (max-width: 760px) {
+  .lab-curated-section .lab-curated-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem .85rem;
+  }
+  .lab-curated-section .lab-curated-image {
+    aspect-ratio: 1 / 1;
+  }
+  .lab-curated-section .lab-curated-image img {
+    transform: scale(1.07);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab-curated-section .lab-curated-image img { transition: none; }
+}
