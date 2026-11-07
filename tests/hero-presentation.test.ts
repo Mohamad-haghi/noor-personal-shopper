@@ -23,7 +23,7 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(root.innerHTML).toContain("گزیدهٔ مجموعه");
     expect(root.innerHTML).toContain("هوشمندی‌ای که دلیلش را می‌گوید.");
     expect(root.innerHTML).toContain('href="/how-it-works"');
-    expect(root.innerHTML).toContain("عینکی که با شناخت شما انتخاب می‌شود.");
+    expect(root.innerHTML).toContain("عینکی که با <span class=\"hero-accent\">شناخت شما</span> انتخاب می‌شود.");
     expect(root.innerHTML).toContain("سلیقه و نیازتان را در یک گفت‌وگوی کوتاه بیان کنید");
     expect(root.innerHTML).not.toContain("Ray-Ban RB3025 181/71");
   });
@@ -53,6 +53,28 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(prada).toBeGreaterThan(oakley);
     expect(root.innerHTML).not.toContain("noor-demo-001-ray-ban-rb3025-181-71.jpg");
     expect(root.innerHTML).not.toContain("محصولی برای نمایش ثبت نشده است");
+  });
+
+  it("renders the Lab-style favorite control over each curated image and restores saved state", async () => {
+    const hero = await new DemoHeroProvider().getHeroContent();
+    const productId = "noor-demo-002-persol-po0649-95-31";
+    const products = [{
+      identity: { id: productId },
+      name: "Persol PO0649",
+      media: { primaryImage: { url: "/persol.jpg", altText: "Persol PO0649" } },
+    }] as unknown as Product[];
+    const variantsByProduct = new Map([[productId, [{
+      identity: { id: "persol-variant-1" },
+      availability: { isAvailable: true, source: "demo" },
+    }]]]);
+    const root = { innerHTML: "" } as HTMLElement;
+
+    renderHero(root, hero!, "/shopper", products, variantsByProduct, new Set(["persol-variant-1"]));
+
+    expect(root.innerHTML).toContain('class="lab-curated-favorite is-saved"');
+    expect(root.innerHTML).toContain('data-home-favorite-toggle');
+    expect(root.innerHTML).toContain('data-variant-id="persol-variant-1"');
+    expect(root.innerHTML).toContain('aria-pressed="true"');
   });
 
   it("keeps responsive, reduced-motion and uncropped image rules in the dedicated Hero stylesheet", () => {
