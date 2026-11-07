@@ -136,13 +136,13 @@ describe("NOOR homepage header, curated collection and favorite refinements", ()
 
     expect(root.innerHTML).toContain('class="lab-curated-model" dir="ltr">PO0649 95/31</p>');
     expect(root.innerHTML).toContain('class="lab-curated-kind">آفتابی</span>');
-    expect(root.innerHTML).toContain('class="lab-curated-specs">آفتابی · استات · مشکی</p>');
+    expect(root.innerHTML).toContain('class="lab-curated-specs">استات · مشکی</p>');
   });
 
   it("restores the Lab's colored circular favorite control and matching three-step card surface", () => {
     const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
-    expect(css).toContain("border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);\n  border-radius: 50%;");
-    expect(css).toContain("background: color-mix(in srgb, var(--background) 92%, transparent);");
+    expect(css).toContain("border: 1px solid color-mix(in srgb, oklch(0.84 0.022 76) 75%, transparent);\n  border-radius: 50%;");
+    expect(css).toContain("background: color-mix(in srgb, oklch(0.945 0.012 82) 92%, transparent);");
     expect(css).toContain(".lab-home .lab-curated-favorite:hover {\n  border-color: var(--accent);");
     expect(css).toContain(".lab-home .lab-curated-favorite[aria-pressed=\"true\"] {\n  border-color: var(--accent);");
     expect(css).toContain(".lab-home .lab-step-grid li {\n  background: oklch(0.945 0.012 82);");
