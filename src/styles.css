@@ -1585,3 +1585,82 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
 @media (prefers-reduced-motion: reduce) {
   .lab-curated-section .lab-curated-image img { transition: none; }
 }
+
+/* COR decision-intelligence section — quiet editorial layout, no product-logic changes. */
+.lab-cor-section {
+  grid-template-columns: minmax(0, 1.12fr) minmax(17rem, .88fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  padding-top: clamp(3.5rem, 7vw, 5.5rem);
+  padding-bottom: clamp(3.5rem, 7vw, 5.5rem);
+}
+.lab-cor-section > div:first-child { max-width: 43rem; }
+.lab-cor-section > div:first-child .eyebrow { letter-spacing: .14em; }
+.lab-cor-section > div:first-child h2 {
+  max-width: 15ch;
+  margin: .8rem 0 1.1rem;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 350;
+  line-height: 1.55;
+}
+.lab-cor-section > div:first-child > p:not(.eyebrow) {
+  margin: 0;
+  max-width: 39rem;
+  line-height: 2.05;
+}
+.lab-cor-section .lab-text-link {
+  display: inline-flex;
+  margin-top: 1.5rem;
+  padding-bottom: .2rem;
+  font-size: .9rem;
+  text-underline-offset: 6px;
+}
+.lab-cor-visual {
+  position: relative;
+  gap: .95rem;
+  min-height: 19rem;
+  align-content: center;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--background) 88%, var(--surface));
+}
+.lab-cor-visual::before {
+  position: absolute;
+  inset: .65rem;
+  border: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  content: "";
+  pointer-events: none;
+}
+.lab-cor-visual span {
+  position: relative;
+  z-index: 1;
+  max-width: 18rem;
+  font-size: .9rem;
+  line-height: 1.8;
+}
+.lab-cor-visual i {
+  position: relative;
+  z-index: 1;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.lab-cor-visual strong {
+  position: relative;
+  z-index: 1;
+  width: 4.8rem;
+  height: 4.8rem;
+  box-shadow: 0 0 0 .45rem color-mix(in srgb, var(--accent) 12%, transparent);
+  font-size: 1.05rem;
+}
+@media (max-width: 760px) {
+  .lab-cor-section {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    margin-top: 4.5rem;
+    padding: 3.5rem 1.25rem;
+  }
+  .lab-cor-section > div:first-child h2 { max-width: none; }
+  .lab-cor-visual { min-height: 16rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab-cor-section *, .lab-cor-section *::before, .lab-cor-section *::after { scroll-behavior: auto; }
+}
