@@ -242,6 +242,36 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .d5-account-grid { grid-template-columns: 1fr; }
 }
 
+
+/* Lab-aligned account forms — quiet, accessible, and demo-explicit. */
+.lab-account-page { width: min(100%, 72rem); margin: 0 auto; padding: 3.5rem 1.25rem 5.5rem; }
+.lab-account-head { max-width: 58rem; margin: 0 auto 1.5rem; }
+.lab-account-head h1 { margin: .75rem 0 1rem; font-size: clamp(2.2rem, 5vw, 3.75rem); font-weight: 400; line-height: 1.2; }
+.lab-account-head > p:last-child { max-width: 44rem; margin: 0; color: var(--muted); line-height: 2; }
+.lab-account-note { max-width: 58rem; margin: 0 auto 2rem; padding: .9rem 1rem; border: 1px solid var(--line); border-radius: .375rem; background: var(--surface); color: var(--muted); font-size: .88rem; line-height: 1.85; }
+.lab-account-forms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; max-width: 58rem; margin: 0 auto; }
+.lab-account-form { display: flex; min-width: 0; flex-direction: column; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: .375rem; background: var(--surface); }
+.lab-account-form h2 { margin: .35rem 0 1.25rem; font-size: 1.3rem; font-weight: 500; }
+.lab-account-form label { margin: .75rem 0 .4rem; color: var(--muted); font-size: .85rem; }
+.lab-account-form input { width: 100%; min-height: 2.9rem; box-sizing: border-box; padding: .7rem .85rem; border: 1px solid var(--line); border-radius: .25rem; background: #fff; color: var(--ink); font: inherit; }
+.lab-account-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.lab-account-form .button { width: 100%; margin-top: 1.5rem; }
+.lab-account-error { max-width: 58rem; margin: 0 auto 1.25rem; padding: .9rem 1rem; border: 1px solid rgba(150,0,0,.25); border-radius: .375rem; color: #8b2929; background: #fffafa; line-height: 1.8; }
+.lab-account-active { display: flex; max-width: 58rem; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2rem; margin: 0 auto; padding: clamp(1.5rem, 4vw, 2.5rem); border: 1px solid var(--line); border-radius: .375rem; background: var(--surface); }
+.lab-account-active h2 { margin: .5rem 0 .25rem; font-size: 1.5rem; font-weight: 500; }
+.lab-account-email { margin: 0; color: var(--muted); }
+.lab-account-status { display: grid; gap: .65rem; margin: 1.5rem 0 0; }
+.lab-account-status div { display: flex; justify-content: space-between; gap: 1.5rem; padding-top: .65rem; border-top: 1px solid var(--line); }
+.lab-account-status dt { color: var(--muted); font-size: .85rem; }
+.lab-account-status dd { margin: 0; font-size: .85rem; }
+.lab-account-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+@media (max-width: 760px) {
+  .lab-account-page { padding: 2.5rem 1rem 4rem; }
+  .lab-account-forms { grid-template-columns: 1fr; }
+  .lab-account-actions { width: 100%; flex-direction: column; }
+  .lab-account-actions .button { width: 100%; }
+}
+
 /* D7-B — Demo Cart */
 .d7-cart-page { max-width: 980px; margin: 0 auto; padding: 72px 24px 96px; }
 .d7-cart-intro { max-width: 720px; margin-bottom: 42px; }
