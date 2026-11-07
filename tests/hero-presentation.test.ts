@@ -81,8 +81,10 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     const css = readFileSync(new URL("../src/ui/hero.css", import.meta.url), "utf8");
     expect(css).toMatch(/\.hero-noor\s*\{[^}]*overflow:\s*hidden/s);
     expect(css).toContain("@media (max-width: 767px)");
+    expect(css).toContain("order: 0");
     expect(css).toContain("order: 1");
-    expect(css).toContain("order: 2");
+    expect(css).toMatch(/\.hero-noor \.hero-image\s*\{[^}]*order:\s*0/s);
+    expect(css).toMatch(/\.hero-noor \.hero-content\s*\{[^}]*order:\s*1/s);
     expect(css).toContain("position: relative");
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
     expect(css).toMatch(/\.hero-noor \.hero-image\s*\{[^}]*object-fit:\s*contain/s);
