@@ -77,18 +77,27 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(root.innerHTML).toContain('aria-pressed="true"');
   });
 
-  it("uses the Lab's single uninterrupted hero surface and in-flow image-first composition", () => {
+  it("matches the Lab's single-surface image overlay on desktop and bottom-anchored mobile composition", () => {
     const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
     const heroCss = readFileSync(new URL("../src/ui/hero.css", import.meta.url), "utf8");
 
-    expect(css).toMatch(/\.lab-home \.hero-stage\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;/s);
-    expect(css).toMatch(/\.lab-home \.hero-image\s*\{[^}]*order:\s*0;/s);
-    expect(css).toMatch(/\.lab-home \.hero-content\s*\{[^}]*position:\s*relative;[^}]*order:\s*1;/s);
-    expect(css).toMatch(/\.lab-home \.hero-content\s*\{[^}]*background:\s*transparent;/s);
+    expect(css).toContain(".lab-home .hero-noor .hero-stage {");
+    expect(css).toContain("position: relative;");
+    expect(css).toContain("isolation: isolate;");
+    expect(css).toContain(".lab-home .hero-noor .hero-image {");
+    expect(css).toContain("object-fit: contain;");
+    expect(css).toContain(".lab-home .hero-noor .hero-content {");
+    expect(css).toContain("position: absolute;");
+    expect(css).toContain("inset: 0 auto 0 0;");
+    expect(css).toContain("width: min(47%, 39rem);");
+    expect(css).toContain("--h-ivory: oklch(0.945 0.012 82);");
+    expect(css).toContain('font-family: "Vazirmatn", Tahoma, sans-serif;');
     expect(css).toContain("@media (max-width: 767px)");
+    expect(css).toContain("inset: auto 0 0;");
+    expect(css).toContain(".lab-home .hero-noor .hero-cta-primary,");
+    expect(css).toContain(".lab-home .hero-noor .hero-cta-secondary { width: 100%; }");
     expect(heroCss).not.toContain(".hero-noor .hero-stage");
     expect(heroCss).not.toContain(".hero-noor .hero-content");
-    expect(css).toMatch(/\.lab-home \.hero-image\s*\{[^}]*object-fit:\s*contain/s);
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
   });
 });
