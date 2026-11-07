@@ -2238,3 +2238,164 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .app-shell-header .lab-how-page .lab-profile-actions { align-items: stretch; flex-direction: column; }
   .app-shell-header .lab-how-page .lab-profile-actions .button { width: 100%; }
 }
+
+
+/* Smart Discovery — editorial search presentation; search behavior remains NOOR-owned. */
+.app-shell-header .search-page {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+  padding: clamp(2.8rem, 6vw, 4.5rem) 0 clamp(4rem, 8vw, 6rem);
+}
+.app-shell-header .search-intro {
+  max-width: 52rem;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+}
+.app-shell-header .search-intro > .eyebrow { margin-bottom: .7rem; }
+.app-shell-header .search-intro h1 {
+  margin: .55rem 0 .85rem;
+  font-size: clamp(2rem, 4.4vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+.app-shell-header .search-form { margin-top: 1.8rem; }
+.app-shell-header .search-form label {
+  margin-bottom: .65rem;
+  color: var(--ink);
+  font-size: .88rem;
+  font-weight: 500;
+}
+.app-shell-header .search-form-row { align-items: stretch; gap: .7rem; }
+.app-shell-header .search-form-row input {
+  min-height: 3.15rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: color-mix(in srgb, var(--surface) 96%, white);
+  font: inherit;
+  font-size: .9rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.app-shell-header .search-form-row input:focus {
+  border-color: var(--accent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  outline-offset: 1px;
+}
+.app-shell-header .search-form-row .button {
+  min-width: 8.5rem;
+  min-height: 3.15rem;
+  border-radius: .25rem;
+}
+.app-shell-header .search-meta {
+  margin: 1rem 0 0;
+  font-size: .82rem;
+  line-height: 1.9;
+}
+.app-shell-header .search-shopper-handoff {
+  margin-top: .7rem;
+  color: var(--accent);
+  font-size: .86rem;
+  text-underline-offset: 4px;
+}
+.app-shell-header .search-results { margin-top: 2.4rem; }
+.app-shell-header .search-page .product-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.8rem, 1.5vw, 1.25rem);
+}
+.app-shell-header .search-page .product-card {
+  border-radius: .3rem;
+  box-shadow: none;
+  transition: border-color 160ms ease;
+}
+.app-shell-header .search-page .product-card:hover {
+  transform: none;
+  border-color: var(--accent);
+  box-shadow: none;
+}
+.app-shell-header .search-page .product-card-media {
+  aspect-ratio: 5 / 4;
+  background: #fff;
+}
+.app-shell-header .search-page .product-card-media img {
+  padding: 0;
+  object-fit: contain;
+  transition: transform 180ms ease;
+}
+.app-shell-header .search-page .product-card:hover .product-card-media img { transform: scale(1.025); }
+.app-shell-header .search-page .product-card-body {
+  padding: clamp(.9rem, 1.5vw, 1.3rem);
+}
+.app-shell-header .search-page .product-card-body h2 {
+  margin: .35rem 0 .55rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.7;
+}
+.app-shell-header .search-page .product-card-body > p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.9;
+}
+.app-shell-header .search-page .product-card-actions { padding-top: 1rem; }
+.app-shell-header .search-page .product-card-actions .button {
+  min-height: 2.5rem;
+  border-radius: .25rem;
+  font-size: .82rem;
+}
+.app-shell-header .search-empty,
+.app-shell-header .search-similar {
+  margin: 2rem 0 0;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: .3rem;
+  background: color-mix(in srgb, var(--surface) 96%, white);
+}
+.app-shell-header .search-empty h2,
+.app-shell-header .search-similar h2 {
+  margin: .2rem 0 .55rem;
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 550;
+  line-height: 1.8;
+}
+.app-shell-header .search-empty p {
+  max-width: 43rem;
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 2;
+}
+.app-shell-header .search-empty .button {
+  margin-top: .65rem;
+  border-radius: .25rem;
+}
+.app-shell-header .search-similar { margin-top: 3rem; }
+.app-shell-header .search-similar > .eyebrow { margin-bottom: .3rem; }
+.app-shell-header .search-similar .product-grid { margin-top: 1.2rem; }
+.app-shell-header .search-page a:focus-visible,
+.app-shell-header .search-page button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 900px) {
+  .app-shell-header .search-page .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .app-shell-header .search-page { width: min(100% - 1.5rem, 48rem); }
+  .app-shell-header .search-intro { margin-top: 0; }
+  .app-shell-header .search-intro h1 { font-size: clamp(1.9rem, 8vw, 2.5rem); }
+  .app-shell-header .search-form-row { flex-direction: column; }
+  .app-shell-header .search-form-row .button { width: 100%; }
+  .app-shell-header .search-page .product-grid { grid-template-columns: 1fr; gap: .8rem; }
+  .app-shell-header .search-page .product-card { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+  .app-shell-header .search-page .product-card-media { min-height: 100%; aspect-ratio: auto; }
+  .app-shell-header .search-page .product-card-body { padding: .85rem; }
+  .app-shell-header .search-page .product-card-actions .button { width: 100%; }
+}
+@media (max-width: 380px) {
+  .app-shell-header .search-page .product-card { grid-template-columns: 1fr; }
+  .app-shell-header .search-page .product-card-media { aspect-ratio: 5 / 4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-header .search-form-row input,
+  .app-shell-header .search-page .product-card-media img { transition: none; }
+}
