@@ -1980,3 +1980,46 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
 @media (prefers-reduced-motion: reduce) {
   .app-shell-lab .product-detail-page > .product-back { transition: none; }
 }
+
+/* Personal Shopper — final interaction and responsive rhythm pass. */
+.app-shell-lab .lab-shopper-layout { width: min(100%, 48rem); }
+.app-shell-lab .lab-shopper-top { min-height: 1.8rem; }
+.app-shell-lab .lab-shopper-progress { overflow: hidden; }
+.app-shell-lab .lab-shopper-options:has(> .shopper-option:nth-child(5)) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.app-shell-lab .lab-shopper-options .shopper-option {
+  min-width: 0;
+  min-height: 5.1rem;
+  gap: .75rem;
+  line-height: 1.75;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+.app-shell-lab .lab-shopper-options .shopper-option:active { transform: translateY(1px); }
+.app-shell-lab .lab-shopper-options .shopper-option:focus-visible,
+.app-shell-lab .lab-shopper-mandatory input:focus-visible,
+.app-shell-lab .lab-shopper-actions .button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.app-shell-lab .lab-shopper-options .shopper-option:disabled {
+  cursor: wait;
+  opacity: .7;
+  transform: none;
+}
+.app-shell-lab .lab-shopper-mandatory { border-radius: .25rem; }
+.app-shell-lab .lab-shopper-summary > div { min-width: 0; border-radius: .2rem; }
+.app-shell-lab .lab-shopper-summary strong { overflow-wrap: anywhere; line-height: 1.8; }
+.app-shell-lab .lab-shopper-actions .button:disabled { cursor: not-allowed; opacity: .45; }
+@media (max-width: 760px) {
+  .app-shell-lab .lab-shopper-options:has(> .shopper-option:nth-child(5)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .app-shell-lab .lab-shopper-options:has(> .shopper-option:nth-child(5)) { grid-template-columns: 1fr; }
+  .app-shell-lab .lab-shopper-options .shopper-option { min-height: 4.5rem; padding: .9rem 1rem; }
+  .app-shell-lab .lab-shopper-count { font-size: .78rem; }
+  .app-shell-lab .lab-shopper-actions { padding-block: .8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-lab .lab-shopper-options .shopper-option { transition: none; }
+}
