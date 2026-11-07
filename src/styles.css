@@ -3194,162 +3194,6 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   }
 }
 
-/* NOOR demo cart route — editorial cart summary; demo-only commerce behavior remains unchanged. */
-.app-shell-header .d7-cart-page {
-  width: min(100% - 3rem, 68rem);
-  max-width: none;
-  margin-inline: auto;
-  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 7vw, 6rem);
-}
-.app-shell-header .d7-cart-intro {
-  max-width: 52rem;
-  margin: 0 auto clamp(2rem, 4vw, 3rem);
-  text-align: center;
-}
-.app-shell-header .d7-cart-intro > .eyebrow { color: var(--accent); letter-spacing: .16em; }
-.app-shell-header .d7-cart-intro h1 {
-  margin: 1rem 0 1.1rem;
-  color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.2rem, 5vw, 4rem);
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -.035em;
-}
-.app-shell-header .d7-cart-intro > p:not(.eyebrow) {
-  max-width: 42rem;
-  margin: .6rem auto 0;
-  color: var(--muted);
-  font-size: .92rem;
-  line-height: 2;
-}
-.app-shell-header .d7-cart-list {
-  display: grid;
-  gap: .75rem;
-}
-.app-shell-header .d7-cart-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1.35rem 1.5rem;
-  border: 1px solid var(--line);
-  border-radius: .25rem;
-  background: var(--surface);
-}
-.app-shell-header .d7-cart-item > div { min-width: 0; }
-.app-shell-header .d7-cart-item .eyebrow {
-  color: var(--accent);
-  font-size: .72rem;
-}
-.app-shell-header .d7-cart-item h2 {
-  margin: .4rem 0 .6rem;
-  color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.25rem;
-  font-weight: 400;
-  line-height: 1.6;
-}
-.app-shell-header .d7-cart-item p:not(.eyebrow) {
-  margin: .25rem 0;
-  color: var(--muted);
-  font-size: .84rem;
-  line-height: 1.8;
-}
-.app-shell-header .d7-cart-item .d7-cart-price {
-  color: var(--ink);
-  font-size: .96rem;
-  font-weight: 500;
-}
-.app-shell-header .d7-cart-item > .button {
-  flex: 0 0 auto;
-  min-width: 5.5rem;
-  min-height: 2.75rem;
-  justify-content: center;
-  border-radius: .2rem;
-}
-.app-shell-header .d7-cart-summary {
-  display: grid;
-  gap: .85rem;
-  max-width: 36rem;
-  margin: 1rem 0 0 auto;
-  padding: 1.5rem;
-  border: 1px solid var(--line);
-  border-radius: .25rem;
-  background: color-mix(in srgb, var(--surface) 88%, var(--accent) 12%);
-}
-.app-shell-header .d7-cart-summary > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: .8rem;
-  border-bottom: 1px solid var(--line);
-  color: var(--muted);
-  font-size: .86rem;
-}
-.app-shell-header .d7-cart-summary > div strong {
-  color: var(--ink);
-  font-weight: 500;
-  text-align: end;
-}
-.app-shell-header .d7-cart-summary > p {
-  margin: 0;
-  color: var(--muted);
-  font-size: .78rem;
-  line-height: 1.9;
-}
-.app-shell-header .d7-cart-summary > .button {
-  min-height: 3rem;
-  justify-content: center;
-  margin-top: .25rem;
-  border-radius: .2rem;
-}
-.app-shell-header .d7-cart-empty {
-  max-width: 48rem;
-  margin-inline: auto;
-  padding: clamp(2rem, 5vw, 3.5rem);
-  border: 1px solid var(--line);
-  border-radius: .25rem;
-  background: var(--surface);
-  text-align: center;
-}
-.app-shell-header .d7-cart-empty h2 {
-  margin: 0 0 1.25rem;
-  color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.45rem, 3vw, 2rem);
-  font-weight: 400;
-  line-height: 1.5;
-}
-.app-shell-header .d7-cart-empty .button {
-  min-height: 2.9rem;
-  justify-content: center;
-  border-radius: .2rem;
-}
-@media (max-width: 760px) {
-  .app-shell-header .d7-cart-summary { max-width: none; }
-}
-@media (max-width: 620px) {
-  .app-shell-header .d7-cart-page {
-    width: min(100% - 2rem, 68rem);
-    padding-block: 2.5rem 4rem;
-  }
-  .app-shell-header .d7-cart-intro { margin-bottom: 2rem; text-align: start; }
-  .app-shell-header .d7-cart-intro h1 { font-size: clamp(2rem, 10vw, 2.8rem); }
-  .app-shell-header .d7-cart-intro > p:not(.eyebrow) { margin-inline: 0; }
-  .app-shell-header .d7-cart-item {
-    align-items: stretch;
-    flex-direction: column;
-    gap: .9rem;
-    padding: 1.1rem;
-  }
-  .app-shell-header .d7-cart-item > .button { width: 100%; }
-  .app-shell-header .d7-cart-summary { padding: 1.15rem; }
-  .app-shell-header .d7-cart-empty { padding: 1.5rem 1.15rem; text-align: start; }
-  .app-shell-header .d7-cart-empty .button { width: 100%; }
-}
-
-
 /* NOOR demo cart — quiet editorial layout; cart state and demo-only pricing remain unchanged. */
 .app-shell-header .d7-cart-page {
   width: min(100% - 3rem, 76rem);
@@ -3920,6 +3764,266 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .app-shell-header .route-placeholder *,
   .app-shell-header .route-placeholder *::before,
   .app-shell-header .route-placeholder *::after {
+    scroll-behavior: auto;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+/* NOOR branch directory — quiet-luxury editorial layout; branch data and visit routing remain unchanged. */
+.app-shell-header .d8-page {
+  width: min(100% - 3rem, 76rem);
+  max-width: none;
+  margin-inline: auto;
+  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 7vw, 6rem);
+}
+.app-shell-header .d8-intro {
+  max-width: 54rem;
+  margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+}
+.app-shell-header .d8-intro > .eyebrow {
+  color: var(--accent);
+  font-size: .72rem;
+  letter-spacing: .16em;
+}
+.app-shell-header .d8-intro h1 {
+  max-width: 48rem;
+  margin: .9rem 0 1.1rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -.035em;
+}
+.app-shell-header .d8-intro p:not(.eyebrow) {
+  max-width: 45rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 2;
+}
+.app-shell-header .d8-branch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1rem;
+}
+.app-shell-header .d8-branch-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(1.25rem, 2.5vw, 1.8rem);
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+  box-shadow: none;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.app-shell-header .d8-branch-card > .eyebrow {
+  margin: 0 0 .45rem;
+  color: var(--accent);
+  font-size: .7rem;
+  letter-spacing: .13em;
+}
+.app-shell-header .d8-branch-card h2 {
+  margin: 0 0 .8rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.45;
+}
+.app-shell-header .d8-branch-card p {
+  margin: .25rem 0;
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.app-shell-header .d8-branch-card .d8-muted {
+  margin-top: .75rem;
+  color: var(--ink);
+  font-size: .8rem;
+  line-height: 1.9;
+}
+.app-shell-header .d8-branch-card .d8-actions {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 1.4rem;
+}
+.app-shell-header .d8-branch-card .button {
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: .2rem;
+}
+.app-shell-header .d8-branch-card a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 980px) {
+  .app-shell-header .d8-branch-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .app-shell-header .d8-page {
+    width: min(100% - 2rem, 76rem);
+    padding-block: 2.5rem 4rem;
+  }
+  .app-shell-header .d8-intro { margin-bottom: 2rem; }
+  .app-shell-header .d8-intro h1 { font-size: clamp(2rem, 9vw, 2.8rem); }
+  .app-shell-header .d8-branch-grid { grid-template-columns: 1fr; gap: .8rem; }
+  .app-shell-header .d8-branch-card { padding: 1.2rem; }
+  .app-shell-header .d8-branch-card .button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-header .d8-branch-card,
+  .app-shell-header .d8-branch-card * {
+    scroll-behavior: auto;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+/* NOOR branch visit request — accessible appointment form and confirmation; demo scheduling logic stays unchanged. */
+.app-shell-header .d8-form {
+  width: min(100%, 52rem);
+  max-width: none;
+  gap: 1.1rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+}
+.app-shell-header .d8-form label {
+  display: grid;
+  gap: .5rem;
+  color: var(--ink);
+  font-size: .84rem;
+  font-weight: 500;
+  line-height: 1.7;
+}
+.app-shell-header .d8-form input,
+.app-shell-header .d8-form select,
+.app-shell-header .d8-form textarea {
+  width: 100%;
+  min-height: 3rem;
+  box-sizing: border-box;
+  padding: .75rem .85rem;
+  border: 1px solid var(--line);
+  border-radius: .15rem;
+  background: color-mix(in srgb, var(--surface) 94%, white);
+  color: var(--ink);
+  font: inherit;
+  font-size: .88rem;
+  line-height: 1.6;
+}
+.app-shell-header .d8-form textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+.app-shell-header .d8-form input::placeholder,
+.app-shell-header .d8-form textarea::placeholder { color: var(--muted); }
+.app-shell-header .d8-form input:focus-visible,
+.app-shell-header .d8-form select:focus-visible,
+.app-shell-header .d8-form textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+.app-shell-header .d8-form > button[type="submit"] {
+  min-height: 3rem;
+  justify-self: start;
+  margin-top: .35rem;
+  padding-inline: 1.5rem;
+  border-radius: .2rem;
+}
+.app-shell-header .d8-form > button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: .52;
+}
+.app-shell-header .d8-form-error {
+  width: min(100%, 52rem);
+  box-sizing: border-box;
+  margin: 0 0 1rem;
+  padding: .9rem 1.1rem;
+  border: 1px solid color-mix(in srgb, #a33 28%, var(--line));
+  border-inline-start: 2px solid #a33;
+  border-radius: .15rem;
+  background: color-mix(in srgb, #a33 5%, var(--surface));
+  color: var(--ink);
+  font-size: .82rem;
+  line-height: 1.9;
+}
+.app-shell-header .d8-confirmation {
+  display: grid;
+  max-width: 52rem;
+  gap: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+}
+.app-shell-header .d8-confirmation div {
+  display: grid;
+  grid-template-columns: minmax(10rem, .7fr) minmax(0, 1.3fr);
+  align-items: baseline;
+  gap: 1rem;
+  padding: .95rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.app-shell-header .d8-confirmation div:last-child { border-bottom: 0; }
+.app-shell-header .d8-confirmation span {
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.8;
+}
+.app-shell-header .d8-confirmation strong {
+  color: var(--ink);
+  font-size: .86rem;
+  font-weight: 550;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.app-shell-header .d8-page > .route-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: 1.5rem;
+}
+.app-shell-header .d8-page > .route-actions .button {
+  min-height: 2.9rem;
+  justify-content: center;
+  border-radius: .2rem;
+}
+.app-shell-header .d8-page a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .app-shell-header .d8-form { padding: 1.15rem; gap: .9rem; }
+  .app-shell-header .d8-form > button[type="submit"] { width: 100%; }
+  .app-shell-header .d8-confirmation { padding: 1.1rem; }
+  .app-shell-header .d8-confirmation div {
+    grid-template-columns: 1fr;
+    gap: .2rem;
+  }
+  .app-shell-header .d8-page > .route-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .app-shell-header .d8-page > .route-actions .button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-header .d8-form *,
+  .app-shell-header .d8-confirmation *,
+  .app-shell-header .d8-page > .route-actions * {
     scroll-behavior: auto;
     transition-duration: .01ms !important;
     animation-duration: .01ms !important;
