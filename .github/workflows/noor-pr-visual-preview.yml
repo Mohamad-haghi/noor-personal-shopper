@@ -115,16 +115,26 @@ jobs:
                 failures.push(`${viewport.name}/${route.name}: ${imageReport.broken.length} image(s) failed to load`);
               }
 
-              // Clear any browser-restored/programmatic focus before capturing the default state.
-              // Keyboard focus remains available in the actual app via :focus-visible.
+              // Verify that the accessibility skip link remains available to keyboard users.
+              await page.keyboard.press('Tab');
+              const skipLinkVisibleOnKeyboardFocus = await page.locator('.skip-link').evaluate(el => {
+                const style = getComputedStyle(el);
+                return style.visibility !== 'hidden' && style.transform === 'matrix(1, 0, 0, 1, 0, 0)';
+              });
+              if (!skipLinkVisibleOnKeyboardFocus) {
+                failures.push(`${'${viewport.name}'}/${'${route.name}'}: skip link did not appear on keyboard focus`);
+              }
               await page.evaluate(() => {
                 if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
               });
 
+              // The skip link is intentionally hidden in default-state screenshots;
+              // its keyboard-focus visibility is checked immediately above.
               // Chromium's fullPage capture can pin position:sticky headers at
               // an arbitrary scroll offset. Disable stickiness only in the
               // screenshot document so the real app remains untouched.
               await page.addStyleTag({ content: `
+                .skip-link { visibility: hidden !important; }
                 .app-header, .app-header-lab {
                   position: static !important;
                   inset: auto !important;
