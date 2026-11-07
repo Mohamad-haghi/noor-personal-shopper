@@ -28,7 +28,7 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; }
 a:focus-visible, summary:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .skip-link { position: fixed; z-index: 100; inset-block-start: .75rem; inset-inline-start: .75rem; padding: .65rem .9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); transform: translateY(-160%); transition: transform 160ms ease; }
-.skip-link:focus { transform: translateY(0); }
+.skip-link:focus-visible { transform: translateY(0); }
 #app { width: 100%; }
 .app-shell { width: min(100% - 2rem, var(--max-width)); min-height: 100vh; margin-inline: auto; padding: 1.25rem 0 1.5rem; }
 .app-header { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 4rem; }
