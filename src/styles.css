@@ -997,9 +997,9 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
   width: 2.75rem;
   height: 2.75rem;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  border: 1px solid color-mix(in srgb, oklch(0.84 0.022 76) 75%, transparent);
   border-radius: 50%;
-  background: color-mix(in srgb, var(--background) 92%, transparent);
+  background: color-mix(in srgb, oklch(0.945 0.012 82) 92%, transparent);
   color: var(--ink);
   cursor: pointer;
   transition: color .2s, background .2s, border-color .2s, transform .2s;
