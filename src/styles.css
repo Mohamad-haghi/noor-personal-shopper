@@ -1516,3 +1516,15 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .lab-home .hero-cta-primary,
   .lab-home .hero-cta-secondary { transition: none; }
 }
+
+/* Home — guided three-step section: match the Lab's quiet, clipped card grid. */
+.lab-step-grid {
+  overflow: hidden;
+  border-radius: .375rem;
+}
+.lab-step-grid li {
+  min-width: 0;
+}
+@media (max-width: 760px) {
+  .lab-step-grid { border-radius: .375rem; }
+}
