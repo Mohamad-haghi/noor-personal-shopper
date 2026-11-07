@@ -117,6 +117,8 @@ jobs:
 
               // Verify that the accessibility skip link remains available to keyboard users.
               await page.keyboard.press('Tab');
+              // Allow the 160ms focus-visible transform transition to finish before measuring visibility.
+              await page.waitForTimeout(200);
               const skipLinkKeyboardCheck = await page.locator('.skip-link').evaluate(el => ({
                 focused: document.activeElement === el,
                 keyboardVisible: el.matches(':focus-visible'),
