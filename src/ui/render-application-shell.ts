@@ -50,19 +50,20 @@ function isLabExperienceRoute(match: RouteMatch | null): boolean {
 }
 
 function renderNavigation(match: RouteMatch | null): string {
+  // Preserve NOOR's route-specific menu inventory and destinations exactly.
   const labPaths = new Set(["/catalog", "/shopper", "/how-it-works"]);
   const routes = isLabExperienceRoute(match)
     ? APP_ROUTES.filter((route) => labPaths.has(route.path))
     : APP_ROUTES.filter((route) => route.navigationLabel !== null);
+  const labLabels: Record<string, string> = {
+    "/catalog": "مجموعه",
+    "/shopper": "مشاوره انتخاب",
+    "/how-it-works": "NOOR چگونه کار می‌کند",
+  };
   return routes
     .map((route) => {
       const current = isNavigationRouteCurrent(route.path, match);
       const currentAttribute = current ? ' aria-current="page"' : "";
-      const labLabels: Record<string, string> = {
-        "/catalog": "مجموعه",
-        "/shopper": "مشاوره انتخاب",
-        "/how-it-works": "NOOR چگونه کار می‌کند",
-      };
       const label = isLabExperienceRoute(match) ? labLabels[route.path] : route.navigationLabel;
       return `<li><a href="${route.path}" data-app-link${currentAttribute}>${label}</a></li>`;
     })
@@ -742,21 +743,17 @@ export async function renderApplicationShell(
   const navigation = renderNavigation(match);
   root.innerHTML = `
     <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
-    <div class="app-shell${isLabExperienceRoute(match) ? " app-shell-lab" : ""}">
-      <header class="app-header">
-        ${isLabExperienceRoute(match)
-          ? `<a class="app-brand app-brand-lab" href="/" data-app-link aria-label="NOOR Eyewear Studio"><span class="app-brand-name">NOOR</span><span class="app-brand-tagline" dir="ltr">Eyewear Studio</span></a>`
-          : `<a class="app-brand" href="/" data-app-link aria-label="نور، صفحهٔ اصلی"><span class="app-brand-mark" aria-hidden="true">ن</span><span class="app-brand-name">نور</span></a>`}
+    <div class="app-shell app-shell-header">
+      <header class="app-header app-header-lab">
+        <a class="app-brand app-brand-lab" href="/" data-app-link aria-label="NOOR Eyewear Studio"><span class="app-brand-name">NOOR</span><span class="app-brand-tagline" dir="ltr">Eyewear Studio</span></a>
+        <nav class="lab-header-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>
         <div class="app-header-meta">
-          <a class="button button-primary header-shopper-cta" href="/shopper" data-app-link>${isLabExperienceRoute(match) ? "مشاوره انتخاب" : "دستیار خرید شخصی"}</a>
-          <span class="app-mode">${isLabExperienceRoute(match) ? "The Intelligent Eyewear Studio" : "دموی مستقل"}</span>
           <details class="mobile-nav">
-            <summary>منو</summary>
+            <summary aria-label="باز کردن منو">منو</summary>
             <nav aria-label="ناوبری موبایل"><ul>${navigation}</ul></nav>
           </details>
         </div>
       </header>
-      <nav class="primary-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>
       <div id="route-view" class="route-view" aria-live="polite"></div>
       <footer class="app-footer">
         ${isLabExperienceRoute(match)

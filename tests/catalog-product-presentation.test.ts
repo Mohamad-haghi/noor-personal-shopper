@@ -34,7 +34,12 @@ function makeProduct(overrides: Record<string, unknown> = {}): Product {
 describe("catalog and product detail presentation", () => {
   it("shows source-backed product facts and makes demo pricing disclosure explicit", () => {
     const root = { innerHTML: "" } as HTMLElement;
-    renderProducts(root, [makeProduct()], new Map(), []);
+    const variant = {
+      identity: { id: "catalog-variant-1" },
+      name: "Standard",
+      availability: { isAvailable: true, source: "demo" },
+    } as unknown as ProductVariant;
+    renderProducts(root, [makeProduct()], new Map([["frame-1", [variant]]]), []);
 
     expect(root.innerHTML).toContain("فریم‌ها را با دقت بیشتری بشناسید");
     expect(root.innerHTML).toContain("aviator");
@@ -42,6 +47,11 @@ describe("catalog and product detail presentation", () => {
     expect(root.innerHTML).toContain("قیمت‌های نمایشی");
     expect(root.innerHTML).toContain("مشاهدهٔ جزئیات");
     expect(root.innerHTML).toContain("موجودی فرضی دمو — موجودی واقعی نور نیست");
+    expect(root.innerHTML).toContain("product-card-media");
+    expect(root.innerHTML).toContain("product-card-facts");
+    expect(root.innerHTML).toContain('data-compare-product="catalog-variant-1"');
+    expect(root.innerHTML).not.toContain("product-card-meta");
+    expect(root.innerHTML).not.toContain("product-demo-price");
   });
 
   it("renders only known detail facts and omits unresolved values instead of guessing", () => {

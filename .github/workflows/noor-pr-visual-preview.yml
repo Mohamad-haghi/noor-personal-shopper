@@ -1,0 +1,195 @@
+name: NOOR PR Visual Preview (artifact only)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: noor-pr-visual-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-preview:
+    name: Build isolated desktop and mobile preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Checkout pinned Digital Sales Core
+        uses: actions/checkout@v4
+        with:
+          repository: Mohamad-haghi/digital-sales-core
+          path: digital-sales-core
+          token: ${{ secrets.CORE_REPO_TOKEN }}
+          ref: bd7a215dbd9154f9638687636167e4d980309e32
+
+      - name: Install dependencies
+        run: |
+          npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
+          npm install --package-lock=false --no-audit --no-fund
+
+      - name: Build NOOR
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/noor-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/noor-personal-shopper/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/noor-preview.log
+          exit 1
+
+      - name: Capture desktop and mobile routes
+        run: |
+          mkdir -p artifacts/noor-pr-preview
+          node --input-type=module <<'NODE'
+          import { chromium, devices } from 'playwright';
+
+          const base = 'http://127.0.0.1:4173/noor-personal-shopper/';
+          // Capture every registered NOOR route, including legacy aliases and
+          // intentional empty/demo states. Dynamic routes use known-safe IDs.
+          const demoProductId = 'noor-demo-012-prada-pr51yv-04q1o1';
+          const routes = [
+            { name: 'home', path: '' },
+            { name: 'how-it-works', path: 'how-it-works' },
+            { name: 'catalog', path: 'catalog' },
+            { name: 'products-alias', path: 'products' },
+            { name: 'product-detail', path: 'products/' + demoProductId },
+            { name: 'product-legacy-alias', path: 'product/' + demoProductId },
+            { name: 'profile', path: 'profile' },
+            { name: 'search', path: 'search' },
+            { name: 'shopper', path: 'shopper' },
+            { name: 'manager', path: 'manager' },
+            { name: 'recommendations', path: 'recommendations' },
+            { name: 'choices', path: 'choices' },
+            { name: 'compare', path: 'compare' },
+            { name: 'account', path: 'account' },
+            { name: 'cart', path: 'cart' },
+            { name: 'checkout', path: 'checkout' },
+            { name: 'payment-placeholder', path: 'payment' },
+            { name: 'confirmation-empty', path: 'confirmation/noor-pr-preview-check' },
+            { name: 'branches', path: 'branches' },
+            { name: 'visit', path: 'visit' },
+          ];
+          const browser = await chromium.launch({ headless: true });
+          const failures = [];
+
+          for (const viewport of [
+            { name: 'desktop', options: { viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 } },
+            { name: 'mobile', options: devices['iPhone 13'] },
+          ]) {
+            const context = await browser.newContext(viewport.options);
+            const page = await context.newPage();
+            page.on('pageerror', error => failures.push(`${viewport.name}: page error: ${error.message}`));
+            page.on('console', message => {
+              if (message.type() === 'error') failures.push(`${viewport.name}: console error: ${message.text()}`);
+            });
+
+            for (const route of routes) {
+              const response = await page.goto(base + route.path, { waitUntil: 'networkidle', timeout: 30000 });
+              if (!response || !response.ok()) {
+                failures.push(`${viewport.name}/${route.name}: HTTP ${response?.status() ?? 'no response'}`);
+                continue;
+              }
+
+              const imageReport = await page.evaluate(async () => {
+                const pageHeight = document.documentElement.scrollHeight;
+                const step = Math.max(window.innerHeight - 80, 320);
+                for (let y = 0; y < pageHeight; y += step) {
+                  window.scrollTo(0, y);
+                  await new Promise(resolve => setTimeout(resolve, 120));
+                }
+                const images = [...document.images];
+                for (const img of images) img.loading = 'eager';
+                await Promise.all(images.map(img => img.decode().catch(() => undefined)));
+                window.scrollTo(0, 0);
+                return {
+                  total: images.length,
+                  broken: images.filter(img => !img.complete || img.naturalWidth === 0).map(img => img.currentSrc || img.src),
+                };
+              });
+              if (imageReport.broken.length) {
+                failures.push(`${viewport.name}/${route.name}: ${imageReport.broken.length} image(s) failed to load`);
+              }
+
+              // Verify that the accessibility skip link remains available to keyboard users.
+              await page.keyboard.press('Tab');
+              // Allow the 160ms focus-visible transform transition to finish before measuring visibility.
+              await page.waitForTimeout(200);
+              const skipLinkKeyboardCheck = await page.locator('.skip-link').evaluate(el => ({
+                focused: document.activeElement === el,
+                keyboardVisible: el.matches(':focus-visible'),
+                inViewport: el.getBoundingClientRect().top >= 0,
+              }));
+              if (!skipLinkKeyboardCheck.focused || !skipLinkKeyboardCheck.keyboardVisible || !skipLinkKeyboardCheck.inViewport) {
+                failures.push(viewport.name + '/' + route.name + ': skip link did not appear on keyboard focus');
+              }
+              await page.evaluate(() => {
+                if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+              });
+
+              // The skip link is intentionally hidden in default-state screenshots;
+              // its keyboard-focus visibility is checked immediately above.
+              // Chromium's fullPage capture can pin position:sticky headers at
+              // an arbitrary scroll offset. Disable stickiness only in the
+              // screenshot document so the real app remains untouched.
+              await page.addStyleTag({ content: `
+                .skip-link { visibility: hidden !important; }
+                .app-header, .app-header-lab {
+                  position: static !important;
+                  inset: auto !important;
+                  transform: none !important;
+                }
+              ` });
+              await page.screenshot({
+                path: `artifacts/noor-pr-preview/${viewport.name}-${route.name}.png`,
+                fullPage: true,
+              });
+              const bodyText = (await page.locator('body').innerText()).trim();
+              if (bodyText.length < 40) failures.push(`${viewport.name}/${route.name}: page content appears empty`);
+              console.log(`Captured ${viewport.name}/${route.name} (${bodyText.length} text characters; ${imageReport.total} images; ${imageReport.broken.length} failed)`);
+            }
+            await context.close();
+          }
+
+          await browser.close();
+          await import('node:fs/promises').then(fs => fs.writeFile(
+            'artifacts/noor-pr-preview/visual-check.json',
+            JSON.stringify({ base, routes, failures }, null, 2),
+          ));
+          if (failures.length) {
+            console.error(failures.join('\n'));
+            process.exitCode = 1;
+          }
+          NODE
+
+      - name: Upload preview screenshots and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: noor-pr-${{ github.event.pull_request.number || 'manual' }}-desktop-mobile-preview
+          path: artifacts/noor-pr-preview/
+          if-no-files-found: warn
+          retention-days: 7

@@ -22,7 +22,14 @@ export function renderHero(
     ? `<video class="hero-image" muted playsinline preload="metadata" poster="${escapeHtml(content.media.poster || "")}"><source src="${escapeHtml(content.media.source)}" type="video/mp4"></video>`
     : `<img class="hero-image" src="${escapeHtml(content.media.source)}" alt="${escapeHtml(content.media.altText || "")}" fetchpriority="high" decoding="async" />`;
 
-  const curated = products.slice(0, 3).map((product) => {
+  // Use canonical DemoCatalogSeed IDs; display slugs omit the noor-demo-NNN prefix.
+  const curatedIds = [
+    "noor-demo-002-persol-po0649-95-31",
+    "noor-demo-003-oakley-oo9318-02-34",
+    "noor-demo-012-prada-pr51yv-04q1o1",
+  ];
+  const curatedProducts = curatedIds.map((id) => products.find((product) => product.identity.id === id)).filter((product): product is Product => Boolean(product));
+  const curated = curatedProducts.map((product) => {
     const image = product.media.primaryImage;
     const imageMarkup = image
       ? `<img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.altText ?? product.name)}" loading="lazy">`

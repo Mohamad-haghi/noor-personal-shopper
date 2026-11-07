@@ -5,6 +5,7 @@ import { DemoSelectionProfileProvider } from "../src/providers/demo/demo-selecti
 import { SelectionProfileService } from "../src/services/selection-profile-service";
 import { renderSelectionProfile } from "../src/ui/render-selection-profile";
 import { renderHowItWorks } from "../src/ui/render-how-it-works";
+import { renderShopper } from "../src/ui/render-shopper";
 
 describe("Lab presentation boundary and NOOR handoff", () => {
   it("resolves Lab-style aliases and the new profile page inside the NOOR router", () => {
@@ -44,7 +45,29 @@ describe("Lab presentation boundary and NOOR handoff", () => {
     renderHowItWorks(routeView);
     expect(routeView.innerHTML).toContain("پروفایل انتخاب");
     expect(routeView.innerHTML).toContain("مسیر تصمیم‌گیری COR");
+    expect(routeView.innerHTML).toContain("شواهد محصول");
+    expect(routeView.innerHTML).toContain("پیشنهاد شفاف");
     expect(routeView.innerHTML).not.toContain("recommend(");
+  });
+
+  it("renders the Lab-style one-question shopper layout while retaining NOOR mandatory criteria", async () => {
+    const service = new SelectionProfileService(new DemoSelectionProfileProvider());
+    const feature = new ShopperFeature(service, null);
+    await feature.setAnswer("style", "خلبانی");
+    feature.goToStep(3);
+    const routeView = {
+      innerHTML: "",
+      querySelectorAll: () => [],
+      querySelector: () => null,
+    } as unknown as HTMLElement;
+
+    renderShopper(routeView, feature);
+
+    expect(routeView.innerHTML).toContain("lab-shopper-progress");
+    expect(routeView.innerHTML).toContain("lab-shopper-title-row");
+    expect(routeView.innerHTML).toContain("این معیار برای من اجباری است");
+    expect(routeView.innerHTML).toContain('data-shopper-mandatory="frameShape"');
+    expect(routeView.innerHTML).not.toContain("shopper-sidebar");
   });
 
   it("can reopen a specific NOOR questionnaire step for profile editing", async () => {

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { DemoHeroProvider } from "../src/providers/demo/demo-hero-provider";
 import { renderHero } from "../src/ui/render-hero";
+import type { Product } from "../src/domain";
 
 describe("approved Lab hero presentation in the NOOR application", () => {
   it("uses the local approved hero artwork while preserving NOOR content and route-aware actions", async () => {
@@ -25,6 +26,33 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(root.innerHTML).toContain("عینکی که با شناخت شما انتخاب می‌شود.");
     expect(root.innerHTML).toContain("سلیقه و نیازتان را در یک گفت‌وگوی کوتاه بیان کنید");
     expect(root.innerHTML).not.toContain("Ray-Ban RB3025 181/71");
+  });
+
+  it("renders the three curated homepage models from the canonical NOOR demo catalog IDs", async () => {
+    const hero = await new DemoHeroProvider().getHeroContent();
+    const ids = [
+      "noor-demo-012-prada-pr51yv-04q1o1",
+      "noor-demo-001-ray-ban-rb3025-181-71",
+      "noor-demo-003-oakley-oo9318-02-34",
+      "noor-demo-002-persol-po0649-95-31",
+    ];
+    const products = ids.map((id) => ({
+      identity: { id },
+      name: id,
+      media: { primaryImage: { url: `/${id}.jpg`, altText: id } },
+    })) as unknown as Product[];
+    const root = { innerHTML: "" } as HTMLElement;
+
+    renderHero(root, hero!, "/shopper", products);
+
+    const persol = root.innerHTML.indexOf("noor-demo-002-persol-po0649-95-31.jpg");
+    const oakley = root.innerHTML.indexOf("noor-demo-003-oakley-oo9318-02-34.jpg");
+    const prada = root.innerHTML.indexOf("noor-demo-012-prada-pr51yv-04q1o1.jpg");
+    expect(persol).toBeGreaterThan(-1);
+    expect(oakley).toBeGreaterThan(persol);
+    expect(prada).toBeGreaterThan(oakley);
+    expect(root.innerHTML).not.toContain("noor-demo-001-ray-ban-rb3025-181-71.jpg");
+    expect(root.innerHTML).not.toContain("محصولی برای نمایش ثبت نشده است");
   });
 
   it("keeps responsive, reduced-motion and uncropped image rules in the dedicated Hero stylesheet", () => {
