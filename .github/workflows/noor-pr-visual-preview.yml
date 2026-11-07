@@ -117,12 +117,13 @@ jobs:
 
               // Verify that the accessibility skip link remains available to keyboard users.
               await page.keyboard.press('Tab');
-              const skipLinkVisibleOnKeyboardFocus = await page.locator('.skip-link').evaluate(el => {
-                const style = getComputedStyle(el);
-                return style.visibility !== 'hidden' && style.transform === 'matrix(1, 0, 0, 1, 0, 0)';
-              });
-              if (!skipLinkVisibleOnKeyboardFocus) {
-                failures.push(`${'${viewport.name}'}/${'${route.name}'}: skip link did not appear on keyboard focus`);
+              const skipLinkKeyboardCheck = await page.locator('.skip-link').evaluate(el => ({
+                focused: document.activeElement === el,
+                keyboardVisible: el.matches(':focus-visible'),
+                inViewport: el.getBoundingClientRect().top >= 0,
+              }));
+              if (!skipLinkKeyboardCheck.focused || !skipLinkKeyboardCheck.keyboardVisible || !skipLinkKeyboardCheck.inViewport) {
+                failures.push(viewport.name + '/' + route.name + ': skip link did not appear on keyboard focus');
               }
               await page.evaluate(() => {
                 if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
