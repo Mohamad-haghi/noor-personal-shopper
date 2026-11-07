@@ -347,7 +347,8 @@ async function attachProductFavoriteActions(
       ?? variants.find((item) => item.availability.isAvailable && item.availability.source === "demo")
       ?? variants[0];
     if (!variant) {
-      button.hidden = true;
+      button.disabled = true;
+      button.setAttribute("aria-label", "علاقه‌مندی برای این محصول در نسخهٔ نمایشی فعال نیست");
       continue;
     }
     button.dataset.variantId = variant.identity.id;
