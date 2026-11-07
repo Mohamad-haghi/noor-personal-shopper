@@ -3193,3 +3193,158 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
     animation-iteration-count: 1 !important;
   }
 }
+
+/* NOOR demo cart route — editorial cart summary; demo-only commerce behavior remains unchanged. */
+.app-shell-header .d7-cart-page {
+  width: min(100% - 3rem, 68rem);
+  max-width: none;
+  margin-inline: auto;
+  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 7vw, 6rem);
+}
+.app-shell-header .d7-cart-intro {
+  max-width: 52rem;
+  margin: 0 auto clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+.app-shell-header .d7-cart-intro > .eyebrow { color: var(--accent); letter-spacing: .16em; }
+.app-shell-header .d7-cart-intro h1 {
+  margin: 1rem 0 1.1rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -.035em;
+}
+.app-shell-header .d7-cart-intro > p:not(.eyebrow) {
+  max-width: 42rem;
+  margin: .6rem auto 0;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 2;
+}
+.app-shell-header .d7-cart-list {
+  display: grid;
+  gap: .75rem;
+}
+.app-shell-header .d7-cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.35rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+}
+.app-shell-header .d7-cart-item > div { min-width: 0; }
+.app-shell-header .d7-cart-item .eyebrow {
+  color: var(--accent);
+  font-size: .72rem;
+}
+.app-shell-header .d7-cart-item h2 {
+  margin: .4rem 0 .6rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.app-shell-header .d7-cart-item p:not(.eyebrow) {
+  margin: .25rem 0;
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.8;
+}
+.app-shell-header .d7-cart-item .d7-cart-price {
+  color: var(--ink);
+  font-size: .96rem;
+  font-weight: 500;
+}
+.app-shell-header .d7-cart-item > .button {
+  flex: 0 0 auto;
+  min-width: 5.5rem;
+  min-height: 2.75rem;
+  justify-content: center;
+  border-radius: .2rem;
+}
+.app-shell-header .d7-cart-summary {
+  display: grid;
+  gap: .85rem;
+  max-width: 36rem;
+  margin: 1rem 0 0 auto;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: color-mix(in srgb, var(--surface) 88%, var(--accent) 12%);
+}
+.app-shell-header .d7-cart-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .86rem;
+}
+.app-shell-header .d7-cart-summary > div strong {
+  color: var(--ink);
+  font-weight: 500;
+  text-align: end;
+}
+.app-shell-header .d7-cart-summary > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.9;
+}
+.app-shell-header .d7-cart-summary > .button {
+  min-height: 3rem;
+  justify-content: center;
+  margin-top: .25rem;
+  border-radius: .2rem;
+}
+.app-shell-header .d7-cart-empty {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: clamp(2rem, 5vw, 3.5rem);
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+  text-align: center;
+}
+.app-shell-header .d7-cart-empty h2 {
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.app-shell-header .d7-cart-empty .button {
+  min-height: 2.9rem;
+  justify-content: center;
+  border-radius: .2rem;
+}
+@media (max-width: 760px) {
+  .app-shell-header .d7-cart-summary { max-width: none; }
+}
+@media (max-width: 620px) {
+  .app-shell-header .d7-cart-page {
+    width: min(100% - 2rem, 68rem);
+    padding-block: 2.5rem 4rem;
+  }
+  .app-shell-header .d7-cart-intro { margin-bottom: 2rem; text-align: start; }
+  .app-shell-header .d7-cart-intro h1 { font-size: clamp(2rem, 10vw, 2.8rem); }
+  .app-shell-header .d7-cart-intro > p:not(.eyebrow) { margin-inline: 0; }
+  .app-shell-header .d7-cart-item {
+    align-items: stretch;
+    flex-direction: column;
+    gap: .9rem;
+    padding: 1.1rem;
+  }
+  .app-shell-header .d7-cart-item > .button { width: 100%; }
+  .app-shell-header .d7-cart-summary { padding: 1.15rem; }
+  .app-shell-header .d7-cart-empty { padding: 1.5rem 1.15rem; text-align: start; }
+  .app-shell-header .d7-cart-empty .button { width: 100%; }
+}
