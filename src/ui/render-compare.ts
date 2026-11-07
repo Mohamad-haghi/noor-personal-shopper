@@ -19,7 +19,7 @@ function displayFact(value: unknown): string {
 }
 
 function productImage(product: Product): string {
-  const image = product.media.primaryImage;
+  const image = product.media?.primaryImage;
   return image
     ? `<img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.altText ?? product.name)}" loading="lazy">`
     : `<div class="lab-compare-image-placeholder" aria-hidden="true">NOOR</div>`;
