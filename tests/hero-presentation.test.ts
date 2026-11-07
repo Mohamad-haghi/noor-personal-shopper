@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { DemoHeroProvider } from "../src/providers/demo/demo-hero-provider";
 import { renderHero } from "../src/ui/render-hero";
-import type { Product } from "../src/domain";
+import type { Product, ProductVariant } from "../src/domain";
 
 describe("approved Lab hero presentation in the NOOR application", () => {
   it("uses the local approved hero artwork while preserving NOOR content and route-aware actions", async () => {
@@ -63,10 +63,10 @@ describe("approved Lab hero presentation in the NOOR application", () => {
       name: "Persol PO0649",
       media: { primaryImage: { url: "/persol.jpg", altText: "Persol PO0649" } },
     }] as unknown as Product[];
-    const variantsByProduct = new Map([[productId, [{
+    const variantsByProduct = new Map<string, readonly ProductVariant[]>([[productId, [{
       identity: { id: "persol-variant-1" },
       availability: { isAvailable: true, source: "demo" },
-    }]]]);
+    } as unknown as ProductVariant]]]);
     const root = { innerHTML: "" } as HTMLElement;
 
     renderHero(root, hero!, "/shopper", products, variantsByProduct, new Set(["persol-variant-1"]));
