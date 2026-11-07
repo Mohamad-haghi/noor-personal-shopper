@@ -16,57 +16,117 @@ export function renderCheckout(
   errorMessage: string | null = null,
 ): void {
   if (order) {
-    routeView.innerHTML = `<main class="d7-checkout-page" id="main-content"><section class="d7-checkout-intro"><p class="eyebrow">DEMO ORDER CREATED</p><h1>سفارش آمادهٔ پرداخت است</h1><p>سفارش در Demo ایجاد شد. پرداخت واقعی در D7-D به‌صورت Mock Payment اجرا می‌شود و اتصال درگاه واقعی بعداً در همین مرز PaymentProvider قرار می‌گیرد.</p></section><section class="d7-checkout-summary"><div><span>شناسه سفارش</span><strong>${escapeHtml(order.identity.id)}</strong></div><div><span>جمع کالاها</span><strong>${formatAmount(order.pricing.subtotal, order.pricing.currency)}</strong></div><div><span>هزینه ارسال</span><strong>${formatAmount(order.pricing.shipping, order.pricing.currency)}</strong></div><div><span>مبلغ نهایی Demo</span><strong>${formatAmount(order.pricing.total, order.pricing.currency)}</strong></div></section><p class="d7-demo-note">این مبلغ و اطلاعات خرید، نمایشی و مخصوص Demo هستند؛ قیمت واقعی نور هنوز از سامانهٔ فروش واقعی دریافت نمی‌شود.</p></main>`;
+    routeView.innerHTML = `
+      <main class="d7-checkout-page lab-checkout-page" id="main-content" aria-labelledby="checkout-title">
+        <header class="lab-checkout-head">
+          <p class="eyebrow" dir="ltr">DEMO ORDER CREATED</p>
+          <h1 id="checkout-title">سفارش آمادهٔ پرداخت است</h1>
+          <p>سفارش در Demo ایجاد شد. پرداخت واقعی در مرحلهٔ بعد به‌صورت Mock Payment نمایش داده می‌شود.</p>
+        </header>
+        <section class="d7-checkout-summary lab-checkout-summary" aria-label="خلاصه سفارش">
+          <div><span>شناسه سفارش</span><strong>${escapeHtml(order.identity.id)}</strong></div>
+          <div><span>جمع کالاها</span><strong>${formatAmount(order.pricing.subtotal, order.pricing.currency)}</strong></div>
+          <div><span>هزینه ارسال</span><strong>${formatAmount(order.pricing.shipping, order.pricing.currency)}</strong></div>
+          <div><span>مبلغ نهایی Demo</span><strong>${formatAmount(order.pricing.total, order.pricing.currency)}</strong></div>
+        </section>
+        <p class="lab-checkout-note d7-demo-note" role="note">این مبلغ و اطلاعات خرید نمایشی هستند و به قیمت واقعی یا درگاه بانکی فروشگاه نور متصل نیستند.</p>
+      </main>
+    `;
     return;
   }
 
   if (!cart || cart.items.length === 0) {
-    routeView.innerHTML = `<main class="d7-checkout-page" id="main-content"><section class="d7-checkout-intro"><p class="eyebrow">CHECKOUT</p><h1>تکمیل سفارش</h1><p>برای ادامه ابتدا محصولی را به سبد خرید اضافه کنید.</p><a class="button button-primary" href="/recommendations" data-app-link>دیدن پیشنهادها</a></section></main>`;
+    routeView.innerHTML = `
+      <main class="d7-checkout-page lab-checkout-page" id="main-content" aria-labelledby="checkout-title">
+        <header class="lab-checkout-head">
+          <p class="eyebrow" dir="ltr">DEMO CHECKOUT</p>
+          <h1 id="checkout-title">تکمیل سفارش</h1>
+          <p>برای ادامه ابتدا یک فریم را به سبد خرید نمایشی اضافه کنید.</p>
+        </header>
+        <section class="lab-checkout-empty" role="status">
+          <h2>سبد خرید شما خالی است.</h2>
+          <p>ابتدا پیشنهادهای خود را مرور کنید یا از مجموعه یک فریم انتخاب کنید.</p>
+          <div class="lab-checkout-empty-actions">
+            <a class="button button-primary" href="/recommendations" data-app-link>دیدن پیشنهادها</a>
+            <a class="button button-secondary" href="/products" data-app-link>مشاهده مجموعه</a>
+          </div>
+        </section>
+      </main>
+    `;
     return;
   }
 
   if (!account) {
-    routeView.innerHTML = `<main class="d7-checkout-page" id="main-content"><section class="d7-checkout-intro"><p class="eyebrow">CHECKOUT</p><h1>ورود به حساب کاربری</h1><p>برای ثبت سفارش Demo باید با حساب مستقل Personal Shopper وارد شوید.</p><a class="button button-primary" href="/account" data-app-link>ورود / ثبت‌نام</a></section></main>`;
+    routeView.innerHTML = `
+      <main class="d7-checkout-page lab-checkout-page" id="main-content" aria-labelledby="checkout-title">
+        <header class="lab-checkout-head">
+          <p class="eyebrow" dir="ltr">DEMO CHECKOUT</p>
+          <h1 id="checkout-title">ورود به حساب کاربری</h1>
+          <p>برای ثبت سفارش نمایشی، ابتدا با حساب مستقل Personal Shopper وارد شوید.</p>
+        </header>
+        <section class="lab-checkout-empty">
+          <p>حساب Personal Shopper از حساب سایت اصلی نور مستقل است.</p>
+          <a class="button button-primary" href="/account" data-app-link>ورود / ثبت‌نام</a>
+        </section>
+      </main>
+    `;
     return;
   }
 
   routeView.innerHTML = `
-    <main class="d7-checkout-page" id="main-content" aria-labelledby="checkout-title">
-      <section class="d7-checkout-intro">
-        <p class="eyebrow">DEMO CHECKOUT</p>
+    <main class="d7-checkout-page lab-checkout-page" id="main-content" aria-labelledby="checkout-title">
+      <header class="lab-checkout-head">
+        <p class="eyebrow" dir="ltr">DEMO CHECKOUT</p>
         <h1 id="checkout-title">تکمیل سفارش</h1>
-        <p>مبلغ‌ها «قیمت نمایشی Demo» هستند. ساختار Checkout طوری نگه داشته شده که منبع قیمت و موجودی بعداً از Commerce واقعی نور تأمین شود.</p>
-      </section>
-      ${errorMessage ? `<p class="d7-form-error" role="alert">${escapeHtml(errorMessage)}</p>` : ""}
-      <form class="d7-checkout-form" data-checkout-form>
-        <section class="d7-checkout-section">
+        <p>اطلاعات دریافت را برای ادامه مسیر نمایشی وارد کنید. هیچ سفارش واقعی یا پرداخت بانکی در این مرحله انجام نمی‌شود.</p>
+      </header>
+      <p class="lab-checkout-note" role="note">مبلغ‌ها «قیمت نمایشی Demo» هستند. قیمت و موجودی واقعی فروشگاه نور در این نسخه متصل نیستند.</p>
+      ${errorMessage ? `<p class="d7-form-error lab-checkout-error" role="alert">${escapeHtml(errorMessage)}</p>` : ""}
+      <form class="d7-checkout-form lab-checkout-form" data-checkout-form>
+        <section class="d7-checkout-section lab-checkout-section">
+          <p class="eyebrow">01 · خریدار</p>
           <h2>اطلاعات خریدار</h2>
-          <label>نام گیرنده<input name="recipientName" required value="${escapeHtml([account.profile.firstName, account.profile.lastName].filter(Boolean).join(" "))}"></label>
-          <label>شماره تماس<input name="phone" value="${escapeHtml(account.phone ?? "")}" inputmode="tel"></label>
+          <label for="checkout-recipient-name">نام گیرنده</label>
+          <input id="checkout-recipient-name" name="recipientName" required value="${escapeHtml([account.profile.firstName, account.profile.lastName].filter(Boolean).join(" "))}">
+          <label for="checkout-phone">شماره تماس</label>
+          <input id="checkout-phone" name="phone" value="${escapeHtml(account.phone ?? "")}" inputmode="tel" autocomplete="tel">
         </section>
-        <section class="d7-checkout-section">
+        <section class="d7-checkout-section lab-checkout-section">
+          <p class="eyebrow">02 · دریافت</p>
           <h2>روش دریافت</h2>
-          <label><input type="radio" name="fulfillment" value="delivery" checked> ارسال</label>
-          <label><input type="radio" name="fulfillment" value="pickup"> تحویل حضوری از شعبه</label>
-          <div class="d7-delivery-fields" data-delivery-fields>
-            <label>آدرس<input name="addressLine1" required></label>
-            <label>شهر<input name="city" required></label>
-            <label>استان<input name="state"></label>
-            <label>کد پستی<input name="postalCode" required inputmode="numeric"></label>
+          <div class="lab-checkout-fulfillment-options">
+            <label class="lab-checkout-radio"><input type="radio" name="fulfillment" value="delivery" checked><span>ارسال</span></label>
+            <label class="lab-checkout-radio"><input type="radio" name="fulfillment" value="pickup"><span>تحویل حضوری از شعبه</span></label>
           </div>
-          <div class="d7-pickup-fields" data-pickup-fields hidden>
-            <label>شناسه شعبه<input name="branchId" data-branch-id></label>
-            <p>در مرحله اتصال واقعی، این مقدار از BranchProvider / سامانه شعب نور انتخاب خواهد شد.</p>
+          <div class="d7-delivery-fields lab-checkout-delivery-fields" data-delivery-fields>
+            <label for="checkout-address">آدرس</label>
+            <input id="checkout-address" name="addressLine1" required autocomplete="street-address">
+            <label for="checkout-city">شهر</label>
+            <input id="checkout-city" name="city" required autocomplete="address-level2">
+            <label for="checkout-state">استان</label>
+            <input id="checkout-state" name="state" autocomplete="address-level1">
+            <label for="checkout-postal-code">کد پستی</label>
+            <input id="checkout-postal-code" name="postalCode" required inputmode="numeric" autocomplete="postal-code">
+          </div>
+          <div class="d7-pickup-fields lab-checkout-pickup-fields" data-pickup-fields hidden>
+            <label for="checkout-branch-id">شناسه شعبه</label>
+            <input id="checkout-branch-id" name="branchId" data-branch-id>
+            <p>در مرحله اتصال واقعی، شعبه از سامانه شعب نور انتخاب خواهد شد. در این Demo شناسه معتبر شعبه لازم است.</p>
           </div>
         </section>
-        <section class="d7-checkout-summary">
+        <section class="d7-checkout-summary lab-checkout-summary">
+          <p class="eyebrow">03 · خلاصه</p>
+          <h2>خلاصه سفارش</h2>
           <div><span>جمع سبد</span><strong>${formatAmount(cart.subtotal, cart.currency)}</strong></div>
           <div><span>ارسال Demo</span><strong>با توجه به روش دریافت محاسبه می‌شود</strong></div>
+          <p class="lab-checkout-summary-note">هزینه‌ها و مبلغ نهایی فقط در نسخه نمایشی محاسبه می‌شوند.</p>
         </section>
-        <button class="button button-primary" type="submit">ثبت سفارش و ادامه</button>
+        <button class="button button-primary lab-checkout-submit" type="submit">ثبت سفارش و ادامه</button>
       </form>
-    </main>`;
+    </main>
+  `;
 }
+
 
 
 export function renderPaymentState(
