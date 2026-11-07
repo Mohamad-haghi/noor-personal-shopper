@@ -39,22 +39,22 @@ export function renderVisit(
   const branch = branches.find((item) => item.identity.id === selectedBranchId) ?? null;
   if (existingVisit && branch) {
     root.innerHTML = `
-      <main class="d8-page" id="main-content" aria-labelledby="visit-confirmation-title">
-        <section class="d8-intro">
-          <p class="eyebrow">VISIT REQUEST</p>
+      <main class="d8-page lab-visit-page" id="main-content" aria-labelledby="visit-confirmation-title">
+        <header class="lab-visit-head">
+          <p class="eyebrow" dir="ltr">VISIT REQUEST CONFIRMED</p>
           <h1 id="visit-confirmation-title">درخواست مراجعه ثبت شد.</h1>
-          <p>این درخواست در وضعیت نمایشی ثبت شده و در اجرای واقعی می‌تواند به سیستم شعب و زمان‌بندی NOOR متصل شود.</p>
-        </section>
-        <section class="d8-confirmation">
-          <div><span>Request ID</span><strong>${escapeHtml(existingVisit.identity.id)}</strong></div>
+          <p>درخواست شما در وضعیت نمایشی ثبت شده و در اجرای واقعی می‌تواند به سیستم شعب و زمان‌بندی NOOR متصل شود.</p>
+        </header>
+        <section class="d8-confirmation lab-visit-confirmation" aria-label="جزئیات درخواست مراجعه">
+          <div><span>شناسه درخواست</span><strong>${escapeHtml(existingVisit.identity.id)}</strong></div>
           <div><span>شعبه</span><strong>${escapeHtml(branch.name)}</strong></div>
           <div><span>زمان مراجعه</span><strong>${escapeHtml(formatSlot(existingVisit.scheduledAt))}</strong></div>
           <div><span>وضعیت</span><strong>درخواست ثبت شد</strong></div>
         </section>
-        <div class="route-actions">
+        <nav class="lab-visit-actions" aria-label="گام بعدی">
           <a class="button button-primary" href="/shopper" data-app-link>ادامه در Personal Shopper</a>
           <a class="button button-secondary" href="/branches" data-app-link>انتخاب شعبه دیگر</a>
-        </div>
+        </nav>
       </main>
     `;
     return;
@@ -62,37 +62,40 @@ export function renderVisit(
 
   const slots = createDemoVisitSlots();
   root.innerHTML = `
-    <main class="d8-page" id="main-content" aria-labelledby="visit-title">
-      <section class="d8-intro">
-        <p class="eyebrow">IN-PERSON VISIT</p>
+    <main class="d8-page lab-visit-page" id="main-content" aria-labelledby="visit-title">
+      <header class="lab-visit-head">
+        <p class="eyebrow" dir="ltr">IN-PERSON VISIT</p>
         <h1 id="visit-title">زمان مراجعه را انتخاب کنید.</h1>
         <p>برای اجرای Demo، یک شعبه و زمان پیشنهادی انتخاب کنید. درخواست به حساب مستقل Personal Shopper متصل می‌شود.</p>
-      </section>
-      ${accountEmail ? "" : '<p class="d8-form-error">برای ثبت درخواست، ابتدا وارد حساب مستقل Personal Shopper شوید.</p>'}
-      ${errorMessage ? `<p class="d8-form-error">${escapeHtml(errorMessage)}</p>` : ""}
-      <form class="d8-form" data-visit-form>
-        <label>شعبه
-          <select name="branchId" required>
+      </header>
+      <p class="lab-visit-note" role="note">زمان‌های نمایش‌داده‌شده نمونه هستند و به سامانه رزرو واقعی شعب نور متصل نیستند.</p>
+      ${accountEmail ? "" : '<p class="d8-form-error lab-visit-error" role="alert">برای ثبت درخواست، ابتدا وارد حساب مستقل Personal Shopper شوید.</p>'}
+      ${errorMessage ? `<p class="d8-form-error lab-visit-error" role="alert">${escapeHtml(errorMessage)}</p>` : ""}
+      <form class="d8-form lab-visit-form" data-visit-form>
+        <section class="lab-visit-form-section">
+          <p class="eyebrow">01 · انتخاب شعبه و زمان</p>
+          <label for="visit-branch">شعبه</label>
+          <select id="visit-branch" name="branchId" required>
             <option value="">انتخاب شعبه</option>
             ${branches.map((item) => `<option value="${escapeHtml(item.identity.id)}" ${item.identity.id === selectedBranchId ? "selected" : ""}>${escapeHtml(item.name)}</option>`).join("")}
           </select>
-        </label>
-        <label>زمان مراجعه
-          <select name="scheduledAt" required>
+          <label for="visit-time">زمان مراجعه</label>
+          <select id="visit-time" name="scheduledAt" required>
             <option value="">انتخاب زمان</option>
             ${slots.map((slot) => `<option value="${slot.toISOString()}">${escapeHtml(formatSlot(slot))}</option>`).join("")}
           </select>
-        </label>
-        <label>هدف مراجعه
-          <select name="purpose">
+        </section>
+        <section class="lab-visit-form-section">
+          <p class="eyebrow">02 · هدف مراجعه</p>
+          <label for="visit-purpose">هدف مراجعه</label>
+          <select id="visit-purpose" name="purpose">
             <option value="consultation">مشاوره</option>
             <option value="fitting">فیتینگ</option>
           </select>
-        </label>
-        <label>یادداشت
-          <textarea name="notes" rows="4" maxlength="500" placeholder="اختیاری"></textarea>
-        </label>
-        <button class="button button-primary" type="submit" ${accountEmail ? "" : "disabled"}>ثبت درخواست مراجعه</button>
+          <label for="visit-notes">یادداشت</label>
+          <textarea id="visit-notes" name="notes" rows="4" maxlength="500" placeholder="اختیاری"></textarea>
+        </section>
+        <button class="button button-primary lab-visit-submit" type="submit" ${accountEmail ? "" : "disabled"}>ثبت درخواست مراجعه</button>
       </form>
     </main>
   `;
