@@ -1745,12 +1745,26 @@ h1 { margin: 0; color: var(--ink); font-family: "Cormorant Garamond", Georgia, "
   .app-header-lab .app-header-meta { display: flex; }
   .app-header-lab .mobile-nav { display: block; }
   .app-header-lab .mobile-nav summary {
-    padding: .55rem .85rem;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    place-items: center;
+    overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: .25rem;
     background: transparent;
+    color: transparent;
+    font-size: 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  .app-header-lab .mobile-nav summary::-webkit-details-marker { display: none; }
+  .app-header-lab .mobile-nav summary::before {
+    content: "☰";
     color: var(--ink);
-    font-size: .85rem;
+    font-size: 1.2rem;
+    line-height: 1;
   }
   .app-header-lab .mobile-nav nav {
     inset-inline-end: 0;
