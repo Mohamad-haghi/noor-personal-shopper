@@ -63,15 +63,15 @@ function card(product: Product, recommendation: Recommendation, index: number): 
 
   return `
     <li class="lab-recommendation-item">
-      <article class="lab-recommendation-card">
+      <article class="lab-recommendation-card recommendation-card">
         <a class="lab-recommendation-media" href="${productHref}" data-app-link aria-label="مشاهده جزئیات ${escapeHtml(product.name)}">
           ${productImage(product)}
           <span class="lab-recommendation-rank" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
         </a>
-        <div class="lab-recommendation-content">
+        <div class="lab-recommendation-content recommendation-card-body">
           <div class="lab-recommendation-product-heading">
             <div>
-              <p class="eyebrow">پیشنهاد ${index + 1}</p>
+              <p class="eyebrow">پیشنهاد ${index + 1} · ${formatRecommendationScoreLabel(recommendation.score.overall)}</p>
               <h2>${escapeHtml(product.name)}</h2>
             </div>
             <div class="lab-recommendation-score" aria-label="امتیاز تطابق ${score} از ۱۰۰">
