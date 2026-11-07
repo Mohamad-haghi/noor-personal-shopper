@@ -77,16 +77,18 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(root.innerHTML).toContain('aria-pressed="true"');
   });
 
-  it("keeps responsive, reduced-motion and uncropped image rules in the dedicated Hero stylesheet", () => {
-    const css = readFileSync(new URL("../src/ui/hero.css", import.meta.url), "utf8");
-    expect(css).toMatch(/\.hero-noor\s*\{[^}]*overflow:\s*hidden/s);
+  it("uses the Lab's single uninterrupted hero surface and in-flow image-first composition", () => {
+    const css = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+    const heroCss = readFileSync(new URL("../src/ui/hero.css", import.meta.url), "utf8");
+
+    expect(css).toMatch(/\.lab-home \.hero-stage\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;/s);
+    expect(css).toMatch(/\.lab-home \.hero-image\s*\{[^}]*order:\s*0;/s);
+    expect(css).toMatch(/\.lab-home \.hero-content\s*\{[^}]*position:\s*relative;[^}]*order:\s*1;/s);
+    expect(css).toMatch(/\.lab-home \.hero-content\s*\{[^}]*background:\s*transparent;/s);
     expect(css).toContain("@media (max-width: 767px)");
-    expect(css).toContain("order: 0");
-    expect(css).toContain("order: 1");
-    expect(css).toMatch(/\.hero-noor \.hero-image\s*\{[^}]*order:\s*0/s);
-    expect(css).toMatch(/\.hero-noor \.hero-content\s*\{[^}]*order:\s*1/s);
-    expect(css).toContain("position: relative");
+    expect(heroCss).not.toContain(".hero-noor .hero-stage");
+    expect(heroCss).not.toContain(".hero-noor .hero-content");
+    expect(css).toMatch(/\.lab-home \.hero-image\s*\{[^}]*object-fit:\s*contain/s);
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
-    expect(css).toMatch(/\.hero-noor \.hero-image\s*\{[^}]*object-fit:\s*contain/s);
   });
 });
