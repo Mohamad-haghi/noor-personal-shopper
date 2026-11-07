@@ -1708,3 +1708,84 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
   .lab-home-cta p { margin: .75rem auto 1.5rem; font-size: .9rem; }
   .lab-home-cta .button { width: 100%; max-width: 22rem; }
 }
+
+/* Catalog route finish — keep the photograph dominant and controls secondary. */
+.app-shell-lab .lab-catalog-page .products-intro {
+  max-width: 54rem;
+  margin-bottom: 2.2rem;
+}
+.app-shell-lab .lab-catalog-page .products-intro > p:not(.eyebrow) {
+  max-width: 46rem;
+  font-size: .96rem;
+  line-height: 2;
+}
+.app-shell-lab .lab-catalog-page .demo-truth-notice {
+  align-items: flex-start;
+  gap: .7rem 1rem;
+  padding: .9rem 0;
+  border-inline: 0;
+  border-bottom: 0;
+  font-size: .82rem;
+}
+.app-shell-lab .lab-catalog-page .demo-truth-notice strong {
+  white-space: nowrap;
+  font-weight: 550;
+}
+.app-shell-lab .lab-catalog-page .catalog-shopper-cta .button {
+  min-height: 2.7rem;
+  padding-inline: 1.2rem;
+}
+.app-shell-lab .lab-catalog-page .lab-catalog-filters {
+  align-items: center;
+  gap: .55rem;
+  margin-top: 1.8rem;
+  padding-top: 1.15rem;
+}
+.app-shell-lab .lab-catalog-page .lab-filter-chip {
+  min-height: 2.45rem;
+  padding-inline: 1.05rem;
+  font-size: .84rem;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+.app-shell-lab .lab-catalog-page .lab-filter-chip:focus-visible,
+.app-shell-lab .lab-catalog-page .product-card a:focus-visible,
+.app-shell-lab .lab-catalog-page .product-card button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.app-shell-lab .lab-catalog-page .product-grid {
+  column-gap: clamp(1rem, 2.4vw, 2rem);
+  row-gap: clamp(2.5rem, 4vw, 3.5rem);
+}
+.app-shell-lab .lab-catalog-page .product-card-media img {
+  transform: scale(1.055);
+  transition: transform 420ms ease;
+}
+.app-shell-lab .lab-catalog-page .product-card:hover .product-card-media img {
+  transform: scale(1.09);
+}
+.app-shell-lab .lab-catalog-page .product-card-body h2 {
+  font-size: clamp(1rem, 1.3vw, 1.12rem);
+  line-height: 1.65;
+}
+.app-shell-lab .lab-catalog-page .product-card-actions {
+  row-gap: .35rem;
+}
+@media (max-width: 820px) {
+  .app-shell-lab .lab-catalog-page .products-page { padding-top: 3rem; }
+  .app-shell-lab .lab-catalog-page .product-grid { column-gap: 1.1rem; }
+}
+@media (max-width: 480px) {
+  .app-shell-lab .lab-catalog-page .products-intro { margin-bottom: 1.8rem; }
+  .app-shell-lab .lab-catalog-page .demo-truth-notice { flex-direction: column; gap: .25rem; }
+  .app-shell-lab .lab-catalog-page .lab-catalog-filters { gap: .45rem; }
+  .app-shell-lab .lab-catalog-page .catalog-count { width: 100%; margin: .35rem 0 0; }
+  .app-shell-lab .lab-catalog-page .product-card-media { aspect-ratio: 4 / 3; }
+  .app-shell-lab .lab-catalog-page .product-card-actions { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-lab .lab-catalog-page .lab-filter-chip,
+  .app-shell-lab .lab-catalog-page .product-card-media img { transition: none; }
+  .app-shell-lab .lab-catalog-page .product-card-media img,
+  .app-shell-lab .lab-catalog-page .product-card:hover .product-card-media img { transform: none; }
+}
