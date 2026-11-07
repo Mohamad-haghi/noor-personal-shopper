@@ -4506,37 +4506,53 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
   height: 2px;
 }
 .lab-home .lab-curated-section {
-  width: 100%;
-  max-width: none;
-  margin-inline: 0;
+  width: min(100% - 2.5rem, 76rem);
+  max-width: 76rem;
+  margin: 7rem auto 0;
 }
 .lab-home .lab-curated-section .lab-section-heading {
-  width: min(100% - 2.5rem, 76rem);
+  width: 100%;
   margin-inline: auto;
 }
 .lab-home .lab-curated-section .lab-curated-grid {
+  display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
+  gap: 3rem 1.5rem;
+  width: 100%;
+  margin: 2.5rem auto 0;
 }
-.lab-home .lab-curated-section .lab-curated-item,
-.lab-home .lab-curated-section .lab-curated-image {
+.lab-home .lab-curated-section .lab-curated-item {
+  position: relative;
+  min-width: 0;
   width: 100%;
 }
 .lab-home .lab-curated-section .lab-curated-image {
-  aspect-ratio: 16 / 9;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #fff;
 }
 .lab-home .lab-curated-section .lab-curated-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  transform: scale(1.1);
+  transform: none;
+  transition: transform 700ms ease;
 }
 .lab-home .lab-curated-section .lab-curated-item a:hover .lab-curated-image img,
 .lab-home .lab-curated-section .lab-curated-item a:focus-visible .lab-curated-image img {
-  transform: scale(1.15);
+  transform: scale(1.03);
 }
-@media (max-width: 760px) {
-  .lab-home .lab-curated-section .lab-curated-image img { transform: scale(1.07); }
+@media (min-width: 640px) {
+  .lab-home .lab-curated-section .lab-curated-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .lab-home .lab-curated-section .lab-curated-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 .lab-home .lab-curated-section .lab-curated-details {
   display: flex;
