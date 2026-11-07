@@ -115,6 +115,12 @@ jobs:
                 failures.push(`${viewport.name}/${route.name}: ${imageReport.broken.length} image(s) failed to load`);
               }
 
+              // Clear any browser-restored/programmatic focus before capturing the default state.
+              // Keyboard focus remains available in the actual app via :focus-visible.
+              await page.evaluate(() => {
+                if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+              });
+
               // Chromium's fullPage capture can pin position:sticky headers at
               // an arbitrary scroll offset. Disable stickiness only in the
               // screenshot document so the real app remains untouched.
