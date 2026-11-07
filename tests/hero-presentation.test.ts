@@ -90,6 +90,8 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(css).toContain("position: absolute;");
     expect(css).toContain("inset: 0 auto 0 0;");
     expect(css).toContain("width: min(47%, 39rem);");
+    expect(css).toContain("--h-ivory: oklch(0.945 0.012 82);");
+    expect(css).toContain('font-family: "Vazirmatn", Tahoma, sans-serif;');
     expect(css).toContain("@media (max-width: 767px)");
     expect(css).toContain("inset: auto 0 0;");
     expect(css).toContain(".lab-home .hero-noor .hero-cta-primary,");
