@@ -35,7 +35,7 @@ describe("Lab-aligned search presentation", () => {
     expect(root.innerHTML).toContain("Ray-Ban RB3025");
     expect(root.innerHTML).toContain("فرم فریم با عبارت جست‌وجو هماهنگ است");
     expect(root.innerHTML).toContain('href="/products/frame-1"');
-    expect(root.innerHTML).toContain('href="/shopper?from=search&amp;query=عینک%20آفتابی"');
+    expect(root.innerHTML).toContain('href="/shopper?from=search&amp;query=' + encodeURIComponent("عینک آفتابی") + '"');
   });
 
   it("renders the no-results state and consultation route", () => {
