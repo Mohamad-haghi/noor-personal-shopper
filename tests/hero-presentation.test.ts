@@ -28,10 +28,14 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(root.innerHTML).not.toContain("Ray-Ban RB3025 181/71");
   });
 
-
-  it("uses the same three curated homepage models as the Lab instead of the first feed entries", async () => {
+  it("renders the three curated homepage models from the canonical NOOR demo catalog IDs", async () => {
     const hero = await new DemoHeroProvider().getHeroContent();
-    const ids = ["prada-pr51yv-04q1o1", "ray-ban-rb3025-181-71", "oakley-oo9318-02-34", "persol-po0649-95-31"];
+    const ids = [
+      "noor-demo-012-prada-pr51yv-04q1o1",
+      "noor-demo-001-ray-ban-rb3025-181-71",
+      "noor-demo-003-oakley-oo9318-02-34",
+      "noor-demo-002-persol-po0649-95-31",
+    ];
     const products = ids.map((id) => ({
       identity: { id },
       name: id,
@@ -41,13 +45,14 @@ describe("approved Lab hero presentation in the NOOR application", () => {
 
     renderHero(root, hero!, "/shopper", products);
 
-    const persol = root.innerHTML.indexOf("persol-po0649-95-31.jpg");
-    const oakley = root.innerHTML.indexOf("oakley-oo9318-02-34.jpg");
-    const prada = root.innerHTML.indexOf("prada-pr51yv-04q1o1.jpg");
+    const persol = root.innerHTML.indexOf("noor-demo-002-persol-po0649-95-31.jpg");
+    const oakley = root.innerHTML.indexOf("noor-demo-003-oakley-oo9318-02-34.jpg");
+    const prada = root.innerHTML.indexOf("noor-demo-012-prada-pr51yv-04q1o1.jpg");
     expect(persol).toBeGreaterThan(-1);
     expect(oakley).toBeGreaterThan(persol);
     expect(prada).toBeGreaterThan(oakley);
-    expect(root.innerHTML).not.toContain("ray-ban-rb3025-181-71.jpg");
+    expect(root.innerHTML).not.toContain("noor-demo-001-ray-ban-rb3025-181-71.jpg");
+    expect(root.innerHTML).not.toContain("محصولی برای نمایش ثبت نشده است");
   });
 
   it("keeps responsive, reduced-motion and uncropped image rules in the dedicated Hero stylesheet", () => {
