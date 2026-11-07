@@ -97,5 +97,5 @@ describe("approved Lab hero presentation in the NOOR application", () => {
     expect(heroCss).not.toContain(".hero-noor .hero-stage");
     expect(heroCss).not.toContain(".hero-noor .hero-content");
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");
-  });;
+  });
 });
