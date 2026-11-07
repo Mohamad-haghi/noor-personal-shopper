@@ -2831,3 +2831,91 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
     animation-iteration-count: 1 !important;
   }
 }
+
+/* NOOR comparison route — quiet editorial matrix; comparison data and actions remain unchanged. */
+.app-shell-header .d5-compare-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: .25rem;
+  background: var(--surface);
+  overscroll-behavior-inline: contain;
+}
+.app-shell-header .d5-compare-table {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: collapse;
+  font-size: .86rem;
+  text-align: start;
+}
+.app-shell-header .d5-compare-table th,
+.app-shell-header .d5-compare-table td {
+  min-width: 9rem;
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.8;
+  text-align: start;
+  vertical-align: top;
+}
+.app-shell-header .d5-compare-table thead th {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 88%, var(--accent) 12%);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: .96rem;
+  font-weight: 400;
+}
+.app-shell-header .d5-compare-table thead th:first-child,
+.app-shell-header .d5-compare-table tbody th {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  min-width: 7rem;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: .78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.app-shell-header .d5-compare-table tbody tr:last-child th,
+.app-shell-header .d5-compare-table tbody tr:last-child td { border-bottom: 0; }
+.app-shell-header .d5-compare-table tbody td {
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.app-shell-header .d5-compare-purchase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 1rem;
+}
+.app-shell-header .d5-compare-product-actions {
+  display: grid;
+  align-content: start;
+  gap: .55rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.app-shell-header .d5-compare-product-actions .button {
+  display: flex;
+  min-width: 0;
+  min-height: 2.8rem;
+  align-items: center;
+  justify-content: center;
+  padding: .65rem;
+  border-radius: .2rem;
+  font-size: .78rem;
+  line-height: 1.65;
+  text-align: center;
+}
+@media (max-width: 900px) {
+  .app-shell-header .d5-compare-purchase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .app-shell-header .d5-compare-table { min-width: 36rem; }
+  .app-shell-header .d5-compare-table th,
+  .app-shell-header .d5-compare-table td { padding: .8rem .75rem; }
+  .app-shell-header .d5-compare-purchase-grid { grid-template-columns: 1fr; }
+  .app-shell-header .d5-compare-product-actions { padding: .85rem; }
+}
