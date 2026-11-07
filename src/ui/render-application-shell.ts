@@ -753,14 +753,14 @@ export async function renderApplicationShell(
             <button class="mobile-nav-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="mobile-navigation-panel">
               <span></span><span></span><span></span>
             </button>
-            <button class="mobile-nav-backdrop" type="button" aria-label="بستن منو" tabindex="-1" hidden></button>
-            <nav id="mobile-navigation-panel" class="mobile-nav-panel" aria-label="ناوبری موبایل" hidden>
-              <button class="mobile-nav-close" type="button" aria-label="بستن منو">×</button>
-              <ul>${mobileNavigation}</ul>
-            </nav>
           </div>
         </div>
       </header>
+      <button class="mobile-nav-backdrop" type="button" aria-label="بستن منو" tabindex="-1" hidden></button>
+      <nav id="mobile-navigation-panel" class="mobile-nav-panel" aria-label="ناوبری موبایل" hidden>
+        <button class="mobile-nav-close" type="button" aria-label="بستن منو">×</button>
+        <ul>${mobileNavigation}</ul>
+      </nav>
       <div id="route-view" class="route-view" aria-live="polite"></div>
       <footer class="app-footer">
         ${isLabExperienceRoute(match)
@@ -772,9 +772,11 @@ export async function renderApplicationShell(
 
   const mobileMenu = root.querySelector<HTMLElement>(".mobile-nav");
   const menuToggle = mobileMenu?.querySelector<HTMLButtonElement>(".mobile-nav-toggle");
-  const menuPanel = mobileMenu?.querySelector<HTMLElement>(".mobile-nav-panel");
-  const menuBackdrop = mobileMenu?.querySelector<HTMLButtonElement>(".mobile-nav-backdrop");
-  const menuClose = mobileMenu?.querySelector<HTMLButtonElement>(".mobile-nav-close");
+  // Keep the drawer and its backdrop outside the header so fixed positioning
+  // covers the complete viewport on mobile browsers.
+  const menuPanel = root.querySelector<HTMLElement>(".mobile-nav-panel");
+  const menuBackdrop = root.querySelector<HTMLButtonElement>(".mobile-nav-backdrop");
+  const menuClose = root.querySelector<HTMLButtonElement>(".mobile-nav-close");
   const setMobileMenuOpen = (open: boolean): void => {
     if (!menuToggle || !menuPanel || !menuBackdrop) return;
     menuToggle.setAttribute("aria-expanded", String(open));
@@ -788,6 +790,15 @@ export async function renderApplicationShell(
   menuToggle?.addEventListener("click", () => setMobileMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true"));
   menuClose?.addEventListener("click", () => setMobileMenuOpen(false));
   menuBackdrop?.addEventListener("click", () => setMobileMenuOpen(false));
+  // A capture-phase document listener also dismisses the drawer if a browser,
+  // stacking context, or embedded page prevents the backdrop from receiving taps.
+  document.addEventListener("pointerdown", (event) => {
+    if (menuToggle?.getAttribute("aria-expanded") !== "true") return;
+    const target = event.target;
+    if (target instanceof Node && !menuPanel?.contains(target) && !menuToggle?.contains(target)) {
+      setMobileMenuOpen(false);
+    }
+  }, true);
   menuPanel?.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => link.addEventListener("click", () => setMobileMenuOpen(false)));
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && menuToggle?.getAttribute("aria-expanded") === "true") setMobileMenuOpen(false);
