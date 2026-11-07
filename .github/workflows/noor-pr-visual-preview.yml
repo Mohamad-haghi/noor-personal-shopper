@@ -95,8 +95,6 @@ jobs:
                 continue;
               }
 
-              // Full-page screenshots do not reliably trigger native lazy images.
-              // Visit each scroll position, eagerly request images, and wait for decode.
               const imageReport = await page.evaluate(async () => {
                 const pageHeight = document.documentElement.scrollHeight;
                 const step = Math.max(window.innerHeight - 80, 320);
@@ -116,6 +114,17 @@ jobs:
               if (imageReport.broken.length) {
                 failures.push(`${viewport.name}/${route.name}: ${imageReport.broken.length} image(s) failed to load`);
               }
+
+              // Chromium's fullPage capture can pin position:sticky headers at
+              // an arbitrary scroll offset. Disable stickiness only in the
+              // screenshot document so the real app remains untouched.
+              await page.addStyleTag({ content: `
+                .app-header, .app-header-lab {
+                  position: static !important;
+                  inset: auto !important;
+                  transform: none !important;
+                }
+              ` });
               await page.screenshot({
                 path: `artifacts/noor-pr-preview/${viewport.name}-${route.name}.png`,
                 fullPage: true,
