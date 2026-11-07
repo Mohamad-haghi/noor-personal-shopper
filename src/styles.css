@@ -648,6 +648,40 @@ h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", seri
 @media(max-width:720px){.header-shopper-cta{max-width:9.5rem;min-height:2.35rem;padding:.4rem .65rem;font-size:.76rem}.manager-stat-grid{grid-template-columns:1fr}.manager-status-list div{flex-direction:column;gap:.2rem}.manager-status-list dd{text-align:start}}
 
 
+/* Lab-aligned manager view — evidence coverage first, demo metrics second. */
+.lab-manager-page { width: min(100%, 72rem); margin: 0 auto; padding: 3.5rem 1.25rem 5.5rem; }
+.lab-manager-head { max-width: 58rem; margin: 0 auto 1.5rem; }
+.lab-manager-head h1 { margin: .75rem 0 1rem; font-size: clamp(2.2rem, 5vw, 3.75rem); font-weight: 400; line-height: 1.2; }
+.lab-manager-head > p:last-child { max-width: 46rem; margin: 0; color: var(--muted); line-height: 2; }
+.lab-manager-note { max-width: 58rem; margin: 0 auto 2rem; padding: .9rem 1rem; border: 1px solid var(--line); border-radius: .375rem; background: var(--surface); }
+.lab-manager-coverage { max-width: 58rem; margin: 0 auto 1.5rem; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: .375rem; background: var(--surface); }
+.lab-manager-section-head h2 { margin: .3rem 0 .45rem; font-size: 1.25rem; font-weight: 500; }
+.lab-manager-section-head > p:last-child { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.8; }
+.lab-manager-coverage-list { display: grid; gap: 1.4rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+.lab-manager-coverage-row > div:first-child { display: flex; justify-content: space-between; gap: 1rem; color: var(--ink); font-size: .88rem; }
+.lab-manager-coverage-count { color: var(--muted); font-size: .8rem; }
+.lab-manager-coverage-track { height: .3rem; margin-top: .55rem; overflow: hidden; border-radius: 999px; background: var(--surface-soft); }
+.lab-manager-coverage-track span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.lab-manager-stat-grid { max-width: 58rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 1.5rem auto; gap: .75rem; }
+.lab-manager-stat { border-radius: .375rem; background: var(--surface); box-shadow: none; }
+.lab-manager-stat strong { font-family: Georgia, "Times New Roman", serif; font-size: 2rem; font-weight: 400; }
+.lab-manager-panel { max-width: 58rem; margin: 1rem auto; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: .375rem; background: var(--surface); }
+.lab-manager-panel h2 { font-size: 1.15rem; font-weight: 500; }
+.lab-manager-panel li { color: var(--muted); font-size: .88rem; line-height: 1.9; }
+.lab-manager-panel li strong { color: var(--ink); }
+.lab-manager-status-list div { padding: .75rem 0; border-top: 1px solid var(--line); }
+.lab-manager-status-list dt { font-size: .85rem; }
+.lab-manager-status-list dd { font-size: .85rem; font-weight: 500; }
+.lab-manager-footnote { max-width: 58rem; margin: 1rem auto 0; color: var(--muted); font-size: .82rem; line-height: 1.9; }
+.lab-manager-actions { max-width: 58rem; margin: 1.5rem auto 0; }
+@media (max-width: 760px) {
+  .lab-manager-page { padding: 2.5rem 1rem 4rem; }
+  .lab-manager-stat-grid { grid-template-columns: 1fr; }
+  .lab-manager-actions { flex-direction: column; align-items: stretch; }
+  .lab-manager-actions .button { width: 100%; }
+}
+
+
 /* Demo image fit polish: keep the complete eyewear photo visible inside its frame. */
 .product-card-media img,
 .product-detail-media img {
