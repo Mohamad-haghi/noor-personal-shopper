@@ -62,6 +62,14 @@ describe("Lab-aligned in-person visit presentation", () => {
     expect(root.innerHTML).toContain('disabled');
   });
 
+  it("provides a direct account route when visit submission is disabled", () => {
+    const root = { innerHTML: "" } as HTMLElement;
+    renderVisit(root, [makeBranch()], null, "branch-1", null);
+
+    expect(root.innerHTML).toContain('href="/account"');
+    expect(root.innerHTML).toContain("ورود یا ساخت حساب");
+  });
+
   it("renders a visit confirmation with the selected branch and request id", () => {
     const root = { innerHTML: "" } as HTMLElement;
     renderVisit(root, [makeBranch()], "demo@example.com", "branch-1", makeVisit());
