@@ -335,7 +335,7 @@ try {
       throw new Error("noor_catalog_responsive_check_failed:" + viewport.name + ":" + JSON.stringify(catalog));
     }
 
-    await page.locator(".product-card h2 a").first().click();
+    await page.locator(".product-card-link[href^=\"/products/\"]").first().click();
     await page.locator(".product-detail-page").waitFor({ timeout: 30_000 });
     const detail = await page.evaluate(() => ({
       title: document.querySelector("#product-title")?.textContent?.trim() ?? null,
