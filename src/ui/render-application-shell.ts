@@ -1015,3 +1015,63 @@ export async function renderApplicationShell(
       const savedChoices = await choicesService.listChoices();
       const favoriteVariantIds = new Set(
         savedChoices.filter((choice) => choice.tags.includes("favorite")).map((choice) => choice.variantId.id),
+      );
+      renderHero(routeView, hero, heroDestination, products, variantsByProduct, favoriteVariantIds);
+      await attachHomeFavoriteActions(routeView, catalogService, choicesService);
+    } else {
+      renderFoundationStatus(routeView, status);
+    }
+  } else if (match?.route.path === "/manager") {
+    const products = await catalogService.listProducts();
+    const variants = (await Promise.all(products.map((product) => catalogService.listVariants(product.identity)))).flat();
+    const offers: CommerceOffer[] = [];
+    for (const variant of variants) {
+      const offer = await commerceService.getOffer(variant.identity);
+      if (offer) offers.push(offer);
+    }
+    renderManagerOverview(routeView, { products, variants, offers });
+  } else if (match?.route.path === "/search") {
+    await renderSearchRoute(routeView, searchService, catalogService);
+  } else if (match?.route.path === "/products" || match?.route.path === "/catalog") {
+    await renderProductsRoute(routeView, catalogService, commerceService);
+  } else if (match?.route.path === "/products/:id" || match?.route.path === "/product/:id") {
+    await renderProductDetailRoute(routeView, catalogService, commerceService, match.params.id ?? null);
+  } else if (match?.route.path === "/how-it-works") {
+    renderHowItWorks(routeView);
+  } else if (match?.route.path === "/profile") {
+    renderSelectionProfile(routeView, shopperFeature);
+  } else if (match?.route.path === "/shopper") {
+    const requestedStep = Number(new URLSearchParams(window.location.search).get("step"));
+    if (Number.isInteger(requestedStep) && requestedStep > 0) shopperFeature.goToStep(requestedStep);
+    renderShopper(routeView, shopperFeature);
+  } else if (match?.route.path === "/recommendations") {
+    await renderRecommendationRoute(routeView, shopperFeature, recommendationsService, choicesService);
+  } else if (match?.route.path === "/choices") {
+    await renderChoicesRoute(routeView, catalogService, choicesService);
+  } else if (match?.route.path === "/compare") {
+    await renderCompareRoute(routeView, catalogService, choicesService, compareService, digitalSalesComparisonBridge, digitalSalesPurchaseHandoffBridge);
+  } else if (match?.route.path === "/account") {
+    await renderAccountRoute(routeView, accountService);
+  } else if (match?.route.path === "/cart") {
+    await renderCartRoute(routeView, cartService, catalogService);
+  } else if (match?.route.path === "/checkout") {
+    await renderCheckoutRoute(routeView, cartService, accountService, checkoutService, paymentService, orderService, confirmationService, branchService);
+  } else if (match?.route.path === "/branches") {
+    await renderBranchesRoute(routeView, branchService);
+  } else if (match?.route.path === "/visit") {
+    await renderVisitRoute(routeView, branchService, visitService, accountService);
+  } else if (match?.route.path === "/confirmation/:id") {
+    const confirmationId = match.params.id ? { id: match.params.id } : null;
+    const confirmation = confirmationId ? await confirmationService.getConfirmation(confirmationId) : null;
+    const order = confirmation ? await orderService.getOrder(confirmation.orderId) : null;
+    renderConfirmation(routeView, confirmation, order);
+  } else {
+    renderRoutePlaceholder(routeView, match);
+  }
+
+  await attachProductFavoriteActions(routeView, catalogService, choicesService);
+  await attachProductChoiceActions(routeView, catalogService, choicesService);
+  if (match?.route.path !== "/cart" && match?.route.path !== "/confirmation/:id" && match?.route.path !== "/branches" && match?.route.path !== "/visit") {
+    await attachPurchaseActions(routeView, commerceService, cartService, digitalSalesPurchaseHandoffBridge);
+  }
+}
