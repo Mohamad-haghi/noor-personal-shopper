@@ -1,4 +1,4 @@
-import type { Comparison, Product } from "../domain";
+import type { Comparison, Product, SavedChoice } from "../domain";
 import { productFavoriteControl } from "./product-favorite-control";
 
 function escapeHtml(value: string): string {
@@ -39,15 +39,45 @@ function dimensionLabel(product: Product): string {
     : "اطلاعات ثبت نشده";
 }
 
+
+function renderFavoriteSuggestions(
+  favoriteChoices: readonly SavedChoice[],
+  productByVariant: ReadonlyMap<string, Product>,
+): string {
+  const seen = new Set<string>();
+  const suggestions = favoriteChoices.filter((choice) => {
+    const productId = choice.variantId.productId.id;
+    if (seen.has(productId) || !productByVariant.has(productId)) return false;
+    seen.add(productId);
+    return true;
+  });
+  if (suggestions.length === 0) return "";
+
+  return `
+    <section class="lab-compare-favorites" aria-labelledby="compare-favorites-title">
+      <p id="compare-favorites-title">افزودن از علاقه‌مندی‌های شما:</p>
+      <div class="lab-compare-favorite-links">
+        ${suggestions.map((choice) => {
+          const product = productByVariant.get(choice.variantId.productId.id);
+          if (!product) return "";
+          return `<button class="lab-compare-favorite-link" type="button" data-add-favorite-to-compare="${escapeHtml(choice.identity.id)}" aria-label="افزودن ${escapeHtml(product.name)} به مقایسه">+ ${escapeHtml(product.name)}</button>`;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
 export function renderCompare(
   routeView: HTMLElement,
   comparison: Comparison | null,
   products: readonly Product[],
+  favoriteChoices: readonly SavedChoice[] = [],
 ): void {
   const productByVariant = new Map(products.map((product) => [product.identity.id, product]));
   const columns = comparison
     ? comparison.items.map((item) => productByVariant.get(item.variantId.productId.id)).filter((product): product is Product => Boolean(product))
     : [];
+  const favoriteSuggestions = renderFavoriteSuggestions(favoriteChoices, productByVariant);
 
   if (!comparison || comparison.items.length < 2 || columns.length < 2) {
     const hasUnmappedComparison = Boolean(comparison && comparison.items.length >= 2);
@@ -63,6 +93,7 @@ export function renderCompare(
           <p>${hasUnmappedComparison ? "اطلاعات یکی از محصولات انتخاب‌شده در کاتالوگ فعلی پیدا نشد." : "از صفحه محصولات یا پیشنهادها، حداقل دو فریم را به مقایسه اضافه کنید."}</p>
           <a class="button button-primary" href="/products" data-app-link>مشاهده مجموعه</a>
         </section>
+        ${favoriteSuggestions}
       </main>
     `;
     return;
@@ -123,6 +154,7 @@ export function renderCompare(
           </tbody>
         </table>
       </div>
+      ${favoriteSuggestions}
       <p class="lab-compare-note" role="note">قیمت، موجودی واقعی و امتیاز کاربران در این نسخه نمایشی ارائه نمی‌شوند. اطلاعات نامشخص ساخته یا حدس زده نمی‌شوند.</p>
       <nav class="lab-compare-footer-actions" aria-label="ادامه مسیر انتخاب">
         <a class="button button-primary" href="/choices" data-app-link>ویرایش انتخاب‌ها</a>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Comparison, Product } from "../src/domain";
+import type { Comparison, Product, SavedChoice } from "../src/domain";
 import { renderCompare } from "../src/ui/render-compare";
 
 function makeProduct(id: string, name: string, overrides: Record<string, unknown> = {}): Product {
@@ -102,6 +102,28 @@ describe("Lab-aligned comparison presentation", () => {
     expect(root.innerHTML).toContain("فهرست مقایسه خالی است");
     expect(root.innerHTML).toContain('href="/products"');
     expect(root.innerHTML).not.toContain("data-add-to-cart");
+  });
+
+
+  it("offers saved favorites below the empty state and makes each one addable to comparison", () => {
+    const root = { innerHTML: "" } as HTMLElement;
+    const product = makeProduct("frame-1", "Ray-Ban RB3025");
+    const favorite = {
+      identity: { id: "favorite-frame-1" },
+      variantId: { id: "variant-1", productId: { id: "frame-1", source: "demo" } },
+      status: "saved",
+      notes: null,
+      tags: ["favorite"],
+      createdAt: new Date("2026-01-01T00:00:00Z"),
+      updatedAt: new Date("2026-01-01T00:00:00Z"),
+    } as unknown as SavedChoice;
+
+    renderCompare(root, null, [product], [favorite]);
+
+    expect(root.innerHTML).toContain("فهرست مقایسه خالی است");
+    expect(root.innerHTML).toContain("افزودن از علاقه‌مندی‌های شما:");
+    expect(root.innerHTML).toContain('data-add-favorite-to-compare="favorite-frame-1"');
+    expect(root.innerHTML).toContain("Ray-Ban RB3025");
   });
 
   it("escapes product-provided text in comparison headings and image alt text", () => {
