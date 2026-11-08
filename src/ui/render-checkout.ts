@@ -1,4 +1,4 @@
-import type { Account, Cart, Order, Payment } from "../domain";
+import type { Account, Branch, Cart, Order, Payment } from "../domain";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#039;");
@@ -14,6 +14,7 @@ export function renderCheckout(
   account: Account | null,
   order: Order | null = null,
   errorMessage: string | null = null,
+  branches: readonly Branch[] = [],
 ): void {
   if (order) {
     routeView.innerHTML = `
@@ -109,9 +110,15 @@ export function renderCheckout(
             <input id="checkout-postal-code" name="postalCode" required inputmode="numeric" autocomplete="postal-code">
           </div>
           <div class="d7-pickup-fields lab-checkout-pickup-fields" data-pickup-fields hidden>
-            <label for="checkout-branch-id">شناسه شعبه</label>
-            <input id="checkout-branch-id" name="branchId" data-branch-id>
-            <p>در مرحله اتصال واقعی، شعبه از سامانه شعب نور انتخاب خواهد شد. در این Demo شناسه معتبر شعبه لازم است.</p>
+            <label for="checkout-branch-id">شعبهٔ تحویل حضوری</label>
+            <select id="checkout-branch-id" name="branchId" data-branch-id>
+              <option value="">انتخاب شعبه</option>
+              ${branches.filter((branch) => branch.services.includes("pickup")).map((branch) =>
+                `<option value="${escapeHtml(branch.identity.id)}">${escapeHtml(branch.name)} · ${escapeHtml(branch.location.city)}</option>`
+              ).join("")}
+            </select>
+            <p>فقط شعب دارای امکان تحویل حضوری در این فهرست نمایش داده می‌شوند.</p>
+            ${branches.some((branch) => branch.services.includes("pickup")) ? "" : '<a class="button button-secondary" href="/branches" data-app-link>مشاهده شعب</a>'}
           </div>
         </section>
         <section class="d7-checkout-summary lab-checkout-summary">
