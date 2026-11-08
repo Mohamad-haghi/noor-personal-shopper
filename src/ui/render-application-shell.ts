@@ -16,6 +16,7 @@ import type { SearchService } from "../services/search-service";
 import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
+import { withBasePath } from "../app/routing/create-router";
 import { renderFoundationStatus } from "./render-foundation";
 import { renderHero } from "./render-hero";
 import { renderRoutePlaceholder } from "./render-route-placeholder";
@@ -36,6 +37,8 @@ import { renderSelectionProfile } from "./render-selection-profile";
 import { renderHowItWorks } from "./render-how-it-works";
 import type { NoorDigitalSalesComparisonBridge } from "../integration/digital-sales-core/comparison-bridge";
 import type { NoorDigitalSalesPurchaseHandoffBridge } from "../integration/digital-sales-core/purchase-handoff-bridge";
+
+let activeMenuListeners: AbortController | null = null;
 
 function isNavigationRouteCurrent(navigationPath: string, match: RouteMatch | null): boolean {
   if (!match) return false;
@@ -858,7 +861,8 @@ async function renderVisitRoute(
       createdAt: new Date(),
     });
 
-    window.history.pushState(null, "", "/visit?branch=" + encodeURIComponent(branch.identity.id) + "&request=" + encodeURIComponent(visit.identity.id));
+    const visitPath = withBasePath("/visit", import.meta.env.BASE_URL);
+    window.history.pushState(null, "", visitPath + "?branch=" + encodeURIComponent(branch.identity.id) + "&request=" + encodeURIComponent(visit.identity.id));
     window.dispatchEvent(new PopStateEvent("popstate"));
   });
 }
@@ -937,6 +941,8 @@ export async function renderApplicationShell(
   const menuPanel = root.querySelector<HTMLElement>(".mobile-nav-panel");
   const menuBackdrop = root.querySelector<HTMLButtonElement>(".mobile-nav-backdrop");
   const menuClose = root.querySelector<HTMLButtonElement>(".mobile-nav-close");
+  activeMenuListeners?.abort();
+  activeMenuListeners = new AbortController();
   const setMobileMenuOpen = (open: boolean): void => {
     if (!menuToggle || !menuPanel || !menuBackdrop) return;
     menuToggle.setAttribute("aria-expanded", String(open));
@@ -958,11 +964,11 @@ export async function renderApplicationShell(
     if (target instanceof Node && !menuPanel?.contains(target) && !menuToggle?.contains(target)) {
       setMobileMenuOpen(false);
     }
-  }, true);
+  }, { capture: true, signal: activeMenuListeners.signal });
   menuPanel?.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => link.addEventListener("click", () => setMobileMenuOpen(false)));
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && menuToggle?.getAttribute("aria-expanded") === "true") setMobileMenuOpen(false);
-  });
+  }, { signal: activeMenuListeners.signal });
 
   const routeView = root.querySelector<HTMLElement>("#route-view");
   if (!routeView) throw new Error("Application route view was not created.");
