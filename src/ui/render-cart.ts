@@ -53,9 +53,9 @@ export function renderCart(routeView: HTMLElement, cart: Cart | null, products: 
           <h2>${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}</h2>
           <div class="lab-cart-quantity-control" aria-label="تغییر تعداد">
             <span>تعداد</span>
-            <button class="button button-secondary" type="button" data-cart-quantity-change="\${escapeHtml(item.id)}" data-quantity-delta="-1" aria-label="کاهش تعداد \${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}"\${item.quantity <= 1 ? " disabled" : ""}>−</button>
-            <strong aria-live="polite">\${item.quantity}</strong>
-            <button class="button button-secondary" type="button" data-cart-quantity-change="\${escapeHtml(item.id)}" data-quantity-delta="1" aria-label="افزایش تعداد \${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}">+</button>
+            <button class="button button-secondary" type="button" data-cart-quantity-change="${escapeHtml(item.id)}" data-quantity-delta="-1" aria-label="کاهش تعداد ${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}"${item.quantity <= 1 ? " disabled" : ""}>−</button>
+            <strong aria-live="polite">${item.quantity}</strong>
+            <button class="button button-secondary" type="button" data-cart-quantity-change="${escapeHtml(item.id)}" data-quantity-delta="1" aria-label="افزایش تعداد ${escapeHtml(product?.name ?? "فریم انتخاب‌شده")}">+</button>
           </div>
           <p class="lab-cart-price">${formatAmount(item.unitPrice * item.quantity, item.currency)}</p>
           ${href ? `<a class="lab-cart-detail-link" href="${href}" data-app-link>جزئیات محصول</a>` : ""}
