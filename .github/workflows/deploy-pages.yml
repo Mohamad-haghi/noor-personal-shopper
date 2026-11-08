@@ -696,6 +696,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: noor-cor-live-browser-proof
-          path: artifacts/*.jsonl
+          path: |
+            artifacts/*.jsonl
+            artifacts/*.json
           if-no-files-found: warn
           retention-days: 14
