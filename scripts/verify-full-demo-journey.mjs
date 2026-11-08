@@ -122,6 +122,36 @@ try {
   await page.getByText("سبد خرید شما خالی است.", { exact: true }).waitFor({ timeout: 15_000 });
   evidence.journey.cartClearedAfterConfirmation = true;
 
+  // Repeat the order journey with branch pickup and exercise the branch visit request.
+  await page.goto(new URL("products", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await page.locator("[data-add-to-cart]").first().click();
+  await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
+  await page.getByRole("link", { name: "مشاهدهٔ سبد خرید", exact: true }).click();
+  await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
+  await page.locator("[data-checkout-form]").waitFor({ state: "visible", timeout: 20_000 });
+  await page.locator("#checkout-recipient-name").fill("Demo Tester");
+  await page.locator("#checkout-phone").fill("09120000000");
+  await page.locator("input[name='fulfillment'][value='pickup']").check();
+  await page.locator("[data-pickup-fields]").waitFor({ state: "visible", timeout: 10_000 });
+  const pickupBranch = page.locator("#checkout-branch-id");
+  if (await pickupBranch.locator("option").count() < 2) throw new Error("pickup_branch_options_missing");
+  await pickupBranch.selectOption({ index: 1 });
+  await page.locator("[data-checkout-form] button[type='submit']").click();
+  await page.getByRole("heading", { name: "پرداخت سفارش" }).waitFor({ timeout: 20_000 });
+  await page.locator("[data-demo-pay]").click();
+  await page.getByRole("heading", { name: "سفارش شما با موفقیت تأیید شد" }).waitFor({ timeout: 20_000 });
+  evidence.journey.pickupCheckout = { passed: true };
+
+  await page.goto(new URL("branches", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await page.getByRole("link", { name: "انتخاب این شعبه" }).first().click();
+  await page.locator("[data-visit-form]").waitFor({ state: "visible", timeout: 20_000 });
+  const visitTime = page.locator("#visit-time");
+  if (await visitTime.locator("option").count() < 2) throw new Error("visit_time_options_missing");
+  await visitTime.selectOption({ index: 1 });
+  await page.locator("[data-visit-form] button[type='submit']").click();
+  await page.getByRole("heading", { name: "درخواست مراجعه ثبت شد." }).waitFor({ timeout: 20_000 });
+  evidence.journey.branchVisitRequest = { passed: true };
+
   if (evidence.errors.length) throw new Error("browser_errors_detected:" + evidence.errors.join(" | "));
   evidence.status = "passed";
 } catch (error) {
