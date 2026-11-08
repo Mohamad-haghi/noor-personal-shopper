@@ -39,7 +39,7 @@ try {
   const entry = new URL(pagesUrl);
   entry.searchParams.set("corTrace", "1");
   await page.goto(entry.toString(), { waitUntil: "domcontentloaded", timeout: 60_000 });
-  await page.getByRole("link", { name: "دستیار خرید" }).first().click();
+  await page.getByRole("link", { name: "مشاوره انتخاب" }).first().click();
   await page.getByRole("button", { name: "شروع مشاوره" }).click();
 
   for (const answer of [
@@ -55,7 +55,8 @@ try {
     await page.getByRole("button", { name: "ادامه", exact: true }).click();
   }
 
-  await page.getByRole("button", { name: "مشاهده مسیر پیشنهادها", exact: true }).click();
+  await page.getByRole("button", { name: "مشاهده پروفایل انتخاب", exact: true }).click();
+  await page.getByRole("link", { name: "مشاهده پیشنهادها", exact: true }).click();
   await page.waitForSelector(".recommendation-card", { timeout: 120_000 });
   const cards = page.locator(".recommendation-card");
   const cardCount = await cards.count();
@@ -84,7 +85,7 @@ try {
   const compareResponse = await compareResponsePromise;
   const compareBody = await compareResponse.json();
   const compareRequest = compareResponse.request().postDataJSON();
-  const compareTable = await page.locator(".d5-compare-table").innerText();
+  const compareTable = await page.locator(".lab-compare-table").innerText();
   if (!compareResponse.ok() ||
       compareBody?.contractVersion !== "1.0.0" ||
       compareBody?.requestId !== compareRequest?.requestId ||
