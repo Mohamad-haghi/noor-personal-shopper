@@ -12,6 +12,7 @@ function makeProduct(overrides: Record<string, unknown> = {}): Product {
       category: "sunglasses",
       customAttributes: {
         frameShapes: ["aviator"],
+        model: "Model One",
         frameMaterial: "acetate",
         frameColor: null,
         frameColorComponents: ["black", "gold"],
@@ -42,8 +43,8 @@ describe("catalog and product detail presentation", () => {
     renderProducts(root, [makeProduct()], new Map([["frame-1", [variant]]]), []);
 
     expect(root.innerHTML).toContain("فریم‌ها را با دقت بیشتری بشناسید");
-    expect(root.innerHTML).toContain("aviator");
     expect(root.innerHTML).toContain("acetate");
+    expect(root.innerHTML).toContain("black · gold");
     expect(root.innerHTML).toContain("قیمت‌های نمایشی");
     expect(root.innerHTML).toContain('href="/products/frame-1" data-app-link aria-label="مشاهدهٔ جزئیات Frame One"');
     expect(root.innerHTML).toContain("product-card-link");
