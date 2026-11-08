@@ -225,7 +225,7 @@ try {
   const mobileMenuPanel = page.locator("#mobile-navigation-panel");
   await mobileMenuToggle.click();
   if (!(await mobileMenuPanel.isVisible())) throw new Error("mobile_navigation_did_not_open");
-  await page.locator("footer.app-footer").click();
+  await page.locator(".mobile-nav-backdrop").click();
   if (await mobileMenuPanel.isVisible()) throw new Error("mobile_navigation_outside_tap_did_not_close");
   await mobileMenuToggle.click();
   await page.keyboard.press("Escape");
