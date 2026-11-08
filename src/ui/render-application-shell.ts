@@ -701,7 +701,7 @@ async function renderCheckoutRoute(
               sentAt: new Date(),
               confirmedAt: new Date(),
             });
-            window.history.pushState(null, "", "/confirmation/" + encodeURIComponent(confirmation.identity.id));
+            window.history.pushState(null, "", withBasePath("/confirmation/" + encodeURIComponent(confirmation.identity.id), import.meta.env.BASE_URL));
             window.dispatchEvent(new PopStateEvent("popstate"));
 
             return;
@@ -740,7 +740,7 @@ async function renderSearchRoute(routeView: HTMLElement, searchService: SearchSe
   form?.addEventListener("submit", (event) => {
     event.preventDefault();
     const value = String(new FormData(form).get("q") ?? "").trim();
-    window.history.pushState(null, "", "/search" + (value ? "?q=" + encodeURIComponent(value) : ""));
+    window.history.pushState(null, "", withBasePath("/search", import.meta.env.BASE_URL) + (value ? "?q=" + encodeURIComponent(value) : ""));
     window.dispatchEvent(new PopStateEvent("popstate"));
   });
 }

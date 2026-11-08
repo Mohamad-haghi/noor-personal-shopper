@@ -20,6 +20,12 @@ describe("GitHub Pages route base path", () => {
     expect(withBasePath("/noor-personal-shopper/products", baseUrl)).toBe("/noor-personal-shopper/products");
   });
 
+  it("preserves the Pages base path for search, visit, and confirmation history routes", () => {
+    expect(withBasePath("/search", baseUrl)).toBe("/noor-personal-shopper/search");
+    expect(withBasePath("/visit", baseUrl)).toBe("/noor-personal-shopper/visit");
+    expect(withBasePath("/confirmation/demo-confirmation-1", baseUrl)).toBe("/noor-personal-shopper/confirmation/demo-confirmation-1");
+  });
+
   it("leaves root-hosted local development paths unchanged", () => {
     expect(stripBasePath("/products", "/")).toBe("/products");
     expect(withBasePath("/products", "/")).toBe("/products");
