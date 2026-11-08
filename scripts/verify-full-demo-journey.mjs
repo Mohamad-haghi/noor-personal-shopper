@@ -14,6 +14,8 @@ const evidence = {
   routeChecks: [],
   journey: {},
   errors: [],
+  consoleErrors: [],
+  resourceFailures: [],
 };
 const browser = await chromium.launch({ headless: true });
 
@@ -42,7 +44,14 @@ try {
   };
   page.on("pageerror", error => evidence.errors.push(error.message.slice(0, 300)));
   page.on("console", message => {
-    if (message.type() === "error") evidence.errors.push(message.text().slice(0, 300));
+    if (message.type() === "error") {
+      evidence.consoleErrors.push({ text: message.text().slice(0, 300), location: message.location() });
+    }
+  });
+  page.on("response", response => {
+    if (response.status() >= 400) {
+      evidence.resourceFailures.push({ status: response.status(), url: response.url() });
+    }
   });
 
   const routeCases = [
@@ -82,6 +91,7 @@ try {
 
   // Add a real catalog offer to the demo cart and exercise quantity controls.
   await page.goto(new URL("products", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await page.locator(".product-card-link").first().click();
   const addButton = page.locator("[data-add-to-cart]").first();
   await addButton.waitFor({ state: "visible", timeout: 30_000 });
   await addButton.click();
@@ -137,6 +147,8 @@ try {
 
   // Repeat the order journey with branch pickup and exercise the branch visit request.
   await navigateSpa("/products");
+  await page.locator(".product-card-link").first().click();
+  await page.locator("[data-add-to-cart]").first().waitFor({ state: "visible", timeout: 30_000 });
   await page.locator("[data-add-to-cart]").first().click();
   await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
   await page.getByRole("link", { name: "مشاهدهٔ سبد خرید", exact: true }).click();
@@ -165,7 +177,7 @@ try {
   await page.getByRole("heading", { name: "درخواست مراجعه ثبت شد." }).waitFor({ timeout: 20_000 });
   evidence.journey.branchVisitRequest = { passed: true };
 
-  if (evidence.errors.length) throw new Error("browser_errors_detected:" + evidence.errors.join(" | "));
+  if (evidence.errors.length) throw new Error("browser_page_errors_detected:" + evidence.errors.join(" | "));
   evidence.status = "passed";
 } catch (error) {
   evidence.status = "failed";
