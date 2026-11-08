@@ -27,7 +27,7 @@ export const APP_ROUTES: readonly AppRoute[] = [
   { path: "/account", title: "حساب کاربری", navigationLabel: "حساب کاربری" },
   { path: "/cart", title: "سبد خرید", navigationLabel: "سبد خرید" },
   { path: "/checkout", title: "تکمیل سفارش", navigationLabel: "تکمیل سفارش" },
-  { path: "/payment", title: "پرداخت", navigationLabel: "پرداخت" },
+  { path: "/payment", title: "پرداخت", navigationLabel: null },
   { path: "/confirmation/:id", title: "تأیید سفارش", navigationLabel: null },
   { path: "/branches", title: "شعب", navigationLabel: "شعب" },
   { path: "/visit", title: "بازدید از شعبه", navigationLabel: "بازدید از شعبه" },
