@@ -124,10 +124,23 @@ try {
   const handoffResponse = await handoffResponsePromise;
   const handoffBody = await handoffResponse.json();
   const handoffRequest = handoffResponse.request().postDataJSON();
-  await page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).waitFor({ state: "visible", timeout: 30_000 });
+  const handoffDestination = handoffBody?.result?.handoff?.destination;
+  let parsedDestination = null;
+  try {
+    parsedDestination = new URL(handoffDestination);
+  } catch {
+    evidence.steps.handoffApi = { status: handoffResponse.status(), destinationPresent: false };
+    throw new Error("live_ui_handoff_destination_missing_or_invalid");
+  }
+  evidence.steps.handoffApi = {
+    status: handoffResponse.status(),
+    destinationPresent: true,
+    destinationOrigin: parsedDestination.origin,
+    destinationProtocol: parsedDestination.protocol,
+  };
+  await page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).waitFor({ state: "visible", timeout: 5_000 });
   const storeLink = page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).first();
   const destination = await storeLink.getAttribute("href");
-  const parsedDestination = new URL(destination);
   if (!handoffResponse.ok() ||
       handoffBody?.contractVersion !== "1.0.0" ||
       handoffBody?.requestId !== handoffRequest?.requestId ||
