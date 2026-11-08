@@ -675,6 +675,12 @@ jobs:
           EVIDENCE_PATH: artifacts/noor-ui-comparison-handoff.json
         run: node scripts/verify-live-ui-comparison-handoff.mjs
 
+      - name: Verify full demo purchase journey and direct route refresh
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          EVIDENCE_PATH: artifacts/noor-full-demo-journey.json
+        run: node scripts/verify-full-demo-journey.mjs
+
       - name: Install WebKit system dependencies
         timeout-minutes: 20
         run: |

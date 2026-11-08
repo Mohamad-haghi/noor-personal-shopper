@@ -38,6 +38,9 @@ jobs:
           npm pkg set dependencies.digital-sales-core="file:./digital-sales-core"
           npm install --package-lock=false --no-audit --no-fund
 
+      - name: Validate live browser audit script syntax
+        run: node --check scripts/verify-full-demo-journey.mjs
+
       - name: Run behavioral tests
         run: npm test
 
