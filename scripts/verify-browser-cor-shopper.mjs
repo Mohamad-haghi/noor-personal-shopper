@@ -218,6 +218,20 @@ try {
   const traceEntryUrl = new URL(pagesUrl);
   traceEntryUrl.searchParams.set("corTrace", "1");
   await page.goto(traceEntryUrl.toString(), { waitUntil: "domcontentloaded", timeout: 60_000 });
+
+  // Exercise the mobile drawer: open, dismiss with an outside tap, and dismiss with Escape.
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobileMenuToggle = page.locator(".mobile-nav-toggle");
+  const mobileMenuPanel = page.locator("#mobile-navigation-panel");
+  await mobileMenuToggle.click();
+  if (!(await mobileMenuPanel.isVisible())) throw new Error("mobile_navigation_did_not_open");
+  await page.locator("footer.app-footer").click();
+  if (await mobileMenuPanel.isVisible()) throw new Error("mobile_navigation_outside_tap_did_not_close");
+  await mobileMenuToggle.click();
+  await page.keyboard.press("Escape");
+  if (await mobileMenuPanel.isVisible()) throw new Error("mobile_navigation_escape_did_not_close");
+  console.log(JSON.stringify({ diagnostic: "noor_mobile_navigation", opened: true, outsideTapCloses: true, escapeCloses: true }));
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole("link", { name: "مشاوره انتخاب" }).first().click();
   await page.getByRole("button", { name: "شروع مشاوره" }).click();
 
