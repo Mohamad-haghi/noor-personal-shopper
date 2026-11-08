@@ -46,7 +46,9 @@ describe("Lab-aligned demo cart presentation", () => {
     expect(root.innerHTML).toContain('src="/assets/rb3025.jpg"');
     expect(root.innerHTML).toContain("Ray-Ban RB3025");
     expect(root.innerHTML).toContain("قیمت نمایشی Demo");
-    expect(root.innerHTML).toContain("تعداد: 2");
+    expect(root.innerHTML).toContain('data-cart-quantity-change="cart-item-1" data-quantity-delta="-1"');
+    expect(root.innerHTML).toContain('data-cart-quantity-change="cart-item-1" data-quantity-delta="1"');
+    expect(root.innerHTML).toContain('<strong aria-live="polite">2</strong>');
     expect(root.innerHTML).toContain('data-cart-remove="cart-item-1"');
     expect(root.innerHTML).toContain('href="/products/frame-1"');
     expect(root.innerHTML).toContain('href="/checkout"');
