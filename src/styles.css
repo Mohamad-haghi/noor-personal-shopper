@@ -4747,3 +4747,12 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
     inset-inline-end: .55rem;
   }
 }
+
+
+/* Saved favorites can be promoted into the comparison list, matching the Lab flow. */
+.lab-compare-favorites { max-width: 58rem; margin: 1.75rem auto 0; }
+.lab-compare-favorites > p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.8; }
+.lab-compare-favorite-links { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .75rem; }
+.lab-compare-favorite-link { display: inline-flex; align-items: center; min-height: 2.5rem; padding: .45rem .85rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: .84rem; cursor: pointer; transition: border-color 180ms ease, background 180ms ease, color 180ms ease; }
+.lab-compare-favorite-link:hover:not(:disabled) { border-color: var(--bronze); background: var(--surface); color: var(--bronze); }
+.lab-compare-favorite-link:disabled { cursor: wait; opacity: .55; }
