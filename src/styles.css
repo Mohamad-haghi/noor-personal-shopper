@@ -4756,3 +4756,18 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
 .lab-compare-favorite-link { display: inline-flex; align-items: center; min-height: 2.5rem; padding: .45rem .85rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: .84rem; cursor: pointer; transition: border-color 180ms ease, background 180ms ease, color 180ms ease; }
 .lab-compare-favorite-link:hover:not(:disabled) { border-color: var(--accent); background: var(--surface); color: var(--accent); }
 .lab-compare-favorite-link:disabled { cursor: wait; opacity: .55; }
+
+
+/* Refined Latin model codes and numerals across product labels.
+   Persian glyphs continue to fall back to the existing Vazirmatn family. */
+.lab-curated-item h3,
+.lab-curated-item a > span,
+.product-card-body h2,
+.product-card-model,
+.lab-recommendation-product-heading h2,
+.lab-choice-content h2,
+.lab-compare-product-name {
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-variant-numeric: lining-nums;
+  font-feature-settings: "lnum" 1;
+}
