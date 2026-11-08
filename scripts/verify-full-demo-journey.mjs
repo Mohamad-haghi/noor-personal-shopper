@@ -110,6 +110,8 @@ try {
   await page.locator("[data-demo-pay]").click();
   await page.getByRole("heading", { name: "پرداخت انجام نشد" }).waitFor({ timeout: 20_000 });
   await page.getByRole("button", { name: "تلاش دوباره", exact: true }).click();
+  await page.getByRole("heading", { name: "پرداخت سفارش" }).waitFor({ timeout: 20_000 });
+  await page.locator("[data-demo-pay]").click();
   await page.getByRole("heading", { name: "سفارش شما با موفقیت تأیید شد" }).waitFor({ timeout: 20_000 });
   if (!(await page.getByText("تأیید شده در Demo", { exact: true }).isVisible())) {
     throw new Error("order_confirmation_status_missing");
