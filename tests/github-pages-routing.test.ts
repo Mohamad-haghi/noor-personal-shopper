@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stripBasePath, withBasePath } from "../src/app/routing/create-router";
+import { resolveRoute } from "../src/app/routing/routes";
 
 describe("GitHub Pages route base path", () => {
   const baseUrl = "/noor-personal-shopper/";
@@ -24,6 +25,10 @@ describe("GitHub Pages route base path", () => {
     expect(withBasePath("/search", baseUrl)).toBe("/noor-personal-shopper/search");
     expect(withBasePath("/visit", baseUrl)).toBe("/noor-personal-shopper/visit");
     expect(withBasePath("/confirmation/demo-confirmation-1", baseUrl)).toBe("/noor-personal-shopper/confirmation/demo-confirmation-1");
+  });
+
+  it("does not register the intermediate payment state as a standalone page", () => {
+    expect(resolveRoute("/payment")).toBeNull();
   });
 
   it("leaves root-hosted local development paths unchanged", () => {
