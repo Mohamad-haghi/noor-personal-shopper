@@ -32,32 +32,29 @@ function categoryLabel(product: Product): string {
 
 function knownFacts(product: Product): string[] {
   return [
-    displayValue(custom(product, "frameShapes")),
     displayValue(custom(product, "frameMaterial")) ?? displayValue(custom(product, "frameMaterialComponents")),
     displayValue(custom(product, "frameColor")) ?? displayValue(custom(product, "frameColorComponents")),
   ].filter((value): value is string => Boolean(value));
 }
 
-function productCard(product: Product, variant: ProductVariant | null, favoriteVariant: ProductVariant | null): string {
+function productCard(product: Product): string {
   const detailHref = `/products/${encodeURIComponent(product.identity.id)}`;
   const facts = knownFacts(product);
-  const variantAction = variant
-    ? `<button class="button button-primary" type="button" data-add-to-cart="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">انتخاب در دمو</button>`
-    : `<span class="product-unavailable">گزینهٔ نمایشی برای انتخاب ثبت نشده</span>`;
+  const model = displayValue(custom(product, "model"));
 
   return `<article class="product-card" data-product-category="${product.attributes.category === "sunglasses" ? "sunglasses" : "optical"}">
-    <a class="product-card-media" href="${detailHref}" data-app-link aria-label="مشاهدهٔ جزئیات ${escapeHtml(product.name)}">${productImage(product)}</a>
-    ${favoriteVariant ? productFavoriteControl(product.identity.id) : ""}
-    <div class="product-card-body">
-      <p class="eyebrow">${escapeHtml(categoryLabel(product))}</p>
-      <h2><a href="${detailHref}" data-app-link>${escapeHtml(product.name)}</a></h2>
-      ${facts.length ? `<p class="product-card-facts">${facts.map(escapeHtml).join(" · ")}</p>` : `<p class="product-facts-pending">مشخصات تأییدشدهٔ بیشتری ثبت نشده است.</p>`}
-      <div class="product-card-actions">
-        <a class="product-card-details" href="${detailHref}" data-app-link>مشاهدهٔ جزئیات</a>
-        ${variant ? `<button class="product-card-quiet-action" type="button" data-compare-product="${escapeHtml(variant.identity.id)}" data-product-id="${escapeHtml(product.identity.id)}">مقایسه</button>` : ""}
-        ${variantAction}
+    <a class="product-card-link" href="${detailHref}" data-app-link aria-label="مشاهدهٔ جزئیات ${escapeHtml(product.name)}">
+      <div class="product-card-media">${productImage(product)}</div>
+      <div class="product-card-body">
+        <div class="product-card-heading">
+          <p class="eyebrow">${escapeHtml(categoryLabel(product))}</p>
+        </div>
+        <h2>${escapeHtml(product.name)}</h2>
+        ${model ? `<p class="product-card-model" dir="ltr">${escapeHtml(model)}</p>` : ""}
+        ${facts.length ? `<p class="product-card-facts">${facts.map(escapeHtml).join(" · ")}</p>` : ""}
       </div>
-    </div>
+    </a>
+    ${productFavoriteControl(product.identity.id)}
   </article>`;
 }
 
@@ -68,12 +65,7 @@ export function renderProducts(
   offers: readonly CommerceOffer[],
 ): void {
   void offers;
-  const cards = products.map((product) => {
-    const variants = variantsByProduct.get(product.identity.id) ?? [];
-    const variant = variants.find((item) => item.availability.isAvailable && item.availability.source === "demo") ?? null;
-    const favoriteVariant = variant ?? variants[0] ?? null;
-    return productCard(product, variant, favoriteVariant);
-  }).join("");
+  const cards = products.map((product) => productCard(product)).join("");
 
   routeView.innerHTML = `<main class="products-page lab-catalog-page" id="main-content" aria-labelledby="products-title">
     <section class="products-intro">
