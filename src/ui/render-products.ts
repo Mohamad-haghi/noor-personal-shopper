@@ -64,6 +64,7 @@ export function renderProducts(
   variantsByProduct: ReadonlyMap<string, readonly ProductVariant[]>,
   offers: readonly CommerceOffer[],
 ): void {
+  void variantsByProduct;
   void offers;
   const cards = products.map((product) => productCard(product)).join("");
 
