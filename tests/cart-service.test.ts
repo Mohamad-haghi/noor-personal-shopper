@@ -54,6 +54,21 @@ describe("D7-B cart behavior", () => {
     expect(empty.subtotal).toBe(0);
   });
 
+  it("updates an item quantity and recalculates cart totals", async () => {
+    const catalog = new DemoCatalogProvider();
+    const commerce = new DemoCommerceProvider(catalog);
+    const cart = new CartService(new DemoCartProvider());
+    const variants = await catalog.listVariants((await catalog.listProducts())[0].identity);
+    const offer = await commerce.getOffer(variants[0].identity);
+    const added = await cart.addCommerceOffer(cartId, offer!);
+
+    const updated = await cart.updateItem(cartId, { ...added.items[0], quantity: 3 });
+
+    expect(updated.items[0].quantity).toBe(3);
+    expect(updated.itemCount).toBe(3);
+    expect(updated.subtotal).toBe(offer!.pricing.amount * 3);
+  });
+
   it("rejects non-purchasable offers", async () => {
     const cart = new CartService(new DemoCartProvider());
     const offer = {

@@ -803,8 +803,25 @@ async function renderCartRoute(routeView: HTMLElement, cartService: CartService,
     button.addEventListener("click", async () => {
       const itemId = button.dataset.cartRemove;
       if (!itemId) return;
+      button.disabled = true;
       await cartService.removeItem({ id: "demo-cart" }, itemId);
       await renderCartRoute(routeView, cartService, catalogService);
+    });
+  });
+  routeView.querySelectorAll<HTMLButtonElement>("[data-cart-quantity-change]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const itemId = button.dataset.cartQuantityChange;
+      const delta = Number(button.dataset.quantityDelta);
+      const item = cart?.items.find((candidate) => candidate.id === itemId);
+      if (!item || ![-1, 1].includes(delta) || item.quantity + delta < 1) return;
+      button.disabled = true;
+      try {
+        await cartService.updateItem({ id: "demo-cart" }, { ...item, quantity: item.quantity + delta });
+        await renderCartRoute(routeView, cartService, catalogService);
+      } catch {
+        button.disabled = false;
+        button.setAttribute("aria-label", "به‌روزرسانی تعداد انجام نشد؛ دوباره تلاش کنید");
+      }
     });
   });
 }
