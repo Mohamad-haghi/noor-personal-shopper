@@ -12,6 +12,7 @@ function makeProduct(overrides: Record<string, unknown> = {}): Product {
       category: "sunglasses",
       customAttributes: {
         frameShapes: ["aviator"],
+        model: "Model One",
         frameMaterial: "acetate",
         frameColor: null,
         frameColorComponents: ["black", "gold"],
@@ -42,17 +43,21 @@ describe("catalog and product detail presentation", () => {
     renderProducts(root, [makeProduct()], new Map([["frame-1", [variant]]]), []);
 
     expect(root.innerHTML).toContain("فریم‌ها را با دقت بیشتری بشناسید");
-    expect(root.innerHTML).toContain("aviator");
     expect(root.innerHTML).toContain("acetate");
+    expect(root.innerHTML).toContain("black · gold");
     expect(root.innerHTML).toContain("قیمت‌های نمایشی");
-    expect(root.innerHTML).toContain("مشاهدهٔ جزئیات");
+    expect(root.innerHTML).toContain('href="/products/frame-1" data-app-link aria-label="مشاهدهٔ جزئیات Frame One"');
+    expect(root.innerHTML).toContain("product-card-link");
+    expect(root.innerHTML).toContain("product-card-model");
     expect(root.innerHTML).toContain("موجودی فرضی دمو — موجودی واقعی نور نیست");
     expect(root.innerHTML).toContain("product-card-media");
     expect(root.innerHTML).toContain("product-card-facts");
     expect(root.innerHTML).toContain('data-product-favorite="frame-1"');
     expect(root.innerHTML).toContain("product-favorite-toggle");
     expect(root.innerHTML).not.toContain("data-save-product-choice");
-    expect(root.innerHTML).toContain('data-compare-product="catalog-variant-1"');
+    expect(root.innerHTML).not.toContain('data-compare-product="catalog-variant-1"');
+    expect(root.innerHTML).not.toContain('data-add-to-cart="catalog-variant-1"');
+    expect(root.innerHTML).not.toContain("product-card-actions");
     expect(root.innerHTML).not.toContain("product-card-meta");
     expect(root.innerHTML).not.toContain("product-demo-price");
   });
