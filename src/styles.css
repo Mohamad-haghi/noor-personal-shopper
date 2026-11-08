@@ -4853,3 +4853,42 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
     height: 2.75rem;
   }
 }
+
+
+/* Homepage shell alignment — keep the NOOR wordmark centered in the header
+   and remove the generic route top inset before the integrated hero. */
+.app-shell-header .app-header-lab {
+  align-items: center;
+  justify-content: space-between;
+}
+.app-shell-header .app-brand-lab {
+  height: 2.75rem;
+  min-height: 2.75rem;
+  align-self: center;
+  align-items: center;
+  line-height: 1;
+}
+.app-shell-header .app-brand-lab .app-brand-name {
+  display: block;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+}
+.app-shell-header .app-brand-lab .app-brand-tagline {
+  display: block;
+  line-height: 1;
+  margin: 0;
+}
+.app-shell-header .route-view:has(> .lab-home) {
+  padding-block-start: 0;
+}
+@media (max-width: 720px) {
+  .app-shell-header .app-brand-lab {
+    height: 2.75rem;
+    min-height: 2.75rem;
+  }
+  .app-shell-header .app-brand-lab .app-brand-name {
+    font-size: 1.55rem;
+    letter-spacing: .26em;
+  }
+}
