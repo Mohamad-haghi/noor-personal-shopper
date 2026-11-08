@@ -906,7 +906,7 @@ export async function renderApplicationShell(
     <a class="skip-link" href="#main-content">پرش به محتوای اصلی</a>
     <div class="app-shell app-shell-header">
       <header class="app-header app-header-lab">
-        <a class="app-brand app-brand-lab" href="/" data-app-link aria-label="NOOR Eyewear Studio"><span class="app-brand-name">NOOR</span><span class="app-brand-tagline" dir="ltr">Eyewear Studio</span></a>
+        <a class="app-brand app-brand-lab" href="/" data-app-link aria-label="NOOR"><span class="app-brand-name">NOOR</span></a>
         <nav class="lab-header-nav" aria-label="ناوبری اصلی"><ul>${navigation}</ul></nav>
         <div class="app-header-meta">
           <div class="mobile-nav">
