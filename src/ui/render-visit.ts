@@ -69,7 +69,8 @@ export function renderVisit(
         <p>برای اجرای Demo، یک شعبه و زمان پیشنهادی انتخاب کنید. درخواست به حساب مستقل Personal Shopper متصل می‌شود.</p>
       </header>
       <p class="lab-visit-note" role="note">زمان‌های نمایش‌داده‌شده نمونه هستند و به سامانه رزرو واقعی شعب نور متصل نیستند.</p>
-      ${accountEmail ? "" : '<p class="d8-form-error lab-visit-error" role="alert">برای ثبت درخواست، ابتدا وارد حساب مستقل Personal Shopper شوید.</p>'}
+      ${accountEmail ? "" : '<p class="d8-form-error lab-visit-error" role="alert">برای ثبت درخواست، ابتدا وارد حساب مستقل Personal Shopper شوید.</p>
+      ${accountEmail ? "" : '<a class="button button-secondary lab-visit-account-link" href="/account" data-app-link>ورود یا ساخت حساب</a>'}'}
       ${errorMessage ? `<p class="d8-form-error lab-visit-error" role="alert">${escapeHtml(errorMessage)}</p>` : ""}
       <form class="d8-form lab-visit-form" data-visit-form>
         <section class="lab-visit-form-section">
