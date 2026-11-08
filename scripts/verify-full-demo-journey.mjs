@@ -33,7 +33,7 @@ try {
     ? new URL(pagesUrl).pathname
     : new URL(pagesUrl).pathname + "/";
   const navigateSpa = async (route) => {
-    const path = route === "/" ? appBasePath : appBasePath + route.replace(/^\\/+/, "");
+    const path = route === "/" ? appBasePath : appBasePath + route.slice(1);
     await page.evaluate((destination) => {
       window.history.pushState(null, "", destination);
       window.dispatchEvent(new PopStateEvent("popstate"));
