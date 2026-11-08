@@ -701,6 +701,7 @@ async function renderCheckoutRoute(
               sentAt: new Date(),
               confirmedAt: new Date(),
             });
+            await cartService.clearCart({ id: "demo-cart" });
             window.history.pushState(null, "", withBasePath("/confirmation/" + encodeURIComponent(confirmation.identity.id), import.meta.env.BASE_URL));
             window.dispatchEvent(new PopStateEvent("popstate"));
 
