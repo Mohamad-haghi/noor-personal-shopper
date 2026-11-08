@@ -586,7 +586,8 @@ async function renderCheckoutRoute(
 ): Promise<void> {
   const cart = await cartService.getCart({ id: "demo-cart" });
   const account = await accountService.getCurrentAccount();
-  renderCheckout(routeView, cart, account, null, errorMessage);
+  const branches = await branchService.listBranches();
+  renderCheckout(routeView, cart, account, null, errorMessage, branches);
 
   const form = routeView.querySelector<HTMLFormElement>("[data-checkout-form]");
   if (!form) return;
