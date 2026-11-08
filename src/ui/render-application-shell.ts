@@ -231,6 +231,10 @@ async function renderCompareRoute(
 ): Promise<void> {
   const choices = await choicesService.listChoices();
   const compareChoices = choices.filter((choice) => choice.tags.includes("compare"));
+  const comparedProductIds = new Set(compareChoices.map((choice) => choice.variantId.productId.id));
+  const favoriteChoices = choices.filter((choice) => choice.tags.includes("favorite") && !comparedProductIds.has(choice.variantId.productId.id))
+    .filter((choice, index, all) => all.findIndex((item) => item.variantId.productId.id === choice.variantId.productId.id) === index)
+    .slice(0, Math.max(0, 3 - compareChoices.length));
   const items = compareChoices.slice(0, 3).map((choice, index) => ({
     variantId: choice.variantId,
     addedAt: choice.createdAt,
@@ -248,7 +252,27 @@ async function renderCompareRoute(
     : null;
 
   const products = await catalogService.listProducts();
-  renderCompare(routeView, comparison, products);
+  renderCompare(routeView, comparison, products, favoriteChoices);
+  routeView.querySelectorAll<HTMLButtonElement>("[data-add-favorite-to-compare]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const choiceId = button.dataset.addFavoriteToCompare;
+      if (!choiceId || button.disabled || compareChoices.length >= 3) return;
+      const favorite = choices.find((choice) => choice.identity.id === choiceId);
+      if (!favorite || !favorite.tags.includes("favorite") || favorite.tags.includes("compare")) return;
+      button.disabled = true;
+      try {
+        await choicesService.saveChoice({
+          ...favorite,
+          tags: [...new Set([...favorite.tags, "compare"])],
+          updatedAt: new Date(),
+        });
+        await renderCompareRoute(routeView, catalogService, choicesService, compareService, digitalSalesComparisonBridge, digitalSalesPurchaseHandoffBridge);
+      } catch {
+        button.disabled = false;
+        button.setAttribute("aria-label", "افزودن به مقایسه انجام نشد؛ دوباره تلاش کنید");
+      }
+    });
+  });
   if (comparison) {
     try {
       await digitalSalesComparisonBridge.compare(
