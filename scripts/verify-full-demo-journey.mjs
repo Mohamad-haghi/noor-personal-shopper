@@ -27,8 +27,8 @@ try {
   if (feed?.demoOnly !== true || !Array.isArray(feed.products) || feed.products.length !== 15) {
     throw new Error("demo_catalog_feed_contract_invalid");
   }
-  const productId = feed.products[0]?.id;
-  if (!productId) throw new Error("demo_catalog_feed_product_missing");
+  const productIds = feed.products.map((product) => product?.id).filter((id) => typeof id === "string" && id.trim());
+  if (productIds.length !== 15) throw new Error("demo_catalog_feed_product_identity_missing");
 
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await context.newPage();
@@ -69,11 +69,11 @@ try {
     ["/", "خانه"],
     ["/how-it-works", "how-it-works"],
     ["/catalog", "مجموعه"],
-    ["/product/" + encodeURIComponent(productId), "جزئیات محصول"],
+    ["/product/" + encodeURIComponent(productIds[0]), "جزئیات محصول"],
     ["/profile", "profile"],
     ["/search", "جست‌وجوی فریم"],
     ["/products", "محصولات"],
-    ["/products/" + encodeURIComponent(productId), "جزئیات محصول"],
+    ["/products/" + encodeURIComponent(productIds[0]), "جزئیات محصول"],
     ["/shopper", "shopper"],
     ["/manager", "manager"],
     ["/recommendations", "recommendations"],
@@ -100,11 +100,22 @@ try {
   }
   evidence.routeAudit = { registeredRouteCount: routeCases.length, passed: evidence.routeChecks.length };
 
-  // Add a real catalog offer to the demo cart and exercise quantity controls.
-  await page.goto(new URL("products", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
-  await page.locator(".product-card-link").first().click();
+  // Select the first demo catalog product that actually exposes a purchasable demo variant.
+  // Navigate by its canonical product identity so the test exercises the same deep link as the app.
+  let selectedProductId = null;
+  for (const candidateId of productIds) {
+    const productUrl = new URL("products/" + encodeURIComponent(candidateId), pagesUrl);
+    await page.goto(productUrl.toString(), { waitUntil: "domcontentloaded", timeout: 60_000 });
+    await page.locator("#product-title").waitFor({ state: "visible", timeout: 20_000 });
+    if (await page.locator("[data-add-to-cart]").count()) {
+      selectedProductId = candidateId;
+      break;
+    }
+  }
+  if (!selectedProductId) throw new Error("no_demo_product_has_a_purchasable_variant");
+  evidence.journey.selectedProductId = selectedProductId;
   const addButton = page.locator("[data-add-to-cart]").first();
-  await addButton.waitFor({ state: "visible", timeout: 30_000 });
+  await addButton.waitFor({ state: "visible", timeout: 15_000 });
   await addButton.click();
   await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
   await page.getByRole("link", { name: "مشاهدهٔ سبد خرید", exact: true }).click();
@@ -157,8 +168,7 @@ try {
   evidence.journey.cartClearedAfterConfirmation = true;
 
   // Repeat the order journey with branch pickup and exercise the branch visit request.
-  await navigateSpa("/products");
-  await page.locator(".product-card-link").first().click();
+  await page.goto(new URL("products/" + encodeURIComponent(selectedProductId), pagesUrl).toString(), { waitUntil: "domcontentloaded" });
   await page.locator("[data-add-to-cart]").first().waitFor({ state: "visible", timeout: 30_000 });
   await page.locator("[data-add-to-cart]").first().click();
   await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
