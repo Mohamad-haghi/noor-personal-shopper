@@ -17,6 +17,7 @@ import type { FoundationStatus } from "../domain/foundation-status";
 import type { ShopperFeature } from "../features/shopper/shopper-feature";
 import { APP_ROUTES, type RouteMatch } from "../app/routing/routes";
 import { withBasePath } from "../app/routing/create-router";
+import { approvedDemoProductHandoffUrl } from "../integration/digital-sales-core/approved-demo-product-handoff";
 import { renderFoundationStatus } from "./render-foundation";
 import { renderHero } from "./render-hero";
 import { renderRoutePlaceholder } from "./render-route-placeholder";
@@ -549,11 +550,16 @@ async function attachPurchaseActions(
             "https://www.nooroptic.com/fa/search",
             { source: "noor-personal-shopper", productId, variantId },
           );
-          const destination = new URL(handoff.destination);
-          if (destination.protocol === "https:" && destination.origin === "https://www.nooroptic.com") {
+          const approvedDestination = approvedDemoProductHandoffUrl(
+            handoff.destination,
+            productId,
+            import.meta.env.BASE_URL,
+            window.location.origin,
+          );
+          if (approvedDestination) {
             const storeLink = document.createElement("a");
             storeLink.className = "button button-secondary";
-            storeLink.href = destination.href;
+            storeLink.href = approvedDestination;
             storeLink.target = "_blank";
             storeLink.rel = "noopener noreferrer";
             storeLink.textContent = "ادامه در فروشگاه نور";
