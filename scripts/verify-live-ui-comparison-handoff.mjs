@@ -124,7 +124,15 @@ try {
   const handoffResponse = await handoffResponsePromise;
   const handoffBody = await handoffResponse.json();
   const handoffRequest = handoffResponse.request().postDataJSON();
-  await page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).waitFor({ state: "visible", timeout: 30_000 });
+  evidence.steps.productHandoffApi = {
+    status: handoffResponse.status(),
+    requestId: handoffBody?.requestId ?? null,
+    source: handoffBody?.result?.source ?? null,
+    demoOnly: handoffBody?.result?.demoOnly ?? null,
+    destinationReturned: Boolean(handoffBody?.result?.handoff?.destination),
+  };
+  // Allow the hosted COR service cold-start window before declaring the UI link missing.
+  await page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).waitFor({ state: "visible", timeout: 90_000 });
   const storeLink = page.getByRole("link", { name: "ادامه در فروشگاه نور", exact: true }).first();
   const destination = await storeLink.getAttribute("href");
   const parsedDestination = new URL(destination);
