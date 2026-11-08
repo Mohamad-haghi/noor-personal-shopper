@@ -15,6 +15,7 @@ const evidence = {
   journey: {},
   errors: [],
   consoleErrors: [],
+  spaFallbackResponses: [],
   resourceFailures: [],
 };
 const browser = await chromium.launch({ headless: true });
@@ -49,8 +50,18 @@ try {
     }
   });
   page.on("response", response => {
-    if (response.status() >= 400) {
-      evidence.resourceFailures.push({ status: response.status(), url: response.url() });
+    if (response.status() < 400) return;
+    const request = response.request();
+    const responseUrl = new URL(response.url());
+    const isGitHubPagesSpaFallback =
+      response.status() === 404 &&
+      request.resourceType() === "document" &&
+      responseUrl.origin === new URL(pagesUrl).origin &&
+      responseUrl.pathname.startsWith(appBasePath);
+    if (isGitHubPagesSpaFallback) {
+      evidence.spaFallbackResponses.push(response.url());
+    } else {
+      evidence.resourceFailures.push({ status: response.status(), url: response.url(), resourceType: request.resourceType() });
     }
   });
 
@@ -141,7 +152,7 @@ try {
   evidence.journey.deliveryCheckout = { passed: true, paymentFailureRecovery: true, orderConfirmation: true };
 
   await navigateSpa("/cart");
-  await page.getByRole("heading", { name: "سبد خرید" }).waitFor({ timeout: 15_000 });
+  await page.getByRole("heading", { name: "سبد خرید", exact: true }).waitFor({ timeout: 15_000 });
   await page.getByText("سبد خرید شما خالی است.", { exact: true }).waitFor({ timeout: 15_000 });
   evidence.journey.cartClearedAfterConfirmation = true;
 
@@ -178,6 +189,9 @@ try {
   evidence.journey.branchVisitRequest = { passed: true };
 
   if (evidence.errors.length) throw new Error("browser_page_errors_detected:" + evidence.errors.join(" | "));
+  if (evidence.resourceFailures.length) {
+    throw new Error("unexpected_http_resource_failures:" + JSON.stringify(evidence.resourceFailures));
+  }
   evidence.status = "passed";
 } catch (error) {
   evidence.status = "failed";
