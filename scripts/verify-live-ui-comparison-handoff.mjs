@@ -153,6 +153,56 @@ try {
     demoCartNoticeVisible: await page.getByText("سبد خرید نمایشی آماده است؛ این مرحله خرید یا پرداخت واقعی انجام نمی‌دهد.").isVisible().catch(() => false),
   };
 
+  // Complete the local demo checkout, including failure recovery and confirmation.
+  await page.getByRole("link", { name: "حساب کاربری", exact: true }).click();
+  const auditEmail = "noor-audit-" + Date.now() + "@example.com";
+  await page.locator("#account-first-name").fill("NOOR");
+  await page.locator("#account-last-name").fill("Audit");
+  await page.locator("#account-register-email").fill(auditEmail);
+  await page.locator("#account-register-password").fill("noor-demo-pass-2026");
+  await page.getByRole("button", { name: "ساخت حساب", exact: true }).click();
+  await page.locator("#account-title").waitFor({ timeout: 15_000 });
+  evidence.steps.account = { registered: true, emailDomain: "example.com" };
+
+  await page.getByRole("link", { name: "سبد خرید", exact: true }).click();
+  await page.locator(".lab-cart-item").first().waitFor({ timeout: 15_000 });
+  evidence.steps.cart = { itemCount: await page.locator(".lab-cart-item").count() };
+  await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
+  await page.locator("[data-checkout-form]").waitFor({ timeout: 15_000 });
+  await page.locator("#checkout-recipient-name").fill("NOOR Audit");
+  await page.locator("#checkout-phone").fill("09120000000");
+  await page.locator("#checkout-address").fill("Demo Test Street 1");
+  await page.locator("#checkout-city").fill("Tehran");
+  await page.locator("#checkout-state").fill("Tehran");
+  await page.locator("#checkout-postal-code").fill("1234567890");
+  await page.locator("[data-checkout-form] button[type=submit]").click();
+  await page.locator("[data-demo-pay]").waitFor({ timeout: 20_000 });
+  await page.locator("[data-simulate-failure]").check();
+  await page.locator("[data-demo-pay]").click();
+  await page.getByRole("button", { name: "تلاش دوباره", exact: true }).waitFor({ timeout: 15_000 });
+  evidence.steps.paymentFailureRecovery = { simulatedFailureShown: true };
+  await page.getByRole("button", { name: "تلاش دوباره", exact: true }).click();
+  await page.locator("#confirmation-title").waitFor({ timeout: 20_000 });
+  const confirmationUrl = new URL(page.url());
+  if (!confirmationUrl.pathname.startsWith(new URL(pagesUrl).pathname + "confirmation/")) {
+    throw new Error("checkout_confirmation_escaped_pages_base_path:" + confirmationUrl.pathname);
+  }
+  evidence.steps.confirmation = { visible: true, path: confirmationUrl.pathname };
+  await page.getByRole("link", { name: "سبد خرید", exact: true }).click();
+  await page.locator(".lab-cart-empty").waitFor({ timeout: 15_000 });
+  evidence.steps.cartAfterConfirmation = { empty: true };
+
+  // Verify search submits without escaping the GitHub Pages repository prefix.
+  await page.getByRole("link", { name: "جست‌وجو", exact: true }).click();
+  await page.locator("#search-input").fill("خلبانی");
+  await page.locator("[data-search-form] button[type=submit]").click();
+  await page.locator("#search-title").waitFor({ timeout: 15_000 });
+  const searchUrl = new URL(page.url());
+  if (searchUrl.pathname !== new URL(pagesUrl).pathname + "search") {
+    throw new Error("search_navigation_escaped_pages_base_path:" + searchUrl.pathname);
+  }
+  evidence.steps.search = { submitted: true, path: searchUrl.pathname };
+
   if (evidence.errors.length) throw new Error("browser_page_errors_detected");
   evidence.status = "passed";
 } catch (error) {
