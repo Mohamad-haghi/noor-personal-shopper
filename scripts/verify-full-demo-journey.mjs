@@ -139,7 +139,11 @@ try {
 
   await navigateSpa("/cart");
   await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
-  await page.locator("[data-checkout-form]").waitFor({ state: "visible", timeout: 20_000 });
+  await page.locator("#checkout-title").waitFor({ state: "visible", timeout: 20_000 });
+  if (!(await page.locator("[data-checkout-form]").isVisible().catch(() => false))) {
+    const checkoutState = (await page.locator("#main-content").innerText().catch(() => "main-content-unavailable")).slice(0, 900);
+    throw new Error("checkout_form_missing_after_cart_navigation:" + checkoutState.replaceAll("\\n", " | "));
+  }
   await page.locator("#checkout-recipient-name").fill("Demo Tester");
   await page.locator("#checkout-phone").fill("09120000000");
   await page.locator("#checkout-address").fill("خیابان نمونه، پلاک ۱");
