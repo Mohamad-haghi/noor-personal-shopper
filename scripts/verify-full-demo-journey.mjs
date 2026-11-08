@@ -172,7 +172,7 @@ try {
   evidence.journey.cartClearedAfterConfirmation = true;
 
   // Repeat the order journey with branch pickup and exercise the branch visit request.
-  await page.goto(new URL("products/" + encodeURIComponent(selectedProductId), pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await navigateSpa("/products/" + encodeURIComponent(selectedProductId));
   await page.locator("[data-add-to-cart]").first().waitFor({ state: "visible", timeout: 30_000 });
   await page.locator("[data-add-to-cart]").first().click();
   await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
