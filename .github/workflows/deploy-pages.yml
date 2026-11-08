@@ -668,6 +668,13 @@ jobs:
           set -o pipefail
           node scripts/verify-browser-cor-shopper.mjs | tee artifacts/noor-cor-chromium.jsonl
 
+      - name: Verify live NOOR comparison and product handoff journey
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          COR_SHOPPER_BASE_URL: https://digital-sales-core.onrender.com
+          EVIDENCE_PATH: artifacts/noor-ui-comparison-handoff.json
+        run: node scripts/verify-live-ui-comparison-handoff.mjs
+
       - name: Install WebKit system dependencies
         timeout-minutes: 20
         run: |
