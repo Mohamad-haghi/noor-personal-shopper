@@ -4774,17 +4774,18 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
 
 
 /* Header parity with the approved NOOR Lab header.
-   Keep NOOR's existing navigation markup, destinations and menu handlers intact. */
+   Keep the header inside the viewport; navigation markup and handlers stay NOOR-owned. */
 .app-shell-header { padding-top: 0; }
 .app-shell-header .app-header-lab {
   position: sticky;
-  top: 0;
+  inset-block-start: 0;
   z-index: 40;
-  width: calc(100% + 2rem);
-  max-width: 72rem;
+  display: flex;
+  width: 100%;
+  max-width: none;
   min-height: 4rem;
-  margin-inline: auto;
-  padding: .45rem 1.25rem;
+  margin-inline: 0;
+  padding: .45rem max(1.25rem, calc((100vw - 72rem) / 2));
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface) 95%, transparent);
   -webkit-backdrop-filter: blur(8px);
@@ -4792,35 +4793,41 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
   box-sizing: border-box;
 }
 .app-shell-header .app-brand-lab {
+  display: inline-flex;
   min-height: 2.75rem;
-  align-items: baseline;
-  gap: .5rem;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: .65rem;
+  text-decoration: none;
 }
 .app-shell-header .app-brand-lab .app-brand-name {
   font-family: var(--editorial-font);
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 400;
   line-height: 1;
-  letter-spacing: .3em;
+  letter-spacing: .28em;
 }
 .app-shell-header .app-brand-tagline {
+  color: var(--muted);
   font-family: var(--editorial-font);
-  font-size: .65rem;
+  font-size: .68rem;
   font-weight: 400;
   line-height: 1;
   letter-spacing: .2em;
+  text-transform: uppercase;
 }
 .app-shell-header .mobile-nav-toggle {
   display: grid;
   width: 2.75rem;
   height: 2.75rem;
   place-content: center;
-  gap: .28rem;
+  gap: .32rem;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   color: var(--ink);
+  cursor: pointer;
 }
 .app-shell-header .mobile-nav-toggle span {
   display: block;
@@ -4831,13 +4838,14 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
 }
 @media (max-width: 720px) {
   .app-shell-header .app-header-lab {
-    width: calc(100% + 1.25rem);
+    width: 100%;
+    max-width: none;
     min-height: 4rem;
     padding: .45rem 1.25rem;
   }
   .app-shell-header .app-brand-lab .app-brand-name {
-    font-size: 1.5rem;
-    letter-spacing: .3em;
+    font-size: 1.55rem;
+    letter-spacing: .26em;
   }
   .app-shell-header .app-brand-tagline { display: none; }
   .app-shell-header .mobile-nav-toggle {
