@@ -29,6 +29,17 @@ try {
 
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   const page = await context.newPage();
+  const appBasePath = new URL(pagesUrl).pathname.endsWith("/")
+    ? new URL(pagesUrl).pathname
+    : new URL(pagesUrl).pathname + "/";
+  const navigateSpa = async (route) => {
+    const path = route === "/" ? appBasePath : appBasePath + route.replace(/^\\/+/, "");
+    await page.evaluate((destination) => {
+      window.history.pushState(null, "", destination);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    }, path);
+    await page.locator("#main-content").waitFor({ state: "attached", timeout: 30_000 });
+  };
   page.on("pageerror", error => evidence.errors.push(error.message.slice(0, 300)));
   page.on("console", message => {
     if (message.type() === "error") evidence.errors.push(message.text().slice(0, 300));
@@ -94,7 +105,7 @@ try {
   await page.locator("[data-account-register] button[type='submit']").click();
   await page.getByRole("heading", { name: "حساب کاربری من" }).waitFor({ timeout: 20_000 });
 
-  await page.goto(new URL("cart", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await navigateSpa("/cart");
   await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
   await page.locator("[data-checkout-form]").waitFor({ state: "visible", timeout: 20_000 });
   await page.locator("#checkout-recipient-name").fill("Demo Tester");
@@ -119,13 +130,13 @@ try {
   evidence.journey.accountRegistration = { passed: true, accountType: "demo" };
   evidence.journey.deliveryCheckout = { passed: true, paymentFailureRecovery: true, orderConfirmation: true };
 
-  await page.goto(new URL("cart", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await navigateSpa("/cart");
   await page.getByRole("heading", { name: "سبد خرید" }).waitFor({ timeout: 15_000 });
   await page.getByText("سبد خرید شما خالی است.", { exact: true }).waitFor({ timeout: 15_000 });
   evidence.journey.cartClearedAfterConfirmation = true;
 
   // Repeat the order journey with branch pickup and exercise the branch visit request.
-  await page.goto(new URL("products", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await navigateSpa("/products");
   await page.locator("[data-add-to-cart]").first().click();
   await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
   await page.getByRole("link", { name: "مشاهدهٔ سبد خرید", exact: true }).click();
@@ -144,7 +155,7 @@ try {
   await page.getByRole("heading", { name: "سفارش شما با موفقیت تأیید شد" }).waitFor({ timeout: 20_000 });
   evidence.journey.pickupCheckout = { passed: true };
 
-  await page.goto(new URL("branches", pagesUrl).toString(), { waitUntil: "domcontentloaded" });
+  await navigateSpa("/branches");
   await page.getByRole("link", { name: "انتخاب این شعبه" }).first().click();
   await page.locator("[data-visit-form]").waitFor({ state: "visible", timeout: 20_000 });
   const visitTime = page.locator("#visit-time");
