@@ -62,6 +62,22 @@ describe("Lab-aligned demo checkout presentation", () => {
     expect(root.innerHTML).toContain("هیچ سفارش واقعی یا پرداخت بانکی");
   });
 
+  it("offers valid pickup branches instead of requiring users to know internal branch ids", () => {
+    const root = { innerHTML: "" } as HTMLElement;
+    const branch = {
+      identity: { id: "demo-branch-tehran-central" },
+      name: "شعبه مرکزی تهران — Demo",
+      location: { city: "تهران" },
+      services: ["pickup"],
+    } as unknown as import("../src/domain").Branch;
+    renderCheckout(root, makeCart(), makeAccount(), null, null, [branch]);
+
+    expect(root.innerHTML).toContain('<select id="checkout-branch-id" name="branchId" data-branch-id>');
+    expect(root.innerHTML).toContain('value="demo-branch-tehran-central"');
+    expect(root.innerHTML).toContain("شعبه مرکزی تهران");
+    expect(root.innerHTML).not.toContain('<input id="checkout-branch-id"');
+  });
+
   it("renders a clear empty-cart state without creating a checkout form", () => {
     const root = { innerHTML: "" } as HTMLElement;
     renderCheckout(root, null, makeAccount());
