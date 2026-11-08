@@ -4630,3 +4630,120 @@ body { font-family: "Vazirmatn", system-ui, sans-serif; -webkit-font-smoothing: 
 .lab-compare-product-head .product-favorite-toggle { inset-block-start: 1.25rem; inset-inline-end: 1.25rem; }
 .product-detail-media > .product-favorite-toggle, .lab-cart-media-wrap > .product-favorite-toggle { inset-block-start: .6rem; inset-inline-end: .6rem; }
 @media (max-width: 640px) { .product-favorite-toggle { width: 2.45rem; height: 2.45rem; inset-block-start: .55rem; inset-inline-end: .55rem; } }
+
+
+/* Product cards follow the Lab's quiet, detail-first composition. */
+.products-page .product-grid {
+  width: min(100%, 76rem);
+  margin-inline: auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem 1.5rem;
+}
+.products-page .product-card {
+  position: relative;
+  display: block;
+  min-width: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: none;
+}
+.products-page .product-card:hover {
+  transform: none;
+  border: 0;
+  box-shadow: none;
+}
+.products-page .product-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.products-page .product-card-media {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  place-items: center;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+}
+.products-page .product-card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  object-fit: contain;
+  background: #fff;
+  transform: none;
+  transition: transform 700ms ease;
+}
+.products-page .product-card-link:hover .product-card-media img,
+.products-page .product-card-link:focus-visible .product-card-media img {
+  transform: scale(1.03);
+}
+.products-page .product-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  padding: 1rem 0 0;
+  background: transparent;
+}
+.products-page .product-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.products-page .product-card-heading .eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-size: .75rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.products-page .product-card-body h2 {
+  margin: .25rem 0 .05rem;
+  color: var(--ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.products-page .product-card-model {
+  margin: 0;
+  color: var(--muted);
+  font-size: .875rem;
+  line-height: 1.7;
+}
+.products-page .product-card-facts {
+  min-height: 0;
+  margin: .5rem 0 0;
+  color: var(--muted);
+  font-size: .75rem;
+  line-height: 1.8;
+}
+.products-page .product-card .product-favorite-toggle {
+  inset-block-start: .75rem;
+  inset-inline-end: .75rem;
+}
+.products-page .product-card-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+@media (min-width: 640px) {
+  .products-page .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .products-page .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .products-page .product-card .product-favorite-toggle {
+    width: 2.45rem;
+    height: 2.45rem;
+    inset-block-start: .55rem;
+    inset-inline-end: .55rem;
+  }
+}
