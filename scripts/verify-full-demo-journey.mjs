@@ -114,6 +114,20 @@ try {
   }
   if (!selectedProductId) throw new Error("no_demo_product_has_a_purchasable_variant");
   evidence.journey.selectedProductId = selectedProductId;
+
+  // Create the demo account before adding to cart. Keep subsequent navigation in the
+  // SPA so the in-memory demo account/cart providers remain in the same browser session.
+  await navigateSpa("/account");
+  await page.locator("[data-account-register] input[name='firstName']").fill("Demo");
+  await page.locator("[data-account-register] input[name='lastName']").fill("Tester");
+  const email = "noor-e2e-" + Date.now() + "@example.test";
+  await page.locator("[data-account-register] input[name='email']").fill(email);
+  await page.locator("[data-account-register] input[name='password']").fill("NoorDemo123!");
+  await page.locator("[data-account-register] button[type='submit']").click();
+  await page.getByRole("heading", { name: "حساب کاربری من" }).waitFor({ timeout: 20_000 });
+  evidence.journey.accountRegistration = { passed: true, accountType: "demo" };
+
+  await navigateSpa("/products/" + encodeURIComponent(selectedProductId));
   const addButton = page.locator("[data-add-to-cart]").first();
   await addButton.waitFor({ state: "visible", timeout: 15_000 });
   await addButton.click();
@@ -128,16 +142,7 @@ try {
   evidence.journey.cartQuantity = { increment: "1→2", decrement: "2→1", passed: true };
 
   await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
-  await page.getByRole("link", { name: "ورود / ثبت‌نام", exact: true }).click();
-  const email = "noor-e2e-" + Date.now() + "@example.test";
-  await page.locator("[data-account-register] input[name='firstName']").fill("Demo");
-  await page.locator("[data-account-register] input[name='lastName']").fill("Tester");
-  await page.locator("[data-account-register] input[name='email']").fill(email);
-  await page.locator("[data-account-register] input[name='password']").fill("NoorDemo123!");
-  await page.locator("[data-account-register] button[type='submit']").click();
-  await page.getByRole("heading", { name: "حساب کاربری من" }).waitFor({ timeout: 20_000 });
-
-  await navigateSpa("/cart");
+  await page.locator("[data-checkout-form]").waitFor({ state: "visible", timeout: 20_000 });
   await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
   await page.locator("#checkout-title").waitFor({ state: "visible", timeout: 20_000 });
   if (!(await page.locator("[data-checkout-form]").isVisible().catch(() => false))) {
@@ -163,7 +168,6 @@ try {
   if (!(await page.getByText("تأیید شده در Demo", { exact: true }).isVisible())) {
     throw new Error("order_confirmation_status_missing");
   }
-  evidence.journey.accountRegistration = { passed: true, accountType: "demo" };
   evidence.journey.deliveryCheckout = { passed: true, paymentFailureRecovery: true, orderConfirmation: true };
 
   await navigateSpa("/cart");
