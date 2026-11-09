@@ -100,6 +100,34 @@ try {
   }
   evidence.routeAudit = { registeredRouteCount: routeCases.length, passed: evidence.routeChecks.length };
 
+  // Exercise catalog filters and the favorite -> saved choices -> remove loop.
+  await navigateSpa("/products");
+  const opticalFilter = page.locator("[data-catalog-filter='optical']");
+  await opticalFilter.click();
+  const opticalCards = page.locator("[data-product-category='optical']");
+  if (await opticalCards.count() === 0) throw new Error("catalog_optical_filter_returned_no_cards");
+  if (await page.locator("[data-product-category='sunglasses']:visible").count() !== 0) {
+    throw new Error("catalog_optical_filter_left_sunglasses_visible");
+  }
+  await page.locator("[data-catalog-filter='all']").click();
+  evidence.journey.catalogFilters = { optical: true, all: true };
+
+  const favoriteButton = page.locator("[data-product-favorite]").first();
+  await favoriteButton.click();
+  await page.waitForFunction(() => document.querySelector("[data-product-favorite]")?.getAttribute("aria-pressed") === "true");
+  await navigateSpa("/choices");
+  await page.locator(".lab-choice-card").first().waitFor({ state: "visible", timeout: 15_000 });
+  await page.locator("[data-remove-choice]").first().click();
+  await page.getByRole("heading", { name: "هنوز فریمی ذخیره نکرده‌اید." }).waitFor({ timeout: 15_000 });
+  evidence.journey.favoriteAndChoiceRemoval = { saved: true, removed: true };
+
+  // Search by a known catalog model and verify the result list.
+  await navigateSpa("/search");
+  await page.locator("#search-input").fill("PO3011");
+  await page.locator("[data-search-form] button[type='submit']").click();
+  await page.getByText(/PO3011/).first().waitFor({ timeout: 15_000 });
+  evidence.journey.search = { query: "PO3011", passed: true };
+
   // Select the first demo catalog product that actually exposes a purchasable demo variant.
   // Navigate by its canonical product identity so the test exercises the same deep link as the app.
   let selectedProductId = null;
@@ -141,6 +169,14 @@ try {
   await page.locator(".lab-cart-quantity-control strong").first().getByText("1", { exact: true }).waitFor({ timeout: 15_000 });
   evidence.journey.cartQuantity = { increment: "1→2", decrement: "2→1", passed: true };
 
+  await page.locator("[data-cart-remove]").first().click();
+  await page.getByText("سبد خرید شما خالی است.", { exact: true }).waitFor({ timeout: 15_000 });
+  evidence.journey.cartRemoval = { passed: true };
+
+  await navigateSpa("/products/" + encodeURIComponent(selectedProductId));
+  await page.locator("[data-add-to-cart]").first().click();
+  await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
+  await page.getByRole("link", { name: "مشاهدهٔ سبد خرید", exact: true }).click();
   await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
   await page.locator("[data-checkout-form]").waitFor({ state: "visible", timeout: 20_000 });
   await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
