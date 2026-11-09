@@ -155,6 +155,26 @@ try {
   await page.getByRole("heading", { name: "حساب کاربری من" }).waitFor({ timeout: 20_000 });
   evidence.journey.accountRegistration = { passed: true, accountType: "demo" };
 
+  // Verify logout, rejected credentials, and a successful login in the same demo session.
+  await page.locator("[data-account-logout]").click();
+  await page.locator("[data-account-login]").waitFor({ state: "visible", timeout: 15_000 });
+  await page.locator("[data-account-login] input[name='email']").fill(email);
+  await page.locator("[data-account-login] input[name='password']").fill("WrongPassword123!");
+  await page.locator("[data-account-login] button[type='submit']").click();
+  await page.getByRole("alert").filter({ hasText: "ایمیل یا رمز عبور صحیح نیست." }).waitFor({ timeout: 15_000 });
+  await page.locator("[data-account-login] input[name='email']").fill(email);
+  await page.locator("[data-account-login] input[name='password']").fill("NoorDemo123!");
+  await page.locator("[data-account-login] button[type='submit']").click();
+  await page.getByRole("heading", { name: "حساب کاربری من" }).waitFor({ timeout: 20_000 });
+  await page.locator("[data-account-logout]").click();
+  await page.locator("[data-account-login]").waitFor({ state: "visible", timeout: 15_000 });
+  evidence.journey.accountLoginLogout = {
+    logout: true,
+    invalidCredentialsRejected: true,
+    validCredentialsAccepted: true,
+    passed: true,
+  };
+
   await navigateSpa("/products/" + encodeURIComponent(selectedProductId));
   const addButton = page.locator("[data-add-to-cart]").first();
   await addButton.waitFor({ state: "visible", timeout: 15_000 });
@@ -240,6 +260,28 @@ try {
   await page.locator("[data-visit-form] button[type='submit']").click();
   await page.getByRole("heading", { name: "درخواست مراجعه ثبت شد." }).waitFor({ timeout: 20_000 });
   evidence.journey.branchVisitRequest = { passed: true };
+
+  // Exercise native browser history after a sequence of in-app route transitions.
+  await navigateSpa("/catalog");
+  await navigateSpa("/products");
+  await navigateSpa("/search");
+  await page.goBack({ waitUntil: "domcontentloaded", timeout: 20_000 });
+  if (!new URL(page.url()).pathname.endsWith("/products")) {
+    throw new Error("browser_back_did_not_restore_previous_route:" + page.url());
+  }
+  await page.goBack({ waitUntil: "domcontentloaded", timeout: 20_000 });
+  if (!new URL(page.url()).pathname.endsWith("/catalog")) {
+    throw new Error("browser_back_did_not_restore_catalog_route:" + page.url());
+  }
+  await page.goForward({ waitUntil: "domcontentloaded", timeout: 20_000 });
+  if (!new URL(page.url()).pathname.endsWith("/products")) {
+    throw new Error("browser_forward_did_not_restore_products_route:" + page.url());
+  }
+  await page.goForward({ waitUntil: "domcontentloaded", timeout: 20_000 });
+  if (!new URL(page.url()).pathname.endsWith("/search")) {
+    throw new Error("browser_forward_did_not_restore_search_route:" + page.url());
+  }
+  evidence.journey.browserHistory = { back: true, forward: true, passed: true };
 
   if (evidence.errors.length) throw new Error("browser_page_errors_detected:" + evidence.errors.join(" | "));
   if (evidence.resourceFailures.length) {
