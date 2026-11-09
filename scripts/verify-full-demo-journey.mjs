@@ -166,8 +166,7 @@ try {
   await page.locator("[data-account-login] input[name='password']").fill("NoorDemo123!");
   await page.locator("[data-account-login] button[type='submit']").click();
   await page.getByRole("heading", { name: "حساب کاربری من" }).waitFor({ timeout: 20_000 });
-  await page.locator("[data-account-logout]").click();
-  await page.locator("[data-account-login]").waitFor({ state: "visible", timeout: 15_000 });
+  // Keep the successful session active for the checkout journey, which is account-gated.
   evidence.journey.accountLoginLogout = {
     logout: true,
     invalidCredentialsRejected: true,
