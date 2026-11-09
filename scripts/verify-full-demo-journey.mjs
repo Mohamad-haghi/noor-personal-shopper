@@ -178,9 +178,8 @@ try {
   await page.getByText("به سبد خرید دمو اضافه شد", { exact: true }).waitFor({ timeout: 30_000 });
   await page.getByRole("link", { name: "مشاهدهٔ سبد خرید", exact: true }).click();
   await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
-  await page.locator("[data-checkout-form]").waitFor({ state: "visible", timeout: 20_000 });
-  await page.getByRole("link", { name: "ادامهٔ تکمیل سفارش نمایشی", exact: true }).click();
   await page.locator("#checkout-title").waitFor({ state: "visible", timeout: 20_000 });
+  await page.locator("[data-checkout-form]").waitFor({ state: "visible", timeout: 20_000 });
   if (!(await page.locator("[data-checkout-form]").isVisible().catch(() => false))) {
     const checkoutState = (await page.locator("#main-content").innerText().catch(() => "main-content-unavailable")).slice(0, 900);
     throw new Error("checkout_form_missing_after_cart_navigation:" + checkoutState.replaceAll("\\n", " | "));
